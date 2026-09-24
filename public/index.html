@@ -25,6 +25,8 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .frames{flex:1;position:relative;min-height:0}
 .frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:var(--bg)}
 .frames iframe.on{display:block}
+.extlink{position:absolute;right:14px;bottom:14px;z-index:5;background:var(--card);color:var(--ac);border:1px solid var(--bd);border-radius:999px;padding:6px 12px;font:600 12.5px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.extlink[hidden]{display:none}
 @media (max-width:520px){.bar{gap:6px;padding:0 10px;height:44px}.brand{font-size:13px}nav a{padding:0 8px;font-size:13px}}
 .sp{flex:1}
 .acc{flex:none;display:flex;align-items:center;gap:8px}
@@ -77,12 +79,14 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
     <div class="msg" id="lMsg" role="status"></div>
   </form>
 </div>
-<div class="frames" id="frames"></div>
+<div class="frames" id="frames"><a class="extlink" id="extLink" target="_blank" rel="noopener noreferrer" hidden title="Se o site não aparecer aqui, abra-o numa nova aba">↗ Abrir numa nova aba</a></div>
 <script>
 /* Para adicionar um separador: acrescentar {id, nome, ficheiro} a esta lista e criar o HTML na mesma pasta. */
 const SEPARADORES=[
   {id:'simulador', nome:'Simulador Salarial', ficheiro:'simulador-salarial.html'},
-  {id:'financas',  nome:'Finanças',           ficheiro:'financas.html'}
+  {id:'financas',  nome:'Finanças',           ficheiro:'financas.html'},
+  {id:'biblia',    nome:'Bíblia financeira',  url:'https://bibliafinanceira.pt/'},
+  {id:'stock',     nome:'Stock casa',         url:'https://casastock-despensa-a-dois.dinisleao14.chatgpt.site/'}
 ];
 const tabs=document.getElementById('tabs'),frames=document.getElementById('frames');
 SEPARADORES.forEach(s=>{
@@ -91,7 +95,10 @@ SEPARADORES.forEach(s=>{
 function abrir(id){
   const s=SEPARADORES.find(x=>x.id===id)||SEPARADORES[0];
   let f=frames.querySelector(`iframe[data-id="${s.id}"]`);
-  if(!f){f=document.createElement('iframe');f.dataset.id=s.id;f.title=s.nome;f.src=s.ficheiro;frames.appendChild(f)} // carrega só quando é aberto e mantém o estado
+  if(!f){f=document.createElement('iframe');f.dataset.id=s.id;f.title=s.nome;
+    if(s.url){f.dataset.ext='1';f.src=s.url;f.referrerPolicy='no-referrer';f.setAttribute('allow','clipboard-write')}else f.src=s.ficheiro;
+    frames.appendChild(f)} // carrega só quando é aberto e mantém o estado
+  const ex=document.getElementById('extLink');ex.hidden=!s.url;if(s.url)ex.href=s.url;
   frames.querySelectorAll('iframe').forEach(x=>x.classList.toggle('on',x===f));
   tabs.querySelectorAll('a').forEach(a=>{const on=a.dataset.id===s.id;a.classList.toggle('on',on);a.setAttribute('aria-selected',on)});
   document.title=s.nome+' · Finanças Pessoais';
@@ -119,7 +126,7 @@ abrir(location.hash.slice(1));
     const on=!!user;$('btEntrar').hidden=on;$('who').hidden=!on;$('btSair').hidden=!on;
     if(on){$('mail').textContent=user.email||'';$('av').textContent=(user.email||'?')[0];$('who').title=user.email||''}
     window.financasUser=user||null; // disponível para os separadores (window.parent.financasUser)
-    document.querySelectorAll('.frames iframe').forEach(f=>{try{f.contentWindow.postMessage({tipo:'financas-sessao',user:user?{id:user.id,email:user.email}:null},'*')}catch(e){}});
+    document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'financas-sessao',user:user?{id:user.id,email:user.email}:null},'*')}catch(e){}});
   }
   $('btEntrar').onclick=()=>{setMsg('');mod.hidden=false;$('lEmail').focus()};
   $('btCancel').onclick=()=>{mod.hidden=true};
@@ -141,7 +148,7 @@ abrir(location.hash.slice(1));
 (function(){const K='fp_tema',b=document.getElementById('btTema'),h=document.documentElement;
   const atual=()=>h.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
   const pinta=()=>{const d=atual()==='dark';b.textContent=d?'☀️':'🌙';b.title=d?'Mudar para modo claro':'Mudar para modo escuro'};
-  const envia=t=>document.querySelectorAll('.frames iframe').forEach(f=>{try{f.contentWindow.postMessage({tipo:'fp-tema',tema:t},'*')}catch(e){}});
+  const envia=t=>document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'fp-tema',tema:t},'*')}catch(e){}});
   b.addEventListener('click',()=>{const t=atual()==='dark'?'light':'dark';h.dataset.theme=t;try{localStorage.setItem(K,t)}catch(e){}pinta();envia(t)});
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change',pinta);pinta();
   document.getElementById('frames').addEventListener('load',e=>{if(h.dataset.theme)envia(h.dataset.theme)},true);
