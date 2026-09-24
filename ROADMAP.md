@@ -28,6 +28,7 @@ Estado: ✅ feito · 🔜 próxima · ⬜ por fazer
   11. Ligação automática ao movimento de entrada com o mesmo valor (transferência no banco, subsídio no cartão refeição) → categoria Rendimentos; escolha manual em ✏.
   12. Resumo anual por mês (bruto, subsídio em cartão, IRS, SS, outros descontos, líquido).
   - Extra: leitor genérico Excel/CSV (cartão refeição), com reordenação pelos saldos; categoria Rendimentos (fora das despesas).
+  - Ajustes: 🔗 clicáveis (rendimento ↔ movimento), resumo anual com meses que abrem e filtro por entidade, "Compra:" passa para os detalhes, títulos da tabela de movimentos fixos, aba Previsões (estrutura).
 - ⬜ **v0.8 — Início e análises**
   13. Previsto vs real por categoria e por mês, com alertas de desvio.
   14. Evolução do saldo e comparação com o mesmo mês do ano anterior.
