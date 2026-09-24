@@ -22,12 +22,51 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:var(--bg)}
 .frames iframe.on{display:block}
 @media (max-width:520px){.bar{gap:6px;padding:0 10px;height:44px}.brand{font-size:13px}nav a{padding:0 8px;font-size:13px}}
+.sp{flex:1}
+.acc{flex:none;display:flex;align-items:center;gap:8px}
+.acc[hidden],.who[hidden],.bt[hidden]{display:none}
+.bt{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:9px;padding:6px 12px;font:600 13px system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.bt:hover{border-color:var(--ac)}
+.bt.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+.who{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mu);max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.av{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;text-transform:uppercase}
+.mod{position:fixed;inset:0;background:rgba(10,14,20,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.mod[hidden]{display:none}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:20px;width:100%;max-width:380px}
+.box h2{margin:0 0 4px;font-size:18px}
+.box p{margin:0 0 14px;color:var(--mu);font-size:13px}
+.box label{display:block;font-size:13px;color:var(--mu);margin:10px 0 4px}
+.box input{width:100%;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;padding:10px;font-size:16px}
+.box input:focus{outline:2px solid var(--ac2);border-color:var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.row .bt{flex:1;padding:9px 12px}
+.msg{min-height:1.2em;font-size:13px;margin-top:10px}
+.msg.err{color:#c0392b}.msg.ok{color:#0f7a55}
+@media (max-width:520px){.who span{display:none}.acc .bt{padding:5px 9px}}
+@media (max-width:420px){.brand{display:none}}
 </style>
 </head>
 <body>
 <div class="bar">
   <div class="brand">Finanças <span>Pessoais</span></div>
   <nav id="tabs" role="tablist"></nav>
+  <div class="sp"></div>
+  <div class="acc" id="acc" hidden>
+    <button class="bt" id="btEntrar" type="button">Entrar</button>
+    <div class="who" id="who" hidden><div class="av" id="av"></div><span id="mail"></span></div>
+    <button class="bt" id="btSair" type="button" hidden>Sair</button>
+  </div>
+</div>
+<div class="mod" id="mod" hidden>
+  <form class="box" id="fLogin" autocomplete="on">
+    <h2>Entrar ou criar conta</h2>
+    <p>Use a mesma conta dos outros sites frisk.pt. Sem sessão, os dados ficam guardados só neste dispositivo.</p>
+    <label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="email" required>
+    <label for="lPass">Palavra-passe</label><input id="lPass" type="password" autocomplete="current-password" minlength="6" required>
+    <div class="row"><button class="bt pri" type="submit" id="btLogin">Entrar</button><button class="bt" type="button" id="btCriar">Criar conta</button></div>
+    <div class="row" style="margin-top:8px"><button class="bt" type="button" id="btCancel">Cancelar</button></div>
+    <div class="msg" id="lMsg" role="status"></div>
+  </form>
 </div>
 <div class="frames" id="frames"></div>
 <script>
@@ -50,6 +89,44 @@ function abrir(id){
 }
 window.addEventListener('hashchange',()=>abrir(location.hash.slice(1)));
 abrir(location.hash.slice(1));
+</script>
+<!-- Login partilhado da plataforma (mesmas contas de *.frisk.pt). Se não carregar (offline), o site funciona sem login. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/gh/sebalca/plataforma-core@main/auth.js"></script>
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  if(!window.Auth)return; // sem ligação ou sem auth.js: continua só local
+  const acc=$('acc'),mod=$('mod'),msg=$('lMsg');
+  acc.hidden=false;
+  const setMsg=(t,ok)=>{msg.textContent=t||'';msg.className='msg'+(t?(ok?' ok':' err'):'')};
+  const traduz=e=>{const m=(e&&e.message)||'';
+    if(/Invalid login/i.test(m))return 'Email ou palavra-passe incorretos.';
+    if(/already registered/i.test(m))return 'Já existe uma conta com este email — use "Entrar".';
+    if(/Email not confirmed/i.test(m))return 'Confirme o email antes de entrar (verifique a caixa de correio).';
+    if(/Password should/i.test(m))return 'A palavra-passe tem de ter pelo menos 6 caracteres.';
+    return m||'Não foi possível concluir. Tente novamente.';};
+  function mostrar(user){
+    const on=!!user;$('btEntrar').hidden=on;$('who').hidden=!on;$('btSair').hidden=!on;
+    if(on){$('mail').textContent=user.email||'';$('av').textContent=(user.email||'?')[0];$('who').title=user.email||''}
+    window.financasUser=user||null; // disponível para os separadores (window.parent.financasUser)
+    document.querySelectorAll('.frames iframe').forEach(f=>{try{f.contentWindow.postMessage({tipo:'financas-sessao',user:user?{id:user.id,email:user.email}:null},'*')}catch(e){}});
+  }
+  $('btEntrar').onclick=()=>{setMsg('');mod.hidden=false;$('lEmail').focus()};
+  $('btCancel').onclick=()=>{mod.hidden=true};
+  mod.addEventListener('click',e=>{if(e.target===mod)mod.hidden=true});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')mod.hidden=true});
+  $('fLogin').addEventListener('submit',async e=>{e.preventDefault();setMsg('A entrar…',true);
+    const {data,error}=await Auth.signIn($('lEmail').value.trim(),$('lPass').value);
+    if(error)return setMsg(traduz(error));mod.hidden=true;mostrar(data.user)});
+  $('btCriar').onclick=async()=>{const f=$('fLogin');if(!f.reportValidity())return;setMsg('A criar conta…',true);
+    const {data,error}=await Auth.signUp($('lEmail').value.trim(),$('lPass').value);
+    if(error)return setMsg(traduz(error));
+    if(data.session){mod.hidden=true;mostrar(data.user)}else setMsg('Conta criada. Confirme o email e depois clique em "Entrar".',true)};
+  $('btSair').onclick=async()=>{await Auth.signOut();mostrar(null)};
+  Auth.onChange((ev,session)=>mostrar(session&&session.user));
+  Auth.getSession().then(s=>mostrar(s&&s.user));
+})();
 </script>
 </body>
 </html>
