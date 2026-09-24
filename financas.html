@@ -5,11 +5,336 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Finanças</title>
 <style>
-:root{--bg:#f4f5f7;--tx:#18202b;--mu:#667085;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:#0e1217;--tx:#e7eaef;--mu:#95a0b1;color-scheme:dark}}
-html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+:root{
+  --bg:#f4f5f7;--card:#fff;--tx:#18202b;--mu:#667085;--bd:#e2e5ea;--soft:#f1f3f6;
+  --ac:#2451d6;--ac2:#e9eefc;--ok:#0f7a55;--neg:#b93815;--warn:#a15c00;
+  --c1:#0f7a55;--c2:#d1495b;--c3:#e08a1e;--c4:#2451d6;--c5:#7a4fd6;--c6:#1597a8;--c7:#8a5a44;--c8:#8c96a5;
+  --r:14px;--sh:0 1px 2px rgba(16,24,40,.05),0 1px 8px rgba(16,24,40,.04);color-scheme:light}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--soft:#1c222b;
+  --ac:#7d9bff;--ac2:#1c2740;--ok:#3ecf95;--neg:#ff7d62;--warn:#f0b35a;
+  --c1:#3ecf95;--c2:#ff6f86;--c3:#f5a543;--c4:#7d9bff;--c5:#b393ff;--c6:#4cc9d9;--c7:#c9937a;--c8:#7b8594;--sh:none;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1360px;margin:0 auto;padding:0 16px}
+/* cabeçalho fixo */
+.stk{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--bd);box-shadow:0 2px 10px rgba(16,24,40,.04)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 8px;flex-wrap:wrap}
+.top h1{font-size:20px;margin:0;letter-spacing:-.01em}.top h1 span{color:var(--ac)}
+.top p{margin:2px 0 0;color:var(--mu);font-size:13px}
+.per{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.per .seg{display:inline-flex;border:1px solid var(--bd);border-radius:9px;overflow:hidden;background:var(--card)}
+.per .seg button{border:0;background:transparent;padding:6px 10px;font-size:13px;cursor:pointer;color:var(--mu)}
+.per .seg button.on{background:var(--ac);color:#fff}
+.nav{display:inline-flex;align-items:center;border:1px solid var(--bd);border-radius:9px;background:var(--card)}
+.nav button{border:0;background:transparent;width:32px;height:32px;cursor:pointer;font-size:16px;color:var(--mu)}
+.nav span{min-width:128px;text-align:center;font-weight:700;font-size:14px}
+.rng{display:none;align-items:center;gap:6px}.rng.on{display:inline-flex}
+.rng input{border:1px solid var(--bd);border-radius:8px;background:var(--card);padding:5px 8px;font-size:13px}
+nav.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:5px;margin:4px 0 12px;box-shadow:var(--sh);overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{border:0;background:transparent;border-radius:8px;padding:9px 16px;cursor:pointer;font-weight:600;color:var(--mu);white-space:nowrap}
+nav.tabs button.on{background:var(--ac);color:#fff}
+nav.tabs .n{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:var(--ac2);color:var(--ac);font-size:11px}
+nav.tabs button.on .n{background:rgba(255,255,255,.25);color:#fff}
+/* geral */
+main{padding:16px 0 40px}
+.panel{display:none}.panel.on{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-bottom:16px;min-width:0}
+.card h3{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h3 small{font-weight:400;color:var(--mu);font-size:12px}
+.card h3 .r{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:1px solid var(--bd);background:var(--card);border-radius:10px;padding:7px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:14px}
+.btn:hover{border-color:var(--ac)}
+.btn.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn.sm{padding:4px 9px;font-size:12.5px;border-radius:8px}
+.btn.ic{padding:4px 7px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+@media (max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:14px;box-shadow:var(--sh);min-width:0}
+.kpi .l{font-size:12px;color:var(--mu)}
+.kpi .v{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:4px 0 2px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kpi .s{font-size:12px;color:var(--mu)}
+.kpi.pos .v{color:var(--ok)}.kpi.neg .v{color:var(--neg)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.t{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+table.t th,table.t td{padding:8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap;vertical-align:middle}
+table.t thead th{font-size:12px;color:var(--mu);font-weight:600;background:var(--card);position:sticky;top:0}
+table.t .num{text-align:right}
+table.t tr.tot td{font-weight:700;border-top:2px solid var(--bd);background:var(--soft)}
+table.t td.desc{white-space:normal;min-width:180px}
+table.t td .pos{color:var(--ok)}table.t td .neg{color:var(--neg)}
+table.t tbody tr:hover td{background:color-mix(in srgb,var(--ac2) 40%,transparent)}
+.tag{display:inline-block;border-radius:999px;padding:1px 8px;font-size:12px;background:var(--soft);border:1px solid var(--bd);color:var(--tx)}
+.tag.wait{background:color-mix(in srgb,var(--c3) 14%,var(--card));border-color:color-mix(in srgb,var(--c3) 40%,transparent);color:var(--warn)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:0}
+.muted{color:var(--mu)}
+.empty{text-align:center;color:var(--mu);padding:26px 10px;font-size:14px}
+.empty b{display:block;color:var(--tx);font-size:15px;margin-bottom:4px}
+.demo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:color-mix(in srgb,var(--c3) 12%,var(--card));border:1px dashed color-mix(in srgb,var(--c3) 55%,transparent);border-radius:12px;padding:8px 12px;font-size:13px;margin-bottom:14px}
+.demo label{display:inline-flex;align-items:center;gap:6px;cursor:pointer;margin-left:auto;font-weight:600}
+.demo input{accent-color:var(--ac)}
+/* filtros */
+.filt{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filt input,.filt select{border:1px solid var(--bd);border-radius:9px;background:var(--soft);padding:7px 10px;font-size:13.5px;min-width:0}
+.filt input[type=search]{flex:1 1 220px}
+/* upload */
+.drop{border:2px dashed var(--bd);border-radius:14px;padding:22px;text-align:center;background:var(--soft);cursor:pointer;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--ac);background:var(--ac2)}
+.drop .ico{font-size:28px;line-height:1}
+.drop b{display:block;margin:6px 0 2px}
+.drop small{color:var(--mu)}
+.upl{display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start}
+@media (max-width:900px){.upl{grid-template-columns:1fr}}
+.fld{display:grid;gap:4px;margin-bottom:10px}
+.fld label{font-size:12.5px;color:var(--mu)}
+.fld select,.fld input{border:1px solid var(--bd);border-radius:9px;background:var(--soft);padding:8px 10px;font-size:14px;width:100%}
+/* bancos */
+.banks{list-style:none;margin:0;padding:0}
+.banks li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--bd)}
+.banks li:last-child{border:0}
+.banks .bi{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px;flex:none}
+.banks .bn{flex:1;min-width:0}.banks .bn small{display:block;color:var(--mu);font-size:12px}
+.banks b{font-variant-numeric:tabular-nums}
+.banks li.tot{border-top:2px solid var(--bd);border-bottom:0;margin-top:4px}
+/* gráficos */
+.donut{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.lg{list-style:none;margin:0;padding:0;flex:1;min-width:180px;font-size:13px}
+.lg li{display:flex;align-items:center;gap:8px;padding:3px 0}
+.lg span{flex:1}.lg b{font-variant-numeric:tabular-nums}
+.bars svg{width:100%;height:auto;display:block}
+.leg{display:flex;gap:14px;font-size:12px;color:var(--mu);margin-top:6px}
+.leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px}
+/* despesas */
+.cat{border:1px solid var(--bd);border-radius:14px;margin-bottom:12px;overflow:hidden;background:var(--card)}
+.cat>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 14px;font-weight:700;flex-wrap:wrap}
+.cat>summary::-webkit-details-marker{display:none}
+.cat>summary .ci{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+.cat>summary .sp{flex:1}
+.cat>summary .m{font-weight:600;font-size:13px;color:var(--mu);font-variant-numeric:tabular-nums}
+.cat>summary .m b{color:var(--tx)}
+.cat>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg);margin-left:4px;transition:.15s}
+.cat[open]>summary::after{transform:rotate(-135deg)}
+.cat .tw{border-top:1px solid var(--bd)}
+.bar{height:6px;border-radius:4px;background:var(--soft);overflow:hidden;min-width:70px}
+.bar i{display:block;height:100%;border-radius:4px}
+.addrow td{color:var(--ac);cursor:pointer;font-weight:600}
+.pill{display:inline-block;border-radius:999px;padding:1px 8px;font-size:11.5px;font-weight:700}
+.pill.ok{background:color-mix(in srgb,var(--c1) 15%,transparent);color:var(--ok)}
+.pill.over{background:color-mix(in srgb,var(--c2) 15%,transparent);color:var(--neg)}
+.note{font-size:12px;color:var(--mu);margin:8px 0 0}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:60}
+#toast.on{opacity:1}
+@media (max-width:640px){.top{padding:8px 0 4px}.top h1{font-size:17px}.top p{display:none}.nav span{min-width:110px;font-size:13px}.kpi .v{font-size:20px}}
 </style>
 </head>
 <body>
+<div class="stk"><div class="wrap">
+  <div class="top">
+    <div><h1>Finanças <span>pessoais</span></h1><p>Extratos, rendimentos e despesas num só sítio</p></div>
+    <div class="per" aria-label="Período">
+      <div class="seg" id="perMode"><button type="button" data-m="mes" class="on">Mês</button><button type="button" data-m="ano">Ano</button><button type="button" data-m="int">Intervalo</button></div>
+      <div class="nav" id="perNav"><button type="button" data-d="-1" aria-label="Anterior">‹</button><span id="perLbl"></span><button type="button" data-d="1" aria-label="Seguinte">›</button></div>
+      <div class="rng" id="perRng"><input type="date" id="rIni"> <span class="muted">a</span> <input type="date" id="rFim"></div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button type="button" data-tab="home" class="on">Início</button>
+    <button type="button" data-tab="ext">Extratos <span class="n" data-cnt="ext"></span></button>
+    <button type="button" data-tab="ren">Rendimentos</button>
+    <button type="button" data-tab="des">Despesas</button>
+  </nav>
+</div></div>
+
+<main class="wrap">
+  <div class="demo"><span>🧪 <b>Pré-visualização do layout</b> — os valores são exemplos; as funcionalidades vão sendo ligadas por etapas.</span>
+    <label><input type="checkbox" id="demoTgl" checked> Mostrar dados de exemplo</label></div>
+
+  <!-- ================= INÍCIO ================= -->
+  <section class="panel on" id="tab-home">
+    <div class="kpis" id="homeKpis"></div>
+    <div class="grid3">
+      <div class="card"><h3>Entradas e saídas por mês <small id="barsSub"></small></h3><div class="bars" id="homeBars"></div></div>
+      <div class="card"><h3>Saldo por banco</h3><ul class="banks" id="homeBanks"></ul></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Despesas por categoria <small>real no período</small></h3><div id="homeDonut"></div></div>
+      <div class="card"><h3>Previsto vs real <small>despesas</small><span class="r"><button class="btn sm" data-go="des">Ver despesas →</button></span></h3><div class="tw" id="homeBudget"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Últimos movimentos<span class="r"><button class="btn sm" data-go="ext">Ver extratos →</button></span></h3><div class="tw" id="homeLast"></div></div>
+      <div class="card"><h3>Por categorizar <span class="tag wait" id="homeUncCnt">0</span><span class="r"><button class="btn sm" data-go="ext">Categorizar →</button></span></h3><div class="tw" id="homeUnc"></div></div>
+    </div>
+  </section>
+
+  <!-- ================= EXTRATOS ================= -->
+  <section class="panel" id="tab-ext">
+    <div class="card"><h3>Importar extrato</h3>
+      <div class="upl">
+        <label class="drop" id="drop"><input type="file" id="fExt" accept=".csv,.xlsx,.xls,.pdf,.ofx,.qif" multiple hidden>
+          <div class="ico">📄</div><b>Arraste aqui o ficheiro do extrato ou clique para escolher</b><small>CSV, Excel (XLSX/XLS), PDF ou OFX · vários ficheiros de uma vez</small></label>
+        <div>
+          <div class="fld"><label for="bankSel">Banco</label><select id="bankSel"><option>Detetar automaticamente</option><option>CGD</option><option>Millennium BCP</option><option>Santander</option><option>Novo Banco</option><option>BPI</option><option>ActivoBank</option><option>Revolut</option><option>Outro…</option></select></div>
+          <div class="fld"><label for="whoSel">Titular (quem é)</label><select id="whoSel"><option>Eu</option><option>Cônjuge</option><option>Conta conjunta</option><option>Outro…</option></select></div>
+          <button class="btn pri" type="button" data-todo="Importar extrato" style="width:100%;justify-content:center">Importar</button>
+        </div>
+      </div>
+      <p class="note">Os movimentos já importados são reconhecidos para não haver duplicados. As regras de categorização aprendem com as suas escolhas.</p>
+    </div>
+    <div class="card"><h3>Movimentos <small id="extSub"></small><span class="r"><button class="btn sm" data-todo="Adicionar movimento">＋ Movimento</button><button class="btn sm" data-todo="Regras de categorização">⚙ Regras</button><button class="btn sm" data-todo="Exportar CSV">⤓ Exportar</button></span></h3>
+      <div class="filt">
+        <input type="search" placeholder="Pesquisar descrição, referência, detalhes…" aria-label="Pesquisar">
+        <select aria-label="Banco"><option>Todos os bancos</option></select>
+        <select aria-label="Categoria"><option>Todas as categorias</option><option>Por categorizar</option></select>
+        <select aria-label="Quem é"><option>Todos (quem é)</option></select>
+        <select aria-label="Tipo"><option>Entradas e saídas</option><option>Só entradas</option><option>Só saídas</option></select>
+      </div>
+      <div class="tw" id="extTable"></div>
+    </div>
+  </section>
+
+  <!-- ================= RENDIMENTOS ================= -->
+  <section class="panel" id="tab-ren">
+    <div class="kpis" id="renKpis"></div>
+    <div class="card"><h3>Rendimentos recorrentes <small>salários, rendas, pensões…</small><span class="r"><button class="btn sm" data-todo="Carregar recibo de vencimento">📎 Carregar recibo</button><button class="btn sm pri" data-todo="Adicionar rendimento recorrente">＋ Adicionar</button></span></h3>
+      <div class="tw" id="renRec"></div></div>
+    <div class="card"><h3>Rendimentos pontuais <small>prémios, vendas, reembolsos…</small><span class="r"><button class="btn sm" data-todo="Carregar documento">📎 Carregar documento</button><button class="btn sm pri" data-todo="Adicionar rendimento pontual">＋ Adicionar</button></span></h3>
+      <div class="tw" id="renPon"></div></div>
+    <p class="note">Ao carregar um recibo de vencimento (PDF), os valores são lidos automaticamente para confirmar antes de guardar. Também pode escrever tudo à mão.</p>
+  </section>
+
+  <!-- ================= DESPESAS ================= -->
+  <section class="panel" id="tab-des">
+    <div class="kpis" id="desKpis"></div>
+    <div class="card"><h3>Categorias e referências <small>previsto (orçamento) vs real (dos extratos)</small><span class="r"><button class="btn sm pri" data-todo="Nova categoria">＋ Categoria</button></span></h3>
+      <div id="desCats"></div>
+      <p class="note">O valor real de cada referência vem dos movimentos dos Extratos com essa categoria e referência.</p>
+    </div>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR'});
+const E=x=>fE.format(Math.abs(x)<.005?0:x);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2000)}
+const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+/* ---------- período (só interface por agora) ---------- */
+const P={m:'mes',d:new Date()};
+function perLabel(){$('#perLbl').textContent=P.m==='ano'?String(P.d.getFullYear()):`${MESES[P.d.getMonth()]} ${P.d.getFullYear()}`;
+  $('#perNav').style.display=P.m==='int'?'none':'';$('#perRng').classList.toggle('on',P.m==='int')}
+$('#perMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;P.m=b.dataset.m;$$('#perMode button').forEach(x=>x.classList.toggle('on',x===b));perLabel()});
+$('#perNav').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=+b.dataset.d;
+  if(P.m==='ano')P.d=new Date(P.d.getFullYear()+d,P.d.getMonth(),1);else P.d=new Date(P.d.getFullYear(),P.d.getMonth()+d,1);perLabel()});
+
+/* ---------- dados de exemplo (apenas para ver o layout) ---------- */
+const BANCOS=[{n:'CGD',c:'#1d4f91',s:3240.55,t:'Conta à ordem'},{n:'Millennium BCP',c:'#c8102e',s:1185.20,t:'Conta à ordem'},{n:'Revolut',c:'#111827',s:412.08,t:'Conta cartão'}];
+const CATS=[
+ {n:'Casa',i:'🏠',c:'var(--c4)',refs:[['Renda',650,650],['Eletricidade',55,61.3],['Água',25,22.1],['Internet e telemóvel',45,44.99]]},
+ {n:'Alimentação',i:'🛒',c:'var(--c1)',refs:[['Supermercado',350,382.4],['Restaurantes',80,64.5]]},
+ {n:'Transportes',i:'🚗',c:'var(--c3)',refs:[['Combustível',120,98.7],['Portagens',20,31.2],['Seguro automóvel',30,30]]},
+ {n:'Saúde',i:'💊',c:'var(--c2)',refs:[['Farmácia',25,12.8],['Seguro de saúde',38,38]]},
+ {n:'Lazer',i:'🎟',c:'var(--c5)',refs:[['Subscrições',25,27.97],['Ginásio',35,35]]}];
+const MOV=[
+ ['2026-09-23','2026-09-23','COMPRA CONTINENTE MATOSINHOS',-64.32,4640.51,'PT50 0035…','Alimentação','Supermercado','Eu','CGD'],
+ ['2026-09-22','2026-09-22','TRF MB WAY P/ JOAO S',-20.00,4704.83,'MBW 7781','','','Eu','CGD'],
+ ['2026-09-21','2026-09-22','DD EDP COMERCIAL',-61.30,4724.83,'DD 00123','Casa','Eletricidade','Eu','Millennium BCP'],
+ ['2026-09-20','2026-09-20','GALP AREEIRO',-48.90,4786.13,'CRT 4417','Transportes','Combustível','Eu','Revolut'],
+ ['2026-09-19','2026-09-19','NETFLIX.COM',-13.99,4835.03,'CRT 4417','Lazer','Subscrições','Eu','Revolut'],
+ ['2026-09-18','2026-09-18','TRF RECEBIDA ANA P',150.00,4849.02,'TRF 5521','','','Conta conjunta','Millennium BCP'],
+ ['2026-09-01','2026-09-01','PAGAMENTO RENDA SET',-650.00,4699.02,'TRF 1001','Casa','Renda','Conta conjunta','CGD'],
+ ['2026-08-29','2026-08-29','VENCIMENTO EMPRESA XPTO LDA',1690.12,5349.02,'TRF 9004','Rendimentos','Salário','Eu','CGD']];
+const REN_REC=[['Empresa XPTO, Lda','Vencimento','Salário','Eu','Mensal','2024-03-01','','dia 29',2100,301.66,231,1567.34,true],
+ ['Inquilino — T1 Porto','Renda T1','Rendas','Eu','Mensal','2025-01-01','2026-12-31','dia 8',500,125,0,375,false]];
+const REN_PON=[['2026-07-15','Empresa XPTO, Lda','Prémio de desempenho','Prémios','Eu',800,94.4,88,617.6,true],
+ ['2026-05-20','OLX — venda bicicleta','Venda de bem usado','Vendas','Eu',180,0,0,180,false]];
+const BARS=[['Abr',2250,1780],['Mai',2430,1920],['Jun',2250,2410],['Jul',3050,1890],['Ago',2280,2050],['Set',1840,1520]];
+
+/* ---------- render ---------- */
+const kpi=(l,v,s,cls)=>`<div class="kpi ${cls||''}"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`;
+const dt=s=>s?s.split('-').reverse().join('/'):'—';
+const val=v=>`<span class="${v<0?'neg':'pos'}">${E(v)}</span>`;
+const emptyTbl=(cols,msg,sub)=>`<table class="t"><thead><tr>${cols.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody><tr><td colspan="${cols.length}"><div class="empty"><b>${msg}</b>${sub||''}</div></td></tr></tbody></table>`;
+const catCell=(c,r)=>c?`<span class="tag">${esc(c)}${r?' · '+esc(r):''}</span>`:'<span class="tag wait">Por categorizar</span>';
+
+function donut(segs){const tot=segs.reduce((a,s)=>a+s.v,0)||1,R0=58,C=2*Math.PI*R0;let off=0;
+  const arcs=segs.map(s=>{const L=s.v/tot*C;const a=`<circle r="${R0}" cx="75" cy="75" fill="none" stroke="${s.c}" stroke-width="24" stroke-dasharray="${L} ${C-L}" stroke-dashoffset="${-off}" transform="rotate(-90 75 75)"/>`;off+=L;return a}).join('');
+  return `<div class="donut"><svg width="150" height="150" viewBox="0 0 150 150">${arcs}<text x="75" y="72" text-anchor="middle" font-size="11" fill="var(--mu)">total</text><text x="75" y="90" text-anchor="middle" font-size="14" font-weight="700" fill="var(--tx)">${E(tot)}</text></svg>
+  <ul class="lg">${segs.map(s=>`<li><i class="dot" style="background:${s.c}"></i><span>${esc(s.l)}</span><b>${E(s.v)}</b></li>`).join('')}</ul></div>`}
+function bars(data){const W=560,H=210,pl=44,pb=24,pt=8,mx=Math.max(...data.flatMap(d=>[d[1],d[2]]))*1.1,bw=(W-pl)/data.length,Y=v=>H-pb-v/mx*(H-pb-pt);
+  let g='';for(let i=0;i<=4;i++){const v=mx/4*i;g+=`<line x1="${pl}" x2="${W}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--bd)"/><text x="${pl-6}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="var(--mu)">${Math.round(v).toLocaleString('pt-PT')}</text>`}
+  data.forEach((d,i)=>{const x=pl+i*bw+bw*.18,w=bw*.3;g+=`<rect x="${x}" y="${Y(d[1])}" width="${w}" height="${H-pb-Y(d[1])}" rx="3" fill="var(--c1)"><title>Entradas ${E(d[1])}</title></rect><rect x="${x+w+3}" y="${Y(d[2])}" width="${w}" height="${H-pb-Y(d[2])}" rx="3" fill="var(--c2)"><title>Saídas ${E(d[2])}</title></rect><text x="${pl+i*bw+bw/2}" y="${H-7}" text-anchor="middle" font-size="11" fill="var(--mu)">${d[0]}</text>`});
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg><div class="leg"><span><i style="background:var(--c1)"></i>Entradas</span><span><i style="background:var(--c2)"></i>Saídas</span></div>`}
+
+const EXT_COLS=[['Data mov.'],['Data valor'],['Descrição'],['Valor','num'],['Saldo','num'],['Referência'],['Categoria'],['Detalhes'],['Quem é'],['Banco'],['']];
+const REC_COLS=[['Entidade pagadora'],['Descrição'],['Categoria'],['Pessoa'],['Periodicidade'],['Início'],['Fim'],['Pagamento'],['Bruto','num'],['IRS retido','num'],['SS','num'],['Líquido','num'],['Recibo'],['']];
+const PON_COLS=[['Data'],['Entidade pagadora'],['Descrição'],['Categoria'],['Pessoa'],['Bruto','num'],['IRS retido','num'],['SS','num'],['Líquido','num'],['Documento'],['']];
+const acts='<button class="btn ic sm" data-todo="Editar" title="Editar">✎</button> <button class="btn ic sm" data-todo="Apagar" title="Apagar">🗑</button>';
+const clip=h=>h?'<button class="btn ic sm" data-todo="Abrir anexo" title="Abrir anexo">📎</button>':'<span class="muted">—</span>';
+
+function render(){
+  const demo=$('#demoTgl').checked;
+  const cats=demo?CATS:[],mov=demo?MOV:[],rec=demo?REN_REC:[],pon=demo?REN_PON:[],bk=demo?BANCOS:[];
+  const ent=mov.filter(m=>m[3]>0).reduce((a,m)=>a+m[3],0),sai=-mov.filter(m=>m[3]<0).reduce((a,m)=>a+m[3],0);
+  const unc=mov.filter(m=>!m[6]);
+  // Início
+  $('#homeKpis').innerHTML=kpi('Entradas',E(demo?1840:0),'no período','pos')+kpi('Saídas',E(demo?1520.35:0),'no período','neg')+kpi('Saldo do período',E(demo?319.65:0),'entradas − saídas')+kpi('Taxa de poupança',demo?'17,4 %':'—','do rendimento líquido');
+  $('#barsSub').textContent=demo?'últimos 6 meses':'';
+  $('#homeBars').innerHTML=demo?bars(BARS):'<div class="empty"><b>Sem dados</b>Importe extratos para ver a evolução.</div>';
+  const tb=bk.reduce((a,b)=>a+b.s,0);
+  $('#homeBanks').innerHTML=bk.length?bk.map(b=>`<li><div class="bi" style="background:${b.c}">${esc(b.n.slice(0,2).toUpperCase())}</div><div class="bn">${esc(b.n)}<small>${esc(b.t)} · último extrato 23/09</small></div><b>${E(b.s)}</b></li>`).join('')+`<li class="tot"><div class="bn"><b>Total</b></div><b>${E(tb)}</b></li>`:'<li><div class="empty" style="width:100%"><b>Sem bancos</b>Os bancos aparecem ao importar extratos.</div></li>';
+  const cs=cats.map(c=>({l:c.n,c:c.c,v:c.refs.reduce((a,r)=>a+r[2],0)}));
+  $('#homeDonut').innerHTML=cs.length?donut(cs):'<div class="empty"><b>Sem despesas categorizadas</b></div>';
+  $('#homeBudget').innerHTML=cats.length?`<table class="t"><thead><tr><th>Categoria</th><th class="num">Previsto</th><th class="num">Real</th><th></th></tr></thead><tbody>${cats.map(c=>{const p=c.refs.reduce((a,r)=>a+r[1],0),r=c.refs.reduce((a,x)=>a+x[2],0),pc=Math.min(100,r/p*100);return `<tr><td>${c.i} ${esc(c.n)}</td><td class="num">${E(p)}</td><td class="num">${E(r)}</td><td style="width:30%"><div class="bar"><i style="width:${pc}%;background:${r>p?'var(--c2)':'var(--c1)'}"></i></div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem orçamento</b>Crie categorias na aba Despesas.</div>';
+  $('#homeLast').innerHTML=mov.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Banco</th></tr></thead><tbody>${mov.slice(0,6).map(m=>`<tr><td>${dt(m[0])}</td><td class="desc">${esc(m[2])}</td><td class="num">${val(m[3])}</td><td>${esc(m[9])}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos</b></div>';
+  $('#homeUncCnt').textContent=unc.length;
+  $('#homeUnc').innerHTML=unc.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th></th></tr></thead><tbody>${unc.map(m=>`<tr><td>${dt(m[0])}</td><td class="desc">${esc(m[2])}</td><td class="num">${val(m[3])}</td><td><button class="btn sm" data-todo="Categorizar">Categorizar</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Tudo categorizado ✓</b></div>';
+  // Extratos
+  $$('[data-cnt="ext"]').forEach(x=>x.textContent=unc.length||'');
+  $('#extSub').textContent=mov.length?`${mov.length} movimentos · ${unc.length} por categorizar`:'';
+  $('#extTable').innerHTML=mov.length?`<table class="t"><thead><tr>${EXT_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${mov.map(m=>`<tr><td>${dt(m[0])}</td><td>${dt(m[1])}</td><td class="desc">${esc(m[2])}</td><td class="num">${val(m[3])}</td><td class="num">${E(m[4])}</td><td class="muted">${esc(m[5])}</td><td>${catCell(m[6])}</td><td>${m[7]?esc(m[7]):'<span class="muted">—</span>'}</td><td>${esc(m[8])}</td><td>${esc(m[9])}</td><td>${acts}</td></tr>`).join('')}
+    <tr class="tot"><td colspan="3">Total do período</td><td class="num">${val(ent-sai)}</td><td colspan="7" class="muted" style="font-weight:400">Entradas ${E(ent)} · Saídas ${E(sai)}</td></tr></tbody></table>`:emptyTbl(EXT_COLS,'Ainda não há movimentos','Importe um extrato acima.');
+  // Rendimentos
+  const lr=rec.reduce((a,r)=>a+r[11],0),lp=pon.reduce((a,r)=>a+r[8],0);
+  $('#renKpis').innerHTML=kpi('Recorrentes (líquido/mês)',E(lr),`${rec.length} fontes`,'pos')+kpi('Pontuais no período',E(lp),`${pon.length} registos`,'pos')+kpi('Total bruto no ano',E(demo?30720:0),'recorrentes + pontuais')+kpi('IRS retido no ano',E(demo?4274.3:0),'para comparar com a declaração');
+  $('#renRec').innerHTML=rec.length?`<table class="t"><thead><tr>${REC_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${rec.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td><span class="tag">${esc(r[2])}</span></td><td>${esc(r[3])}</td><td>${esc(r[4])}</td><td>${dt(r[5])}</td><td>${dt(r[6])}</td><td>${esc(r[7])}</td><td class="num">${E(r[8])}</td><td class="num">${E(r[9])}</td><td class="num">${E(r[10])}</td><td class="num"><b>${E(r[11])}</b></td><td>${clip(r[12])}</td><td>${acts}</td></tr>`).join('')}
+    <tr class="tot"><td colspan="8">Total mensal</td><td class="num">${E(rec.reduce((a,r)=>a+r[8],0))}</td><td class="num">${E(rec.reduce((a,r)=>a+r[9],0))}</td><td class="num">${E(rec.reduce((a,r)=>a+r[10],0))}</td><td class="num">${E(lr)}</td><td colspan="2"></td></tr></tbody></table>`:emptyTbl(REC_COLS,'Sem rendimentos recorrentes','Carregue um recibo de vencimento ou adicione à mão.');
+  $('#renPon').innerHTML=pon.length?`<table class="t"><thead><tr>${PON_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${pon.map(r=>`<tr><td>${dt(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td><span class="tag">${esc(r[3])}</span></td><td>${esc(r[4])}</td><td class="num">${E(r[5])}</td><td class="num">${E(r[6])}</td><td class="num">${E(r[7])}</td><td class="num"><b>${E(r[8])}</b></td><td>${clip(r[9])}</td><td>${acts}</td></tr>`).join('')}
+    <tr class="tot"><td colspan="5">Total no período</td><td class="num">${E(pon.reduce((a,r)=>a+r[5],0))}</td><td class="num">${E(pon.reduce((a,r)=>a+r[6],0))}</td><td class="num">${E(pon.reduce((a,r)=>a+r[7],0))}</td><td class="num">${E(lp)}</td><td colspan="2"></td></tr></tbody></table>`:emptyTbl(PON_COLS,'Sem rendimentos pontuais');
+  // Despesas
+  const tp=cats.reduce((a,c)=>a+c.refs.reduce((s,r)=>s+r[1],0),0),tr=cats.reduce((a,c)=>a+c.refs.reduce((s,r)=>s+r[2],0),0);
+  $('#desKpis').innerHTML=kpi('Previsto',E(tp),'orçamento do período')+kpi('Real',E(tr),'dos extratos','neg')+kpi('Diferença',E(tp-tr),tp-tr>=0?'abaixo do previsto':'acima do previsto',tp-tr>=0?'pos':'neg')+kpi('Categorias',String(cats.length),`${cats.reduce((a,c)=>a+c.refs.length,0)} referências`);
+  $('#desCats').innerHTML=cats.length?cats.map((c,ci)=>{const p=c.refs.reduce((a,r)=>a+r[1],0),r=c.refs.reduce((a,x)=>a+x[2],0);
+    return `<details class="cat"${ci<2?' open':''}><summary><span class="ci" style="background:color-mix(in srgb,${c.c} 18%,transparent)">${c.i}</span>${esc(c.n)}<span class="sp"></span><span class="m">Previsto <b>${E(p)}</b> · Real <b>${E(r)}</b></span><span class="pill ${r>p?'over':'ok'}">${r>p?'+':''}${E(r-p)}</span></summary>
+    <div class="tw"><table class="t"><thead><tr><th>Referência</th><th class="num">Previsto</th><th class="num">Real</th><th class="num">Diferença</th><th>Execução</th><th></th></tr></thead><tbody>
+    ${c.refs.map(x=>{const d=x[2]-x[1],pc=Math.min(100,x[2]/x[1]*100);return `<tr><td>${esc(x[0])}</td><td class="num">${E(x[1])}</td><td class="num">${E(x[2])}</td><td class="num"><span class="${d>0?'neg':'pos'}">${d>0?'+':''}${E(d)}</span></td><td style="min-width:110px"><div class="bar"><i style="width:${pc}%;background:${d>0?'var(--c2)':'var(--c1)'}"></i></div></td><td>${acts}</td></tr>`}).join('')}
+    <tr class="addrow"><td colspan="6" data-todo="Nova referência em ${esc(c.n)}">＋ Adicionar referência</td></tr>
+    <tr class="tot"><td>Total ${esc(c.n)}</td><td class="num">${E(p)}</td><td class="num">${E(r)}</td><td class="num"><span class="${r>p?'neg':'pos'}">${r>p?'+':''}${E(r-p)}</span></td><td colspan="2"></td></tr></tbody></table></div></details>`}).join('')
+    +`<div class="tw"><table class="t" style="margin-top:4px"><tbody><tr class="tot"><td>Total geral</td><td class="num">Previsto ${E(tp)}</td><td class="num">Real ${E(tr)}</td><td class="num"><span class="${tr>tp?'neg':'pos'}">${tr>tp?'+':''}${E(tr-tp)}</span></td></tr></tbody></table></div>`
+    :'<div class="empty"><b>Ainda não há categorias</b>Crie a primeira categoria (ex.: Casa) e as suas referências (ex.: Renda).</div>';
+}
+
+/* ---------- navegação ---------- */
+function go(tab){$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));window.scrollTo({top:0})}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-tab],[data-go],[data-todo]');if(!t)return;
+  if(t.dataset.tab){go(t.dataset.tab);return}
+  if(t.dataset.go){go(t.dataset.go);return}
+  if(t.dataset.todo){e.preventDefault();toast(`“${t.dataset.todo}” — disponível numa próxima etapa`)}
+});
+$('#demoTgl').addEventListener('change',render);
+const drop=$('#drop');['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');if(ev==='drop')toast('Importação de extratos — disponível numa próxima etapa')}));
+$('#fExt').addEventListener('change',()=>toast('Importação de extratos — disponível numa próxima etapa'));
+perLabel();render();
+</script>
 </body>
 </html>
