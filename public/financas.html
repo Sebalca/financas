@@ -137,6 +137,17 @@ td input.ed.unc{border-color:color-mix(in srgb,var(--c3) 45%,transparent);backgr
 .modal[hidden]{display:none}
 .sheet{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;width:100%;max-width:720px;max-height:85vh;overflow:auto}
 .sheet h3{margin:0 0 10px}
+.sheet.wide{max-width:1100px}
+td select.ed{border:1px solid transparent;background:transparent;border-radius:6px;padding:3px 4px;font-size:13px;max-width:170px;color:var(--tx)}
+td select.ed:hover{border-color:var(--bd)}td select.ed:focus{border-color:var(--ac);background:var(--card);outline:0}
+td select.ed.unc{border-color:color-mix(in srgb,var(--c3) 45%,transparent);background:color-mix(in srgb,var(--c3) 10%,transparent)}
+td .auto{font-size:10px;color:var(--mu);margin-left:2px;cursor:help}
+td input.ed.obs{width:170px}
+.rgbar input,.rgbar select{border:1px solid var(--bd);border-radius:7px;background:var(--soft);padding:4px 6px;font-size:12.5px}
+.nm{border:1px solid transparent;background:transparent;font:inherit;color:inherit;border-radius:6px;padding:2px 5px;min-width:60px}
+.nm:hover{border-color:var(--bd)}.nm:focus{border-color:var(--ac);background:var(--card);outline:0}
+.pv{width:90px;text-align:right;border:1px solid var(--bd);border-radius:6px;background:var(--soft);padding:3px 6px;font-size:13px}
+.cat>summary .nm{font-weight:700}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:60}
 #toast.on{opacity:1}
 @media (max-width:640px){.top{padding:8px 0 4px}.top h1{font-size:17px}.top p{display:none}.nav span{min-width:110px;font-size:13px}.kpi .v{font-size:20px}}
@@ -186,13 +197,12 @@ td input.ed.unc{border-color:color-mix(in srgb,var(--c3) 45%,transparent);backgr
           <div class="ico">📄</div><b>Arraste aqui o ficheiro do extrato ou clique para escolher</b><small>CSV da CGD · vários ficheiros de uma vez</small></label>
         <div>
           <div class="fld"><label for="bankSel">Banco</label><select id="bankSel"><option value="">Detetar automaticamente</option><option value="CGD">CGD</option></select></div>
-          <div class="fld"><label for="whoSel">Titular (quem é)</label><input id="whoSel" list="dlQuem" value="Eu"></div>
           <button class="btn pri" type="button" id="btImp" style="width:100%;justify-content:center">Escolher ficheiro…</button>
         </div>
       </div>
       <div id="impRes"></div><p class="note">Bancos suportados: <b>CGD</b> (CSV exportado em “Consultar saldos e movimentos”). Os movimentos já importados são reconhecidos e não ficam duplicados. Os dados ficam guardados neste browser.</p>
     </div>
-    <div class="card"><h3>Movimentos <small id="extSub"></small><span class="r"><button class="btn sm" data-todo="Adicionar movimento">＋ Movimento</button><button class="btn sm" data-todo="Regras de categorização">⚙ Regras</button><button class="btn sm" id="btExp">⤓ Exportar</button><button class="btn sm" id="btImps">🗂 Importações</button></span></h3>
+    <div class="card"><h3>Movimentos <small id="extSub"></small><span class="r"><button class="btn sm" data-todo="Adicionar movimento">＋ Movimento</button><button class="btn sm" id="btRegras">⚙ Regras</button><button class="btn sm" id="btPessoas">👥 Pessoas</button><button class="btn sm" id="btExp">⤓ Exportar</button><button class="btn sm" id="btImps">🗂 Importações</button></span></h3>
       <div class="filt">
         <input type="search" id="fQ" placeholder="Pesquisar descrição, referência, detalhes…" aria-label="Pesquisar">
         <select id="fBanco" aria-label="Banco"></select>
@@ -217,14 +227,32 @@ td input.ed.unc{border-color:color-mix(in srgb,var(--c3) 45%,transparent);backgr
   <!-- ================= DESPESAS ================= -->
   <section class="panel" id="tab-des">
     <div class="kpis" id="desKpis"></div>
-    <div class="card"><h3>Categorias e referências <small>previsto (orçamento) vs real (dos extratos)</small><span class="r"><button class="btn sm pri" data-todo="Nova categoria">＋ Categoria</button></span></h3>
+    <div class="card"><h3>Categorias e referências <small>previsto (orçamento) vs real (dos extratos)</small><span class="r"><button class="btn sm" id="btPrevOnly">Só com valores</button><button class="btn sm pri" id="btNovaCat">＋ Categoria</button></span></h3>
       <div id="desCats"></div>
-      <p class="note">O valor real de cada referência vem dos movimentos dos Extratos com essa categoria e referência.</p>
+      <p class="note">O <b>previsto</b> é mensal (escreva à mão; no modo Ano é multiplicado por 12). O <b>real</b> soma as saídas dos Extratos com essa categoria e referência, no período escolhido (as entradas não entram). Clique no nome de uma categoria ou referência para o alterar.</p>
     </div>
   </section>
 </main>
 <div id="toast"></div>
 <datalist id="dlCat"></datalist><datalist id="dlQuem"></datalist>
+
+<div class="modal" id="mRegras" hidden><div class="sheet wide"><h3>Regras de categorização</h3>
+ <p class="note" style="margin:0 0 10px">A primeira regra que corresponder à descrição ganha (use ↑ ↓ para mudar a ordem). As regras aplicam-se ao importar e aos movimentos existentes, <b>exceto os que classificou à mão</b>.</p>
+ <div class="filt"><input type="search" id="rgQ" placeholder="Procurar regra…"><button class="btn sm pri" id="rgNova">＋ Nova regra</button><button class="btn sm" id="rgRepor">Repor pré-definidas em falta</button></div>
+ <div class="tw" id="rgList"></div>
+ <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn pri" data-close="mRegras">Fechar</button></div></div></div>
+<div class="modal" id="mPessoas" hidden><div class="sheet wide"><h3>Pessoas — quem fez / recebeu a transferência</h3>
+ <p class="note" style="margin:0 0 10px">Identificadores encontrados nas descrições (TFI, TRF, MB WAY…). Escreva o nome da pessoa: todos os movimentos com esse identificador ficam com “Quem é” preenchido. Vários identificadores podem ser a mesma pessoa.</p>
+ <h4 style="margin:6px 0">Por identificar <span class="tag wait" id="pesPendN">0</span></h4><div class="tw" id="pesPend"></div>
+ <h4 style="margin:16px 0 6px">Identificados</h4><div class="tw" id="pesList"></div>
+ <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap"><button class="btn" id="pesNovo">＋ Identificador manual</button><button class="btn pri" data-close="mPessoas">Fechar</button></div></div></div>
+<div class="modal" id="mNovaRegra" hidden><div class="sheet"><h3>Criar regra a partir deste movimento?</h3>
+ <p class="note" id="nrDesc" style="margin:0 0 10px"></p>
+ <div class="fld"><label>Quando a descrição</label><div style="display:flex;gap:6px"><select id="nrModo" style="width:auto"><option value="contem">contém</option><option value="palavra">tem a palavra</option><option value="inicio">começa por</option></select><input id="nrTxt"></div></div>
+ <div class="fld"><label>Aplicar a</label><select id="nrTipo"><option value="">entradas e saídas</option><option value="e">só entradas</option><option value="s">só saídas</option></select></div>
+ <div class="fld"><label>Classificar como</label><div id="nrCat" style="font-weight:700"></div></div>
+ <p class="note" id="nrCnt"></p>
+ <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button class="btn" id="nrNao">Só este movimento</button><button class="btn pri" id="nrSim">Criar regra</button></div></div></div>
 <div class="modal" id="mImps" hidden><div class="sheet"><h3>Importações</h3><div id="impsList"></div><div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end"><button class="btn" id="btClearAll">Apagar todos os movimentos</button><button class="btn pri" id="btCloseImps">Fechar</button></div></div></div>
 
 <script>
@@ -233,34 +261,80 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR'});
 const E=x=>fE.format(Math.abs(x)<.005?0:x);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2600)}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2800)}
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const MES3=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-const INTERNA='Transferência interna'; // não conta como entrada/saída
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+/* ================= categorias e regras pré-definidas ================= */
+const CATS_BASE=[
+ ['Casa',['Renda','Eletricidade / gás','Água','Internet','Telemóvel','Manutenção','Empregada','Cozinheira','Equipamentos - Casa','Outros - Casa']],
+ ['Alimentação',['Supermercado','Refeições casa','Almoço / Jantar fora','Refeições Trabalho','Uber eats','Refeições extra fora','Outros - Alimentação']],
+ ['Lazer',['Cinema / Atividades / Espetác.','Jogos','Equipamentos','Férias / viagens','Outros - Lazer']],
+ ['Transporte',['Combustível','Combustível Carro','Combustível Mota','Via verde / Portagens','Seguro, IUC, Inspeção Carro','Seguro, IUC, Inspeção Mota','Oficina Carro','Oficina Mota','Multas','Uber / Taxi / Outros','Outros - Transporte']],
+ ['Saúde',['Exercício fisico','Farmácia','Consultas / Exames','Tratamentos','Seguro','Outros - Saúde']],
+ ['Outros',['Prendas','Vestuário / calçado','Apostas','Subscrições','Contabilista','Multas','Ofertas','Comisões']],
+ ['Trabalho',['Formações','Equipamentos - Trabalho','Software']],
+ ['Seguros/Impostos',['Seguros','IRS','Comissões CGD','Outras Comissões','Outros - Seguros/Impostos']],
+ ['Banco',['Troca entre contas','Levantamentos','Depósitos','Poupanças']],
+ ['Por tratar',['Por tratar','Emprestimo','Transferência','Transferência pag','Transferência rec','Por confirmar','Sem classificação','Por classificar']],
+ ['Investimentos',['Revolut','Apartamento Matosinhos','Cães','Bolsa','Elastic','Kindness']]];
+// [texto, modo, tipo, categoria, referência] — a ordem importa (a primeira que corresponde ganha)
+const REGRAS_BASE=[
+ ['TRF CXD','inicio','','Banco','Troca entre contas'],
+ ['LEVANTAMENTO','contem','s','Banco','Levantamentos'],
+ ['COMISSAO','contem','','Seguros/Impostos','Comissões CGD'],
+ ['MANUT CONTA','contem','','Seguros/Impostos','Comissões CGD'],
+ ['IMPOSTO DO SELO','contem','','Seguros/Impostos','Comissões CGD'],
+ ['IRS','palavra','','Seguros/Impostos','IRS'],
+ ['FIDELIDADE','contem','','Seguros/Impostos','Seguros'],['ALLIANZ','contem','','Seguros/Impostos','Seguros'],['TRANQUILIDADE','contem','','Seguros/Impostos','Seguros'],['GENERALI','contem','','Seguros/Impostos','Seguros'],
+ ['VIA VERDE','contem','','Transporte','Via verde / Portagens'],['BRISA','contem','','Transporte','Via verde / Portagens'],
+ ['GALP','contem','s','Transporte','Combustível'],['REPSOL','contem','s','Transporte','Combustível'],['PRIO','palavra','s','Transporte','Combustível'],['CEPSA','contem','s','Transporte','Combustível'],['BP','palavra','s','Transporte','Combustível'],
+ ['UBER EATS','contem','s','Alimentação','Uber eats'],['GLOVO','contem','s','Alimentação','Uber eats'],['BOLT FOOD','contem','s','Alimentação','Uber eats'],
+ ['UBER','palavra','s','Transporte','Uber / Taxi / Outros'],['BOLT','palavra','s','Transporte','Uber / Taxi / Outros'],['FREENOW','contem','s','Transporte','Uber / Taxi / Outros'],
+ ['CONTINENTE','contem','s','Alimentação','Supermercado'],['PINGO DOCE','contem','s','Alimentação','Supermercado'],['LIDL','contem','s','Alimentação','Supermercado'],['ALDI','palavra','s','Alimentação','Supermercado'],['MERCADONA','contem','s','Alimentação','Supermercado'],['INTERMARCHE','contem','s','Alimentação','Supermercado'],['MINIPRECO','contem','s','Alimentação','Supermercado'],['AUCHAN','contem','s','Alimentação','Supermercado'],['LECLERC','contem','s','Alimentação','Supermercado'],
+ ['PIZZARIA','contem','s','Alimentação','Almoço / Jantar fora'],['RESTAURANTE','contem','s','Alimentação','Almoço / Jantar fora'],['REST','palavra','s','Alimentação','Almoço / Jantar fora'],['MCDONALDS','contem','s','Alimentação','Almoço / Jantar fora'],['TELEPIZZA','contem','s','Alimentação','Almoço / Jantar fora'],['BK','inicio','s','Alimentação','Almoço / Jantar fora'],
+ ['FARMACIA','contem','s','Saúde','Farmácia'],['WELLS','palavra','s','Saúde','Farmácia'],
+ ['GINASIO','contem','s','Saúde','Exercício fisico'],['FITNESS','contem','s','Saúde','Exercício fisico'],['PADEL','contem','s','Saúde','Exercício fisico'],
+ ['NOS CINEMAS','contem','s','Lazer','Cinema / Atividades / Espetác.'],['CINEMA','contem','s','Lazer','Cinema / Atividades / Espetác.'],['UCI','palavra','s','Lazer','Cinema / Atividades / Espetác.'],
+ ['STEAM','contem','s','Lazer','Jogos'],['PLAYSTATION','contem','s','Lazer','Jogos'],['NINTENDO','contem','s','Lazer','Jogos'],['XBOX','contem','s','Lazer','Jogos'],
+ ['NETFLIX','contem','s','Outros','Subscrições'],['SPOTIFY','contem','s','Outros','Subscrições'],['DISNEY','contem','s','Outros','Subscrições'],['HBO','contem','s','Outros','Subscrições'],['YOUTUBE','contem','s','Outros','Subscrições'],['ANTHROPIC','contem','s','Outros','Subscrições'],['OPENAI','contem','s','Outros','Subscrições'],['APPLE.COM','contem','s','Outros','Subscrições'],
+ ['EDP','palavra','s','Casa','Eletricidade / gás'],['ENDESA','contem','s','Casa','Eletricidade / gás'],['IBERDROLA','contem','s','Casa','Eletricidade / gás'],['GOLDENERGY','contem','s','Casa','Eletricidade / gás'],['ALDRO ENERGIA','contem','s','Casa','Eletricidade / gás'],['GALP ENERGIA','contem','s','Casa','Eletricidade / gás'],
+ ['EPAL','contem','s','Casa','Água'],['AGUAS DE','contem','s','Casa','Água'],['AGUAS DO','contem','s','Casa','Água'],
+ ['MEO','palavra','s','Casa','Internet'],['NOS COMUNICA','contem','s','Casa','Internet'],['VODAFONE','contem','s','Casa','Internet'],['DIGI','palavra','s','Casa','Telemóvel'],
+ ['GODADDY','contem','s','Trabalho','Software'],['MICROSOFT','contem','s','Trabalho','Software'],['ADOBE','contem','s','Trabalho','Software'],
+ ['MBWAY','contem','s','Por tratar','Transferência pag'],['MBWAY','contem','e','Por tratar','Transferência rec'],
+ ['TFI','inicio','e','Por tratar','Transferência rec'],['TRF','inicio','s','Por tratar','Transferência pag'],['TRF','inicio','e','Por tratar','Transferência rec']];
+// Ordem de prioridade corrigida: "GALP ENERGIA" tem de vir antes de "GALP" (combustível)
+(function(){const i=REGRAS_BASE.findIndex(r=>r[0]==='GALP ENERGIA'),j=REGRAS_BASE.findIndex(r=>r[0]==='GALP');if(i>j){const x=REGRAS_BASE.splice(i,1)[0];REGRAS_BASE.splice(j,0,x)}})();
+const novaRegraBase=(r,i)=>({id:'rb'+i,txt:r[0],modo:r[1],tipo:r[2],cat:r[3],ref:r[4],ativo:true,predef:true});
+const isInterna=m=>m.cat==='Banco'&&m.ref==='Troca entre contas'; // não conta como entrada/saída
 
 /* ================= armazenamento (neste browser) ================= */
 const KEY='financas_v1';
-let DB={mov:[],imports:[],seq:0};
-try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&Array.isArray(j.mov))DB={seq:0,imports:[],...j}}catch(e){}
+let DB={ver:2,mov:[],imports:[],seq:0,cats:null,regras:null,pessoas:[],prev:{}};
+try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&Array.isArray(j.mov))DB={...DB,...j}}catch(e){}
+if(!DB.cats)DB.cats=CATS_BASE.map(([n,r])=>({id:uid('c'),nome:n,refs:r.slice()}));
+if(!DB.regras)DB.regras=REGRAS_BASE.map(novaRegraBase);
+if(!DB.pessoas)DB.pessoas=[];if(!DB.prev)DB.prev={};
+if((DB.ver||1)<2){ // migração: referência bancária passa para Detalhes, "Quem é" limpo, Observações novo
+  DB.mov.forEach(m=>{if(m.ref){m.det=[m.det,m.ref].filter(Boolean).join(' · ')}m.ref='';m.quem='';m.obs=m.obs||'';m.catSrc=m.cat?'manual':''});DB.ver=2}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('Não foi possível guardar no browser')}}
 
 /* ================= leitura de ficheiros (sem IA) ================= */
-function decode(buf){ // UTF-8 se for válido, senão Windows-1252 (formato da CGD)
-  try{return new TextDecoder('utf-8',{fatal:true}).decode(buf).replace(/^﻿/,'')}catch(e){return new TextDecoder('windows-1252').decode(buf)}}
-const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
-const num=s=>{s=String(s||'').trim();if(!s)return 0;const neg=/^-|\($/.test(s);s=s.replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.');const v=parseFloat(s);return isFinite(v)?(neg&&v>0?-v:v):0};
+function decode(buf){try{return new TextDecoder('utf-8',{fatal:true}).decode(buf).replace(/^﻿/,'')}catch(e){return new TextDecoder('windows-1252').decode(buf)}}
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+const num=s=>{s=String(s||'').trim();if(!s)return 0;const neg=/^-/.test(s);s=s.replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.');const v=parseFloat(s);return isFinite(v)?(neg&&v>0?-v:v):0};
 const r2=x=>Math.round(x*100)/100;
 const isoPT=s=>{const m=String(s||'').trim().match(/^(\d{2})[-/.](\d{2})[-/.](\d{4})$/);return m?`${m[3]}-${m[2]}-${m[1]}`:''};
-function refDe(desc){const d=desc.trim();let m=d.match(/mbway\s+(\S+)/i);if(m)return 'MB WAY '+m[1];m=d.match(/\b(\d{6,})\b/);return m?m[1]:''}
+function refBanco(desc){const d=desc.trim();let m=d.match(/mbway\s+(\S+)/i);if(m)return 'MB WAY '+m[1];m=d.match(/\b(\d{6,})\b/);return m?m[1]:''}
 
-/* Cada banco é um "leitor": detect(texto) e parse(texto) → {banco,conta,titular,inicio,fim,mov:[...],saldoFinal} */
 const LEITORES=[{
   banco:'CGD',
-  detect:t=>/consultar saldos e movimentos/i.test(norm(t))||/data mov\.\s*;data valor\s*;descri/i.test(norm(t)),
+  detect:t=>/consultar saldos e movimentos/i.test(norm(t))||/data mov\.\s*;\s*data valor\s*;\s*descri/i.test(norm(t)),
   parse(t){
     const L=t.split(/\r?\n/).map(l=>l.split(';').map(c=>c.trim()));
-    const out={banco:'CGD',conta:'',titular:'',inicio:'',fim:'',mov:[],saldoFinal:null};
-    let h=-1;
+    const out={banco:'CGD',conta:'',titular:'',inicio:'',fim:'',mov:[],saldoFinal:null};let h=-1;
     L.forEach((c,i)=>{const k=norm(c[0]);
       if(k==='conta'&&c[1]){const p=c[1].split(' - ');out.conta=p[0].trim();out.titular=(p[2]||'').trim()}
       if(k.startsWith('data de inicio'))out.inicio=isoPT(c[1]);
@@ -277,13 +351,32 @@ const LEITORES=[{
         saldoDisp:ix.sd>=0?num(c[ix.sd]):null,catBanco:ix.ca>=0?(c[ix.ca]||'').trim():'',ord:i});}
     return out;
   }}];
-
-function validar(r){ // o extrato vem do mais recente para o mais antigo: saldo(i+1) = saldo(i) − valor(i)
-  let erros=0;for(let i=0;i<r.mov.length-1;i++){const a=r.mov[i],b=r.mov[i+1];if(a.saldo==null||b.saldo==null)continue;if(Math.abs(r2(a.saldo-a.valor)-b.saldo)>0.011)erros++}
+function validar(r){let erros=0;for(let i=0;i<r.mov.length-1;i++){const a=r.mov[i],b=r.mov[i+1];if(a.saldo==null||b.saldo==null)continue;if(Math.abs(r2(a.saldo-a.valor)-b.saldo)>0.011)erros++}
   const fin=r.saldoFinal!=null&&r.mov.length?Math.abs(r.mov[0].saldo-r.saldoFinal)<0.011:null;return {erros,fin}}
-
 const chave=m=>[m.banco,m.conta,m.dm,m.dv,m.desc,m.valor.toFixed(2),m.saldo==null?'':m.saldo.toFixed(2)].join('|');
 
+/* ================= regras (categoria) ================= */
+function corresponde(r,m){
+  if(!r.ativo||!r.txt)return false;if(r.tipo==='e'&&m.valor<=0)return false;if(r.tipo==='s'&&m.valor>=0)return false;
+  const d=norm(m.desc),t=norm(r.txt);
+  if(r.modo==='inicio')return d.startsWith(t);
+  if(r.modo==='palavra')return new RegExp('(^|[^a-z0-9])'+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'($|[^a-z0-9])').test(d);
+  return d.includes(t);
+}
+const regraDe=m=>DB.regras.find(r=>corresponde(r,m));
+function aplicaRegras(lista){let n=0;(lista||DB.mov).forEach(m=>{if(m.catSrc==='manual')return;const r=regraDe(m);const c=r?r.cat:'',f=r?r.ref:'';
+  if(m.cat!==c||m.ref!==f){m.cat=c;m.ref=f;n++}m.catSrc=r?'regra':''});return n}
+
+/* ================= pessoas (quem é) ================= */
+function identificador(desc){const d=desc.replace(/\s+/g,' ').trim();let m;
+  if((m=d.match(/mbway\s+(\S+)/i)))return {tipo:'MB WAY',id:m[1].toUpperCase()};
+  if((m=d.match(/^tfi\s+(.+)$/i)))return {tipo:'TFI',id:m[1].toUpperCase().trim()};
+  if((m=d.match(/^trf\s+(.+)$/i))&&!/^trf\s+cxd/i.test(d))return {tipo:'TRF',id:m[1].toUpperCase().trim()};
+  return null}
+const pessoaDe=m=>{const d=norm(m.desc);const p=DB.pessoas.find(x=>x.match&&d.includes(norm(x.match)));return p?p.pessoa:''};
+function aplicaPessoas(lista){(lista||DB.mov).forEach(m=>{if(m.quemMan)return;m.quem=pessoaDe(m)})}
+
+/* ================= importação ================= */
 async function importar(files){
   const res=[];
   for(const f of files){
@@ -293,18 +386,17 @@ async function importar(files){
       const forc=$('#bankSel').value;const L=LEITORES.find(l=>forc?l.banco===forc:l.detect(t));
       if(!L)throw new Error('Banco não reconhecido. Por agora só a CGD é suportada.');
       const r=L.parse(t);if(!r.mov.length)throw new Error('O ficheiro não tem movimentos.');
-      const v=validar(r),quem=($('#whoSel').value||'Eu').trim();
-      const ex=new Set(DB.mov.map(chave)),impId='i'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-      let novos=0,dup=0;
+      const v=validar(r),ex=new Set(DB.mov.map(chave)),impId=uid('i');let novos=[],dup=0;
       r.mov.forEach(m=>{const o={id:'m'+(++DB.seq),imp:impId,banco:r.banco,conta:r.conta,dm:m.dm,dv:m.dv,desc:m.desc,valor:m.valor,saldo:m.saldo,saldoDisp:m.saldoDisp,
-        ref:refDe(m.desc),cat:'',det:m.catBanco?`${r.banco}: ${m.catBanco}`:'',quem,ord:m.ord};
-        const k=chave(o);if(ex.has(k)){dup++;DB.seq--;return}ex.add(k);DB.mov.push(o);novos++;});
-      DB.imports.push({id:impId,ficheiro:f.name,banco:r.banco,conta:r.conta,titular:r.titular,inicio:r.inicio,fim:r.fim,em:new Date().toISOString(),novos,dup});
-      res.push({ok:true,f:f.name,r,v,novos,dup});
+        cat:'',ref:'',catSrc:'',det:[m.catBanco?`${r.banco}: ${m.catBanco}`:'',refBanco(m.desc)].filter(Boolean).join(' · '),obs:'',quem:'',quemMan:false,ord:m.ord};
+        const k=chave(o);if(ex.has(k)){dup++;DB.seq--;return}ex.add(k);DB.mov.push(o);novos.push(o)});
+      aplicaRegras(novos);aplicaPessoas(novos);
+      DB.imports.push({id:impId,ficheiro:f.name,banco:r.banco,conta:r.conta,titular:r.titular,inicio:r.inicio,fim:r.fim,em:new Date().toISOString(),novos:novos.length,dup});
+      res.push({ok:true,f:f.name,r,v,novos:novos.length,auto:novos.filter(m=>m.cat).length,dup});
     }catch(e){res.push({ok:false,f:f.name,msg:e.message})}
   }
   save();
-  $('#impRes').innerHTML=res.map(x=>x.ok?`<div class="imp ok">✓ <b>${esc(x.f)}</b> — ${x.r.banco} · conta ${esc(x.r.conta)} · ${fmtD(x.r.inicio)} a ${fmtD(x.r.fim)}<br><b>${x.novos}</b> movimentos novos${x.dup?` · ${x.dup} já existiam (ignorados)`:''} · ${x.v.erros===0?'✓ saldos consistentes':`⚠ ${x.v.erros} saldos não batem certo`}${x.v.fin===true?` · saldo final ${E(x.r.saldoFinal)} ✓`:x.v.fin===false?' · ⚠ saldo final diferente':''}</div>`
+  $('#impRes').innerHTML=res.map(x=>x.ok?`<div class="imp ok">✓ <b>${esc(x.f)}</b> — ${x.r.banco} · conta ${esc(x.r.conta)} · ${fmtD(x.r.inicio)} a ${fmtD(x.r.fim)}<br><b>${x.novos}</b> movimentos novos${x.novos?` (${x.auto} categorizados pelas regras)`:''}${x.dup?` · ${x.dup} já existiam (ignorados)`:''} · ${x.v.erros===0?'✓ saldos consistentes':`⚠ ${x.v.erros} saldos não batem certo`}${x.v.fin===true?` · saldo final ${E(x.r.saldoFinal)} ✓`:x.v.fin===false?' · ⚠ saldo final diferente':''}</div>`
     :`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}</div>`).join('');
   const ok=res.filter(x=>x.ok);
   if(ok.length){const last=ok.map(x=>x.r.mov[0].dm).sort().pop();P.d=new Date(+last.slice(0,4),+last.slice(5,7)-1,1);P.m='mes';$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel()}
@@ -318,6 +410,8 @@ function range(){
   if(P.m==='ano')return [`${P.d.getFullYear()}-01-01`,`${P.d.getFullYear()}-12-31`];
   if(P.m==='int')return [P.ini||'0000-01-01',P.fim||'9999-12-31'];
   const y=P.d.getFullYear(),m=P.d.getMonth()+1,last=new Date(y,m,0).getDate();return [`${y}-${pad(m)}-01`,`${y}-${pad(m)}-${pad(last)}`]}
+function mesesPeriodo(){if(P.m==='mes')return 1;if(P.m==='ano')return 12;if(!P.ini||!P.fim)return 1;
+  const a=new Date(P.ini),b=new Date(P.fim);return Math.max(1,(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth()+1)}
 function perLabel(){$('#perLbl').textContent=P.m==='ano'?String(P.d.getFullYear()):`${MESES[P.d.getMonth()]} ${P.d.getFullYear()}`;
   $('#perNav').style.display=P.m==='int'?'none':'';$('#perRng').classList.toggle('on',P.m==='int')}
 $('#perMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;P.m=b.dataset.m;$$('#perMode button').forEach(x=>x.classList.toggle('on',x===b));perLabel();render()});
@@ -331,8 +425,8 @@ const val=v=>`<span class="${v<0?'neg':'pos'}">${E(v)}</span>`;
 const kpi=(l,v,s,cls)=>`<div class="kpi ${cls||''}"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`;
 const emptyTbl=(cols,msg,sub)=>`<table class="t"><thead><tr>${cols.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody><tr><td colspan="${cols.length}"><div class="empty"><b>${msg}</b>${sub||''}</div></td></tr></tbody></table>`;
 const ordena=a=>a.slice().sort((x,y)=>x.dm<y.dm?1:x.dm>y.dm?-1:(x.imp===y.imp?x.ord-y.ord:(x.imp<y.imp?1:-1)));
-const conta=m=>m.cat!==INTERNA;
-const CORES=['var(--c4)','var(--c1)','var(--c3)','var(--c2)','var(--c5)','var(--c6)','var(--c7)','var(--c8)'];
+const CORES=['var(--c4)','var(--c1)','var(--c3)','var(--c2)','var(--c5)','var(--c6)','var(--c7)','#b08900','#5b8def','#c05fa0','#2f9e6e'];
+const corCat=n=>{const i=DB.cats.findIndex(c=>c.nome===n);return i<0?'var(--c8)':CORES[i%CORES.length]};
 const BCOR={CGD:'#1d4f91'};
 function donut(segs){const tot=segs.reduce((a,s)=>a+s.v,0)||1,R0=58,C=2*Math.PI*R0;let off=0;
   const arcs=segs.map(s=>{const L=s.v/tot*C;const a=`<circle r="${R0}" cx="75" cy="75" fill="none" stroke="${s.c}" stroke-width="24" stroke-dasharray="${L} ${C-L}" stroke-dashoffset="${-off}" transform="rotate(-90 75 75)"/>`;off+=L;return a}).join('');
@@ -342,89 +436,197 @@ function bars(data){const W=560,H=210,pl=48,pb=24,pt=8,mx=Math.max(1,...data.fla
   let g='';for(let i=0;i<=4;i++){const v=mx/4*i;g+=`<line x1="${pl}" x2="${W}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--bd)"/><text x="${pl-6}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="var(--mu)">${Math.round(v).toLocaleString('pt-PT')}</text>`}
   data.forEach((d,i)=>{const x=pl+i*bw+bw*.18,w=bw*.3;g+=`<rect x="${x}" y="${Y(d[1])}" width="${w}" height="${H-pb-Y(d[1])}" rx="3" fill="var(--c1)"><title>Entradas ${E(d[1])}</title></rect><rect x="${x+w+3}" y="${Y(d[2])}" width="${w}" height="${H-pb-Y(d[2])}" rx="3" fill="var(--c2)"><title>Saídas ${E(d[2])}</title></rect><text x="${pl+i*bw+bw/2}" y="${H-7}" text-anchor="middle" font-size="11" fill="var(--mu)">${d[0]}</text>`});
   return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg><div class="leg"><span><i style="background:var(--c1)"></i>Entradas</span><span><i style="background:var(--c2)"></i>Saídas</span></div>`}
-function mesesGraf(){const out=[];let y,m,n;
-  if(P.m==='ano'){y=P.d.getFullYear();for(let i=0;i<12;i++)out.push([y,i]);return out}
+function mesesGraf(){const out=[];if(P.m==='ano'){const y=P.d.getFullYear();for(let i=0;i<12;i++)out.push([y,i]);return out}
   const end=P.m==='int'&&P.fim?new Date(+P.fim.slice(0,4),+P.fim.slice(5,7)-1,1):P.d;
   for(let i=5;i>=0;i--){const d=new Date(end.getFullYear(),end.getMonth()-i,1);out.push([d.getFullYear(),d.getMonth()])}return out}
-
-const EXT_COLS=[['Data mov.'],['Data valor'],['Descrição'],['Valor','num'],['Saldo','num'],['Referência'],['Categoria'],['Detalhes'],['Quem é'],['Banco'],['']];
+const EXT_COLS=[['Data mov.'],['Data valor'],['Descrição'],['Valor','num'],['Saldo','num'],['Categoria'],['Referência'],['Detalhes'],['Observações'],['Quem é'],['Banco'],['']];
 const REC_COLS=[['Entidade pagadora'],['Descrição'],['Categoria'],['Pessoa'],['Periodicidade'],['Início'],['Fim'],['Pagamento'],['Bruto','num'],['IRS retido','num'],['SS','num'],['Líquido','num'],['Recibo'],['']];
 const PON_COLS=[['Data'],['Entidade pagadora'],['Descrição'],['Categoria'],['Pessoa'],['Bruto','num'],['IRS retido','num'],['SS','num'],['Líquido','num'],['Documento'],['']];
-const opts=(arr,all,sel)=>`<option value="">${all}</option>`+arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</option>`).join('');
 const uniq=a=>[...new Set(a.filter(Boolean))].sort((x,y)=>x.localeCompare(y,'pt'));
+const catOpts=sel=>`<option value="">— Por categorizar —</option>`+DB.cats.map(c=>`<option${c.nome===sel?' selected':''}>${esc(c.nome)}</option>`).join('')+(sel&&!DB.cats.some(c=>c.nome===sel)?`<option selected>${esc(sel)}</option>`:'');
+const refOpts=(cat,sel)=>{const c=DB.cats.find(x=>x.nome===cat);const rs=c?c.refs:[];return `<option value="">—</option>`+rs.map(r=>`<option${r===sel?' selected':''}>${esc(r)}</option>`).join('')+(sel&&!rs.includes(sel)?`<option selected>${esc(sel)}</option>`:'')};
 
 /* ================= render ================= */
 function render(){
-  const [a,b]=range();const all=DB.mov,per=all.filter(m=>m.dm>=a&&m.dm<=b),perC=per.filter(conta);
+  const [a,b]=range();const all=DB.mov,per=all.filter(m=>m.dm>=a&&m.dm<=b),perC=per.filter(m=>!isInterna(m));
   const ent=perC.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0),sai=-perC.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0);
   const unc=ordena(per.filter(m=>!m.cat));
-  // listas para filtros/sugestões
-  const cats=uniq(all.map(m=>m.cat).concat([INTERNA])),quems=uniq(all.map(m=>m.quem).concat(['Eu'])),bancos=uniq(all.map(m=>m.banco));
-  $('#dlCat').innerHTML=cats.map(c=>`<option value="${esc(c)}">`).join('');$('#dlQuem').innerHTML=quems.map(c=>`<option value="${esc(c)}">`).join('');
-  const keep=id=>$(id).value;
-  const fb=keep('#fBanco'),fc=keep('#fCat'),fq=keep('#fQuem');
-  $('#fBanco').innerHTML=opts(bancos,'Todos os bancos',fb);
-  $('#fCat').innerHTML=`<option value="">Todas as categorias</option><option value="__unc"${fc==='__unc'?' selected':''}>Por categorizar</option>`+cats.map(v=>`<option${v===fc?' selected':''}>${esc(v)}</option>`).join('');
-  $('#fQuem').innerHTML=opts(quems,'Todos (quem é)',fq);
+  const quems=uniq(DB.pessoas.map(p=>p.pessoa).concat(all.map(m=>m.quem)));
+  $('#dlQuem').innerHTML=quems.map(c=>`<option value="${esc(c)}">`).join('');
+  const fb=$('#fBanco').value,fc=$('#fCat').value,fq=$('#fQuem').value;
+  $('#fBanco').innerHTML=`<option value="">Todos os bancos</option>`+uniq(all.map(m=>m.banco)).map(v=>`<option${v===fb?' selected':''}>${esc(v)}</option>`).join('');
+  $('#fCat').innerHTML=`<option value="">Todas as categorias</option><option value="__unc"${fc==='__unc'?' selected':''}>Por categorizar</option>`+DB.cats.map(c=>`<option${c.nome===fc?' selected':''}>${esc(c.nome)}</option>`).join('');
+  $('#fQuem').innerHTML=`<option value="">Todos (quem é)</option><option value="__none"${fq==='__none'?' selected':''}>Sem pessoa</option>`+quems.map(v=>`<option${v===fq?' selected':''}>${esc(v)}</option>`).join('');
 
   /* ---- Início ---- */
-  const rend=ent;
   $('#homeKpis').innerHTML=kpi('Entradas',E(ent),`${perC.filter(m=>m.valor>0).length} movimentos`,'pos')+kpi('Saídas',E(sai),`${perC.filter(m=>m.valor<0).length} movimentos`,'neg')
-    +kpi('Saldo do período',E(ent-sai),'entradas − saídas',ent-sai>=0?'pos':'neg')+kpi('Taxa de poupança',rend>0?((ent-sai)/rend*100).toLocaleString('pt-PT',{maximumFractionDigits:1})+' %':'—','do que entrou no período');
-  const mg=mesesGraf(),bd=mg.map(([y,m])=>{const p=`${y}-${pad(m+1)}`,ms=all.filter(x=>x.dm.startsWith(p)&&conta(x));return [MES3[m],ms.filter(x=>x.valor>0).reduce((s,x)=>s+x.valor,0),-ms.filter(x=>x.valor<0).reduce((s,x)=>s+x.valor,0)]});
+    +kpi('Saldo do período',E(ent-sai),'entradas − saídas (sem trocas entre contas)',ent-sai>=0?'pos':'neg')+kpi('Taxa de poupança',ent>0?((ent-sai)/ent*100).toLocaleString('pt-PT',{maximumFractionDigits:1})+' %':'—','do que entrou no período');
+  const bd=mesesGraf().map(([y,m])=>{const p=`${y}-${pad(m+1)}`,ms=all.filter(x=>x.dm.startsWith(p)&&!isInterna(x));return [MES3[m],ms.filter(x=>x.valor>0).reduce((s,x)=>s+x.valor,0),-ms.filter(x=>x.valor<0).reduce((s,x)=>s+x.valor,0)]});
   $('#barsSub').textContent=P.m==='ano'?`${P.d.getFullYear()}`:'últimos 6 meses';
   $('#homeBars').innerHTML=all.length?bars(bd):'<div class="empty"><b>Sem dados</b>Importe extratos para ver a evolução.</div>';
-  // saldo por banco/conta = saldo do movimento mais recente (até ao fim do período)
   const contas={};ordena(all.filter(m=>m.dm<=b&&m.saldo!=null)).forEach(m=>{const k=m.banco+'|'+m.conta;if(!contas[k])contas[k]=m});
   const ks=Object.keys(contas),tb=ks.reduce((s,k)=>s+contas[k].saldo,0);
   $('#homeBanks').innerHTML=ks.length?ks.map(k=>{const m=contas[k];return `<li><div class="bi" style="background:${BCOR[m.banco]||'#555'}">${esc(m.banco.slice(0,3))}</div><div class="bn">${esc(m.banco)}<small>Conta ${esc(m.conta)} · saldo a ${fmtD(m.dm)}</small></div><b>${E(m.saldo)}</b></li>`}).join('')+(ks.length>1?`<li class="tot"><div class="bn"><b>Total</b></div><b>${E(tb)}</b></li>`:'')
     :'<li><div class="empty" style="width:100%"><b>Sem bancos</b>Os bancos aparecem ao importar extratos.</div></li>';
   const porCat={};perC.filter(m=>m.valor<0).forEach(m=>{const c=m.cat||'Por categorizar';porCat[c]=(porCat[c]||0)-m.valor});
-  const segs=Object.entries(porCat).sort((x,y)=>y[1]-x[1]).map(([l,v],i)=>({l,v,c:l==='Por categorizar'?'var(--c8)':CORES[i%7]}));
+  const segs=Object.entries(porCat).sort((x,y)=>y[1]-x[1]).map(([l,v])=>({l,v,c:l==='Por categorizar'?'var(--c8)':corCat(l)}));
   $('#homeDonut').innerHTML=segs.length?donut(segs):'<div class="empty"><b>Sem despesas no período</b></div>';
-  $('#homeBudget').innerHTML='<div class="empty"><b>Sem orçamento</b>As categorias e referências da aba Despesas vão aparecer aqui.</div>';
+  const k=mesesPeriodo(),resumo=DB.cats.map(c=>{const p=c.refs.reduce((s,r)=>s+(+DB.prev[c.nome+'›'+r]||0),0)*k,r=-per.filter(m=>m.valor<0&&m.cat===c.nome).reduce((s,m)=>s+m.valor,0);return {c,p,r}}).filter(x=>(x.p||Math.abs(x.r)>.004)&&x.c.nome!=='Banco');
+  $('#homeBudget').innerHTML=resumo.length?`<table class="t"><thead><tr><th>Categoria</th><th class="num">Previsto</th><th class="num">Real</th><th></th></tr></thead><tbody>${resumo.map(({c,p,r})=>{const pc=p>0?Math.min(100,r/p*100):(r>0?100:0);return `<tr><td><i class="dot" style="background:${corCat(c.nome)}"></i>${esc(c.nome)}</td><td class="num">${p?E(p):'—'}</td><td class="num">${E(r)}</td><td style="width:30%"><div class="bar"><i style="width:${Math.max(0,pc)}%;background:${p&&r>p?'var(--c2)':p?'var(--c1)':'var(--c8)'}"></i></div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem valores no período</b></div>';
   const last=ordena(per).slice(0,8);
-  $('#homeLast').innerHTML=last.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Banco</th></tr></thead><tbody>${last.map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td>${esc(m.banco)}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos no período</b></div>';
+  $('#homeLast').innerHTML=last.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th></tr></thead><tbody>${last.map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td>${m.cat?`<span class="tag">${esc(m.cat)}${m.ref?' · '+esc(m.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos no período</b></div>';
   $('#homeUncCnt').textContent=unc.length;
   $('#homeUnc').innerHTML=unc.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th></tr></thead><tbody>${unc.slice(0,8).map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td></tr>`).join('')}</tbody></table>${unc.length>8?`<p class="note">+ ${unc.length-8} outros</p>`:''}`:(per.length?'<div class="empty"><b>Tudo categorizado ✓</b></div>':'<div class="empty"><b>Sem movimentos no período</b></div>');
 
   /* ---- Extratos ---- */
   const q=norm($('#fQ').value),ft=$('#fTipo').value;
-  const rows=ordena(per).filter(m=>(!fb||m.banco===fb)&&(!fq||m.quem===fq)&&(!fc||(fc==='__unc'?!m.cat:m.cat===fc))&&(!ft||(ft==='e'?m.valor>0:m.valor<0))
-    &&(!q||norm([m.desc,m.ref,m.det,m.cat].join(' ')).includes(q)));
+  const rows=ordena(per).filter(m=>(!fb||m.banco===fb)&&(!fq||(fq==='__none'?!m.quem:m.quem===fq))&&(!fc||(fc==='__unc'?!m.cat:m.cat===fc))&&(!ft||(ft==='e'?m.valor>0:m.valor<0))
+    &&(!q||norm([m.desc,m.ref,m.det,m.cat,m.obs,m.quem].join(' ')).includes(q)));
   $$('[data-cnt="ext"]').forEach(x=>x.textContent=unc.length||'');
   $('#extSub').textContent=all.length?`${rows.length} de ${per.length} no período · ${unc.length} por categorizar · ${all.length} no total`:'';
-  const re=rows.filter(conta).filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0),rs=-rows.filter(conta).filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0);
+  const rc=rows.filter(m=>!isInterna(m)),re=rc.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0),rs=-rc.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0);
   $('#extTable').innerHTML=rows.length?`<table class="t"><thead><tr>${EXT_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map(m=>`<tr data-id="${m.id}">
     <td>${fmtD(m.dm)}</td><td>${fmtD(m.dv)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td class="num">${m.saldo==null?'—':E(m.saldo)}</td>
-    <td><input class="ed" data-f="ref" value="${esc(m.ref)}" style="width:110px"></td>
-    <td><input class="ed${m.cat?'':' unc'}" data-f="cat" list="dlCat" value="${esc(m.cat)}" placeholder="Por categorizar"></td>
-    <td><input class="ed" data-f="det" value="${esc(m.det)}"></td>
-    <td><input class="ed" data-f="quem" list="dlQuem" value="${esc(m.quem)}" style="width:90px"></td>
+    <td><select class="ed${m.cat?'':' unc'}" data-f="cat">${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':''}</td>
+    <td><select class="ed" data-f="ref"${m.cat?'':' disabled'}>${refOpts(m.cat,m.ref)}</select></td>
+    <td class="muted" style="white-space:normal;min-width:130px;font-size:12.5px">${esc(m.det)}</td>
+    <td><input class="ed obs" data-f="obs" value="${esc(m.obs)}" placeholder="…"></td>
+    <td><input class="ed" data-f="quem" list="dlQuem" value="${esc(m.quem)}" style="width:110px"></td>
     <td>${esc(m.banco)}</td><td><button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></td></tr>`).join('')}
-    <tr class="tot"><td colspan="3">Total (filtrado)</td><td class="num">${val(re-rs)}</td><td colspan="7" class="muted" style="font-weight:400">Entradas ${E(re)} · Saídas ${E(rs)}${rows.some(m=>!conta(m))?' · transferências internas excluídas':''}</td></tr></tbody></table>`
+    <tr class="tot"><td colspan="3">Total (filtrado)</td><td class="num">${val(re-rs)}</td><td colspan="8" class="muted" style="font-weight:400">Entradas ${E(re)} · Saídas ${E(rs)}${rows.some(isInterna)?' · trocas entre contas excluídas':''}</td></tr></tbody></table>`
     :emptyTbl(EXT_COLS,all.length?'Nenhum movimento neste período/filtro':'Ainda não há movimentos',all.length?'Mude o período no topo ou limpe os filtros.':'Importe um extrato acima.');
 
-  /* ---- Rendimentos e Despesas (próximas etapas) ---- */
+  /* ---- Rendimentos (próxima etapa) ---- */
   $('#renKpis').innerHTML=kpi('Recorrentes (líquido/mês)',E(0),'0 fontes')+kpi('Pontuais no período',E(0),'0 registos')+kpi('Total bruto no ano',E(0),'recorrentes + pontuais')+kpi('IRS retido no ano',E(0),'para comparar com a declaração');
   $('#renRec').innerHTML=emptyTbl(REC_COLS,'Sem rendimentos recorrentes','Carregue um recibo de vencimento ou adicione à mão (próxima etapa).');
   $('#renPon').innerHTML=emptyTbl(PON_COLS,'Sem rendimentos pontuais');
-  $('#desKpis').innerHTML=kpi('Previsto',E(0),'orçamento do período')+kpi('Real',E(sai),'saídas no período','neg')+kpi('Diferença','—','')+kpi('Categorias','0','0 referências');
-  $('#desCats').innerHTML='<div class="empty"><b>Ainda não há categorias</b>Crie a primeira categoria (ex.: Casa) e as suas referências (ex.: Renda) — próxima etapa.</div>';
+  renderDespesas(per,k);
 }
+
+/* ---- Despesas: categorias/referências editáveis, previsto (mensal) vs real ---- */
+let soValores=false;
+function renderDespesas(per,k){
+  const real=(c,r)=>-per.filter(m=>m.valor<0&&m.cat===c&&(r==null||m.ref===r)).reduce((s,m)=>s+m.valor,0);
+  const tp=DB.cats.reduce((s,c)=>s+c.refs.reduce((t,r)=>t+(+DB.prev[c.nome+'›'+r]||0),0),0)*k;
+  const tr=DB.cats.filter(c=>c.nome!=='Banco').reduce((s,c)=>s+real(c.nome),0);
+  $('#desKpis').innerHTML=kpi('Previsto',E(tp),k>1?`${k} meses`:'orçamento do mês')+kpi('Real',E(tr),'saídas no período (sem Banco)','neg')+kpi('Diferença',E(tp-tr),tp-tr>=0?'abaixo do previsto':'acima do previsto',tp-tr>=0?'pos':'neg')+kpi('Categorias',String(DB.cats.length),`${DB.cats.reduce((s,c)=>s+c.refs.length,0)} referências`);
+  const open=new Set($$('#desCats details[open]').map(d=>d.dataset.c));
+  $('#btPrevOnly').textContent=soValores?'Mostrar todas':'Só com valores';
+  $('#desCats').innerHTML=DB.cats.map((c,ci)=>{
+    const semRef=real(c.nome,'');
+    const linhas=c.refs.map((r,ri)=>{const pv=+DB.prev[c.nome+'›'+r]||0,p=pv*k,rv=real(c.nome,r),d=rv-p,pc=p>0?Math.min(100,rv/p*100):(rv>0?100:0);
+      if(soValores&&!pv&&Math.abs(rv)<.005)return '';
+      return `<tr><td><input class="nm" data-rn="${ci}|${ri}" value="${esc(r)}"></td><td class="num"><input class="pv" data-pv="${esc(c.nome+'›'+r)}" value="${pv?String(pv).replace('.',','):''}" placeholder="0,00" inputmode="decimal"></td><td class="num">${p?E(p):'—'}</td><td class="num">${E(rv)}</td><td class="num">${p||rv?`<span class="${d>0.004?'neg':'pos'}">${d>0?'+':''}${E(d)}</span>`:'—'}</td><td style="min-width:100px"><div class="bar"><i style="width:${Math.max(0,pc)}%;background:${p&&d>0?'var(--c2)':p?'var(--c1)':'var(--c8)'}"></i></div></td><td><button class="btn ic sm" data-rdel="${ci}|${ri}" title="Apagar referência">🗑</button></td></tr>`}).join('');
+    const p=c.refs.reduce((s,r)=>s+(+DB.prev[c.nome+'›'+r]||0),0)*k,rv=real(c.nome);
+    if(soValores&&!p&&Math.abs(rv)<.005)return '';
+    return `<details class="cat" data-c="${esc(c.nome)}"${open.has(c.nome)?' open':''}><summary><span class="ci" style="background:color-mix(in srgb,${corCat(c.nome)} 22%,transparent)"><i class="dot" style="background:${corCat(c.nome)};margin:0"></i></span>${esc(c.nome)}<span class="sp"></span><span class="m">Previsto <b>${E(p)}</b> · Real <b>${E(rv)}</b></span>${p?`<span class="pill ${rv>p?'over':'ok'}">${rv>p?'+':''}${E(rv-p)}</span>`:''}</summary>
+    <div class="tw"><table class="t"><thead><tr><th>Referência</th><th class="num">Previsto/mês</th><th class="num">Previsto período</th><th class="num">Real</th><th class="num">Diferença</th><th>Execução</th><th></th></tr></thead><tbody>
+    <tr><td colspan="7" style="padding:6px 8px"><span class="muted" style="font-size:12px">Categoria:</span> <input class="nm" data-cn="${ci}" value="${esc(c.nome)}" style="font-weight:700"> <button class="btn ic sm" data-cdel="${ci}" title="Apagar categoria">🗑</button></td></tr>
+    ${linhas}${Math.abs(semRef)>.004?`<tr><td class="muted">(sem referência)</td><td></td><td></td><td class="num">${E(semRef)}</td><td colspan="3"></td></tr>`:''}
+    <tr class="addrow"><td colspan="7" data-radd="${ci}">＋ Adicionar referência</td></tr>
+    <tr class="tot"><td>Total ${esc(c.nome)}</td><td></td><td class="num">${E(p)}</td><td class="num">${E(rv)}</td><td class="num">${p?`<span class="${rv>p?'neg':'pos'}">${rv>p?'+':''}${E(rv-p)}</span>`:'—'}</td><td colspan="2"></td></tr></tbody></table></div></details>`}).join('')
+    +`<div class="tw"><table class="t" style="margin-top:4px"><tbody><tr class="tot"><td>Total geral (sem Banco)</td><td class="num">Previsto ${E(tp)}</td><td class="num">Real ${E(tr)}</td><td class="num"><span class="${tr>tp?'neg':'pos'}">${tr>tp?'+':''}${E(tr-tp)}</span></td></tr></tbody></table></div>`;
+}
+function renomeiaCat(ci,novo){const c=DB.cats[ci];novo=novo.trim();if(!novo||novo===c.nome)return;if(DB.cats.some(x=>x.nome===novo)){toast('Já existe uma categoria com esse nome');return}
+  const v=c.nome;DB.mov.forEach(m=>{if(m.cat===v)m.cat=novo});DB.regras.forEach(r=>{if(r.cat===v)r.cat=novo});
+  Object.keys(DB.prev).forEach(k=>{if(k.startsWith(v+'›')){DB.prev[novo+k.slice(v.length)]=DB.prev[k];delete DB.prev[k]}});c.nome=novo}
+function renomeiaRef(ci,ri,novo){const c=DB.cats[ci],v=c.refs[ri];novo=novo.trim();if(!novo||novo===v)return;if(c.refs.includes(novo)){toast('Já existe essa referência');return}
+  DB.mov.forEach(m=>{if(m.cat===c.nome&&m.ref===v)m.ref=novo});DB.regras.forEach(r=>{if(r.cat===c.nome&&r.ref===v)r.ref=novo});
+  const k0=c.nome+'›'+v;if(k0 in DB.prev){DB.prev[c.nome+'›'+novo]=DB.prev[k0];delete DB.prev[k0]}c.refs[ri]=novo}
+
+/* ================= regras: editor ================= */
+function renderRegras(){
+  const q=norm($('#rgQ').value);
+  const cont=r=>DB.mov.filter(m=>corresponde(r,m)).length;
+  const lista=DB.regras.map((r,i)=>({r,i})).filter(({r})=>!q||norm([r.txt,r.cat,r.ref].join(' ')).includes(q));
+  $('#rgList').innerHTML=`<table class="t rgbar"><thead><tr><th>Ativa</th><th>Ordem</th><th>Descrição</th><th></th><th>Tipo</th><th>Categoria</th><th>Referência</th><th class="num">Mov.</th><th></th></tr></thead><tbody>${lista.map(({r,i})=>`<tr data-ri="${i}">
+    <td><input type="checkbox" data-rg="ativo" ${r.ativo?'checked':''}></td>
+    <td><button class="btn ic sm" data-mv="-1" title="Subir">↑</button><button class="btn ic sm" data-mv="1" title="Descer">↓</button></td>
+    <td><select data-rg="modo"><option value="contem"${r.modo==='contem'?' selected':''}>contém</option><option value="palavra"${r.modo==='palavra'?' selected':''}>palavra</option><option value="inicio"${r.modo==='inicio'?' selected':''}>começa por</option></select></td>
+    <td><input data-rg="txt" value="${esc(r.txt)}" style="width:150px">${r.predef?' <span class="auto" title="Regra pré-definida">★</span>':''}</td>
+    <td><select data-rg="tipo"><option value="">todos</option><option value="e"${r.tipo==='e'?' selected':''}>entradas</option><option value="s"${r.tipo==='s'?' selected':''}>saídas</option></select></td>
+    <td><select data-rg="cat">${catOpts(r.cat).replace('— Por categorizar —','—')}</select></td>
+    <td><select data-rg="ref">${refOpts(r.cat,r.ref)}</select></td>
+    <td class="num">${cont(r)}</td>
+    <td><button class="btn ic sm" data-rgdel title="Apagar regra">🗑</button></td></tr>`).join('')||'<tr><td colspan="9"><div class="empty">Nenhuma regra</div></td></tr>'}</tbody></table>`;
+}
+function regrasMudaram(){const n=aplicaRegras();save();render();renderRegras();return n}
+
+/* ================= pessoas: editor ================= */
+function renderPessoas(){
+  const ids={};DB.mov.forEach(m=>{const x=identificador(m.desc);if(!x)return;const k=x.tipo+'|'+x.id;(ids[k]=ids[k]||{...x,n:0,tot:0,last:''});ids[k].n++;ids[k].tot+=m.valor;if(m.dm>ids[k].last)ids[k].last=m.dm});
+  const pend=Object.values(ids).filter(x=>!DB.pessoas.some(p=>norm(x.id).includes(norm(p.match))||norm(p.match).includes(norm(x.id)))).sort((a,b)=>b.n-a.n);
+  $('#pesPendN').textContent=pend.length;
+  $('#pesPend').innerHTML=pend.length?`<table class="t"><thead><tr><th>Tipo</th><th>Identificador</th><th class="num">Mov.</th><th class="num">Total</th><th>Último</th><th>Quem é</th><th></th></tr></thead><tbody>${pend.map(x=>`<tr><td><span class="tag">${x.tipo}</span></td><td>${esc(x.id)}</td><td class="num">${x.n}</td><td class="num">${val(x.tot)}</td><td>${fmtD(x.last)}</td><td><input class="ed" list="dlQuem" data-pnome placeholder="Nome…" style="width:150px;border-color:var(--bd)"></td><td><button class="btn sm pri" data-padd="${esc(x.id)}">Guardar</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Todos os identificadores estão atribuídos ✓</b></div>';
+  $('#pesList').innerHTML=DB.pessoas.length?`<table class="t"><thead><tr><th>A descrição contém</th><th>Quem é</th><th class="num">Mov.</th><th></th></tr></thead><tbody>${DB.pessoas.map((p,i)=>`<tr data-pi="${i}"><td><input class="ed" data-pf="match" value="${esc(p.match)}" style="width:200px;border-color:var(--bd)"></td><td><input class="ed" list="dlQuem" data-pf="pessoa" value="${esc(p.pessoa)}" style="width:150px;border-color:var(--bd)"></td><td class="num">${DB.mov.filter(m=>p.match&&norm(m.desc).includes(norm(p.match))).length}</td><td><button class="btn ic sm" data-pdel="${i}" title="Apagar">🗑</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Ainda não identificou ninguém.</div>';
+}
+function pessoasMudaram(){aplicaPessoas();save();render();renderPessoas()}
+
+/* ================= criar regra a partir de um movimento ================= */
+let NR=null;
+function sugestao(desc){const w=desc.replace(/[^\p{L}\p{N}\s.&-]/gu,' ').split(/\s+/).filter(t=>t&&!/\d/.test(t)&&t.length>1);return (w.slice(0,2).join(' ')||desc.split(/\s+/)[0]).toUpperCase()}
+function contaNR(){if(!NR)return;const r={ativo:true,txt:$('#nrTxt').value,modo:$('#nrModo').value,tipo:$('#nrTipo').value};
+  const ms=DB.mov.filter(m=>corresponde(r,m)),n=ms.filter(m=>m.catSrc!=='manual').length;
+  $('#nrCnt').textContent=n?`Vai classificar mais ${n} movimento(s) semelhante(s) já existentes, e os que forem importados no futuro. Os classificados à mão não mudam.`:`Não há outros movimentos semelhantes para já — a regra aplica-se aos que forem importados no futuro.`}
+function abreNovaRegra(m){NR=m;$('#nrDesc').textContent=`“${m.desc}” (${E(m.valor)})`;$('#nrTxt').value=sugestao(m.desc);$('#nrModo').value='contem';$('#nrTipo').value=m.valor<0?'s':'e';
+  $('#nrCat').textContent=m.cat+(m.ref?' › '+m.ref:'');contaNR();$('#mNovaRegra').hidden=false;$('#nrTxt').focus();$('#nrTxt').select()}
+['nrTxt','nrModo','nrTipo'].forEach(id=>$('#'+id).addEventListener('input',contaNR));
+$('#nrNao').addEventListener('click',()=>{$('#mNovaRegra').hidden=true;NR=null});
+$('#nrSim').addEventListener('click',()=>{if(!NR)return;const txt=$('#nrTxt').value.trim();if(!txt){toast('Escreva o texto da regra');return}
+  DB.regras.unshift({id:uid('r'),txt,modo:$('#nrModo').value,tipo:$('#nrTipo').value,cat:NR.cat,ref:NR.ref,ativo:true,predef:false});
+  const n=aplicaRegras();save();render();$('#mNovaRegra').hidden=true;NR=null;toast(`Regra criada · ${n} movimento(s) atualizados`)});
 
 /* ================= eventos ================= */
 function go(tab){$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));window.scrollTo({top:0})}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo]');if(!t)return;
-  if(t.dataset.tab){go(t.dataset.tab);return}
-  if(t.dataset.go){go(t.dataset.go);return}
-  if(t.dataset.del){const m=DB.mov.find(x=>x.id===t.dataset.del);if(m&&confirm(`Apagar o movimento "${m.desc}" (${E(m.valor)})?`)){DB.mov=DB.mov.filter(x=>x!==m);save();render()}return}
-  if(t.dataset.undo){const im=DB.imports.find(x=>x.id===t.dataset.undo);if(im&&confirm(`Remover os movimentos importados de "${im.ficheiro}"?`)){DB.mov=DB.mov.filter(x=>x.imp!==im.id);DB.imports=DB.imports.filter(x=>x!==im);save();render();showImps()}return}
-  if(t.dataset.todo){e.preventDefault();toast(`“${t.dataset.todo}” — disponível numa próxima etapa`)}
+  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel]');if(!t)return;
+  const d=t.dataset;
+  if(d.tab){go(d.tab);return}
+  if(d.go){go(d.go);return}
+  if(d.close){$('#'+d.close).hidden=true;return}
+  if(d.del){const m=DB.mov.find(x=>x.id===d.del);if(m&&confirm(`Apagar o movimento "${m.desc}" (${E(m.valor)})?`)){DB.mov=DB.mov.filter(x=>x!==m);save();render()}return}
+  if(d.undo){const im=DB.imports.find(x=>x.id===d.undo);if(im&&confirm(`Remover os movimentos importados de "${im.ficheiro}"?`)){DB.mov=DB.mov.filter(x=>x.imp!==im.id);DB.imports=DB.imports.filter(x=>x!==im);save();render();showImps()}return}
+  if(d.mv){const i=+t.closest('tr').dataset.ri,j=i+(+d.mv);if(j<0||j>=DB.regras.length)return;[DB.regras[i],DB.regras[j]]=[DB.regras[j],DB.regras[i]];regrasMudaram();return}
+  if('rgdel' in d){const i=+t.closest('tr').dataset.ri;if(confirm(`Apagar a regra "${DB.regras[i].txt}"?`)){DB.regras.splice(i,1);regrasMudaram()}return}
+  if(d.padd){const nome=t.closest('tr').querySelector('[data-pnome]').value.trim();if(!nome){toast('Escreva o nome da pessoa');return}DB.pessoas.push({id:uid('p'),match:d.padd,pessoa:nome});pessoasMudaram();toast(`${d.padd} → ${nome}`);return}
+  if(d.pdel){DB.pessoas.splice(+d.pdel,1);pessoasMudaram();return}
+  if(d.radd){const ci=+d.radd,n=prompt('Nome da nova referência:');if(n&&n.trim()){if(DB.cats[ci].refs.includes(n.trim()))return toast('Já existe');DB.cats[ci].refs.push(n.trim());save();render()}return}
+  if(d.rdel){const [ci,ri]=d.rdel.split('|').map(Number),c=DB.cats[ci],r=c.refs[ri],n=DB.mov.filter(m=>m.cat===c.nome&&m.ref===r).length;
+    if(confirm(`Apagar a referência "${r}"?${n?` ${n} movimento(s) ficam sem referência.`:''}`)){c.refs.splice(ri,1);DB.mov.forEach(m=>{if(m.cat===c.nome&&m.ref===r)m.ref=''});delete DB.prev[c.nome+'›'+r];save();render()}return}
+  if(d.cdel){const c=DB.cats[+d.cdel],n=DB.mov.filter(m=>m.cat===c.nome).length;
+    if(confirm(`Apagar a categoria "${c.nome}" e as suas referências?${n?` ${n} movimento(s) ficam por categorizar.`:''}`)){DB.cats.splice(+d.cdel,1);DB.mov.forEach(m=>{if(m.cat===c.nome){m.cat='';m.ref='';m.catSrc=''}});Object.keys(DB.prev).forEach(k=>{if(k.startsWith(c.nome+'›'))delete DB.prev[k]});aplicaRegras();save();render()}return}
+  if(d.todo){e.preventDefault();toast(`“${d.todo}” — disponível numa próxima etapa`)}
 });
-document.addEventListener('change',e=>{const el=e.target;if(!el.classList.contains('ed'))return;const tr=el.closest('tr[data-id]');const m=DB.mov.find(x=>x.id===tr.dataset.id);if(!m)return;
-  m[el.dataset.f]=el.value.trim();save();if(el.dataset.f==='cat')el.classList.toggle('unc',!m.cat);clearTimeout(render.h);render.h=setTimeout(render,50)});
+// edição na tabela de movimentos
+document.addEventListener('change',e=>{const el=e.target;
+  const tr=el.closest('tr[data-id]');
+  if(tr&&el.classList.contains('ed')){const m=DB.mov.find(x=>x.id===tr.dataset.id);if(!m)return;const f=el.dataset.f,v=el.value.trim();
+    if(f==='cat'){m.cat=v;m.ref='';if(v){m.catSrc='manual'}else{m.catSrc='';aplicaRegras([m])}save();render();
+      const c=DB.cats.find(x=>x.nome===v);if(v&&c&&!c.refs.length)abreNovaRegra(m);return}
+    if(f==='ref'){m.ref=v;m.catSrc='manual';save();render();if(m.cat&&v)abreNovaRegra(m);return}
+    if(f==='quem'){m.quem=v;m.quemMan=!!v;if(!v)aplicaPessoas([m])}
+    else m[f]=v;
+    save();clearTimeout(render.h);render.h=setTimeout(render,60);return}
+  // editor de regras
+  const rt=el.closest('tr[data-ri]');
+  if(rt&&el.dataset.rg){const r=DB.regras[+rt.dataset.ri],f=el.dataset.rg;r[f]=el.type==='checkbox'?el.checked:el.value;if(f==='cat')r.ref='';regrasMudaram();return}
+  // pessoas
+  const pt=el.closest('tr[data-pi]');
+  if(pt&&el.dataset.pf){DB.pessoas[+pt.dataset.pi][el.dataset.pf]=el.value.trim();pessoasMudaram();return}
+  // despesas: nomes e previsto
+  if(el.dataset.cn!=null){renomeiaCat(+el.dataset.cn,el.value);save();render();return}
+  if(el.dataset.rn){const [ci,ri]=el.dataset.rn.split('|').map(Number);renomeiaRef(ci,ri,el.value);save();render();return}
+  if(el.dataset.pv){const v=num(el.value);if(v)DB.prev[el.dataset.pv]=v;else delete DB.prev[el.dataset.pv];save();render();return}
+});
+$('#rgQ').addEventListener('input',renderRegras);
+$('#rgNova').addEventListener('click',()=>{DB.regras.unshift({id:uid('r'),txt:'',modo:'contem',tipo:'',cat:'',ref:'',ativo:true,predef:false});save();$('#rgQ').value='';renderRegras();const i=$('#rgList input[data-rg="txt"]');if(i)i.focus()});
+$('#rgRepor').addEventListener('click',()=>{const ex=new Set(DB.regras.map(r=>[norm(r.txt),r.modo,r.tipo].join('|')));let n=0;REGRAS_BASE.forEach((r,i)=>{const b=novaRegraBase(r,i);if(!ex.has([norm(b.txt),b.modo,b.tipo].join('|'))){DB.regras.push({...b,id:uid('r')});n++}});regrasMudaram();toast(`${n} regra(s) pré-definida(s) repostas`)});
+$('#btRegras').addEventListener('click',()=>{$('#rgQ').value='';renderRegras();$('#mRegras').hidden=false});
+$('#btPessoas').addEventListener('click',()=>{renderPessoas();$('#mPessoas').hidden=false});
+$('#pesNovo').addEventListener('click',()=>{const m=prompt('Texto que aparece na descrição (ex.: JOANA MORAIS ou 916XXX581):');if(!m||!m.trim())return;const p=prompt('Quem é?');if(!p||!p.trim())return;DB.pessoas.push({id:uid('p'),match:m.trim(),pessoa:p.trim()});pessoasMudaram()});
+$('#btNovaCat').addEventListener('click',()=>{const n=prompt('Nome da nova categoria:');if(!n||!n.trim())return;if(DB.cats.some(c=>c.nome===n.trim()))return toast('Já existe');DB.cats.push({id:uid('c'),nome:n.trim(),refs:[]});save();render();
+  setTimeout(()=>{const d=$(`#desCats details[data-c="${CSS.escape(n.trim())}"]`);if(d){d.open=true;d.scrollIntoView({block:'center'})}},50)});
+$('#btPrevOnly').addEventListener('click',()=>{soValores=!soValores;render()});
 ['#fQ','#fBanco','#fCat','#fQuem','#fTipo'].forEach(id=>$(id).addEventListener(id==='#fQ'?'input':'change',render));
 const drop=$('#drop'),fin=$('#fExt');
 $('#btImp').addEventListener('click',()=>fin.click());
@@ -434,13 +636,15 @@ fin.addEventListener('change',()=>{if(fin.files.length)importar([...fin.files]);
 function showImps(){$('#impsList').innerHTML=DB.imports.length?`<div class="tw"><table class="t"><thead><tr><th>Ficheiro</th><th>Banco / conta</th><th>Período</th><th class="num">Novos</th><th>Importado em</th><th></th></tr></thead><tbody>${DB.imports.slice().reverse().map(i=>`<tr><td>${esc(i.ficheiro)}</td><td>${esc(i.banco)} · ${esc(i.conta)}</td><td>${fmtD(i.inicio)} – ${fmtD(i.fim)}</td><td class="num">${i.novos}</td><td>${new Date(i.em).toLocaleString('pt-PT')}</td><td><button class="btn sm" data-undo="${i.id}">Remover</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><b>Ainda não há importações</b></div>';$('#mImps').hidden=false}
 $('#btImps').addEventListener('click',showImps);
 $('#btCloseImps').addEventListener('click',()=>$('#mImps').hidden=true);
-$('#mImps').addEventListener('click',e=>{if(e.target.id==='mImps')$('#mImps').hidden=true});
-$('#btClearAll').addEventListener('click',()=>{if(confirm('Apagar TODOS os movimentos e importações deste browser?')){DB={mov:[],imports:[],seq:0};save();render();$('#mImps').hidden=true}});
+$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.hidden=true}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.modal').forEach(m=>m.hidden=true)});
+$('#btClearAll').addEventListener('click',()=>{if(confirm('Apagar TODOS os movimentos e importações deste browser? (categorias, regras e pessoas mantêm-se)')){DB.mov=[];DB.imports=[];DB.seq=0;save();render();$('#mImps').hidden=true}});
 $('#btExp').addEventListener('click',()=>{const [a,b]=range();const rows=ordena(DB.mov.filter(m=>m.dm>=a&&m.dm<=b));if(!rows.length){toast('Sem movimentos no período');return}
   const c=v=>{v=String(v??'');return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v},n=v=>v==null?'':v.toFixed(2).replace('.',',');
-  const s='Data mov.;Data valor;Descrição;Valor;Saldo;Referência;Categoria;Detalhes;Quem é;Banco;Conta\n'+rows.map(m=>[fmtD(m.dm),fmtD(m.dv),m.desc,n(m.valor),n(m.saldo),m.ref,m.cat,m.det,m.quem,m.banco,m.conta].map(c).join(';')).join('\n');
+  const s='Data mov.;Data valor;Descrição;Valor;Saldo;Categoria;Referência;Detalhes;Observações;Quem é;Banco;Conta\n'+rows.map(m=>[fmtD(m.dm),fmtD(m.dv),m.desc,n(m.valor),n(m.saldo),m.cat,m.ref,m.det,m.obs,m.quem,m.banco,m.conta].map(c).join(';')).join('\n');
   const bl=new Blob(['﻿'+s],{type:'text/csv;charset=utf-8'}),aL=document.createElement('a');aL.href=URL.createObjectURL(bl);aL.download=`movimentos_${a}_${b}.csv`;document.body.appendChild(aL);aL.click();setTimeout(()=>{URL.revokeObjectURL(aL.href);aL.remove()},300)});
-// abre no mês do movimento mais recente
+// primeira execução: aplica regras e pessoas aos movimentos já existentes
+aplicaRegras();aplicaPessoas();save();
 if(DB.mov.length){const l=DB.mov.map(m=>m.dm).sort().pop();P.d=new Date(+l.slice(0,4),+l.slice(5,7)-1,1)}
 perLabel();render();
 </script>
