@@ -28,6 +28,6 @@ O login é **opcional** e usa as mesmas contas dos outros sites `*.frisk.pt`, at
 
 Os dados deste site ficam numa tabela própria, `public.financas_dados` (um registo por utilizador / ferramenta / chave, com RLS: cada utilizador só acede aos seus dados).
 
-Criar a tabela (uma vez): abrir o **SQL Editor** do projeto Supabase da plataforma e correr `supabase/001_financas_dados.sql`.
+A tabela já foi criada no projeto Supabase **Sites** (`aehitgqsfcpzuunyzpsh`) com `supabase/001_financas_dados.sql`, e o site está registado em `public.sites` com o id `financas`.
 
 Os separadores podem ler o utilizador com sessão em `window.parent.financasUser` (ou ouvir a mensagem `financas-sessao`).

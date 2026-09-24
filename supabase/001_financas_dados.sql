@@ -46,3 +46,10 @@ create policy "financas: apagar os meus dados" on public.financas_dados
 
 revoke all on public.financas_dados from anon;
 grant select, insert, update, delete on public.financas_dados to authenticated;
+
+revoke execute on function public.financas_set_updated_at() from public, anon, authenticated;
+
+-- Registo do site no catálogo da plataforma
+insert into public.sites (id, nome, dominio, ativo)
+values ('financas', 'Finanças Pessoais', 'financas.frisk.pt', true)
+on conflict (id) do nothing;
