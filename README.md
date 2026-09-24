@@ -4,9 +4,9 @@ Conjunto de ferramentas HTML offline, cada uma num ficheiro próprio, reunidas p
 
 | Ficheiro | Conteúdo |
 |---|---|
-| `index.html` | Página principal com a barra de separadores |
-| `simulador-salarial.html` | Simulador salarial 2026 (Pessoas, Empresas, Unipessoal, Esquema) |
-| `financas.html` | Finanças (em construção) |
+| `public/index.html` | Página principal com a barra de separadores |
+| `public/simulador-salarial.html` | Simulador salarial 2026 (Pessoas, Empresas, Unipessoal, Esquema) |
+| `public/financas.html` | Finanças (em construção) |
 
 ## Usar
 Abrir `index.html` no browser (os ficheiros têm de estar na mesma pasta). Cada HTML também funciona sozinho.
@@ -31,3 +31,6 @@ Os dados deste site ficam numa tabela própria, `public.financas_dados` (um regi
 A tabela já foi criada no projeto Supabase **Sites** (`aehitgqsfcpzuunyzpsh`) com `supabase/001_financas_dados.sql`, e o site está registado em `public.sites` com o id `financas`.
 
 Os separadores podem ler o utilizador com sessão em `window.parent.financasUser` (ou ouvir a mensagem `financas-sessao`).
+
+## Publicação (Cloudflare Workers)
+O site é publicado pelo Cloudflare a cada `push` para `main` (comando `npx wrangler deploy`). Configuração em `wrangler.jsonc`: os ficheiros servidos estão na pasta `public/` e o domínio é `financas.frisk.pt`. A versão do Wrangler está fixada em `package.json`.

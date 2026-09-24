@@ -1,0 +1,11 @@
+{
+  // Site estático (Finanças Pessoais) servido por Cloudflare Workers
+  "name": "financas",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./public"
+  },
+  "routes": [
+    { "pattern": "financas.frisk.pt", "custom_domain": true }
+  ]
+}
