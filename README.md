@@ -35,5 +35,8 @@ Os separadores podem ler o utilizador com sessão em `window.parent.financasUser
 ## Publicação (Cloudflare Workers)
 O site é publicado pelo Cloudflare a cada `push` para `main` (comando `npx wrangler deploy`). Configuração em `wrangler.jsonc`: os ficheiros servidos estão na pasta `public/` e o domínio é `financas.frisk.pt`. A versão do Wrangler está fixada em `package.json`.
 
+## Bibliotecas
+`public/lib/` tem o pdf.js 3.11 (Mozilla, Apache-2.0) e o SheetJS 0.18.5 (Apache-2.0), carregados só quando se lê um PDF ou um Excel.
+
 ## Plano
 Ver [ROADMAP.md](ROADMAP.md).

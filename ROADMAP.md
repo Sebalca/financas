@@ -22,11 +22,12 @@ Estado: ✅ feito · 🔜 próxima · ⬜ por fazer
 - ⬜ **Para mais tarde**
   6. Dividir um movimento por várias categorias.
   8. Importar o extrato mensal da CGD em PDF (meses antigos sem CSV).
-- ⬜ **v0.7 — Rendimentos**
-  9. Tabelas de recorrentes e pontuais a funcionar (preenchimento à mão).
-  10. Ler recibos de vencimento em PDF sem IA (precisa de recibo de exemplo).
-  11. Ligar cada rendimento ao movimento correspondente do extrato.
-  12. Resumo anual (bruto, IRS retido, SS) para comparar com a declaração de IRS.
+- ✅ **v0.7 — Rendimentos**
+  9. Recorrentes (uma linha por recibo) e pontuais, com adicionar/editar/apagar à mão.
+  10. Leitura de recibos de vencimento em PDF sem IA (formato DUALPERI; pdf.js no browser, só os valores ficam guardados).
+  11. Ligação automática ao movimento de entrada com o mesmo valor (transferência no banco, subsídio no cartão refeição) → categoria Rendimentos; escolha manual em ✏.
+  12. Resumo anual por mês (bruto, subsídio em cartão, IRS, SS, outros descontos, líquido).
+  - Extra: leitor genérico Excel/CSV (cartão refeição), com reordenação pelos saldos; categoria Rendimentos (fora das despesas).
 - ⬜ **v0.8 — Início e análises**
   13. Previsto vs real por categoria e por mês, com alertas de desvio.
   14. Evolução do saldo e comparação com o mesmo mês do ano anterior.
