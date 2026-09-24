@@ -17,7 +17,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
 button,input,select{font:inherit;color:inherit}
-.wrap{max-width:1360px;margin:0 auto;padding:0 16px}
+.wrap{margin:0 auto;padding:0 16px}
 /* cabeçalho fixo */
 .stk{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--bd);box-shadow:0 2px 10px rgba(16,24,40,.04)}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 8px;flex-wrap:wrap}
@@ -83,13 +83,15 @@ table.t tbody tr:hover td{background:color-mix(in srgb,var(--ac2) 40%,transparen
 .filt input,.filt select{border:1px solid var(--bd);border-radius:9px;background:var(--soft);padding:7px 10px;font-size:13.5px;min-width:0}
 .filt input[type=search]{flex:1 1 220px}
 /* upload */
-.drop{border:2px dashed var(--bd);border-radius:14px;padding:22px;text-align:center;background:var(--soft);cursor:pointer;transition:.15s}
+.drop{flex:1;min-width:0;height:52px;display:flex;align-items:center;gap:10px;border:2px dashed var(--bd);border-radius:12px;padding:0 14px;background:var(--soft);cursor:pointer;transition:.15s;overflow:hidden;white-space:nowrap}
 .drop:hover,.drop.over{border-color:var(--ac);background:var(--ac2)}
-.drop .ico{font-size:28px;line-height:1}
-.drop b{display:block;margin:6px 0 2px}
-.drop small{color:var(--mu)}
-.upl{display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start}
-@media (max-width:900px){.upl{grid-template-columns:1fr}}
+.drop .ico{font-size:20px;line-height:1;flex:none}
+.drop b{font-size:14px;overflow:hidden;text-overflow:ellipsis}
+.drop small{color:var(--mu);font-size:12.5px;overflow:hidden;text-overflow:ellipsis}
+.upl{display:flex;gap:10px;align-items:center}
+.upl select{height:52px;border:1px solid var(--bd);border-radius:12px;background:var(--soft);padding:0 10px;font-size:14px;flex:none;width:auto}
+@media (max-width:640px){.drop small{display:none}}
+#rgList select[data-rg="cat"],#rgList select[data-rg="ref"]{width:190px;text-overflow:ellipsis}
 .fld{display:grid;gap:4px;margin-bottom:10px}
 .fld label{font-size:12.5px;color:var(--mu)}
 .fld select,.fld input{border:1px solid var(--bd);border-radius:9px;background:var(--soft);padding:8px 10px;font-size:14px;width:100%}
@@ -135,12 +137,17 @@ td input.ed:hover{border-color:var(--bd)}td input.ed:focus{border-color:var(--ac
 td input.ed.unc{border-color:color-mix(in srgb,var(--c3) 45%,transparent);background:color-mix(in srgb,var(--c3) 10%,transparent)}
 .modal{position:fixed;inset:0;background:rgba(10,14,20,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
 .modal[hidden]{display:none}
-.sheet{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;width:100%;max-width:720px;max-height:85vh;overflow:auto}
-.sheet h3{margin:0 0 10px}
+.sheet{background:var(--card);border:1px solid var(--bd);border-radius:16px;width:100%;max-width:720px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.sheet .mh{flex:none;display:flex;align-items:center;gap:10px;padding:12px 12px 12px 18px;border-bottom:1px solid var(--bd)}
+.sheet .mh h3{margin:0;flex:1;min-width:0;font-size:16px}
+.sheet .mx{flex:none;width:34px;height:34px;border:0;border-radius:9px;background:transparent;color:var(--mu);font-size:18px;cursor:pointer}
+.sheet .mx:hover{background:var(--soft);color:var(--tx)}
+.sheet .mbd{overflow:auto;padding:14px 18px 18px;min-height:0}
 .sheet.wide{max-width:1100px}
-td select.ed{border:1px solid transparent;background:transparent;border-radius:6px;padding:3px 4px;font-size:13px;max-width:170px;color:var(--tx)}
-td select.ed:hover{border-color:var(--bd)}td select.ed:focus{border-color:var(--ac);background:var(--card);outline:0}
-td select.ed.unc{border-color:color-mix(in srgb,var(--c3) 45%,transparent);background:color-mix(in srgb,var(--c3) 10%,transparent)}
+td select.ed{-webkit-appearance:none;appearance:none;border:1px solid transparent;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23889' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 6px center;border-radius:6px;padding:3px 20px 3px 6px;font-size:13px;width:170px;color:var(--tx);text-overflow:ellipsis}
+td select.ed:disabled{opacity:.45}
+td select.ed:hover{border-color:var(--bd)}td select.ed:focus{border-color:var(--ac);background-color:var(--card);outline:0}
+td select.ed.unc{border-color:color-mix(in srgb,var(--c3) 45%,transparent);background-color:color-mix(in srgb,var(--c3) 10%,transparent)}
 td .auto{font-size:10px;color:var(--mu);margin-left:2px;cursor:help}
 td input.ed.obs{width:170px}
 .rgbar input,.rgbar select{border:1px solid var(--bd);border-radius:7px;background:var(--soft);padding:4px 6px;font-size:12.5px}
@@ -198,11 +205,8 @@ td input.ed.obs{width:170px}
     <div class="card"><h3>Importar extrato</h3>
       <div class="upl">
         <label class="drop" id="drop"><input type="file" id="fExt" accept=".csv,.txt" multiple hidden>
-          <div class="ico">📄</div><b>Arraste aqui o ficheiro do extrato ou clique para escolher</b><small>CSV da CGD · vários ficheiros de uma vez</small></label>
-        <div>
-          <div class="fld"><label for="bankSel">Banco</label><select id="bankSel"><option value="">Detetar automaticamente</option><option value="CGD">CGD</option></select></div>
-          <button class="btn pri" type="button" id="btImp" style="width:100%;justify-content:center">Escolher ficheiro…</button>
-        </div>
+          <span class="ico">📄</span><b>Arraste o extrato ou clique para escolher</b><small>· CSV da CGD · vários ficheiros de uma vez</small></label>
+        <select id="bankSel" aria-label="Banco" title="Banco"><option value="">Banco: auto</option><option value="CGD">CGD</option></select>
       </div>
       <div id="impRes"></div><p class="note">Bancos suportados: <b>CGD</b> (CSV exportado em “Consultar saldos e movimentos”). Os movimentos já importados são reconhecidos e não ficam duplicados. Com sessão iniciada, os dados ficam guardados na sua conta e sincronizam entre dispositivos; sem sessão, ficam só neste browser.</p>
     </div>
@@ -240,24 +244,24 @@ td input.ed.obs{width:170px}
 <div id="toast"></div>
 <datalist id="dlCat"></datalist><datalist id="dlQuem"></datalist>
 
-<div class="modal" id="mRegras" hidden><div class="sheet wide"><h3>Regras de categorização</h3>
+<div class="modal" id="mRegras" hidden><div class="sheet wide"><div class="mh"><h3>Regras de categorização</h3><button class="mx" type="button" data-close="mRegras" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
  <p class="note" style="margin:0 0 10px">A primeira regra que corresponder à descrição ganha (use ↑ ↓ para mudar a ordem). As regras aplicam-se ao importar e aos movimentos existentes, <b>exceto os que classificou à mão</b>.</p>
- <div class="filt"><input type="search" id="rgQ" placeholder="Procurar regra…"><button class="btn sm pri" id="rgNova">＋ Nova regra</button><button class="btn sm" id="rgRepor">Repor pré-definidas em falta</button></div>
+ <div class="filt"><input type="search" id="rgQ" placeholder="Procurar regra…"><button class="btn sm pri" id="rgNova">＋ Nova regra</button></div>
  <div class="tw" id="rgList"></div>
- <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn pri" data-close="mRegras">Fechar</button></div></div></div>
-<div class="modal" id="mPessoas" hidden><div class="sheet wide"><h3>Pessoas — quem fez / recebeu a transferência</h3>
+ </div></div></div>
+<div class="modal" id="mPessoas" hidden><div class="sheet wide"><div class="mh"><h3>Pessoas — quem fez / recebeu a transferência</h3><button class="mx" type="button" data-close="mPessoas" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
  <p class="note" style="margin:0 0 10px">Identificadores encontrados nas descrições (TFI, TRF, MB WAY…). Escreva o nome da pessoa: todos os movimentos com esse identificador ficam com “Quem é” preenchido. Vários identificadores podem ser a mesma pessoa.</p>
  <h4 style="margin:6px 0">Por identificar <span class="tag wait" id="pesPendN">0</span></h4><div class="tw" id="pesPend"></div>
  <h4 style="margin:16px 0 6px">Identificados</h4><div class="tw" id="pesList"></div>
- <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap"><button class="btn" id="pesNovo">＋ Identificador manual</button><button class="btn pri" data-close="mPessoas">Fechar</button></div></div></div>
-<div class="modal" id="mNovaRegra" hidden><div class="sheet"><h3>Criar regra a partir deste movimento?</h3>
+ <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap"><button class="btn" id="pesNovo">＋ Identificador manual</button></div></div></div></div>
+<div class="modal" id="mNovaRegra" hidden><div class="sheet"><div class="mh"><h3>Criar regra a partir deste movimento?</h3><button class="mx" type="button" data-close="mNovaRegra" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
  <p class="note" id="nrDesc" style="margin:0 0 10px"></p>
  <div class="fld"><label>Quando a descrição</label><div style="display:flex;gap:6px"><select id="nrModo" style="width:auto"><option value="contem">contém</option><option value="palavra">tem a palavra</option><option value="inicio">começa por</option></select><input id="nrTxt"></div></div>
  <div class="fld"><label>Aplicar a</label><select id="nrTipo"><option value="">entradas e saídas</option><option value="e">só entradas</option><option value="s">só saídas</option></select></div>
  <div class="fld"><label>Classificar como</label><div id="nrCat" style="font-weight:700"></div></div>
  <p class="note" id="nrCnt"></p>
- <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button class="btn" id="nrNao">Só este movimento</button><button class="btn pri" id="nrSim">Criar regra</button></div></div></div>
-<div class="modal" id="mImps" hidden><div class="sheet"><h3>Importações</h3><div id="impsList"></div><div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end"><button class="btn" id="btClearAll">Apagar todos os movimentos</button><button class="btn pri" id="btCloseImps">Fechar</button></div></div></div>
+ <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button class="btn" id="nrNao">Só este movimento</button><button class="btn pri" id="nrSim">Criar regra</button></div></div></div></div>
+<div class="modal" id="mImps" hidden><div class="sheet"><div class="mh"><h3>Importações</h3><button class="mx" type="button" data-close="mImps" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd"><div id="impsList"></div><div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end"><button class="btn" id="btClearAll">Apagar todos os movimentos</button></div></div></div></div>
 
 <script>
 'use strict';
@@ -323,6 +327,7 @@ function normaliza(d){d={...fresh(),...d};
   if(!d.regras)d.regras=REGRAS_BASE.map(novaRegraBase);
   if(!d.pessoas)d.pessoas=[];if(!d.prev)d.prev={};
   if((d.ver||1)<2){d.mov.forEach(m=>{if(m.ref){m.det=[m.det,m.ref].filter(Boolean).join(' · ')}m.ref='';m.quem='';m.obs=m.obs||'';m.catSrc=m.cat?'manual':''});d.ver=2}
+  d.mov.forEach(m=>{if(m.det&&m.banco&&m.det.startsWith(m.banco+': '))m.det=m.det.slice(m.banco.length+2)});
   d.seq=Math.max(d.seq||0,...d.mov.map(m=>+String(m.id).replace(/\D/g,'')||0));
   return d}
 let DB=fresh();
@@ -399,7 +404,7 @@ async function importar(files){
       const r=L.parse(t);if(!r.mov.length)throw new Error('O ficheiro não tem movimentos.');
       const v=validar(r),ex=new Set(DB.mov.map(chave)),impId=uid('i');let novos=[],dup=0;
       r.mov.forEach(m=>{const o={id:'m'+(++DB.seq),imp:impId,banco:r.banco,conta:r.conta,dm:m.dm,dv:m.dv,desc:m.desc,valor:m.valor,saldo:m.saldo,saldoDisp:m.saldoDisp,
-        cat:'',ref:'',catSrc:'',det:[m.catBanco?`${r.banco}: ${m.catBanco}`:'',refBanco(m.desc)].filter(Boolean).join(' · '),obs:'',quem:'',quemMan:false,ord:m.ord};
+        cat:'',ref:'',catSrc:'',det:[m.catBanco||'',refBanco(m.desc)].filter(Boolean).join(' · '),obs:'',quem:'',quemMan:false,ord:m.ord};
         const k=chave(o);if(ex.has(k)){dup++;DB.seq--;return}ex.add(k);DB.mov.push(o);novos.push(o)});
       if(novos.length){const nk=new Set(novos.map(chave));DB.del=DB.del.filter(k=>!nk.has(k))}
       aplicaRegras(novos);aplicaPessoas(novos);
@@ -632,7 +637,6 @@ document.addEventListener('change',e=>{const el=e.target;
 });
 $('#rgQ').addEventListener('input',renderRegras);
 $('#rgNova').addEventListener('click',()=>{DB.regras.unshift({id:uid('r'),txt:'',modo:'contem',tipo:'',cat:'',ref:'',ativo:true,predef:false});save();$('#rgQ').value='';renderRegras();const i=$('#rgList input[data-rg="txt"]');if(i)i.focus()});
-$('#rgRepor').addEventListener('click',()=>{const ex=new Set(DB.regras.map(r=>[norm(r.txt),r.modo,r.tipo].join('|')));let n=0;REGRAS_BASE.forEach((r,i)=>{const b=novaRegraBase(r,i);if(!ex.has([norm(b.txt),b.modo,b.tipo].join('|'))){DB.regras.push({...b,id:uid('r')});n++}});regrasMudaram();toast(`${n} regra(s) pré-definida(s) repostas`)});
 $('#btRegras').addEventListener('click',()=>{$('#rgQ').value='';renderRegras();$('#mRegras').hidden=false});
 $('#btPessoas').addEventListener('click',()=>{renderPessoas();$('#mPessoas').hidden=false});
 $('#pesNovo').addEventListener('click',()=>{const m=prompt('Texto que aparece na descrição (ex.: JOANA MORAIS ou 916XXX581):');if(!m||!m.trim())return;const p=prompt('Quem é?');if(!p||!p.trim())return;DB.pessoas.push({id:uid('p'),match:m.trim(),pessoa:p.trim()});pessoasMudaram()});
@@ -641,13 +645,11 @@ $('#btNovaCat').addEventListener('click',()=>{const n=prompt('Nome da nova categ
 $('#btPrevOnly').addEventListener('click',()=>{soValores=!soValores;render()});
 ['#fQ','#fBanco','#fCat','#fQuem','#fTipo'].forEach(id=>$(id).addEventListener(id==='#fQ'?'input':'change',render));
 const drop=$('#drop'),fin=$('#fExt');
-$('#btImp').addEventListener('click',()=>fin.click());
 fin.addEventListener('change',()=>{if(fin.files.length)importar([...fin.files]);fin.value=''});
 ['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));
 ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');if(ev==='drop'&&e.dataTransfer.files.length)importar([...e.dataTransfer.files])}));
 function showImps(){$('#impsList').innerHTML=DB.imports.length?`<div class="tw"><table class="t"><thead><tr><th>Ficheiro</th><th>Banco / conta</th><th>Período</th><th class="num">Novos</th><th>Importado em</th><th></th></tr></thead><tbody>${DB.imports.slice().reverse().map(i=>`<tr><td>${esc(i.ficheiro)}</td><td>${esc(i.banco)} · ${esc(i.conta)}</td><td>${fmtD(i.inicio)} – ${fmtD(i.fim)}</td><td class="num">${i.novos}</td><td>${new Date(i.em).toLocaleString('pt-PT')}</td><td><button class="btn sm" data-undo="${i.id}">Remover</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><b>Ainda não há importações</b></div>';$('#mImps').hidden=false}
 $('#btImps').addEventListener('click',showImps);
-$('#btCloseImps').addEventListener('click',()=>$('#mImps').hidden=true);
 $$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.hidden=true}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.modal').forEach(m=>m.hidden=true)});
 $('#btClearAll').addEventListener('click',()=>{if(confirm('Apagar TODOS os movimentos e importações? (categorias, regras e pessoas mantêm-se)')){apaga(DB.mov);DB.imports=[];save();render();$('#mImps').hidden=true}});
