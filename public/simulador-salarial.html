@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Simulador Salarial 2026</title>
-<style>
+<style>@media (min-width:700px){html{zoom:.85}}
+
 :root{
   --bg:#f4f5f7;--card:#fff;--tx:#18202b;--mu:#667085;--bd:#e2e5ea;--soft:#f1f3f6;
   --ac:#2451d6;--ac2:#e9eefc;--ok:#0f7a55;--neg:#b93815;--warn:#a15c00;
@@ -1341,7 +1342,7 @@ document.addEventListener('click',e=>{
   if(t.id==='cmpClr'){if(confirm('Remover todos os cenários?')){SC=[];save();cmpCount();renderCmp()}return}
   if(t.id==='cmpCsv'){let s='Métrica;'+SC.map(x=>csvCell(x.name)).join(';')+'\n'+MET.map(([l,f])=>csvCell(l)+';'+SC.map(x=>csvCell(f(x))).join(';')).join('\n');download('comparador-cenarios.csv',s);return}
   if(t.classList.contains('x')){t.closest('.modal').hidden=true;return}
-  if(t.id==='themeBtn'){const h=document.documentElement,cur=h.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');h.dataset.theme=cur==='dark'?'light':'dark';save();return}
+  if(t.id==='themeBtn'){const h=document.documentElement,cur=h.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');h.dataset.theme=cur==='dark'?'light':'dark';try{localStorage.setItem('fp_tema',h.dataset.theme)}catch(e){}save();return}
 });
 document.addEventListener('mousedown',e=>{const t=e.target.closest('[data-qmin]');if(!t)return;e.preventDefault();applyQmin(+t.dataset.qmin)});
 document.addEventListener('keydown',e=>{const t=e.target.closest&&e.target.closest('[data-qmin]');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();applyQmin(+t.dataset.qmin)}});
@@ -1351,6 +1352,14 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.modal').forEach
 
 /* ============ arranque ============ */
 TABS.forEach(t=>{S[t]._per={...(S[t]._per||{})}});qApplyPer();SH.forEach(k=>{S.e[k]=S.p[k];S.u[k]=S.p[k];if(k!=='baseMode')S.q[k]=S.p[k]});setHH();TABS.forEach(renderForm);TABS.forEach(t=>renderTab(t,false));save();cmpCount();setHH();
+
+/* tema definido pela página principal (botão ☀️/🌙) */
+(function(){const ap=t=>{if(t==='dark'||t==='light')document.documentElement.dataset.theme=t};
+  try{ap(localStorage.getItem('fp_tema'))}catch(e){}
+  addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-tema')ap(e.data.tema)});
+  addEventListener('storage',e=>{if(e.key==='fp_tema')ap(e.newValue)});
+  if(window.parent!==window){const b=document.getElementById('themeBtn');if(b)b.style.display='none'}
+})();
 </script>
 </body>
 </html>

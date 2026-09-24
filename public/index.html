@@ -6,7 +6,11 @@
 <title>Finanças Pessoais</title>
 <style>
 :root{--bg:#f4f5f7;--card:#fff;--tx:#18202b;--mu:#667085;--bd:#e2e5ea;--ac:#2451d6;--ac2:#e9eefc;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--ac:#7d9bff;--ac2:#1c2740;color-scheme:dark}}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--ac:#7d9bff;--ac2:#1c2740;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--ac:#7d9bff;--ac2:#1c2740;color-scheme:dark}
+@media (min-width:700px){.bar{zoom:.85}}
+.tema{flex:none;width:32px;height:32px;border:1px solid var(--bd);background:var(--card);border-radius:9px;cursor:pointer;font-size:15px;line-height:1;padding:0}
+.tema:hover{border-color:var(--ac)}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
 body{display:flex;flex-direction:column;height:100vh;height:100dvh}
@@ -45,12 +49,17 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 @media (max-width:520px){.who span{display:none}.acc .bt{padding:5px 9px}}
 @media (max-width:420px){.brand{display:none}}
 </style>
+<script>
+/* tema claro/escuro partilhado por todos os separadores */
+(function(){const K='fp_tema';let t='';try{t=localStorage.getItem(K)||''}catch(e){}if(t)document.documentElement.dataset.theme=t})();
+</script>
 </head>
 <body>
 <div class="bar">
   <div class="brand">Finanças <span>Pessoais</span></div>
   <nav id="tabs" role="tablist"></nav>
   <div class="sp"></div>
+  <button class="tema" id="btTema" type="button" title="Modo claro/escuro" aria-label="Modo claro/escuro"></button>
   <div class="acc" id="acc" hidden>
     <button class="bt" id="btEntrar" type="button">Entrar</button>
     <div class="who" id="who" hidden><div class="av" id="av"></div><span id="mail"></span></div>
@@ -126,6 +135,16 @@ abrir(location.hash.slice(1));
   $('btSair').onclick=async()=>{await Auth.signOut();mostrar(null)};
   Auth.onChange((ev,session)=>mostrar(session&&session.user));
   Auth.getSession().then(s=>mostrar(s&&s.user));
+})();
+
+/* botão de modo claro/escuro */
+(function(){const K='fp_tema',b=document.getElementById('btTema'),h=document.documentElement;
+  const atual=()=>h.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  const pinta=()=>{const d=atual()==='dark';b.textContent=d?'☀️':'🌙';b.title=d?'Mudar para modo claro':'Mudar para modo escuro'};
+  const envia=t=>document.querySelectorAll('.frames iframe').forEach(f=>{try{f.contentWindow.postMessage({tipo:'fp-tema',tema:t},'*')}catch(e){}});
+  b.addEventListener('click',()=>{const t=atual()==='dark'?'light':'dark';h.dataset.theme=t;try{localStorage.setItem(K,t)}catch(e){}pinta();envia(t)});
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',pinta);pinta();
+  document.getElementById('frames').addEventListener('load',e=>{if(h.dataset.theme)envia(h.dataset.theme)},true);
 })();
 </script>
 </body>

@@ -13,12 +13,15 @@ Estado: ✅ feito · 🔜 próxima · ⬜ por fazer
   3. Conflitos entre dispositivos: fica a versão mais recente; cada movimento guarda a sua última edição; movimentos apagados não reaparecem.
 
 ## Próximas versões
-- 🔜 **v0.6 — Extratos mais completos**
-  4. Adicionar movimentos à mão (ex.: dinheiro).
-  5. Edição em massa (selecionar vários e categorizar / atribuir pessoa).
+- ✅ **v0.6 — Extratos mais completos**
+  4. Movimentos à mão na conta 💵 Dinheiro, com saldo próprio (levantamentos entram, depósitos saem); linha marcada na tabela e editável (✏).
+  5. Edição em massa: selecionar vários e mudar categoria/referência, quem é, observações, ou apagar.
+  - Extra: modo claro/escuro (botão ao lado do email) e zoom a 85% no computador.
+- 🔜 **v0.6.x — Outros bancos** (à medida que chegam os extratos)
+  7. Leitores para outros bancos.
+- ⬜ **Para mais tarde**
   6. Dividir um movimento por várias categorias.
-  7. Leitores para outros bancos (precisa de extrato de exemplo de cada).
-  8. Importar PDF da CGD, se útil.
+  8. Importar o extrato mensal da CGD em PDF (meses antigos sem CSV).
 - ⬜ **v0.7 — Rendimentos**
   9. Tabelas de recorrentes e pontuais a funcionar (preenchimento à mão).
   10. Ler recibos de vencimento em PDF sem IA (precisa de recibo de exemplo).

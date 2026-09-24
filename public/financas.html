@@ -4,16 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Finanças</title>
+<script>try{const t=localStorage.getItem('fp_tema');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 :root{
   --bg:#f4f5f7;--card:#fff;--tx:#18202b;--mu:#667085;--bd:#e2e5ea;--soft:#f1f3f6;
   --ac:#2451d6;--ac2:#e9eefc;--ok:#0f7a55;--neg:#b93815;--warn:#a15c00;
   --c1:#0f7a55;--c2:#d1495b;--c3:#e08a1e;--c4:#2451d6;--c5:#7a4fd6;--c6:#1597a8;--c7:#8a5a44;--c8:#8c96a5;
   --r:14px;--sh:0 1px 2px rgba(16,24,40,.05),0 1px 8px rgba(16,24,40,.04);color-scheme:light}
-@media (prefers-color-scheme:dark){:root{
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
   --bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--soft:#1c222b;
   --ac:#7d9bff;--ac2:#1c2740;--ok:#3ecf95;--neg:#ff7d62;--warn:#f0b35a;
   --c1:#3ecf95;--c2:#ff6f86;--c3:#f5a543;--c4:#7d9bff;--c5:#b393ff;--c6:#4cc9d9;--c7:#c9937a;--c8:#7b8594;--sh:none;color-scheme:dark}}
+:root[data-theme=dark]{
+  --bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--soft:#1c222b;
+  --ac:#7d9bff;--ac2:#1c2740;--ok:#3ecf95;--neg:#ff7d62;--warn:#f0b35a;
+  --c1:#3ecf95;--c2:#ff6f86;--c3:#f5a543;--c4:#7d9bff;--c5:#b393ff;--c6:#4cc9d9;--c7:#c9937a;--c8:#7b8594;--sh:none;color-scheme:dark}
+@media (min-width:700px){html{zoom:.85}}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
 button,input,select{font:inherit;color:inherit}
@@ -50,6 +56,20 @@ main{padding:16px 0 40px}
 .btn.pri{background:var(--ac);border-color:var(--ac);color:#fff}
 .btn.sm{padding:4px 9px;font-size:12.5px;border-radius:8px}
 .btn.ic{padding:4px 7px}
+.bulk{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:8px 10px;margin-bottom:10px;border:1px solid var(--ac);border-radius:10px;background:var(--ac2);font-size:13.5px}
+.bulk[hidden]{display:none}
+.bulk select,.bulk input{border:1px solid var(--bd);border-radius:8px;background:var(--card);padding:5px 8px;font-size:13px;min-width:0;max-width:190px}
+.bulk .sp{flex:1}
+td.ck,th.ck{width:28px;padding-left:4px!important;padding-right:0!important}
+td.ck input,th.ck input{width:16px;height:16px;accent-color:var(--ac);cursor:pointer;vertical-align:middle}
+tr.selr td{background:color-mix(in srgb,var(--ac2) 70%,transparent)}
+tr.man td:first-child{box-shadow:inset 3px 0 0 var(--c3)}
+.bk-din{display:inline-flex;align-items:center;gap:4px;padding:1px 7px;border-radius:999px;background:color-mix(in srgb,var(--c3) 16%,transparent);color:var(--tx);font-size:12.5px;font-weight:600}
+.seg{display:inline-flex;border:1px solid var(--bd);border-radius:9px;overflow:hidden}
+.seg button{border:0;background:var(--soft);padding:7px 14px;cursor:pointer;font-weight:600;color:var(--mu)}
+.seg button.on.s{background:var(--c2);color:#fff}.seg button.on.e{background:var(--c1);color:#fff}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media (max-width:520px){.fr2{grid-template-columns:1fr}}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid3{display:grid;grid-template-columns:2fr 1fr;gap:16px}
 @media (max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
@@ -210,7 +230,7 @@ td input.ed.obs{width:170px}
       </div>
       <div id="impRes"></div><p class="note">Bancos suportados: <b>CGD</b> (CSV exportado em “Consultar saldos e movimentos”). Os movimentos já importados são reconhecidos e não ficam duplicados. Com sessão iniciada, os dados ficam guardados na sua conta e sincronizam entre dispositivos; sem sessão, ficam só neste browser.</p>
     </div>
-    <div class="card"><h3>Movimentos <small id="extSub"></small><span class="r"><button class="btn sm" data-todo="Adicionar movimento">＋ Movimento</button><button class="btn sm" id="btRegras">⚙ Regras</button><button class="btn sm" id="btPessoas">👥 Pessoas</button><button class="btn sm" id="btExp">⤓ Exportar</button><button class="btn sm" id="btImps">🗂 Importações</button></span></h3>
+    <div class="card"><h3>Movimentos <small id="extSub"></small><span class="r"><button class="btn sm" id="btMov" title="Adicionar um movimento em dinheiro">＋ Movimento</button><button class="btn sm" id="btRegras">⚙ Regras</button><button class="btn sm" id="btPessoas">👥 Pessoas</button><button class="btn sm" id="btExp">⤓ Exportar</button><button class="btn sm" id="btImps">🗂 Importações</button></span></h3>
       <div class="filt">
         <input type="search" id="fQ" placeholder="Pesquisar descrição, referência, detalhes…" aria-label="Pesquisar">
         <select id="fBanco" aria-label="Banco"></select>
@@ -218,6 +238,10 @@ td input.ed.obs{width:170px}
         <select id="fQuem" aria-label="Quem é"></select>
         <select id="fTipo" aria-label="Tipo"><option value="">Entradas e saídas</option><option value="e">Só entradas</option><option value="s">Só saídas</option></select>
       </div>
+      <div class="bulk" id="bulk" hidden><b id="bkN"></b>
+        <select id="bkCat" aria-label="Categoria"></select><select id="bkRef" aria-label="Referência" disabled><option value="">(manter referência)</option></select>
+        <input id="bkQuem" list="dlQuem" placeholder="Quem é (manter)" aria-label="Quem é"><input id="bkObs" placeholder="Observações (manter)" aria-label="Observações">
+        <button class="btn sm pri" id="bkApl" type="button">Aplicar</button><span class="sp"></span><button class="btn sm" id="bkDel" type="button">🗑 Apagar</button><button class="btn sm" id="bkClr" type="button">Limpar seleção</button></div>
       <div class="tw" id="extTable"></div>
     </div>
   </section>
@@ -261,6 +285,22 @@ td input.ed.obs{width:170px}
  <div class="fld"><label>Classificar como</label><div id="nrCat" style="font-weight:700"></div></div>
  <p class="note" id="nrCnt"></p>
  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button class="btn" id="nrNao">Só este movimento</button><button class="btn pri" id="nrSim">Criar regra</button></div></div></div></div>
+<div class="modal" id="mMov" hidden><div class="sheet"><div class="mh"><h3 id="mvTit">Novo movimento em dinheiro</h3><button class="mx" type="button" data-close="mMov" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
+ <p class="note" style="margin:0 0 12px">Fica na conta <span class="bk-din">💵 Dinheiro</span>, com saldo próprio. Os levantamentos (Banco › Levantamentos) entram como entradas nesta conta e os depósitos (Banco › Depósitos) como saídas.</p>
+ <div class="fr2">
+  <div class="fld"><label for="mvData">Data</label><input type="date" id="mvData"></div>
+  <div class="fld"><label>Tipo e valor</label><div style="display:flex;gap:8px"><div class="seg" id="mvTipo"><button type="button" class="s on" data-t="s">Saída</button><button type="button" class="e" data-t="e">Entrada</button></div><input id="mvValor" inputmode="decimal" placeholder="0,00 €" style="flex:1;min-width:0"></div></div>
+ </div>
+ <div class="fld"><label for="mvDesc">Descrição</label><input id="mvDesc" placeholder="Ex.: Café, feira, gorjeta…"></div>
+ <div class="fr2">
+  <div class="fld"><label for="mvCat">Categoria</label><select id="mvCat"></select></div>
+  <div class="fld"><label for="mvRef">Referência</label><select id="mvRef"></select></div>
+  <div class="fld"><label for="mvQuem">Quem é</label><input id="mvQuem" list="dlQuem"></div>
+  <div class="fld"><label for="mvObs">Observações</label><input id="mvObs"></div>
+ </div>
+ <p class="note" style="margin:4px 0 0">Sem categoria, as regras automáticas tentam classificar pela descrição.</p>
+ <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap"><button class="btn" id="mvDel" type="button">🗑 Apagar</button><span style="flex:1"></span><button class="btn pri" id="mvOk" type="button">Guardar</button></div>
+</div></div></div>
 <div class="modal" id="mImps" hidden><div class="sheet"><div class="mh"><h3>Importações</h3><button class="mx" type="button" data-close="mImps" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd"><div id="impsList"></div><div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end"><button class="btn" id="btClearAll">Apagar todos os movimentos</button></div></div></div></div>
 
 <script>
@@ -316,7 +356,9 @@ const REGRAS_BASE=[
 // Ordem de prioridade corrigida: "GALP ENERGIA" tem de vir antes de "GALP" (combustível)
 (function(){const i=REGRAS_BASE.findIndex(r=>r[0]==='GALP ENERGIA'),j=REGRAS_BASE.findIndex(r=>r[0]==='GALP');if(i>j){const x=REGRAS_BASE.splice(i,1)[0];REGRAS_BASE.splice(j,0,x)}})();
 const novaRegraBase=(r,i)=>({id:'rb'+i,txt:r[0],modo:r[1],tipo:r[2],cat:r[3],ref:r[4],ativo:true,predef:true});
-const isInterna=m=>m.cat==='Banco'&&m.ref==='Troca entre contas'; // não conta como entrada/saída
+const INTERNAS=['Troca entre contas','Levantamentos','Depósitos'];
+const isInterna=m=>m.cat==='Banco'&&INTERNAS.includes(m.ref); // movimentos entre contas (incl. Dinheiro): não contam como entrada/saída
+const DIN='Dinheiro';
 
 /* ================= armazenamento: browser + conta (Supabase) ================= */
 const KEY='financas_v1';
@@ -369,7 +411,7 @@ const LEITORES=[{
   }}];
 function validar(r){let erros=0;for(let i=0;i<r.mov.length-1;i++){const a=r.mov[i],b=r.mov[i+1];if(a.saldo==null||b.saldo==null)continue;if(Math.abs(r2(a.saldo-a.valor)-b.saldo)>0.011)erros++}
   const fin=r.saldoFinal!=null&&r.mov.length?Math.abs(r.mov[0].saldo-r.saldoFinal)<0.011:null;return {erros,fin}}
-const chave=m=>[m.banco,m.conta,m.dm,m.dv,m.desc,m.valor.toFixed(2),m.saldo==null?'':m.saldo.toFixed(2)].join('|');
+const chave=m=>m.k?'man|'+m.k:[m.banco,m.conta,m.dm,m.dv,m.desc,m.valor.toFixed(2),m.saldo==null?'':m.saldo.toFixed(2)].join('|');
 
 /* ================= regras (categoria) ================= */
 function corresponde(r,m){
@@ -441,10 +483,20 @@ const fmtD=s=>s?s.split('-').reverse().join('/'):'—';
 const val=v=>`<span class="${v<0?'neg':'pos'}">${E(v)}</span>`;
 const kpi=(l,v,s,cls)=>`<div class="kpi ${cls||''}"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`;
 const emptyTbl=(cols,msg,sub)=>`<table class="t"><thead><tr>${cols.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody><tr><td colspan="${cols.length}"><div class="empty"><b>${msg}</b>${sub||''}</div></td></tr></tbody></table>`;
-const ordena=a=>a.slice().sort((x,y)=>x.dm<y.dm?1:x.dm>y.dm?-1:(x.imp===y.imp?x.ord-y.ord:(x.imp<y.imp?1:-1)));
+const ordena=a=>a.slice().sort((x,y)=>x.dm<y.dm?1:x.dm>y.dm?-1:(x.man||y.man)?((y.c||0)-(x.c||0)):(x.imp===y.imp?x.ord-y.ord:(x.imp<y.imp?1:-1)));
+/* conta Dinheiro: movimentos à mão + levantamentos (entrada) − depósitos (saída), por ordem de data */
+function dinheiro(){const ev=[];DB.mov.forEach(m=>{
+    if(m.banco===DIN)ev.push({m,v:m.valor,dm:m.dm,o:1,c:m.c||0});
+    else if(m.cat==='Banco'&&m.ref==='Levantamentos')ev.push({v:-m.valor,dm:m.dm,o:0,c:0});
+    else if(m.cat==='Banco'&&m.ref==='Depósitos')ev.push({v:-m.valor,dm:m.dm,o:0,c:0})});
+  ev.sort((a,b)=>a.dm<b.dm?-1:a.dm>b.dm?1:(a.o-b.o)||(a.c-b.c));let s=0;const por=new Map(),hist=[];
+  ev.forEach(e=>{s=r2(s+e.v);hist.push([e.dm,s]);if(e.m)por.set(e.m.id,s)});
+  const ate=d=>{let v=null;for(const [x,y] of hist){if(x<=d)v=y;else break}return v};
+  return {por,ate,tem:ev.length>0}}
+let SEL=new Set();
 const CORES=['var(--c4)','var(--c1)','var(--c3)','var(--c2)','var(--c5)','var(--c6)','var(--c7)','#b08900','#5b8def','#c05fa0','#2f9e6e'];
 const corCat=n=>{const i=DB.cats.findIndex(c=>c.nome===n);return i<0?'var(--c8)':CORES[i%CORES.length]};
-const BCOR={CGD:'#1d4f91'};
+const BCOR={CGD:'#1d4f91',Dinheiro:'#b7791f'};
 function donut(segs){const tot=segs.reduce((a,s)=>a+s.v,0)||1,R0=58,C=2*Math.PI*R0;let off=0;
   const arcs=segs.map(s=>{const L=s.v/tot*C;const a=`<circle r="${R0}" cx="75" cy="75" fill="none" stroke="${s.c}" stroke-width="24" stroke-dasharray="${L} ${C-L}" stroke-dashoffset="${-off}" transform="rotate(-90 75 75)"/>`;off+=L;return a}).join('');
   return `<div class="donut"><svg width="150" height="150" viewBox="0 0 150 150">${arcs}<text x="75" y="72" text-anchor="middle" font-size="11" fill="var(--mu)">total</text><text x="75" y="90" text-anchor="middle" font-size="14" font-weight="700" fill="var(--tx)">${E(tot)}</text></svg>
@@ -456,7 +508,7 @@ function bars(data){const W=560,H=210,pl=48,pb=24,pt=8,mx=Math.max(1,...data.fla
 function mesesGraf(){const out=[];if(P.m==='ano'){const y=P.d.getFullYear();for(let i=0;i<12;i++)out.push([y,i]);return out}
   const end=P.m==='int'&&P.fim?new Date(+P.fim.slice(0,4),+P.fim.slice(5,7)-1,1):P.d;
   for(let i=5;i>=0;i--){const d=new Date(end.getFullYear(),end.getMonth()-i,1);out.push([d.getFullYear(),d.getMonth()])}return out}
-const EXT_COLS=[['Data mov.'],['Data valor'],['Descrição'],['Valor','num'],['Saldo','num'],['Categoria'],['Referência'],['Detalhes'],['Observações'],['Quem é'],['Banco'],['']];
+const EXT_COLS=[['<input type="checkbox" id="selAll" aria-label="Selecionar todos">','ck'],['Data mov.'],['Data valor'],['Descrição'],['Valor','num'],['Saldo','num'],['Categoria'],['Referência'],['Detalhes'],['Observações'],['Quem é'],['Banco'],['']];
 const REC_COLS=[['Entidade pagadora'],['Descrição'],['Categoria'],['Pessoa'],['Periodicidade'],['Início'],['Fim'],['Pagamento'],['Bruto','num'],['IRS retido','num'],['SS','num'],['Líquido','num'],['Recibo'],['']];
 const PON_COLS=[['Data'],['Entidade pagadora'],['Descrição'],['Categoria'],['Pessoa'],['Bruto','num'],['IRS retido','num'],['SS','num'],['Líquido','num'],['Documento'],['']];
 const uniq=a=>[...new Set(a.filter(Boolean))].sort((x,y)=>x.localeCompare(y,'pt'));
@@ -477,13 +529,14 @@ function render(){
 
   /* ---- Início ---- */
   $('#homeKpis').innerHTML=kpi('Entradas',E(ent),`${perC.filter(m=>m.valor>0).length} movimentos`,'pos')+kpi('Saídas',E(sai),`${perC.filter(m=>m.valor<0).length} movimentos`,'neg')
-    +kpi('Saldo do período',E(ent-sai),'entradas − saídas (sem trocas entre contas)',ent-sai>=0?'pos':'neg')+kpi('Taxa de poupança',ent>0?((ent-sai)/ent*100).toLocaleString('pt-PT',{maximumFractionDigits:1})+' %':'—','do que entrou no período');
+    +kpi('Saldo do período',E(ent-sai),'entradas − saídas (sem movimentos entre contas)',ent-sai>=0?'pos':'neg')+kpi('Taxa de poupança',ent>0?((ent-sai)/ent*100).toLocaleString('pt-PT',{maximumFractionDigits:1})+' %':'—','do que entrou no período');
   const bd=mesesGraf().map(([y,m])=>{const p=`${y}-${pad(m+1)}`,ms=all.filter(x=>x.dm.startsWith(p)&&!isInterna(x));return [MES3[m],ms.filter(x=>x.valor>0).reduce((s,x)=>s+x.valor,0),-ms.filter(x=>x.valor<0).reduce((s,x)=>s+x.valor,0)]});
   $('#barsSub').textContent=P.m==='ano'?`${P.d.getFullYear()}`:'últimos 6 meses';
   $('#homeBars').innerHTML=all.length?bars(bd):'<div class="empty"><b>Sem dados</b>Importe extratos para ver a evolução.</div>';
   const contas={};ordena(all.filter(m=>m.dm<=b&&m.saldo!=null)).forEach(m=>{const k=m.banco+'|'+m.conta;if(!contas[k])contas[k]=m});
-  const ks=Object.keys(contas),tb=ks.reduce((s,k)=>s+contas[k].saldo,0);
-  $('#homeBanks').innerHTML=ks.length?ks.map(k=>{const m=contas[k];return `<li><div class="bi" style="background:${BCOR[m.banco]||'#555'}">${esc(m.banco.slice(0,3))}</div><div class="bn">${esc(m.banco)}<small>Conta ${esc(m.conta)} · saldo a ${fmtD(m.dm)}</small></div><b>${E(m.saldo)}</b></li>`}).join('')+(ks.length>1?`<li class="tot"><div class="bn"><b>Total</b></div><b>${E(tb)}</b></li>`:'')
+  delete contas[DIN+'|'];const DN=dinheiro(),dnS=DN.tem?DN.ate(b):null;
+  const ks=Object.keys(contas),tb=ks.reduce((s,k)=>s+contas[k].saldo,0)+(dnS||0);
+  $('#homeBanks').innerHTML=ks.length||dnS!=null?ks.map(k=>{const m=contas[k];return `<li><div class="bi" style="background:${BCOR[m.banco]||'#555'}">${esc(m.banco.slice(0,3))}</div><div class="bn">${esc(m.banco)}<small>Conta ${esc(m.conta)} · saldo a ${fmtD(m.dm)}</small></div><b>${E(m.saldo)}</b></li>`}).join('')+(dnS!=null?`<li><div class="bi" style="background:${BCOR[DIN]}">💵</div><div class="bn">Dinheiro<small>movimentos à mão + levantamentos</small></div><b>${E(dnS)}</b></li>`:'')+(ks.length+(dnS!=null)>1?`<li class="tot"><div class="bn"><b>Total</b></div><b>${E(tb)}</b></li>`:'')
     :'<li><div class="empty" style="width:100%"><b>Sem bancos</b>Os bancos aparecem ao importar extratos.</div></li>';
   const porCat={};perC.filter(m=>m.valor<0).forEach(m=>{const c=m.cat||'Por categorizar';porCat[c]=(porCat[c]||0)-m.valor});
   const segs=Object.entries(porCat).sort((x,y)=>y[1]-x[1]).map(([l,v])=>({l,v,c:l==='Por categorizar'?'var(--c8)':corCat(l)}));
@@ -502,16 +555,20 @@ function render(){
   $$('[data-cnt="ext"]').forEach(x=>x.textContent=unc.length||'');
   $('#extSub').textContent=all.length?`${rows.length} de ${per.length} no período · ${unc.length} por categorizar · ${all.length} no total`:'';
   const rc=rows.filter(m=>!isInterna(m)),re=rc.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0),rs=-rc.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0);
-  $('#extTable').innerHTML=rows.length?`<table class="t"><thead><tr>${EXT_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map(m=>`<tr data-id="${m.id}">
-    <td>${fmtD(m.dm)}</td><td>${fmtD(m.dv)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td class="num">${m.saldo==null?'—':E(m.saldo)}</td>
+  const ids=new Set(rows.map(m=>m.id));SEL=new Set([...SEL].filter(i=>ids.has(i)));const DS=dinheiro().por;
+  $('#extTable').innerHTML=rows.length?`<table class="t"><thead><tr>${EXT_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map(m=>`<tr data-id="${m.id}" class="${m.man?'man':''}${SEL.has(m.id)?' selr':''}">
+    <td class="ck"><input type="checkbox" class="sel"${SEL.has(m.id)?' checked':''} aria-label="Selecionar"></td>
+    <td>${fmtD(m.dm)}</td><td>${fmtD(m.dv)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td class="num">${m.man?(DS.has(m.id)?E(DS.get(m.id)):'—'):m.saldo==null?'—':E(m.saldo)}</td>
     <td><select class="ed${m.cat?'':' unc'}" data-f="cat">${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':''}</td>
     <td><select class="ed" data-f="ref"${m.cat?'':' disabled'}>${refOpts(m.cat,m.ref)}</select></td>
     <td class="muted" style="white-space:normal;min-width:130px;font-size:12.5px">${esc(m.det)}</td>
     <td><input class="ed obs" data-f="obs" value="${esc(m.obs)}" placeholder="…"></td>
     <td><input class="ed" data-f="quem" list="dlQuem" value="${esc(m.quem)}" style="width:110px"></td>
-    <td>${esc(m.banco)}</td><td><button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></td></tr>`).join('')}
-    <tr class="tot"><td colspan="3">Total (filtrado)</td><td class="num">${val(re-rs)}</td><td colspan="8" class="muted" style="font-weight:400">Entradas ${E(re)} · Saídas ${E(rs)}${rows.some(isInterna)?' · trocas entre contas excluídas':''}</td></tr></tbody></table>`
-    :emptyTbl(EXT_COLS,all.length?'Nenhum movimento neste período/filtro':'Ainda não há movimentos',all.length?'Mude o período no topo ou limpe os filtros.':'Importe um extrato acima.');
+    <td>${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td style="white-space:nowrap">${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button> `:''}<button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></td></tr>`).join('')}
+    <tr class="tot"><td colspan="4">Total (filtrado)</td><td class="num">${val(re-rs)}</td><td colspan="8" class="muted" style="font-weight:400">Entradas ${E(re)} · Saídas ${E(rs)}${rows.some(isInterna)?' · movimentos entre contas (trocas, levantamentos, depósitos) excluídos':''}</td></tr></tbody></table>`
+    :emptyTbl(EXT_COLS,all.length?'Nenhum movimento neste período/filtro':'Ainda não há movimentos',all.length?'Mude o período no topo ou limpe os filtros.':'Importe um extrato acima ou adicione um movimento em dinheiro.');
+  const sa=$('#selAll');if(sa){sa.checked=rows.length>0&&SEL.size===rows.length;sa.indeterminate=SEL.size>0&&SEL.size<rows.length}
+  bulkBar();
 
   /* ---- Rendimentos (próxima etapa) ---- */
   $('#renKpis').innerHTML=kpi('Recorrentes (líquido/mês)',E(0),'0 fontes')+kpi('Pontuais no período',E(0),'0 registos')+kpi('Total bruto no ano',E(0),'recorrentes + pontuais')+kpi('IRS retido no ano',E(0),'para comparar com a declaração');
@@ -593,11 +650,58 @@ $('#nrSim').addEventListener('click',()=>{if(!NR)return;const txt=$('#nrTxt').va
   DB.regras.unshift({id:uid('r'),txt,modo:$('#nrModo').value,tipo:$('#nrTipo').value,cat:NR.cat,ref:NR.ref,ativo:true,predef:false});
   const n=aplicaRegras();save();render();$('#mNovaRegra').hidden=true;NR=null;toast(`Regra criada · ${n} movimento(s) atualizados`)});
 
+/* ================= edição em massa ================= */
+let bkAberta=false;
+function bulkBar(){const n=SEL.size,b=$('#bulk');b.hidden=!n;if(!n){bkAberta=false;return}
+  $('#bkN').textContent=n===1?'1 selecionado':`${n} selecionados`;
+  if(!bkAberta){bkAberta=true;$('#bkCat').innerHTML='<option value="">(manter categoria)</option>'+DB.cats.map(c=>`<option>${esc(c.nome)}</option>`).join('')+'<option value="__none">— Por categorizar —</option>';
+    $('#bkRef').innerHTML='<option value="">(manter referência)</option>';$('#bkRef').disabled=true;$('#bkQuem').value='';$('#bkObs').value=''}}
+$('#bkCat').addEventListener('change',()=>{const v=$('#bkCat').value,c=DB.cats.find(x=>x.nome===v);
+  $('#bkRef').innerHTML=c?'<option value="">— sem referência —</option>'+c.refs.map(r=>`<option>${esc(r)}</option>`).join(''):'<option value="">(manter referência)</option>';$('#bkRef').disabled=!c});
+$('#bkApl').addEventListener('click',()=>{const ms=DB.mov.filter(m=>SEL.has(m.id));if(!ms.length)return;
+  const cat=$('#bkCat').value,ref=$('#bkRef').value,quem=$('#bkQuem').value.trim(),obs=$('#bkObs').value.trim();
+  if(!cat&&!quem&&!obs){toast('Escolha pelo menos uma alteração');return}
+  const now=Date.now();ms.forEach(m=>{m.u=now;
+    if(cat==='__none'){m.cat='';m.ref='';m.catSrc=''}else if(cat){m.cat=cat;m.ref=ref;m.catSrc='manual'}
+    if(quem){m.quem=quem;m.quemMan=true}if(obs)m.obs=obs});
+  if(cat==='__none')aplicaRegras(ms);
+  SEL=new Set();bkAberta=false;save();render();toast(`${ms.length} movimento(s) atualizados`)});
+$('#bkDel').addEventListener('click',()=>{const ms=DB.mov.filter(m=>SEL.has(m.id));if(!ms.length)return;
+  if(!confirm(`Apagar ${ms.length} movimento(s)? Esta ação não se pode desfazer.`))return;apaga(ms);SEL=new Set();save();render();toast(`${ms.length} movimento(s) apagados`)});
+$('#bkClr').addEventListener('click',()=>{SEL=new Set();render()});
+
+/* ================= movimentos à mão (conta Dinheiro) ================= */
+let MV=null;
+const hoje=()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
+const fmtN=v=>v?Math.abs(v).toFixed(2).replace('.',','):'';
+function mvTipo(t){$$('#mvTipo button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
+function mvRefs(sel){$('#mvRef').innerHTML=refOpts($('#mvCat').value,sel);$('#mvRef').disabled=!$('#mvCat').value}
+function abreMov(m){MV=m||null;const [a,b]=range(),h=hoje();
+  $('#mvTit').textContent=m?'Editar movimento em dinheiro':'Novo movimento em dinheiro';
+  $('#mvData').value=m?m.dm:(h>=a&&h<=b?h:b<'9999'?b:h);mvTipo(m&&m.valor>0?'e':'s');$('#mvValor').value=m?fmtN(m.valor):'';
+  $('#mvDesc').value=m?m.desc:'';$('#mvCat').innerHTML=catOpts(m?m.cat:'');mvRefs(m?m.ref:'');
+  $('#mvQuem').value=m?m.quem:'';$('#mvObs').value=m?m.obs:'';$('#mvDel').style.display=m?'':'none';
+  $('#mMov').hidden=false;(m?$('#mvValor'):$('#mvValor')).focus()}
+$('#btMov').addEventListener('click',()=>abreMov(null));
+$('#mvTipo').addEventListener('click',e=>{const b=e.target.closest('button');if(b)mvTipo(b.dataset.t)});
+$('#mvCat').addEventListener('change',()=>mvRefs(''));
+$('#mvOk').addEventListener('click',()=>{
+  const dm=$('#mvData').value,desc=$('#mvDesc').value.replace(/\s+/g,' ').trim(),vs=$('#mvValor').value.replace(/[€\s]/g,''),v=Math.abs(/^\d+(\.\d{1,2})?$/.test(vs)?parseFloat(vs):num(vs)),e=$('#mvTipo .on').dataset.t==='e';
+  if(!dm){toast('Indique a data');return}if(!v){toast('Indique o valor');$('#mvValor').focus();return}if(!desc){toast('Escreva uma descrição');$('#mvDesc').focus();return}
+  const cat=$('#mvCat').value,ref=$('#mvRef').value,quem=$('#mvQuem').value.trim(),obs=$('#mvObs').value.trim(),now=Date.now();
+  const m=MV||{id:'m'+(++DB.seq),k:uid('k'),man:true,banco:DIN,conta:'',saldo:null,det:'',ord:0,c:now};
+  Object.assign(m,{dm,dv:dm,desc,valor:r2(e?v:-v),cat,ref:cat?ref:'',catSrc:cat?'manual':'',quem,quemMan:!!quem,obs,u:now});
+  if(!MV)DB.mov.push(m);if(!cat)aplicaRegras([m]);if(!quem)aplicaPessoas([m]);
+  $('#mMov').hidden=true;save();render();toast(MV?'Movimento atualizado':'Movimento adicionado');MV=null});
+$('#mvDel').addEventListener('click',()=>{if(!MV)return;if(!confirm(`Apagar o movimento "${MV.desc}" (${E(MV.valor)})?`))return;apaga([MV]);MV=null;$('#mMov').hidden=true;save();render()});
+$('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();$('#mvOk').click()}});
+
 /* ================= eventos ================= */
 function go(tab){$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));window.scrollTo({top:0})}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel]');if(!t)return;
+  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit]');if(!t)return;
   const d=t.dataset;
+  if(d.edit){abreMov(DB.mov.find(x=>x.id===d.edit));return}
   if(d.tab){go(d.tab);return}
   if(d.go){go(d.go);return}
   if(d.close){$('#'+d.close).hidden=true;return}
@@ -616,6 +720,9 @@ document.addEventListener('click',e=>{
 });
 // edição na tabela de movimentos
 document.addEventListener('change',e=>{const el=e.target;
+  if(el.id==='selAll'){const ids=$$('#extTable tr[data-id]').map(r=>r.dataset.id);SEL=el.checked?new Set(ids):new Set();render();return}
+  if(el.classList.contains('sel')){const id=el.closest('tr').dataset.id;el.checked?SEL.add(id):SEL.delete(id);el.closest('tr').classList.toggle('selr',el.checked);
+    const sa=$('#selAll'),n=$$('#extTable tr[data-id]').length;if(sa){sa.checked=SEL.size===n;sa.indeterminate=SEL.size>0&&SEL.size<n}bulkBar();return}
   const tr=el.closest('tr[data-id]');
   if(tr&&el.classList.contains('ed')){const m=DB.mov.find(x=>x.id===tr.dataset.id);if(!m)return;const f=el.dataset.f,v=el.value.trim();m.u=Date.now();
     if(f==='cat'){m.cat=v;m.ref='';if(v){m.catSrc='manual'}else{m.catSrc='';aplicaRegras([m])}save();render();
@@ -738,6 +845,14 @@ obterCliente().then(sb=>{SY.sb=sb;if(!sb){setSt('local');return}setSt('local');
 aplicaRegras();aplicaPessoas();saveLocal();
 if(DB.mov.length){const l=DB.mov.map(m=>m.dm).sort().pop();P.d=new Date(+l.slice(0,4),+l.slice(5,7)-1,1)}
 perLabel();render();
+
+/* tema definido pela página principal (botão ☀️/🌙) */
+(function(){const ap=t=>{if(t==='dark'||t==='light')document.documentElement.dataset.theme=t};
+  try{ap(localStorage.getItem('fp_tema'))}catch(e){}
+  addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-tema')ap(e.data.tema)});
+  addEventListener('storage',e=>{if(e.key==='fp_tema')ap(e.newValue)});
+  if(window.parent!==window){const b=document.getElementById('themeBtn');if(b)b.style.display='none'}
+})();
 </script>
 </body>
 </html>
