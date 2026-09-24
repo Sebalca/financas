@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Simulador Salarial 2026</title>
+<style>
+:root{
+  --bg:#f4f5f7;--card:#fff;--tx:#18202b;--mu:#667085;--bd:#e2e5ea;--soft:#f1f3f6;
+  --ac:#2451d6;--ac2:#e9eefc;--ok:#0f7a55;--neg:#b93815;--warn:#a15c00;
+  --c1:#0f7a55;--c2:#d1495b;--c3:#e08a1e;--c4:#2451d6;--c5:#7a4fd6;--c6:#1597a8;--c7:#8a5a44;--c8:#8c96a5;
+  --r:14px;--sh:0 1px 2px rgba(16,24,40,.05),0 1px 8px rgba(16,24,40,.04);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--soft:#1c222b;
+  --ac:#7d9bff;--ac2:#1c2740;--ok:#3ecf95;--neg:#ff7d62;--warn:#f0b35a;
+  --c1:#3ecf95;--c2:#ff6f86;--c3:#f5a543;--c4:#7d9bff;--c5:#b393ff;--c6:#4cc9d9;--c7:#c9937a;--c8:#7b8594;
+  --sh:none;color-scheme:dark}}
+:root[data-theme=dark]{
+  --bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--soft:#1c222b;
+  --ac:#7d9bff;--ac2:#1c2740;--ok:#3ecf95;--neg:#ff7d62;--warn:#f0b35a;
+  --c1:#3ecf95;--c2:#ff6f86;--c3:#f5a543;--c4:#7d9bff;--c5:#b393ff;--c6:#4cc9d9;--c7:#c9937a;--c8:#7b8594;
+  --sh:none;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1360px;margin:0 auto;padding:0 16px}
+.stk{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--bd);margin-bottom:16px;box-shadow:0 2px 10px rgba(16,24,40,.04)}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 8px}
+.hk{margin-left:auto;align-self:center;padding:0 10px;font-size:13px;color:var(--mu);white-space:nowrap}
+.hk b{color:var(--ok);font-size:15px;font-variant-numeric:tabular-nums}
+@media (max-width:640px){header.top{padding:8px 0 4px}header h1{font-size:17px}header p{display:none}.hact .btn{padding:6px 9px;font-size:13px}nav.tabs{width:100%;margin:4px 0 8px;flex-wrap:wrap}nav.tabs button{padding:7px 10px;font-size:14px}.hk{flex-basis:100%;text-align:center;padding:4px 0 2px}}
+@media print{.stk{position:static;box-shadow:none;border:0}.hk{display:none}}
+header h1{font-size:20px;margin:0;letter-spacing:-.01em}
+header h1 span{color:var(--ac)}
+header p{margin:2px 0 0;color:var(--mu);font-size:13px}
+.hact{display:flex;gap:8px}
+.btn{border:1px solid var(--bd);background:var(--card);border-radius:10px;padding:8px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;max-width:100%}
+#applyBest{white-space:normal;text-align:left}
+.btn:hover{border-color:var(--ac)}
+.btn.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn b.badge{background:var(--ac);color:#fff;border-radius:999px;padding:0 7px;font-size:12px;min-width:20px;text-align:center}
+nav.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:5px;width:100%;margin:4px 0 12px;box-shadow:var(--sh);align-items:center}
+nav.tabs button{border:0;background:transparent;border-radius:8px;padding:9px 14px;cursor:pointer;font-weight:600;color:var(--mu)}
+nav.tabs button.on{background:var(--ac);color:#fff}
+.grid>*,.two>*,.kpis>*{min-width:0}
+.panel{display:none}.panel.on{display:block}
+.grid{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:18px;align-items:start}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+html{scroll-padding-top:calc(var(--hh,120px) + 8px)}
+@media (min-width:981px){.inputs{position:sticky;top:calc(var(--hh,120px) + 12px);max-height:calc(100vh - var(--hh,120px) - 24px);overflow:auto;padding-right:4px;scrollbar-width:thin}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-bottom:16px}
+.card h3{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:6px}
+.card h3 small{font-weight:400;color:var(--mu);margin-left:auto;font-size:12px}
+details.grp{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:12px;box-shadow:var(--sh)}
+details.grp>summary{cursor:pointer;padding:12px 16px;font-weight:650;list-style:none;display:flex;align-items:center;gap:6px}
+details.grp>summary::-webkit-details-marker{display:none}
+details.grp>summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg);transition:.15s}
+details.grp[open]>summary::after{transform:rotate(-135deg)}
+.flds{padding:2px 16px 14px;display:grid;gap:10px}
+.fld label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mu);margin-bottom:4px}
+.fld small{display:block;color:var(--mu);font-size:12px;margin-top:3px}
+.inp{display:flex;align-items:center;border:1px solid var(--bd);border-radius:10px;background:var(--soft);overflow:hidden}
+.inp:focus-within,select:focus{border-color:var(--ac);outline:2px solid var(--ac2)}
+.inp input{border:0;background:transparent;padding:9px 10px;width:100%;min-width:0;outline:0;font-variant-numeric:tabular-nums;font-size:16px}
+.inp .u{padding:0 10px;color:var(--mu);font-size:13px;white-space:nowrap}
+.inp .ut{border:0;border-left:1px solid var(--bd);background:transparent;color:var(--ac);font-size:13px;font-weight:600;padding:0 10px;align-self:stretch;cursor:pointer;white-space:nowrap}
+.inp .ut::after{content:" ⇄";opacity:.6}
+.inp .ut:hover{background:var(--ac2)}
+.sync{font-size:12px;color:var(--mu);background:var(--ac2);border-radius:10px;padding:8px 10px;margin:0 0 12px}
+.lk{color:var(--ac);font-size:11px;opacity:.75;margin-left:-2px}
+.seg{display:inline-flex;margin-left:auto;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:2px 9px;font-size:12px;cursor:pointer;color:var(--mu)}
+.seg button.on{background:var(--ac);color:#fff}
+.fld .hint{display:block;font-size:12px;color:var(--mu);margin-top:4px;min-height:1em}
+.fld .hint b{color:var(--tx)}
+select{width:100%;border:1px solid var(--bd);border-radius:10px;background:var(--soft);padding:9px 10px;font-size:15px}
+.fld.chk{display:flex;align-items:center;gap:6px}
+.fld.chk label{display:flex;align-items:center;gap:8px;color:var(--tx);font-size:14px;margin:0;cursor:pointer}
+.fld.chk input{width:18px;height:18px;accent-color:var(--ac)}
+.hid{display:none!important}
+.ib{flex:none;width:18px;height:18px;border-radius:50%;border:1px solid var(--ac);background:var(--ac2);color:var(--ac);font:italic 700 11px/16px Georgia,serif;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+.ib::before{content:"i"}
+.ib:hover{background:var(--ac);color:#fff}
+.inv .row{display:flex;gap:8px;flex-wrap:wrap}
+.inv .row .inp{flex:1 1 170px}
+.inv select{margin-bottom:8px}
+.inv .msg{font-size:12px;color:var(--mu);margin-top:6px;min-height:1em}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+@media (max-width:1180px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:14px;box-shadow:var(--sh);min-width:0}
+.kpi .l{font-size:12px;color:var(--mu);display:flex;gap:6px;align-items:center}
+.kpi .v{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:4px 0 2px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kpi .s{font-size:12px;color:var(--mu)}
+.kpi.hl{border-color:var(--ok)}.kpi.hl .v{color:var(--ok)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
+table.t{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+table.t th,table.t td{padding:7px 8px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap}
+table.t th:first-child,table.t td:first-child{text-align:left;white-space:normal;min-width:170px}
+table.t thead th{font-size:12px;color:var(--mu);font-weight:600;vertical-align:bottom}
+table.t td .lb{display:inline-flex;align-items:center;gap:6px}
+table.t tr.tot td{font-weight:700;border-top:2px solid var(--bd)}
+table.t tr.sub td{color:var(--mu);font-size:13px}
+table.t tr.big td{font-weight:800;font-size:16px;color:var(--ok);background:var(--soft)}
+table.t tr.neg td:not(:first-child){color:var(--neg)}
+table.t tr.sec td{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu);font-weight:700;padding-top:14px;background:transparent}
+table.t td.pc{color:var(--mu);font-size:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.donut{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.donut svg{flex:none}
+.lg{list-style:none;margin:0;padding:0;flex:1;min-width:200px;font-size:13px}
+.lg li{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dashed var(--bd)}
+.lg li:last-child{border:0}
+.lg i{width:10px;height:10px;border-radius:3px;flex:none}
+.lg span{flex:1}
+.lg b{font-variant-numeric:tabular-nums}
+.lg em{font-style:normal;color:var(--mu);width:48px;text-align:right;font-variant-numeric:tabular-nums}
+.lc{position:relative}
+.lc svg{width:100%;height:auto;display:block}
+.lc .tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:12px;box-shadow:0 4px 18px rgba(0,0,0,.12);display:none;white-space:nowrap;z-index:2}
+.leg{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--mu);margin-top:6px}
+.leg i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.stack{display:flex;height:26px;border-radius:8px;overflow:hidden;margin:8px 0}
+.stack div{height:100%}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.note{font-size:12px;color:var(--mu);margin:8px 0 0}
+.warn{color:var(--warn)}
+.pill{display:inline-block;background:var(--ac2);color:var(--ac);border-radius:999px;padding:1px 8px;font-size:12px;font-weight:600}
+.modal{position:fixed;inset:0;background:rgba(10,14,20,.5);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal[hidden]{display:none}
+.sheet{background:var(--card);border-radius:16px;max-width:620px;width:100%;max-height:88vh;overflow:auto;padding:20px;position:relative;border:1px solid var(--bd)}
+.sheet.wide{max-width:1100px}
+.sheet h3{margin:0 30px 8px 0;font-size:17px}
+.sheet .x{position:absolute;top:10px;right:10px;border:0;background:var(--soft);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px}
+.sheet .d{color:var(--tx);font-size:14px}
+.sheet .d p{margin:0 0 8px}
+.calcbox{margin-top:12px;background:var(--soft);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;font-size:13px;font-variant-numeric:tabular-nums;line-height:1.6}
+.calcbox:empty{display:none}
+.calcbox b{color:var(--ac)}
+.calcbox .ln{border-top:1px dashed var(--bd);margin-top:6px;padding-top:6px}
+@media (max-width:640px){.modal{align-items:flex-end;padding:0}.sheet{border-radius:16px 16px 0 0;max-height:90vh}}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:60}
+#toast.on{opacity:1}
+footer{color:var(--mu);font-size:12.5px;padding:10px 0 40px}
+footer details{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:12px 16px;margin-bottom:10px}
+footer summary{cursor:pointer;font-weight:600;color:var(--tx)}
+footer table{border-collapse:collapse;width:100%;margin-top:8px}
+footer td{padding:5px 6px;border-bottom:1px solid var(--bd);vertical-align:top}
+.cmpbars .r{display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:center;margin:6px 0;font-size:12px}
+.cmpbars .bar{height:12px;border-radius:4px;margin:2px 0}
+.cmpbars .bv{font-variant-numeric:tabular-nums;color:var(--mu)}
+.x-rm{border:0;background:transparent;color:var(--neg);cursor:pointer;font-size:14px}
+.printsum{display:none}
+@media print{
+  body{background:#fff;color:#000;font-size:11px}
+  header .hact,nav.tabs,.inputs,.actions,.ib,footer,#toast,.modal,.inv,.nopr{display:none!important}
+  .grid{display:block}.card,.kpi{box-shadow:none;break-inside:avoid;border-color:#bbb}
+  .kpis{grid-template-columns:repeat(4,1fr)}
+  .printsum{display:block;font-size:10.5px;columns:2;margin-bottom:10px}
+  .printsum div{break-inside:avoid}
+  .lc .tip{display:none!important}
+}
+
+/* ===== esquema ===== */
+.qwrap{max-width:980px;margin:0 auto}
+.qintro{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+.qintro p{margin:0;color:var(--mu);font-size:13px;max-width:640px}
+.qleg{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--mu)}
+.qleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.flow{display:flex;flex-direction:column;align-items:center}
+.nd{position:relative;background:var(--card);border:2px solid var(--bd);border-radius:14px;padding:10px 14px;width:100%;max-width:330px;text-align:center;box-shadow:var(--sh)}
+.nd .st{position:absolute;top:-10px;left:12px;background:var(--tx);color:var(--bg);font-size:11px;font-weight:700;border-radius:999px;padding:1px 8px}
+.nd .t{font-size:13px;color:var(--mu);display:flex;justify-content:center;align-items:center;gap:6px}
+.nd .v{font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
+.nd .s{font-size:12px;color:var(--mu);margin-top:2px}
+.nd.key{border-color:var(--ac)}
+.nd.me{border-color:var(--c1);background:color-mix(in srgb,var(--c1) 8%,var(--card))}.nd.me .v{color:var(--c1)}
+.nd.co{border-color:var(--c8);border-style:dashed}
+.nd.tot{border-color:var(--c1);border-width:3px;max-width:420px}.nd.tot .v{font-size:28px;color:var(--c1)}
+.nd.neg .v{color:var(--neg)}
+.qi{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:4px}
+.qi input{width:120px;text-align:right;border:1px solid var(--ac);background:var(--ac2);border-radius:8px;padding:5px 8px;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;outline:0}
+.qi input:focus{outline:2px solid var(--ac)}
+.qi span{font-size:12px;color:var(--mu)}
+.qi.sm input{width:84px;font-size:14px;font-weight:700;padding:3px 6px}
+.qck{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--mu);margin-top:6px}
+.qck input{accent-color:var(--ac)}
+.cn{position:relative;width:100%;max-width:330px;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0 14px}
+.cn::before{content:"";position:absolute;left:50%;top:0;bottom:8px;width:2px;margin-left:-1px;background:var(--mu);opacity:.55}
+.cn::after{content:"";position:absolute;left:50%;bottom:0;margin-left:-6px;border:6px solid transparent;border-top:8px solid var(--mu);opacity:.8}
+.cn.p::before{background:var(--c1);opacity:.8}.cn.p::after{border-top-color:var(--c1)}
+.ch{position:relative;z-index:1;margin-left:150px;display:flex;flex-direction:column;gap:4px;align-items:flex-start;align-self:stretch;padding-left:calc(50% + 12px);margin-left:0}
+.cp{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:600;background:var(--soft);border:1px solid var(--bd);white-space:nowrap;font-variant-numeric:tabular-nums}
+.cp::before{content:"├─";color:var(--mu);font-weight:400;margin-left:-4px}
+.cp.st8{border-color:color-mix(in srgb,var(--c2) 45%,transparent);background:color-mix(in srgb,var(--c2) 10%,var(--card));color:var(--c2)}
+.cp.cst{color:var(--tx)}
+.cp.cmp{border-color:var(--c8);color:var(--mu)}
+.cp input{width:78px;text-align:right;border:1px solid var(--ac);background:var(--ac2);border-radius:6px;padding:1px 5px;font-weight:700;font-size:12.5px}
+.cp .ib{margin-left:2px}
+.br{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:100%;position:relative;padding-top:18px;margin-top:4px}
+.br::before{content:"";position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--mu);opacity:.55}
+.br>div{position:relative}
+.br>div::before{content:"";position:absolute;top:-18px;left:50%;height:18px;width:2px;margin-left:-1px;background:var(--mu);opacity:.55}
+.bh{text-align:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.bh span{display:inline-block;border-radius:999px;padding:2px 10px;background:var(--ac2);color:var(--ac)}
+.bh small{display:block;text-transform:none;letter-spacing:0;font-weight:400;color:var(--mu);font-size:11.5px;margin-top:3px}
+.jn{position:relative;width:100%;height:30px}
+.jn::before{content:"";position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--c1);opacity:.8}
+.jn::after{content:"";position:absolute;top:0;left:50%;height:22px;width:2px;margin-left:-1px;background:var(--c1)}
+.jarr{width:0;height:0;border:6px solid transparent;border-top:8px solid var(--c1);margin:-8px auto 4px}
+.sub2{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:360px;position:relative;padding-top:14px}
+.sub2::before{content:"";position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--mu);opacity:.55}
+.sub2>.nd{max-width:none;padding:8px}
+.sub2>.nd::before{content:"";position:absolute;top:-16px;left:50%;height:14px;width:2px;background:var(--mu);opacity:.55}
+.sub2>.nd .v{font-size:17px}
+.qwarn{max-width:520px;text-align:center;margin:8px auto 0}
+@media (max-width:760px){
+ .br{grid-template-columns:1fr;gap:26px;padding-top:0}.br::before,.br>div::before{display:none}
+ .br>div{border:1px solid var(--bd);border-radius:14px;padding:14px 10px;background:color-mix(in srgb,var(--soft) 60%,transparent)}
+ .jn::before{display:none}
+ .ch{padding-left:calc(50% + 10px)}
+ .cp{white-space:normal}
+}
+@media (max-width:420px){.ch{padding-left:0;align-items:center;background:var(--bg);margin:0 -4px}.cp::before{display:none}}
+
+.qbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 12px;font-size:13px;color:var(--mu)}
+.qbar .qck{margin:0}
+.seg.big button{padding:5px 14px;font-size:13px}
+.nd.iv{border-color:var(--c3)}
+.cp.ivc{border-color:color-mix(in srgb,var(--c3) 50%,transparent);background:color-mix(in srgb,var(--c3) 12%,var(--card));color:color-mix(in srgb,var(--c3) 75%,var(--tx))}
+.nd select{border:1px solid var(--ac);background:var(--ac2);border-radius:6px;padding:2px 6px;font-size:13px;width:auto}
+.ivbox{width:100%;max-width:360px;margin:10px 0 4px;border:1.5px dashed var(--c3);border-radius:12px;padding:10px 12px;background:color-mix(in srgb,var(--c3) 6%,var(--card));font-size:13px}
+.ivbox .t{text-align:center;margin-bottom:6px}
+.ivrow{display:flex;justify-content:space-between;gap:8px;padding:2px 0;font-variant-numeric:tabular-nums}
+.ivrow.tot{border-top:1px solid var(--bd);margin-top:4px;padding-top:4px;font-weight:700}
+.ivbox .s{text-align:center;color:var(--mu);font-size:12px;margin-top:4px}
+table.t tr.iv td{color:color-mix(in srgb,var(--c3) 75%,var(--tx))}
+#q_bh{margin:2px 0 4px}
+
+#q_n1{overflow:visible}
+.balao{position:absolute;right:calc(100% + 16px);top:50%;transform:translateY(-50%);width:250px;background:var(--card);border:2px solid var(--neg);border-radius:12px;padding:9px 11px;text-align:left;font-size:12.5px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:3;display:flex;flex-direction:column;gap:4px}
+.balao[hidden]{display:none}
+.balao::before{content:"";position:absolute;right:-9px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:0;border-left:9px solid var(--neg)}
+.balao b{color:var(--neg);font-size:13px}
+.balao span{color:var(--mu)}
+.balao .btn{align-self:flex-start;margin-top:2px}
+@media (max-width:980px){.balao{position:relative;right:auto;top:auto;transform:none;width:auto;margin-top:12px}.balao::before{left:50%;right:auto;top:-9px;margin:0 0 0 -8px;border:8px solid transparent;border-top:0;border-bottom:9px solid var(--neg)}}
+</style>
+</head>
+<body>
+<div class="stk" id="stk"><div class="wrap">
+<header class="top">
+  <div>
+    <h1>Simulador Salarial <span>2026</span></h1>
+    <p>Portugal Continental · Tabelas de retenção do Despacho 233-A/2026 · valores mensais e anuais</p>
+  </div>
+  <div class="hact">
+    <button class="btn" id="cmpBtn" type="button">Comparador <b class="badge" id="cmpN">0</b></button>
+    <button class="btn" id="themeBtn" type="button" title="Tema claro/escuro" aria-label="Tema">◐</button>
+  </div>
+</header>
+<nav class="tabs" role="tablist">
+  <button type="button" data-tab="p" class="on" role="tab">Pessoas</button>
+  <button type="button" data-tab="e" role="tab">Empresas</button>
+  <button type="button" data-tab="u" role="tab">Unipessoal</button>
+  <button type="button" data-tab="q" role="tab">Esquema</button>
+</nav>
+</div></div>
+<div class="wrap">
+<main>
+  <section class="panel on" id="tab-p"><div class="grid"><aside class="inputs" id="form-p"></aside><div class="results" id="res-p"></div></div></section>
+  <section class="panel" id="tab-e"><div class="grid"><aside class="inputs" id="form-e"></aside><div class="results" id="res-e"></div></div></section>
+  <section class="panel" id="tab-q"><div id="res-q"></div></section>
+  <section class="panel" id="tab-u"><div class="grid"><aside class="inputs" id="form-u"></aside><div class="results" id="res-u"></div></div></section>
+</main>
+<footer>
+  <details>
+    <summary>Parâmetros legais usados (2026)</summary>
+    <table>
+      <tr><td>Retribuição mínima mensal garantida (RMMG)</td><td>920 €</td></tr>
+      <tr><td>Retenção na fonte IRS</td><td>Despacho n.º 233-A/2026 (tabelas I a VII, Continente), em vigor todo o ano de 2026</td></tr>
+      <tr><td>Segurança Social — trabalhador por conta de outrem</td><td>Empresa 23,75% · Trabalhador 11%</td></tr>
+      <tr><td>Segurança Social — gerentes e administradores (MOE)</td><td>Entidade 23,75% · Membro 11% (34,75%) · base mínima 1 IAS = 537,13 €/mês</td></tr>
+      <tr><td>Segurança Social — outros membros de órgãos estatutários</td><td>Entidade 20,3% · Membro 9,3%</td></tr>
+      <tr><td>IRS anual 2026 (escalões)</td><td>12,5% · 15,7% · 21,2% · 24,1% · 31,1% · 34,9% · 43,1% · 44,6% · 48% (limites 8 342 / 12 587 / 17 838 / 23 089 / 29 397 / 43 090 / 46 566 / 86 634 €) · dedução específica 4 587,09 € · dependente 600 € · mínimo de existência 12 880 €</td></tr>
+      <tr><td>Subsídio de refeição — limite isento</td><td>6,15 €/dia em dinheiro · 10,455 €/dia em cartão/vale (Portaria 51-B/2026/1 e art. 2.º CIRS)</td></tr>
+      <tr><td>Ajudas de custo — território nacional</td><td>65,89 €/dia (generalidade) · 72,65 €/dia (gerentes/administradores) · 0,40 €/km viatura própria</td></tr>
+      <tr><td>Viatura com uso pessoal (acordo escrito)</td><td>Rendimento em espécie: 0,75% do custo de aquisição por mês</td></tr>
+      <tr><td>Prémios de produtividade</td><td>Isenção IRS/TSU até 6% da retribuição base anual, se cumpridos os requisitos do OE 2026</td></tr>
+      <tr><td>FCT / FGCT</td><td>FCT extinto (2024) · FGCT 0,075% suspenso até 31/12/2026</td></tr>
+      <tr><td>Compensação fim de contrato a termo</td><td>24 dias de retribuição base + diuturnidades por ano</td></tr>
+      <tr><td>IRC 2026</td><td>19% geral · PME/Small Mid Cap 15% nos primeiros 50 000 € · Regiões Autónomas 13,3% / 10,5%</td></tr>
+      <tr><td>Derrama estadual (Continente)</td><td>3% (1,5–7,5 M€) · 5% (7,5–35 M€) · 9% (&gt;35 M€), por escalões</td></tr>
+      <tr><td>Derrama municipal</td><td>Até 1,5% do lucro tributável (varia por município)</td></tr>
+      <tr><td>Tributação autónoma — viaturas</td><td>Combustão 8% / 25% / 32% · Plug-in e GNV 2,5% / 7,5% / 15% (limiares 37 500 € e 45 000 €) · Elétricos 10% acima de 62 500 €</td></tr>
+      <tr><td>Tributação autónoma — outras</td><td>Ajudas de custo e km não faturados 5% · Despesas de representação 10% · +10 p.p. com prejuízo fiscal (salvo suspensão)</td></tr>
+      <tr><td>Dividendos a pessoas singulares</td><td>Retenção liberatória 28%</td></tr>
+    </table>
+  </details>
+  <p>Simulação indicativa. A retenção na fonte é um adiantamento do IRS; o imposto final é apurado na declaração anual. Regras específicas (contratos coletivos, IRS Jovem, empresário em nome individual (categoria B), residentes não habituais, Regiões Autónomas no IRS, trabalho a tempo parcial, faltas, baixas) não estão refletidas. Confirmar decisões com um contabilista certificado.</p>
+</footer>
+</div>
+
+<div class="modal" id="info" hidden><div class="sheet" role="dialog" aria-modal="true"><button class="x" type="button" aria-label="Fechar">×</button><h3></h3><div class="d"></div><div class="calcbox"></div></div></div>
+<div class="modal" id="cmp" hidden><div class="sheet wide" role="dialog" aria-modal="true"><button class="x" type="button" aria-label="Fechar">×</button><h3>Comparador de cenários</h3><div id="cmpBody"></div></div></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* ============ utilitários ============ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR'});
+const fN=new Intl.NumberFormat('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2});
+const E=x=>fE.format(isFinite(x)&&Math.abs(x)>=0.005?x:0);
+const N2=x=>fN.format(isFinite(x)?x:0);
+const Pc=(x,d=2)=>(isFinite(x)&&Math.abs(x)>=Math.pow(10,-d-2)/2?(x*100).toLocaleString('pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d}):'0')+' %';
+const r2=x=>Math.round((x+Number.EPSILON)*100)/100;
+const sum=a=>a.reduce((s,x)=>s+(+x||0),0);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),1800)}
+function parseNum(s){if(typeof s==='number')return s;s=String(s||'').replace(/\s|€|%/g,'');if(s.includes(',')){s=s.replace(/\./g,'').replace(',','.')}const v=parseFloat(s);return isFinite(v)?v:0}
+const fmtIn=v=>typeof v==='number'?String(v).replace('.',','):v;
+
+/* ============ tabelas de retenção 2026 (Despacho 233-A/2026) ============ */
+const T={
+ I:{n:'Tabela I — Não casado sem dependentes ou casado, dois titulares',dep:21.43,rows:[
+  [920,0,0],
+  [1042,.125,R=>.125*2.6*(1273.85-R),'12,50% × 2,60 × (1 273,85 − R)'],
+  [1108,.157,R=>.157*1.35*(1554.83-R),'15,70% × 1,35 × (1 554,83 − R)'],
+  [1154,.157,94.71],[1212,.212,158.18],[1819,.241,193.33],[2119,.311,320.66],[2499,.349,401.19],
+  [3305,.3836,487.66],[5547,.3969,531.62],[20221,.4495,823.40],[Infinity,.4717,1272.31]]},
+ II:{n:'Tabela II — Não casado com um ou mais dependentes',dep:34.29},
+ III:{n:'Tabela III — Casado, único titular',dep:42.86,rows:[
+  [991,0,0],
+  [1042,.125,R=>.125*2.6*(1372.15-R),'12,50% × 2,60 × (1 372,15 − R)'],
+  [1108,.125,R=>.125*1.35*(1677.85-R),'12,50% × 1,35 × (1 677,85 − R)'],
+  [1119,.125,96.17],[1432,.1272,98.64],[1962,.157,141.32],[2240,.1938,213.53],[2773,.2277,289.47],
+  [3389,.257,370.72],[5965,.2881,476.12],[20265,.3843,1049.96],[Infinity,.4717,2821.13]]},
+ IV:{n:'Tabela IV — Não casado ou casado dois titulares, sem dependentes — pessoa com deficiência',dep:0,rows:[
+  [1694,0,0],[2063,.212,359.13],[2492,.311,563.37],[4487,.349,658.07],[4753,.3836,813.33],[6687,.3969,876.55],[20468,.4495,1228.29],[Infinity,.4717,1682.68]]},
+ V:{n:'Tabela V — Não casado com dependentes — pessoa com deficiência',dep:42.86,rows:[
+  [1938,0,0],[2063,.2132,413.19],[2854,.311,614.96],[4504,.349,723.42],[6826,.3836,879.26],[7048,.3969,970.05],[20468,.4495,1340.78],[Infinity,.4717,1795.17]]},
+ VI:{n:'Tabela VI — Casado dois titulares com dependentes — pessoa com deficiência',dep:21.43,rows:[
+  [1668,0,0],[2068,.2049,341.78],[2497,.241,416.44],[3107,.311,591.23],[4504,.349,709.30],[6826,.3836,865.14],[7048,.3969,955.93],[20468,.4495,1326.66],[Infinity,.4717,1781.05]]},
+ VII:{n:'Tabela VII — Casado, único titular — pessoa com deficiência',dep:42.86,rows:[
+  [2325,0,0],[3494,.2277,529.41],[3761,.257,631.79],[6687,.2881,748.76],[20468,.4244,1660.20],[Infinity,.4717,2628.34]]}
+};
+T.II.rows=T.I.rows;
+function pickTable(p){
+  const d=p.dep>0;
+  if(!p.defic){ if(p.estado==='c1')return 'III'; if(p.estado==='nc'&&d)return 'II'; return 'I'; }
+  if(p.estado==='c1')return 'VII'; if(!d)return 'IV'; if(p.estado==='nc')return 'V'; return 'VI';
+}
+function ret(R,p){
+  const o={R:r2(R),val:0,rate:0,rate0:0,pa:0,paTxt:'',padep:0,defdep:0,conj:0,tab:pickTable(p),row:-1,lim:0,ef:0,red:false};
+  if(!(R>0))return o;
+  const t=T[o.tab];let i=t.rows.findIndex(r=>R<=r[0]);if(i<0)i=t.rows.length-1;
+  const row=t.rows[i];o.row=i;o.lim=row[0];o.rate0=row[1];
+  let rate=row[1]; if(p.dep>=3&&rate>0){rate=Math.max(0,rate-.01);o.red=true}
+  o.rate=rate;
+  if(rate>0){
+    o.pa=typeof row[2]==='function'?row[2](R):row[2];o.paTxt=row[3]||'';
+    o.padep=t.dep*p.dep;
+    o.defdep=Math.min(p.depDef,p.dep)*(p.estado==='c2'?42.41:84.82);
+    o.conj=(p.estado==='c1'&&p.conjDef)?135.71:0;
+  }
+  o.val=Math.max(0,r2(R*rate-o.pa-o.padep-o.defdep-o.conj));
+  o.ef=R>0?o.val/R:0;
+  return o;
+}
+function taRate(tipo,custo){
+  if(tipo==='elet')return custo>62500?.10:0;
+  if(tipo==='phev'||tipo==='gnv')return custo<37500?.025:custo<45000?.075:.15;
+  return custo<37500?.08:custo<45000?.25:.32;
+}
+
+/* ============ motor de cálculo ============ */
+const IAS=537.13;
+const DEF={baseMode:'bruto',liqT:0,sem14:false,ssIsento:false,contab:0,englob:false,deducoes:250,estado:'nc',dep:0,depDef:0,defic:false,conjDef:false,vinculo:'tco',
+ base:1500,diut:0,outrosTrib:0,hs:0,duod:'0',premio:0,premioIsento:false,
+ refVal:8,refTipo:'cartao',refDias:21,ajDias:0,ajValor:65.89,km:0,kmValor:0.40,
+ viatura:false,viatCusto:30000,saude:0,saudeGeral:true,
+ segAT:1,fgct:false,medTrab:60,formacao:0,termo:false,equip:0,horasSem:40,
+ viatTipo:'comb',viatCustosAnuais:6000,ajFaturadas:false,
+ nTrab:1,fat:150000,gastos:40000,outrosPessoal:0,repres:0,pme:true,regiao:'cont',derramaM:1.5,prejuizos:0,agravTA:false,distrib:50};
+
+function calc(inp){
+  const p=Object.assign({},DEF,inp);
+  p.dep=Math.max(0,Math.floor(p.dep));p.depDef=Math.min(Math.max(0,Math.floor(p.depDef)),p.dep);
+  const MOE=p.vinculo==='moe'||p.vinculo==='moe2', rW=p.vinculo==='moe2'?.093:.11, rE=p.vinculo==='moe2'?.203:.2375;
+  const floor=MOE&&!p.ssIsento?IAS:0;
+  const B=Math.max(0,p.base),D=p.diut,O=p.outrosTrib,HS=p.hs,q=(+p.duod||0)/100;
+  const ref={lim:p.refTipo==='cartao'?10.455:6.15,mes:p.refDias*p.refVal};
+  ref.isento=p.refDias*Math.min(p.refVal,ref.lim);ref.trib=ref.mes-ref.isento;
+  const aj={lim:MOE?72.65:65.89,kmLim:.40,diar:p.ajDias*p.ajValor,kmv:p.km*p.kmValor};
+  aj.diarI=p.ajDias*Math.min(p.ajValor,aj.lim);aj.kmI=p.km*Math.min(p.kmValor,aj.kmLim);
+  aj.mes=aj.diar+aj.kmv;aj.isento=aj.diarI+aj.kmI;aj.trib=aj.mes-aj.isento;
+  const esp={viat:p.viatura?.0075*p.viatCusto:0,saude:p.saudeGeral?0:p.saude};esp.total=esp.viat+esp.saude;
+  const SF=p.sem14?0:B+D+O, SN=p.sem14?0:B+D;
+  const Rn=B+D+O+ref.trib+aj.trib+esp.total, retN=ret(Rn,p);
+  const retHS=r2(HS*.5*retN.ef);
+  const Rf=B+D+O+esp.total, retF=ret(Rf,p);
+  const retSF=ret(SF,p), retSN=ret(SN,p);
+  const duoSF=q*SF/12, duoSN=q*SN/12, retDuo=q*(retSF.val+retSN.val)/12;
+  const prem={P:p.premio};prem.lim=.06*(B+D)*14;prem.isento=p.premioIsento?Math.min(p.premio,prem.lim):0;prem.trib=prem.P-prem.isento;prem.ret=ret(prem.trib,p);
+  const ssBaseN=Math.max(Rn+HS,floor);
+  const n={bruto:B+D+O+HS+ref.mes+aj.mes+duoSF+duoSN};
+  n.irs=retN.val+retHS+retDuo;n.ss=rW*(ssBaseN+duoSF+duoSN);n.liq=n.bruto-n.irs-n.ss;
+  const mk=(extra,rt)=>{const o={bruto:n.bruto+extra};o.irs=n.irs+rt;o.ss=n.ss+rW*extra;o.liq=o.bruto-o.irs-o.ss;return o};
+  const sf=mk((1-q)*SF,(1-q)*retSF.val), sn=mk((1-q)*SN,(1-q)*retSN.val);
+  const a={base:12*B,diut:12*D,outros:12*O,hs:11*HS,refI:11*ref.isento,refT:11*ref.trib,ajI:11*aj.isento,ajT:11*aj.trib,
+    duoSF:q*SF,duoSN:q*SN,SF:(1-q)*SF,SN:(1-q)*SN,premI:prem.isento,premT:prem.trib};
+  a.bruto=a.base+a.diut+a.outros+a.hs+a.refI+a.refT+a.ajI+a.ajT+a.duoSF+a.duoSN+a.SF+a.SN+prem.P;
+  a.irs=11*(retN.val+retHS)+retF.val+retSF.val+retSN.val+prem.ret.val;
+  a.ssBase=11*ssBaseN+Math.max(Rf,floor)+SF+SN+prem.trib;
+  a.ss=rW*a.ssBase;a.liq=a.bruto-a.irs-a.ss;
+  a.esp=12*esp.total;a.tributavel=11*(Rn+HS)+Rf+SF+SN+prem.trib;
+  a.isentos=a.refI+a.ajI+a.premI;
+  // empresa
+  const emp={};
+  emp.tsu=rE*a.ssBase;
+  emp.massaAT=a.base+a.diut+a.outros+a.hs+SF+SN+11*ref.mes+prem.P;
+  emp.segAT=p.segAT/100*emp.massaAT;
+  emp.fgct=p.fgct?.00075*(B+D)*12:0;
+  emp.termo=p.termo?(B+D)/30*24:0;
+  emp.saude=12*p.saude;
+  emp.viat=p.viatura?p.viatCustosAnuais:0;
+  emp.taViatRate=p.viatura?taRate(p.viatTipo,p.viatCusto):0;
+  emp.taViat=emp.viat*emp.taViatRate;
+  emp.taAj=p.ajFaturadas?0:.05*a.ajI;
+  emp.ta=emp.taViat+emp.taAj;
+  emp.med=p.medTrab;emp.form=p.formacao;emp.equip=12*p.equip;
+  emp.outros=emp.segAT+emp.fgct+emp.termo+emp.med+emp.form+emp.equip;
+  emp.benef=emp.saude+emp.viat;
+  emp.operacional=a.bruto+emp.tsu+emp.outros+emp.benef;
+  emp.total=emp.operacional+emp.ta;emp.mensal=emp.total/12;
+  emp.semanas=52-(22+13)/5;emp.horas=p.horasSem*emp.semanas;emp.hora=emp.horas>0?emp.total/emp.horas:0;
+  emp.racio=a.liq>0?emp.total/a.liq:0;
+  emp.estado=a.irs+a.ss+emp.tsu+emp.ta;emp.carga=emp.total>0?emp.estado/emp.total:0;
+  return {p,MOE,floor,rW,rE,B,D,O,HS,q,SF,SN,ref,aj,esp,Rn,Rf,retN,retHS,retF,retSF,retSN,duoSF,duoSN,retDuo,prem,ssBaseN,n,sf,sn,a,emp};
+}
+
+const ESC=[[8342,.125,0],[12587,.157,266.94],[17838,.212,959.26],[23089,.241,1476.45],[29397,.311,3092.77],[43090,.349,4209.94],[46566,.431,7743.27],[86634,.446,8441.48],[Infinity,.48,11387.17]];
+function taxEsc(x){if(x<=0)return {v:0,rate:0,pa:0};const e=ESC.find(r=>x<=r[0]);return {v:x*e[1]-e[2],rate:e[1],pa:e[2],lim:e[0]}}
+function irsAnual(o){ // o:{catA,ss,div,englob,estado,dep,deducoes}
+  const x={};x.catA=o.catA;x.dedEsp=Math.min(o.catA,Math.max(4587.09,o.ss));x.rlA=Math.max(0,o.catA-x.dedEsp);
+  x.divE=o.englob?o.div*.5:0;x.rc=x.rlA+x.divE;x.q=o.estado==='c1'?2:1;
+  const t=taxEsc(x.rc/x.q);x.rate=t.rate;x.pa=t.pa;x.col=x.q*t.v;
+  const pq=x.rc/x.q;x.tas=x.q*(Math.max(0,Math.min(pq,250000)-80000)*.025+Math.max(0,pq-250000)*.05);
+  x.dedDep=o.dep*(o.estado==='c2'?300:600);x.ded=x.dedDep+(o.deducoes||0);
+  x.irs=Math.max(0,x.col+x.tas-x.ded);
+  x.minEx=Math.max(0,o.catA+(o.englob?o.div:0)-12880);x.minApl=x.irs>x.minEx&&!o.englob;
+  if(x.minApl)x.irs=x.minEx;
+  return x;
+}
+function calcU(st,over){
+  const u=Object.assign({},DEF,st,over||{});
+  const r=calc({...u,vinculo:'moe',diut:0,outrosTrib:0,hs:0,duod:'0',premio:0,termo:false,fgct:false});
+  const e={...u,nTrab:1,outrosPessoal:0,gastos:u.gastos+12*u.contab};
+  const c=irc(e,r);
+  const ia=irsAnual({catA:r.a.tributavel,ss:r.a.ss,div:c.div,englob:u.englob,estado:u.estado,dep:u.dep,deducoes:u.deducoes});
+  const ias=irsAnual({catA:r.a.tributavel,ss:r.a.ss,div:0,englob:false,estado:u.estado,dep:u.dep,deducoes:u.deducoes});
+  const o={u,r,c,ia,ias};
+  o.divTax=u.englob?Math.max(0,ia.irs-ias.irs):.28*c.div;
+  o.irsSal=ias.irs;
+  o.acerto=(u.englob?ia.irs-.28*c.div:ias.irs)-r.a.irs; // + a pagar / − reembolso
+  o.salLiq=r.a.bruto-r.a.ss-o.irsSal;
+  o.divLiq=c.div-o.divTax;
+  o.total=o.salLiq+o.divLiq;
+  o.margem=u.fat-u.gastos-12*u.contab-u.repres;
+  o.estado=o.irsSal+o.divTax+r.a.ss+r.emp.tsu+c.total;
+  o.carga=o.margem>0?o.estado/o.margem:0;
+  return o;
+}
+function optimU(st){
+  const pts=[];let best=null;const m=Math.max(0,(st.fat-st.gastos-12*st.contab)/12);
+  const hi=Math.max(1000,Math.min(30000,m*0.95));const n=120;
+  for(let i=0;i<=n;i++){const b=r2(hi*i/n);const o1=calcU(st,{base:b,distrib:100,englob:false}),o2=calcU(st,{base:b,distrib:100,englob:true});const o=o2.total>o1.total?o2:o1;if(o.c.rai<0&&i>0)break;pts.push({b,t:o.total,est:o.estado,eg:o.u.englob});if(!best||o.total>best.t)best={b,t:o.total,eg:o.u.englob}}
+  // refinar
+  if(best){const s0=hi/n;for(let b=Math.max(0,best.b-s0);b<=best.b+s0;b+=s0/20){const o=calcU(st,{base:b,distrib:100,englob:best.eg});if(o.c.rai>=0&&o.total>best.t)best={b:r2(b),t:o.total,eg:best.eg}}}
+  return {pts,best};
+}
+function irc(e,r){
+  const c={};const cont=e.regiao==='cont';
+  c.gen=cont?.19:.133;c.red=cont?.15:.105;
+  c.pessoalSim=e.nTrab*r.emp.operacional;c.pessoal=c.pessoalSim+e.outrosPessoal;
+  c.rai=e.fat-e.gastos-c.pessoal-e.repres;
+  c.lt=c.rai;
+  c.ded=c.lt>0?Math.min(e.prejuizos,.65*c.lt):0;
+  c.mc=Math.max(0,c.lt-c.ded);
+  c.col1=e.pme?Math.min(c.mc,50000)*c.red:0;c.col2=(e.pme?Math.max(0,c.mc-50000):c.mc)*c.gen;c.coleta=c.col1+c.col2;
+  c.dm=c.lt>0?c.lt*e.derramaM/100:0;
+  const tr=e.regiao==='cont'?[.03,.05,.09]:e.regiao==='mad'?[.021,.035,.063]:[.024,.04,.072];
+  const lt=Math.max(0,c.lt);
+  c.de=Math.max(0,Math.min(lt,7.5e6)-1.5e6)*tr[0]+Math.max(0,Math.min(lt,35e6)-7.5e6)*tr[1]+Math.max(0,lt-35e6)*tr[2];
+  c.taPess=e.nTrab*r.emp.ta;c.taRep=.10*e.repres;
+  c.taAgr=(e.agravTA&&c.lt<0)?.10*(e.nTrab*((r.emp.taViatRate>0?r.emp.viat:0)+(r.p.ajFaturadas?0:r.a.ajI))+e.repres):0;
+  c.ta=c.taPess+c.taRep+c.taAgr;
+  c.total=c.coleta+c.dm+c.de+c.ta;
+  c.rl=c.rai-c.total;
+  c.taxa=c.rai>0?c.total/c.rai:null;
+  c.div=c.rl>0?c.rl*e.distrib/100:0;c.divRet=.28*c.div;c.divLiq=c.div-c.divRet;c.retido=c.rl-c.div;
+  c.estado=c.total+c.divRet+e.nTrab*(r.a.irs+r.a.ss+r.emp.tsu);
+  return c;
+}
+
+/* ============ esquema dos formulários ============ */
+const EST=[['nc','Não casado'],['c2','Casado / unido de facto — dois titulares'],['c1','Casado / unido de facto — único titular']];
+const W=[
+ {g:'Situação pessoal e familiar',f:[
+  {id:'estado',l:'Estado civil',t:'sel',o:EST},
+  {id:'dep',l:'N.º de dependentes',u:'dep.'},
+  {id:'depDef',l:'…dos quais com incapacidade ≥ 60%',u:'dep.',s:s=>s.dep>0},
+  {id:'defic',l:'Titular com incapacidade ≥ 60%',t:'chk'},
+  {id:'conjDef',l:'Cônjuge sem rendimentos, com incapacidade ≥ 60%',t:'chk',s:s=>s.estado==='c1'},
+  {id:'vinculo',l:'Tipo de vínculo',t:'sel',o:[['tco','Trabalhador por conta de outrem'],['moe','Gerente / administrador (MOE)'],['moe2','Outro membro de órgão estatutário']]},
+  {id:'ssIsento',l:'Já desconta noutro regime (≥ IAS) ou é pensionista',t:'chk',s:s=>s.vinculo!=='tco'}]},
+ {g:'Remuneração',f:[
+  {id:'base',l:'Salário base mensal (bruto)',u:'€/mês'},
+  {id:'diut',l:'Diuturnidades',u:'€/mês'},
+  {id:'outrosTrib',l:'Outros complementos tributáveis (IHT, turno…)',u:'€/mês'},
+  {id:'hs',l:'Trabalho suplementar (média)',u:'€/mês'},
+  {id:'duod',l:'Subsídios de férias e Natal',t:'sel',o:[['0','Por inteiro (junho e novembro)'],['50','50% em duodécimos'],['100','100% em duodécimos']]},
+  {id:'premio',l:'Prémio / gratificação anual',u:'€/ano'},
+  {id:'premioIsento',l:'Prémio cumpre requisitos de isenção (até 6%)',t:'chk',s:s=>s.premio>0}]},
+ {g:'Subsídio de refeição',f:[
+  {id:'refVal',l:'Valor diário',u:'€/dia'},
+  {id:'refTipo',l:'Forma de pagamento',t:'sel',o:[['cartao','Cartão / vale de refeição'],['dinheiro','Dinheiro (com o salário)']]},
+  {id:'refDias',l:'Dias trabalhados por mês',u:'dias'}]},
+ {g:'Ajudas de custo e quilómetros',open:false,f:[
+  {id:'ajDias',l:'Dias de deslocação por mês',u:'dias'},
+  {id:'ajValor',l:'Ajuda de custo diária paga',u:'€/dia',s:s=>s.ajDias>0},
+  {id:'km',l:'Km em viatura própria por mês',u:'km'},
+  {id:'kmValor',l:'Valor pago por km',u:'€/km',s:s=>s.km>0}]},
+ {g:'Benefícios em espécie',open:false,f:[
+  {id:'viatura',l:'Viatura da empresa com uso pessoal (acordo escrito)',t:'chk'},
+  {id:'viatCusto',l:'Custo de aquisição da viatura',u:'€',s:s=>s.viatura},
+  {id:'saude',l:'Seguro de saúde pago pela empresa',u:'€/mês'},
+  {id:'saudeGeral',l:'Seguro abrange a generalidade dos trabalhadores',t:'chk',s:s=>s.saude>0}]}
+];
+const EMP=[
+ {g:'Encargos obrigatórios e outros custos',f:[
+  {id:'segAT',l:'Seguro de acidentes de trabalho',u:'% massa sal.'},
+  {id:'fgct',l:'Incluir FGCT (0,075%) — suspenso em 2026',t:'chk'},
+  {id:'medTrab',l:'Medicina / SST no trabalho',u:'€/ano'},
+  {id:'formacao',l:'Formação (40 h obrigatórias)',u:'€/ano'},
+  {id:'termo',l:'Contrato a termo (provisionar compensação)',t:'chk'},
+  {id:'equip',l:'Equipamento, software, fardamento…',u:'€/mês'},
+  {id:'horasSem',l:'Horário semanal',u:'h/sem.'}]},
+ {g:'Viatura — custos para a empresa',s:s=>s.viatura,f:[
+  {id:'viatTipo',l:'Tipo de viatura',t:'sel',o:[['comb','Combustão / híbrido convencional'],['phev','Híbrido plug-in (com requisitos)'],['gnv','Gás natural veicular (GNV)'],['elet','100% elétrico']]},
+  {id:'viatCustosAnuais',l:'Encargos anuais (renda, combustível, seguro…)',u:'€/ano'}]},
+ {g:'Ajudas de custo — tributação autónoma',s:s=>s.ajDias>0||s.km>0,f:[
+  {id:'ajFaturadas',l:'Ajudas de custo / km faturados ao cliente',t:'chk'}]},
+ {g:'IRC e resultado da empresa',f:[
+  {id:'nTrab',l:'N.º de trabalhadores com este perfil',u:'pessoas'},
+  {id:'fat',l:'Volume de negócios (sem IVA)',u:'€/ano'},
+  {id:'gastos',l:'Outros gastos (exceto pessoal)',u:'€/ano'},
+  {id:'outrosPessoal',l:'Outros custos com pessoal',u:'€/ano'},
+  {id:'repres',l:'Despesas de representação',u:'€/ano'},
+  {id:'pme',l:'PME / Small Mid Cap (taxa reduzida)',t:'chk'},
+  {id:'regiao',l:'Sede / região',t:'sel',o:[['cont','Continente'],['mad','Madeira'],['aco','Açores']]},
+  {id:'derramaM',l:'Derrama municipal',u:'%'},
+  {id:'prejuizos',l:'Prejuízos fiscais a deduzir',u:'€'},
+  {id:'agravTA',l:'Aplicar agravamento da TA se houver prejuízo',t:'chk'},
+  {id:'distrib',l:'Lucro distribuído aos sócios',u:'%'}]}
+];
+const UNI=[
+ {g:'Empresa (Unipessoal Lda)',f:[
+  {id:'fat',l:'Volume de negócios (sem IVA)',u:'€/ano'},
+  {id:'gastos',l:'Gastos da atividade (exceto gerente)',u:'€/ano'},
+  {id:'contab',l:'Contabilista certificado',u:'€/mês'},
+  {id:'repres',l:'Despesas de representação',u:'€/ano'},
+  {id:'pme',l:'PME (taxa reduzida 15%)',t:'chk'},
+  {id:'regiao',l:'Sede / região',t:'sel',o:[['cont','Continente'],['mad','Madeira'],['aco','Açores']]},
+  {id:'derramaM',l:'Derrama municipal',u:'%'},
+  {id:'prejuizos',l:'Prejuízos fiscais a deduzir',u:'€'}]},
+ {g:'Remuneração do sócio-gerente',f:[
+  {id:'base',l:'Remuneração mensal bruta',u:'€/mês'},
+  {id:'sem14',l:'Pagar só 12 meses (sem subsídios)',t:'chk'},
+  {id:'ssIsento',l:'Já desconta noutro regime (≥ IAS) ou é pensionista',t:'chk'},
+  {id:'refVal',l:'Subsídio de refeição',u:'€/dia'},
+  {id:'refTipo',l:'Forma de pagamento',t:'sel',o:[['cartao','Cartão / vale de refeição'],['dinheiro','Dinheiro (com o salário)']]},
+  {id:'refDias',l:'Dias trabalhados por mês',u:'dias'},
+  {id:'segAT',l:'Seguro de acidentes pessoais / AT (facultativo)',u:'% remun.'},
+  {id:'medTrab',l:'Medicina / SST',u:'€/ano'}]},
+ {g:'Ajudas de custo, km e viatura',open:false,f:[
+  {id:'ajDias',l:'Dias de deslocação por mês',u:'dias'},
+  {id:'ajValor',l:'Ajuda de custo diária paga',u:'€/dia',s:s=>s.ajDias>0},
+  {id:'km',l:'Km em viatura própria por mês',u:'km'},
+  {id:'kmValor',l:'Valor pago por km',u:'€/km',s:s=>s.km>0},
+  {id:'ajFaturadas',l:'Ajudas de custo / km faturados ao cliente',t:'chk',s:s=>s.ajDias>0||s.km>0},
+  {id:'viatura',l:'Viatura da empresa com uso pessoal',t:'chk'},
+  {id:'viatCusto',l:'Custo de aquisição da viatura',u:'€',s:s=>s.viatura},
+  {id:'viatTipo',l:'Tipo de viatura',t:'sel',s:s=>s.viatura,o:[['comb','Combustão / híbrido convencional'],['phev','Híbrido plug-in (com requisitos)'],['gnv','Gás natural veicular (GNV)'],['elet','100% elétrico']]},
+  {id:'viatCustosAnuais',l:'Encargos anuais com a viatura',u:'€/ano',s:s=>s.viatura},
+  {id:'saude',l:'Seguro de saúde pago pela empresa',u:'€/mês'}]},
+ {g:'Situação pessoal (IRS)',open:false,f:[
+  {id:'estado',l:'Estado civil',t:'sel',o:EST},
+  {id:'dep',l:'N.º de dependentes',u:'dep.'},
+  {id:'depDef',l:'…dos quais com incapacidade ≥ 60%',u:'dep.',s:s=>s.dep>0},
+  {id:'defic',l:'Titular com incapacidade ≥ 60% (só retenção)',t:'chk'},
+  {id:'deducoes',l:'Outras deduções à coleta (despesas gerais, saúde…)',u:'€/ano'}]},
+ {g:'Lucros e dividendos',f:[
+  {id:'distrib',l:'Lucro distribuído ao sócio',u:'%'},
+  {id:'englob',l:'Englobar dividendos no IRS (em vez de 28%)',t:'chk'}]}
+];
+const SCHEMA={p:W,e:[{...W[0],open:false},...W.slice(1),...EMP],u:UNI};
+const ALLF={};[...W,...EMP,...UNI].forEach(g=>g.f.forEach(f=>{if(!ALLF[f.id])ALLF[f.id]=f}));
+const DEFU={vinculo:'moe',base:1200,sem14:true,refVal:10.45,segAT:0,medTrab:0,contab:150,fat:80000,gastos:15000,distrib:100};
+
+/* ============ estado + persistência ============ */
+const KEY='simSal2026v1';
+let S={p:{...DEF},e:{...DEF},u:{...DEF,...DEFU},q:{...DEF,...DEFU,fat:24000,gastos:3000,contab:100,base:900,distrib:100,qPer:'ano',iva:true,ivaTx:'23',ivaDesp:70}}, SC=[], R={p:null,e:null,u:null,q:null,irc:null};
+try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){S.p={...DEF,...j.p};S.e={...DEF,...j.e};S.u={...DEF,...DEFU,...(j.u||{})};if(j.q)S.q={...S.q,...j.q};SC=j.sc||[];if(j.theme)document.documentElement.dataset.theme=j.theme}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({p:S.p,e:S.e,u:S.u,q:S.q,sc:SC,theme:document.documentElement.dataset.theme||''}))}catch(e){}}
+
+/* ============ informação (i) ============ */
+function rowTxt(rt){
+  if(!rt||!(rt.R>0))return 'Sem rendimento — retenção 0 €.';
+  const t=T[rt.tab];
+  if(rt.rate===0)return `${esc(t.n)}<br>R = ${E(rt.R)} ≤ ${E(rt.lim)} → taxa 0% (isento de retenção). <b>Retenção: 0,00 €</b>`;
+  let s=`${esc(t.n)}<br>R = <b>${E(rt.R)}</b> → escalão “até ${isFinite(rt.lim)?E(rt.lim):'∞'}”<br>Taxa marginal: ${Pc(rt.rate0)}${rt.red?` − 1 p.p. (3+ dependentes) = <b>${Pc(rt.rate)}</b>`:''}<br>`;
+  s+=`Parcela a abater: ${rt.paTxt?rt.paTxt.replace('R',N2(rt.R))+' = ':''}<b>${E(rt.pa)}</b><br>`;
+  s+=`${E(rt.R)} × ${Pc(rt.rate)} = ${E(rt.R*rt.rate)} − ${E(rt.pa)}`;
+  if(rt.padep)s+=` − ${E(rt.padep)} (dependentes)`;
+  if(rt.defdep)s+=` − ${E(rt.defdep)} (dep. c/ deficiência)`;
+  if(rt.conj)s+=` − ${E(rt.conj)} (cônjuge c/ deficiência)`;
+  s+=` = <b>${E(rt.val)}</b> · taxa efetiva ${Pc(rt.ef)}`;
+  return s;
+}
+const ln=s=>`<div class="ln">${s}</div>`;
+const INFO={
+ estado:{t:'Estado civil',d:'<p>Determina a tabela de retenção de IRS.</p><p><b>Não casado</b>: solteiro, divorciado, viúvo, separado. <b>Casado/unido de facto — dois titulares</b>: ambos têm rendimentos. <b>Único titular</b>: só um tem rendimentos de trabalho ou pensões, ou um deles ganha ≥ 95% do rendimento englobado do casal.</p>',c:r=>`Tabela aplicada: <b>${esc(T[pickTable(r.p)].n)}</b>`},
+ dep:{t:'Dependentes',d:'<p>Filhos, adotados ou enteados a cargo (menores, ou até 25 anos com condições). Cada dependente reduz a retenção numa parcela fixa. Com <b>3 ou mais</b>, a taxa marginal baixa 1 ponto percentual.</p>',c:r=>{const t=T[pickTable(r.p)];return `Parcela por dependente: ${E(t.dep)} × ${r.p.dep} = <b>${E(t.dep*r.p.dep)}</b> a abater por mês${r.p.dep>=3?'<br>Redução de 1 p.p. na taxa marginal: aplicada.':''}`}},
+ depDef:{t:'Dependentes com deficiência',d:'<p>Por cada dependente com incapacidade permanente ≥ 60%, soma-se à parcela a abater <b>84,82 €</b> (não casado ou casado único titular) ou <b>42,41 €</b> (casado dois titulares). O trabalhador pode optar por multiplicar este valor (até 3× ou 6×); o simulador usa 1×.</p>',c:r=>`${r.p.depDef} × ${E(r.p.estado==='c2'?42.41:84.82)} = <b>${E(r.p.depDef*(r.p.estado==='c2'?42.41:84.82))}</b>`},
+ defic:{t:'Titular com deficiência',d:'<p>Com incapacidade ≥ 60% aplicam-se as tabelas IV a VII, com limiares de isenção muito mais altos (ex.: 1 694 € na tabela IV, 2 325 € na VII).</p>'},
+ conjDef:{t:'Cônjuge com deficiência',d:'<p>Casado único titular em que o cônjuge não tem rendimentos de trabalho ou pensões e tem incapacidade ≥ 60%: soma <b>135,71 €</b> à parcela a abater.</p>'},
+ vinculo:{t:'Tipo de vínculo',d:'<p><b>Conta de outrem</b>: Segurança Social 23,75% pagos pela empresa + 11% descontados ao trabalhador.</p><p><b>Gerente / administrador</b>: também 23,75% + 11% (34,75%), com base mínima de 1 IAS (537,13 €/mês) mesmo que ganhe menos ou nada, salvo se já estiver coberto por outro regime obrigatório com base ≥ IAS ou for pensionista.</p><p><b>Outros membros de órgãos estatutários</b> (ex.: sem funções de gerência): 20,3% + 9,3%.</p><p>Para membros de órgãos estatutários o limite isento da ajuda de custo nacional é 72,65 €/dia. A retenção de IRS usa as mesmas tabelas.</p>',c:r=>`Taxas aplicadas: empresa <b>${Pc(r.rE)}</b> · trabalhador <b>${Pc(r.rW)}</b>`},
+ base:{t:'Salário base mensal',d:'<p>Retribuição base ilíquida mensal, paga <b>14 vezes</b> por ano (12 meses + subsídio de férias + subsídio de Natal). Em 2026 o salário mínimo nacional (RMMG) é <b>920 €</b>.</p>',c:r=>(r.p.base>0&&r.p.base<920?'<span class="warn">Abaixo da RMMG (920 €) — só possível em tempo parcial.</span><br>':'')+`Anual: ${E(r.p.base)} × 14 = <b>${E(r.p.base*14)}</b>`},
+ diut:{t:'Diuturnidades',d:'<p>Acréscimo por antiguidade previsto em contrato coletivo. Integra os subsídios de férias e de Natal e é sujeito a IRS e Segurança Social.</p>'},
+ outrosTrib:{t:'Outros complementos tributáveis',d:'<p>Prestações regulares: isenção de horário de trabalho, subsídio de turno, comissões fixas, etc. Sujeitas a IRS e SS. Entram no <b>subsídio de férias</b> (contrapartida do modo de executar o trabalho), mas não no de Natal.</p>',c:r=>`Subsídio de férias = base + diuturnidades + complementos = <b>${E(r.SF)}</b><br>Subsídio de Natal = base + diuturnidades = <b>${E(r.SN)}</b>`},
+ hs:{t:'Trabalho suplementar',d:'<p>Valor médio mensal de horas extra, nos 11 meses trabalhados. Sujeito a SS. A retenção de IRS é autónoma: <b>50% da taxa efetiva</b> do salário desse mês.</p>',c:r=>`Taxa efetiva do mês: ${Pc(r.retN.ef)} → 50% = ${Pc(r.retN.ef/2)}<br>${E(r.p.hs)} × ${Pc(r.retN.ef/2)} = <b>${E(r.retHS)}</b> de IRS por mês`},
+ duod:{t:'Duodécimos',d:'<p>Por acordo, os subsídios podem ser pagos em frações mensais (1/12). O total anual não muda — só a distribuição ao longo do ano. A retenção dos duodécimos usa a taxa do subsídio completo.</p>',c:r=>r.q?`(${E(r.SF)} + ${E(r.SN)}) × ${r.q*100}% ÷ 12 = <b>${E(r.duoSF+r.duoSN)}</b>/mês<br>IRS sobre duodécimos: (${E(r.retSF.val)} + ${E(r.retSN.val)}) × ${r.q*100}% ÷ 12 = <b>${E(r.retDuo)}</b>`:'Subsídios pagos por inteiro: férias (normalmente junho) e Natal (até 15 de dezembro).'},
+ premio:{t:'Prémio / gratificação',d:'<p>Prémio de desempenho, produtividade ou gratificação de balanço pago uma vez por ano. Tem retenção de IRS autónoma, calculada pela tabela sobre o próprio valor.</p>',c:r=>r.prem.trib>0?rowTxt(r.prem.ret):''},
+ premioIsento:{t:'Isenção do prémio',d:'<p>O OE 2026 mantém a isenção de IRS e TSU para prémios de produtividade, desempenho, participação nos lucros e gratificações de balanço até <b>6% da retribuição base anual</b>, desde que sejam voluntários, sem carácter regular, e a empresa cumpra os requisitos de valorização salarial exigidos. Confirme os requisitos com o contabilista.</p>',c:r=>`Limite: 6% × (${E(r.p.base+r.p.diut)} × 14) = <b>${E(r.prem.lim)}</b><br>Isento: <b>${E(r.prem.isento)}</b> · Tributável: <b>${E(r.prem.trib)}</b>`},
+ refVal:{t:'Subsídio de refeição',d:'<p>Não é obrigatório por lei no setor privado (depende do contrato ou CCT). Isento de IRS e SS até <b>6,15 €/dia</b> em dinheiro ou <b>10,455 €/dia</b> em cartão/vale. O excedente é tributado como salário. Pago só nos dias trabalhados (11 meses/ano).</p>',c:r=>`Limite (${r.p.refTipo==='cartao'?'cartão':'dinheiro'}): ${N2(r.ref.lim)} €/dia<br>Isento: ${r.p.refDias} × ${E(Math.min(r.p.refVal,r.ref.lim))} = <b>${E(r.ref.isento)}</b>/mês<br>Tributável: ${r.p.refDias} × ${E(Math.max(0,r.p.refVal-r.ref.lim))} = <b>${E(r.ref.trib)}</b>/mês`},
+ refTipo:{t:'Forma de pagamento',d:'<p>Em dinheiro (com o salário) o limite isento é 6,15 €/dia; em cartão ou vale de refeição é 70% maior: 6,15 × 1,70 = <b>10,455 €/dia</b>. Uma transferência bancária conta sempre como dinheiro.</p>'},
+ refDias:{t:'Dias trabalhados',d:'<p>Dias efetivamente trabalhados por mês (normalmente 21–22). Não há subsídio em férias, faltas ou baixa, por isso o simulador considera 11 meses de subsídio.</p>',c:r=>`${r.p.refDias} × ${E(r.p.refVal)} = <b>${E(r.ref.mes)}</b>/mês · × 11 = <b>${E(11*r.ref.mes)}</b>/ano`},
+ ajDias:{t:'Ajudas de custo',d:'<p>Compensam refeições e alojamento em deslocações em serviço: mais de 20 km do local de trabalho (deslocação diária) ou mais de 50 km (dias sucessivos), com mapa de itinerário. Não são salário.</p>'},
+ ajValor:{t:'Ajuda de custo diária',d:'<p>Isenta até <b>65,89 €/dia</b> (generalidade) ou <b>72,65 €/dia</b> (gerentes/administradores) em território nacional. O excesso é tributado em IRS e SS. Para a empresa, a parte isenta não faturada a clientes paga <b>tributação autónoma de 5%</b>.</p>',c:r=>`Limite aplicável: ${E(r.aj.lim)}/dia<br>Isento: ${r.p.ajDias} × ${E(Math.min(r.p.ajValor,r.aj.lim))} = <b>${E(r.aj.diarI)}</b><br>Tributável: <b>${E(r.aj.diar-r.aj.diarI)}</b>`},
+ km:{t:'Quilómetros em viatura própria',d:'<p>Deslocações em serviço feitas no carro do trabalhador.</p>'},
+ kmValor:{t:'Valor por km',d:'<p>Isento de IRS e SS até <b>0,40 €/km</b>. O excesso é rendimento tributável.</p>',c:r=>`Isento: ${r.p.km} × ${E(Math.min(r.p.kmValor,.4))} = <b>${E(r.aj.kmI)}</b><br>Tributável: <b>${E(r.aj.kmv-r.aj.kmI)}</b>`},
+ viatura:{t:'Viatura com uso pessoal',d:'<p>Com acordo escrito de uso pessoal, o trabalhador tem um rendimento em espécie de <b>0,75% do custo de aquisição por mês</b>. Não é pago em dinheiro, mas soma à base do IRS e da Segurança Social.</p>',c:r=>`0,75% × ${E(r.p.viatCusto)} = <b>${E(r.esp.viat)}</b>/mês`},
+ viatCusto:{t:'Custo de aquisição',d:'<p>Valor de compra da viatura (incluindo IVA não dedutível). Serve para o rendimento em espécie e para o escalão da tributação autónoma da empresa.</p>'},
+ saude:{t:'Seguro de saúde',d:'<p>Prémio mensal pago pela empresa por este trabalhador.</p>'},
+ saudeGeral:{t:'Seguro para a generalidade',d:'<p>Quando abrange a generalidade dos trabalhadores, o seguro de saúde não é tratado como rendimento do trabalhador. Se for só para alguns, o simulador trata-o como rendimento em espécie sujeito a IRS e SS. Confirme o enquadramento concreto.</p>'},
+ segAT:{t:'Seguro de acidentes de trabalho',d:'<p>Obrigatório. O prémio é uma percentagem da massa salarial anual (salários, subsídios, horas extra, subsídio de refeição) e depende da atividade e da seguradora — tipicamente 0,5%–1% em escritório, mais em obra ou indústria.</p>',c:r=>`${Pc(r.p.segAT/100)} × ${E(r.emp.massaAT)} = <b>${E(r.emp.segAT)}</b>/ano`},
+ fgct:{t:'FGCT',d:'<p>Fundo de Garantia de Compensação do Trabalho: 0,075% da retribuição base + diuturnidades, 12 meses. As entregas estão <b>suspensas até 31/12/2026</b>; o FCT (0,925%) foi extinto em 2024. Ative para simular a retoma em 2027.</p>',c:r=>`0,075% × ${E(r.p.base+r.p.diut)} × 12 = <b>${E(.00075*(r.p.base+r.p.diut)*12)}</b>/ano`},
+ medTrab:{t:'Segurança e saúde no trabalho',d:'<p>Serviços de medicina do trabalho e segurança, obrigatórios. Indique o custo anual por trabalhador (contrato com prestador externo).</p>'},
+ formacao:{t:'Formação',d:'<p>Cada trabalhador tem direito a pelo menos 40 horas de formação contínua por ano. Indique o custo anual (cursos, horas, materiais).</p>'},
+ termo:{t:'Compensação por fim de contrato a termo',d:'<p>No fim de um contrato a termo, o trabalhador recebe 24 dias de retribuição base + diuturnidades por cada ano completo. O simulador reserva esse custo todos os anos.</p>',c:r=>`(${E(r.p.base+r.p.diut)} ÷ 30) × 24 = <b>${E(r.emp.termo)}</b>/ano`},
+ equip:{t:'Outros custos do posto',d:'<p>Equipamento, software, telemóvel, fardamento, espaço, etc. Valor mensal.</p>'},
+ horasSem:{t:'Horário semanal',d:'<p>Usado para o custo por hora efetiva. Considera 22 dias de férias e 13 feriados (≈ 45 semanas de trabalho por ano).</p>',c:r=>`${r.p.horasSem} h × ${N2(r.emp.semanas)} semanas = <b>${N2(r.emp.horas)} h</b>/ano`},
+ viatTipo:{t:'Tributação autónoma — viaturas',d:'<p>Taxa sobre os encargos anuais com a viatura, conforme o custo de aquisição:</p><p>Combustão: 8% (&lt; 37 500 €) · 25% (37 500–45 000 €) · 32% (≥ 45 000 €)<br>Híbrido plug-in / GNV: 2,5% · 7,5% · 15%<br>Elétrico: 0% até 62 500 €, 10% acima</p><p>+10 p.p. se a empresa tiver prejuízo fiscal (salvo suspensão).</p>',c:r=>`Taxa: <b>${Pc(r.emp.taViatRate,1)}</b> × ${E(r.emp.viat)} = <b>${E(r.emp.taViat)}</b>/ano`},
+ viatCustosAnuais:{t:'Encargos anuais com a viatura',d:'<p>Renda de renting/leasing ou depreciação, combustível ou energia, manutenção, seguro, IUC e portagens. É a base da tributação autónoma.</p>'},
+ ajFaturadas:{t:'Ajudas de custo faturadas',d:'<p>Se as ajudas de custo e km forem faturados ao cliente, não há tributação autónoma de 5%.</p>',c:r=>`5% × ${E(r.a.ajI)} (parte isenta anual) = <b>${E(.05*r.a.ajI)}</b>`},
+ nTrab:{t:'Trabalhadores com este perfil',d:'<p>Multiplica o custo simulado para obter os custos com pessoal na conta de resultados da empresa.</p>'},
+ fat:{t:'Volume de negócios',d:'<p>Vendas e prestações de serviços do ano, sem IVA.</p>'},
+ gastos:{t:'Outros gastos',d:'<p>Fornecedores, rendas, energia, subcontratos, depreciações, etc. — tudo exceto o pessoal simulado.</p>'},
+ outrosPessoal:{t:'Outros custos com pessoal',d:'<p>Custo anual total de pessoal que não está a ser simulado neste perfil.</p>'},
+ repres:{t:'Despesas de representação',d:'<p>Receções, refeições, viagens e passeios oferecidos a clientes, fornecedores ou terceiros. Tributação autónoma de <b>10%</b>.</p>'},
+ pme:{t:'Taxa reduzida PME',d:'<p>PME e Small Mid Cap pagam taxa reduzida nos primeiros 50 000 € de matéria coletável: 15% no Continente, 10,5% nas regiões autónomas. Acima disso, taxa geral.</p>'},
+ regiao:{t:'Região',d:'<p>IRC 2026: <b>19%</b> no Continente, <b>13,3%</b> nos Açores e Madeira. As taxas da derrama estadual/regional também diferem. (O IRS do trabalhador usa sempre as tabelas do Continente neste simulador.)</p>'},
+ derramaM:{t:'Derrama municipal',d:'<p>Até 1,5% do lucro tributável, definida por cada município (alguns isentam ou reduzem para PME).</p>'},
+ prejuizos:{t:'Prejuízos fiscais',d:'<p>Prejuízos de anos anteriores ainda por deduzir. A dedução está limitada a <b>65% do lucro tributável</b> do ano, sem limite temporal.</p>'},
+ agravTA:{t:'Agravamento da tributação autónoma',d:'<p>Com prejuízo fiscal, as taxas de tributação autónoma sobem 10 pontos percentuais. Em 2026 mantém-se a suspensão deste agravamento para empresas que cumpram certos requisitos (ex.: lucro num dos 3 anos anteriores). Ative se a empresa não os cumprir.</p>'},
+ distrib:{t:'Distribuição de lucros',d:'<p>Parte do lucro líquido paga aos sócios como dividendos. Para sócios pessoas singulares residentes há retenção liberatória de <b>28%</b> (podem optar por englobar).</p>'},
+ inv_p:{t:'Cálculo inverso',d:'<p>Indique quanto quer receber líquido num mês normal (sem subsídios por inteiro) e o simulador procura o salário base bruto necessário, mantendo todos os outros campos.</p>'},
+ inv_e:{t:'Cálculo inverso',d:'<p>Indique o orçamento disponível (custo total anual ou mensal) ou o líquido pretendido pelo trabalhador, e o simulador calcula o salário base bruto compatível, com todos os encargos e benefícios definidos.</p>'},
+ col_n:{t:'Mês normal',d:'<p>Mês trabalhado sem pagamento de subsídio por inteiro: salário, complementos, horas extra, subsídio de refeição, ajudas de custo e eventuais duodécimos.</p>'},
+ col_sf:{t:'Mês com subsídio de férias',d:'<p>Mês normal + subsídio de férias (parte não paga em duodécimos). O subsídio tem retenção de IRS autónoma.</p>'},
+ col_sn:{t:'Mês com subsídio de Natal',d:'<p>Mês normal + subsídio de Natal (parte não paga em duodécimos), pago até 15 de dezembro.</p>'},
+ col_a:{t:'Total anual',d:'<p>11 meses trabalhados + 1 mês de férias (sem subsídio de refeição, ajudas ou horas extra) + subsídios + prémio.</p>'},
+ r_base:{t:'Vencimento base',d:'<p>Salário base mensal. No ano: 12 × base (os outros 2 pagamentos são os subsídios).</p>',c:r=>`12 × ${E(r.B)} = <b>${E(r.a.base)}</b>`},
+ r_refI:{t:'Subsídio de refeição (isento)',d:'<p>Parte do subsídio de refeição até ao limite legal: não paga IRS nem SS.</p>',c:r=>INFO.refVal.c(r)},
+ r_refT:{t:'Subsídio de refeição (tributável)',d:'<p>Parte acima do limite legal: soma à remuneração para IRS e SS.</p>',c:r=>INFO.refVal.c(r)},
+ r_ajI:{t:'Ajudas de custo e km (isento)',d:'<p>Valores dentro dos limites legais: não pagam IRS nem SS.</p>',c:r=>`Ajudas: ${E(r.aj.diarI)} + km: ${E(r.aj.kmI)} = <b>${E(r.aj.isento)}</b>/mês`},
+ r_ajT:{t:'Ajudas de custo e km (tributável)',d:'<p>Excesso acima dos limites: tributado como salário.</p>',c:r=>`<b>${E(r.aj.trib)}</b>/mês`},
+ r_duo:{t:'Duodécimos',d:'<p>Fração mensal dos subsídios.</p>',c:r=>INFO.duod.c(r)},
+ r_SF:{t:'Subsídio de férias',d:'<p>Igual à retribuição base + diuturnidades + complementos ligados ao modo de trabalho (IHT, turno). Retenção de IRS autónoma pela tabela.</p>',c:r=>`Subsídio: ${E(r.SF)}${r.q?` × ${(1-r.q)*100}% = ${E((1-r.q)*r.SF)} pago por inteiro`:''}${ln(rowTxt(r.retSF))}`},
+ r_SN:{t:'Subsídio de Natal',d:'<p>Igual à retribuição base + diuturnidades. Retenção de IRS autónoma pela tabela.</p>',c:r=>`Subsídio: ${E(r.SN)}${r.q?` × ${(1-r.q)*100}% = ${E((1-r.q)*r.SN)} pago por inteiro`:''}${ln(rowTxt(r.retSN))}`},
+ r_bruto:{t:'Total ilíquido',d:'<p>Tudo o que é pago em dinheiro antes de descontos: salário, complementos, subsídios, horas extra, subsídio de refeição e ajudas de custo (isentos incluídos).</p>',c:r=>`Mês normal: <b>${E(r.n.bruto)}</b><br>Anual: <b>${E(r.a.bruto)}</b><br>Dos quais isentos de IRS/SS: ${E(r.a.isentos)}/ano`},
+ r_irs:{t:'Retenção na fonte de IRS',d:'<p>Adiantamento mensal do IRS pelas tabelas de 2026: <b>R × taxa marginal − parcela a abater − parcela por dependente</b>. Os subsídios, o prémio e as horas extra têm retenção autónoma. Não é o imposto final — o acerto é feito na declaração anual (reembolso ou pagamento).</p>',c:r=>`<b>Mês trabalhado</b> — R = base + diuturnidades + complementos + excessos tributáveis + espécie<br>${rowTxt(r.retN)}`+(r.retHS?ln(`Horas extra: ${E(r.p.hs)} × 50% × ${Pc(r.retN.ef)} = <b>${E(r.retHS)}</b>`):'')+(r.retDuo?ln(`Duodécimos: <b>${E(r.retDuo)}</b>/mês`):'')+ln(`<b>Total mês normal: ${E(r.n.irs)}</b> · <b>Total anual: ${E(r.a.irs)}</b><br>= 11 × (${E(r.retN.val)} + ${E(r.retHS)}) + mês de férias ${E(r.retF.val)} + subs. férias ${E(r.retSF.val)} + subs. Natal ${E(r.retSN.val)}${r.prem.ret.val?` + prémio ${E(r.prem.ret.val)}`:''}`)},
+ r_ss:{t:'Segurança Social do trabalhador',d:'<p><b>11%</b> sobre todas as remunerações sujeitas: base, diuturnidades, complementos, horas extra, subsídios, excessos do subsídio de refeição e ajudas de custo, rendimentos em espécie.</p>',c:r=>`Mês normal: 11% × ${E(r.ssBaseN+r.duoSF+r.duoSN)} = <b>${E(r.n.ss)}</b><br>Anual: 11% × ${E(r.a.ssBase)} = <b>${E(r.a.ss)}</b>`},
+ r_desc:{t:'Total de descontos',d:'<p>IRS retido + Segurança Social do trabalhador.</p>',c:r=>`Anual: ${E(r.a.irs)} + ${E(r.a.ss)} = <b>${E(r.a.irs+r.a.ss)}</b> (${Pc((r.a.irs+r.a.ss)/(r.a.bruto||1),1)} do ilíquido)`},
+ r_liq:{t:'Líquido a receber',d:'<p>Total ilíquido − IRS − Segurança Social.</p>',c:r=>`Mês normal: ${E(r.n.bruto)} − ${E(r.n.irs)} − ${E(r.n.ss)} = <b>${E(r.n.liq)}</b><br>Anual: ${E(r.a.bruto)} − ${E(r.a.irs)} − ${E(r.a.ss)} = <b>${E(r.a.liq)}</b><br>Média mensal: <b>${E(r.a.liq/12)}</b>`},
+ r_liqA:{t:'Líquido anual',d:'<p>Tudo o que o trabalhador recebe no ano, já sem IRS e SS. A média mensal divide por 12.</p>',c:r=>INFO.r_liq.c(r)},
+ r_esp:{t:'Rendimento em espécie',d:'<p>Benefícios não pagos em dinheiro (viatura com uso pessoal, seguro não geral) mas que aumentam a base de IRS e SS.</p>',c:r=>`Viatura: ${E(r.esp.viat)} + seguro: ${E(r.esp.saude)} = <b>${E(r.esp.total)}</b>/mês`},
+ r_tsu:{t:'TSU da empresa',d:'<p>Contribuição da entidade empregadora para a Segurança Social sobre as mesmas remunerações do trabalhador: <b>23,75%</b> (20,3% para gerentes/administradores).</p>',c:r=>`${Pc(r.rE)} × ${E(r.a.ssBase)} = <b>${E(r.emp.tsu)}</b>/ano`},
+ r_segAT:{t:'Seguro de acidentes de trabalho',d:'<p>Obrigatório, calculado sobre a massa salarial.</p>',c:r=>INFO.segAT.c(r)},
+ r_fgct:{t:'FGCT',d:'<p>0,075% da base + diuturnidades.</p>',c:r=>INFO.fgct.c(r)},
+ r_termo:{t:'Provisão fim de contrato a termo',d:'<p>24 dias por ano de antiguidade.</p>',c:r=>INFO.termo.c(r)},
+ r_med:{t:'Medicina e segurança no trabalho',d:'<p>Custo anual por trabalhador.</p>'},
+ r_form:{t:'Formação',d:'<p>Custo anual por trabalhador.</p>'},
+ r_equip:{t:'Equipamento e outros',d:'<p>Custo mensal × 12.</p>',c:r=>`12 × ${E(r.p.equip)} = <b>${E(r.emp.equip)}</b>`},
+ r_saude:{t:'Seguro de saúde',d:'<p>Prémio mensal × 12.</p>',c:r=>`12 × ${E(r.p.saude)} = <b>${E(r.emp.saude)}</b>`},
+ r_viat:{t:'Encargos com viatura',d:'<p>Renda/depreciação, combustível, manutenção, seguro, IUC.</p>'},
+ r_ta:{t:'Tributação autónoma',d:'<p>Imposto pago pela empresa sobre certos encargos, mesmo sem lucro: viaturas e ajudas de custo não faturadas (5%). Não inclui o agravamento por prejuízo.</p>',c:r=>`Viatura: ${E(r.emp.taViat)} (${Pc(r.emp.taViatRate,1)})<br>Ajudas de custo/km: 5% × ${E(r.a.ajI)} = ${E(r.emp.taAj)}${r.p.ajFaturadas?' (faturadas: 0)':''}<br><b>Total: ${E(r.emp.ta)}</b>`},
+ r_custo:{t:'Custo total para a empresa',d:'<p>Tudo o que a empresa gasta com este trabalhador num ano: salários e abonos, TSU, seguros, medicina, formação, benefícios, provisões e tributação autónoma.</p>',c:r=>`${E(r.a.bruto)} (salários) + ${E(r.emp.tsu)} (TSU) + ${E(r.emp.outros)} (outros encargos) + ${E(r.emp.benef)} (benefícios) + ${E(r.emp.ta)} (TA) = <b>${E(r.emp.total)}</b>/ano<br>Média mensal: ÷ 12 = <b>${E(r.emp.mensal)}</b><br>Por cada 1 € de remuneração base anual (${r.p.sem14?12:14}×): <b>${N2(r.emp.total/((r.B||1)*(r.p.sem14?12:14)))} €</b>`},
+ r_hora:{t:'Custo por hora efetiva',d:'<p>Custo total anual ÷ horas efetivamente trabalhadas (horário × ≈45 semanas).</p>',c:r=>`${E(r.emp.total)} ÷ ${N2(r.emp.horas)} h = <b>${E(r.emp.hora)}</b>/h`},
+ r_racio:{t:'Custo por cada euro líquido',d:'<p>Quanto a empresa gasta para o trabalhador receber 1 € líquido.</p>',c:r=>`${E(r.emp.total)} ÷ ${E(r.a.liq)} = <b>${N2(r.emp.racio)} €</b>`},
+ r_carga:{t:'Parte que vai para o Estado',d:'<p>IRS + SS do trabalhador + TSU + tributação autónoma, em % do custo total da empresa.</p>',c:r=>`(${E(r.a.irs)} + ${E(r.a.ss)} + ${E(r.emp.tsu)} + ${E(r.emp.ta)}) ÷ ${E(r.emp.total)} = <b>${Pc(r.emp.carga,1)}</b>`},
+ baseMode:{t:'Salário: bruto ou líquido',d:'<p><b>Bruto</b>: indica o salário base mensal ilíquido (antes de IRS e SS), pago 14 vezes (ou 12 na Unipessoal, se escolher).</p><p><b>Líquido</b>: indica quanto quer receber limpo — o simulador procura o salário bruto necessário, tendo em conta todos os outros campos (subsídio de refeição, dependentes, etc.). O líquido mensal é o de um mês normal; o anual inclui subsídios.</p><p>O botão <b>€/mês ⇄ €/ano</b> muda a unidade em que escreve. Em €/ano, o salário base bruto conta 14 prestações (12 se sem subsídios).</p>',c:r=>`Salário base bruto: <b>${E(r.B)}</b>/mês · ${E(r.B*(r.p.sem14?12:14))}/ano<br>Líquido mês normal: <b>${E(r.n.liq)}</b> · anual: <b>${E(r.a.liq)}</b>`},
+ u_irc:{t:'IRC e resultado',d:'<p>Resultado antes de impostos = margem − custo do gerente. IRC: 15% nos primeiros 50 000 € (PME) e 19% no restante; + derrama municipal e estadual; + tributação autónoma (viatura, ajudas de custo, representação).</p>',c:(r,c)=>`Resultado antes de impostos: <b>${E(c.rai)}</b><br>Matéria coletável: ${E(c.mc)}<br>IRC: ${E(c.col1)} + ${E(c.col2)} = <b>${E(c.coleta)}</b><br>Derramas: ${E(c.dm+c.de)} · TA: ${E(c.ta)}<br>Resultado líquido: <b>${E(c.rl)}</b>`},
+ iva_q:{t:'IVA — como funciona',d:'<p>O IVA <b>não é receita nem custo</b> da empresa: é um imposto pago pelo cliente final que a empresa cobra por conta do Estado.</p><p>1) A empresa fatura com IVA (ex.: 1 000 € + 23% = 1 230 €). 2) Nas compras paga IVA aos fornecedores. 3) Na declaração periódica (trimestral, ou mensal acima de 650 000 € de volume de negócios) entrega ao Estado <b>IVA cobrado − IVA pago</b>. Se pagou mais do que cobrou, fica com crédito ou pede reembolso.</p><p>Por isso as receitas, o IRC e os dividendos calculam-se sempre <b>sem IVA</b>. Onde o IVA pesa: <b>tesouraria</b> (o dinheiro do IVA está na conta mas não é seu até à declaração) e <b>IVA não dedutível</b> (ex.: viaturas ligeiras de passageiros, combustível parcial, refeições e alojamento em muitos casos), que passa a ser custo.</p><p>Uma Lda tem contabilidade organizada, por isso <b>não pode usar a isenção do art. 53.º</b> — cobra IVA desde a primeira fatura, salvo atividades isentas (art. 9.º, ex.: saúde, ensino). Taxas no Continente: 23% · 13% · 6% (Madeira 22/12/5; Açores 16/9/4). Clientes empresariais noutros países da UE: normalmente sem IVA (autoliquidação pelo cliente).</p>',c:()=>{const iv=qIva(S.q);return `IVA cobrado: ${E(S.q.fat)} × ${Pc(iv.tx,0)} = <b>${E(iv.cob)}</b><br>IVA dedutível: ${E(S.q.gastos+12*S.q.contab)} × ${N2(S.q.ivaDesp)}% × 23% = <b>${E(iv.ded)}</b><br>${iv.ent<0?'A recuperar':'A entregar'}: <b>${E(Math.abs(iv.ent))}</b>/ano · ${E(Math.abs(iv.ent)/4)}/trimestre`}},
+ iva_ded:{t:'IVA dedutível nas despesas',d:'<p>As despesas indicadas no esquema estão <b>sem IVA</b>. Indique que parte delas tem IVA dedutível a 23% (ex.: material, software, serviços). Rendas habitacionais, seguros, portagens em certos casos ou compras a entidades isentas não têm IVA a deduzir. Esse IVA recupera-se na declaração periódica.</p>'},
+ u_intro:{t:'Unipessoal Lda — o que muda',d:'<p><b>Igual</b>: IRC (19%, 15% nos primeiros 50 000 € para PME), derramas, tributação autónoma, tabelas de retenção de IRS, subsídio de refeição e ajudas de custo (limite de gerente 72,65 €/dia).</p><p><b>Diferente</b>: o sócio-gerente não tem contrato de trabalho, logo não há obrigação de 14 meses, férias pagas, compensação ou FCT/FGCT; o seguro de acidentes de trabalho e a medicina do trabalho não são obrigatórios só para o gerente (passam a ser com o 1.º trabalhador). A Segurança Social é 34,75% com <b>base mínima de 1 IAS (537,13 €/mês)</b>, mesmo sem salário. O sócio pode ainda receber <b>dividendos</b> (28% liberatória ou englobamento a 50%).</p><p><b>Atenção</b>: um empresário em nome individual (ENI) não é uma Unipessoal — é tributado em IRS categoria B e tem regime de trabalhador independente.</p>'},
+ u_total:{t:'Total líquido para o sócio',d:'<p>Remuneração líquida (após IRS final estimado e SS) + dividendos líquidos. O lucro que fica na empresa não está incluído.</p>',c:o=>`Salário: ${E(o.r.a.bruto)} − SS ${E(o.r.a.ss)} − IRS ${E(o.irsSal)} = ${E(o.salLiq)}<br>Dividendos: ${E(o.c.div)} − ${E(o.divTax)} = ${E(o.divLiq)}<br><b>Total: ${E(o.total)}</b> · ${E(o.total/12)}/mês`},
+ u_margem:{t:'Margem antes do gerente',d:'<p>Faturação − gastos − contabilista − representação: o dinheiro gerado antes de pagar o sócio-gerente e os impostos. É a base para comparar quanto fica para o sócio e quanto vai para o Estado.</p>',c:o=>`${E(o.u.fat)} − ${E(o.u.gastos)} − ${E(12*o.u.contab)} − ${E(o.u.repres)} = <b>${E(o.margem)}</b>`},
+ u_estado:{t:'Total para o Estado',d:'<p>IRS do sócio (salário) + imposto sobre dividendos + SS do gerente (11%) + TSU (23,75%) + IRC, derramas e tributação autónoma.</p>',c:o=>`${E(o.irsSal)} + ${E(o.divTax)} + ${E(o.r.a.ss)} + ${E(o.r.emp.tsu)} + ${E(o.c.total)} = <b>${E(o.estado)}</b><br>= ${Pc(o.carga,1)} da margem`},
+ u_irs:{t:'IRS anual estimado',d:'<p>Liquidação anual simplificada 2026: rendimento da categoria A − dedução específica (4 587,09 € ou a SS paga, se maior) = rendimento coletável; aplica-se a tabela de escalões; subtraem-se dependentes (600 €, ou 300 € em tributação separada) e as outras deduções indicadas. Casado único titular: tributação conjunta com quociente 2. Inclui o mínimo de existência (12 880 €). Não considera IRS Jovem nem benefícios de deficiência.</p>',c:o=>{const x=o.u.englob?o.ia:o.ias;return `Rend. cat. A: ${E(x.catA)} − ded. específica ${E(x.dedEsp)} = ${E(x.rlA)}${x.divE?` + 50% dividendos ${E(x.divE)}`:''}<br>Rend. coletável: <b>${E(x.rc)}</b>${x.q>1?' (÷2 → '+E(x.rc/2)+')':''}<br>Taxa ${Pc(x.rate,1)} − parcela ${E(x.pa)} → coleta ${E(x.col)}${x.tas?` + solidariedade ${E(x.tas)}`:''}<br>− deduções ${E(x.ded)} = <b>${E(x.irs)}</b>${x.minApl?'<br>(limitado pelo mínimo de existência)':''}`}},
+ u_acerto:{t:'Acerto na declaração anual',d:'<p>Diferença entre o IRS final estimado e o que foi retido ao longo do ano (retenção mensal do salário e, se englobar, os 28% retidos nos dividendos). Positivo = a pagar; negativo = reembolso.</p>',c:o=>`${E(o.u.englob?o.ia.irs:o.ias.irs)} − retido ${E(o.r.a.irs)}${o.u.englob?` − 28% dividendos ${E(.28*o.c.div)}`:''} = <b>${E(o.acerto)}</b>`},
+ u_div:{t:'Dividendos',d:'<p>Distribuição do lucro líquido ao sócio. Por defeito: retenção liberatória de <b>28%</b>. Opção de englobamento: 50% do dividendo soma ao rendimento coletável e é tributado à taxa marginal, com crédito dos 28% retidos — compensa normalmente em escalões baixos. Obriga a englobar todos os rendimentos de capitais do ano.</p>',c:o=>`${E(o.c.rl)} × ${o.u.distrib}% = ${E(o.c.div)}<br>Imposto: <b>${E(o.divTax)}</b> (${Pc(o.divTax/(o.c.div||1),1)} efetivo)<br>Líquido: <b>${E(o.divLiq)}</b>`},
+ u_opt:{t:'Otimizador salário vs dividendos',d:'<p>Testa remunerações mensais do gerente de 0 € até ao limite em que a empresa deixa de ter lucro, distribuindo 100% do lucro em dividendos, e calcula o total líquido que chega ao sócio. Salário é gasto da empresa (poupa IRC) mas paga 34,75% de SS e IRS progressivo; dividendos pagam IRC + 28%. O ótimo depende muito da faturação, deduções e situação familiar.</p><p>Nota: a SS também dá direitos (reforma, doença, parentalidade, desemprego para gerentes) — o valor mais alto em dinheiro não é necessariamente a melhor escolha.</p>'},
+ contab:{t:'Contabilista certificado',d:'<p>Uma Lda tem contabilidade organizada obrigatória, feita por contabilista certificado. Honorários mensais típicos de 100–250 € para uma unipessoal pequena.</p>'},
+ sem14:{t:'12 ou 14 meses',d:'<p>O gerente não é trabalhador por conta de outrem: não tem direito legal a subsídios de férias e de Natal. A remuneração pode ser paga em 12 ou 14 prestações, conforme decidido em ata.</p>'},
+ ssIsento:{t:'Base mínima da Segurança Social',d:'<p>O gerente contribui no mínimo sobre 1 IAS (537,13 €/mês em 2026), mesmo sem remuneração. Não se aplica a base mínima se já estiver abrangido por outro regime obrigatório com base ≥ IAS (ex.: trabalha por conta de outrem noutra empresa) ou se for pensionista de velhice/invalidez. Nesse caso, contribui só sobre o que efetivamente recebe.</p>',c:r=>r.floor?`Base mínima: ${E(IAS)} × 34,75% = <b>${E(IAS*.3475)}</b>/mês (${E(IAS*.2375)} empresa + ${E(IAS*.11)} gerente)`:'Sem base mínima aplicada.'},
+ deducoes:{t:'Outras deduções à coleta',d:'<p>Despesas gerais familiares (35%, até 250 € por sujeito passivo), saúde (15%, até 1 000 €), educação, habitação, IVA de faturas, etc. Indique o total anual estimado. Os dependentes (600 €) já são somados automaticamente.</p>'},
+ englob:{t:'Englobamento de dividendos',d:'<p>Por defeito os dividendos pagam 28% (taxa liberatória). Optando pelo englobamento, só 50% do dividendo é somado ao rendimento e tributado às taxas progressivas, recuperando-se os 28% retidos. Compensa quando a taxa marginal é baixa (até cerca de 43%, mas depende do caso).</p>',c:o=>''},
+ i_rai:{t:'Resultado antes de impostos',d:'<p>Volume de negócios − outros gastos − custos com pessoal − despesas de representação.</p>',c:(r,c)=>`${E(S.e.fat)} − ${E(S.e.gastos)} − ${E(c.pessoal)} − ${E(S.e.repres)} = <b>${E(c.rai)}</b><br>Pessoal: ${S.e.nTrab} × ${E(r.emp.operacional)} + ${E(S.e.outrosPessoal)}`},
+ i_lt:{t:'Lucro tributável',d:'<p>Simplificação: igual ao resultado antes de impostos. Na realidade há acréscimos e deduções (ex.: depreciações de viaturas acima do limite fiscal, multas, encargos não documentados).</p>'},
+ i_mc:{t:'Matéria coletável',d:'<p>Lucro tributável − prejuízos fiscais deduzidos (máx. 65% do lucro tributável).</p>',c:(r,c)=>`${E(c.lt)} − ${E(c.ded)} = <b>${E(c.mc)}</b>`},
+ i_col:{t:'IRC (coleta)',d:'<p>Taxa aplicada à matéria coletável.</p>',c:(r,c)=>S.e.pme?`min(${E(c.mc)}; 50 000 €) × ${Pc(c.red,1)} = ${E(c.col1)}<br>+ remanescente × ${Pc(c.gen,1)} = ${E(c.col2)}<br><b>= ${E(c.coleta)}</b>`:`${E(c.mc)} × ${Pc(c.gen,1)} = <b>${E(c.coleta)}</b>`},
+ i_dm:{t:'Derrama municipal',d:'<p>Sobre o lucro tributável.</p>',c:(r,c)=>`${E(Math.max(0,c.lt))} × ${Pc(S.e.derramaM/100)} = <b>${E(c.dm)}</b>`},
+ i_de:{t:'Derrama estadual / regional',d:'<p>Só para lucro tributável acima de 1,5 M€, por escalões: 3% (até 7,5 M€), 5% (até 35 M€), 9% (acima) no Continente.</p>',c:(r,c)=>`<b>${E(c.de)}</b>`},
+ i_ta:{t:'Tributação autónoma total',d:'<p>Dos trabalhadores simulados + 10% das despesas de representação + agravamento por prejuízo (se ativado).</p>',c:(r,c)=>`${S.e.nTrab} × ${E(r.emp.ta)} + 10% × ${E(S.e.repres)}${c.taAgr?` + agravamento ${E(c.taAgr)}`:''} = <b>${E(c.ta)}</b>`},
+ i_tot:{t:'Impostos sobre a empresa',d:'<p>IRC + derramas + tributação autónoma.</p>',c:(r,c)=>`${E(c.coleta)} + ${E(c.dm)} + ${E(c.de)} + ${E(c.ta)} = <b>${E(c.total)}</b>${c.taxa!=null?`<br>Taxa efetiva sobre o resultado: <b>${Pc(c.taxa,1)}</b>`:''}`},
+ i_rl:{t:'Resultado líquido',d:'<p>Resultado antes de impostos − impostos da empresa.</p>',c:(r,c)=>`${E(c.rai)} − ${E(c.total)} = <b>${E(c.rl)}</b>`},
+ i_div:{t:'Dividendos',d:'<p>Lucro distribuído aos sócios, com retenção liberatória de 28%.</p>',c:(r,c)=>`${E(c.rl)} × ${S.e.distrib}% = ${E(c.div)}<br>− 28% = ${E(c.divRet)}<br>Líquido para os sócios: <b>${E(c.divLiq)}</b>`},
+ i_est:{t:'Total para o Estado',d:'<p>Soma de tudo o que este negócio entrega ao Estado num ano: IRS e SS dos trabalhadores simulados, TSU, impostos da empresa e retenção sobre dividendos.</p>',c:(r,c)=>`${S.e.nTrab} × (${E(r.a.irs)} + ${E(r.a.ss)} + ${E(r.emp.tsu)}) + ${E(c.total)} + ${E(c.divRet)} = <b>${E(c.estado)}</b>`}
+};
+function openInfo(k,tab){
+  const it=INFO[k];if(!it)return;const U=(tab==='u'||tab==='q')&&R[tab];const r=U?(k.startsWith('u_')?R[tab]:R[tab].r):(R[tab]||R.p);
+  const m=$('#info');m.querySelector('h3').textContent=it.t;m.querySelector('.d').innerHTML=it.d||'';
+  let c='';try{c=it.c?it.c(r,U?R[tab].c:R.irc):''}catch(e){c=''}
+  m.querySelector('.calcbox').innerHTML=c||'';m.hidden=false;m.querySelector('.x').focus();
+}
+const ib=k=>`<button type="button" class="ib" data-i="${k}" aria-label="Informação"></button>`;
+
+/* ============ formulários ============ */
+const PERF={diut:12,outrosTrib:12,hs:11,premio:12,saude:12,equip:12,medTrab:12,formacao:12,viatCustosAnuais:12,fat:12,gastos:12,outrosPessoal:12,repres:12,contab:12};
+const isMoney=f=>f.id==='base'||PERF[f.id]!=null;
+const natOf=f=>f.u==='€/ano'?'ano':'mes';
+function fac(tab,k){return k==='base'?(S[tab].sem14?12:14):PERF[k]}
+function perOf(tab,f){return (S[tab]._per&&S[tab]._per[f.id])||natOf(f)}
+function dispVal(tab,f){
+  if(f.id==='base'&&S[tab].baseMode==='liq')return r2(S[tab].liqT||0);
+  const v=+S[tab][f.id]||0,nat=natOf(f),per=perOf(tab,f),k=fac(tab,f.id);
+  return per===nat?r2(v):nat==='mes'?r2(v*k):r2(v/k);
+}
+function setFromInput(tab,k,raw){
+  const f=ALLF[k];if(!f||!isMoney(f)){S[tab][k]=raw;return}
+  if(k==='base'&&S[tab].baseMode==='liq'){S[tab].liqT=raw;return}
+  const nat=natOf(f),per=perOf(tab,f),c=fac(tab,k);
+  S[tab][k]=per===nat?raw:nat==='mes'?raw/c:raw*c;
+}
+function liqFn(tab){const per=perOf(tab,ALLF.base);
+  if(tab==='q')return st=>{const o=calcU(st);return per==='ano'?o.salLiq:o.salLiq/12};
+  if(tab==='u')return st=>{const o=calcU(st);return per==='ano'?o.r.a.liq:o.r.n.liq};
+  return st=>{const r=calc(st);return per==='ano'?r.a.liq:r.n.liq};}
+function resolveBase(tab){
+  const st=S[tab];if(st.baseMode!=='liq')return;
+  const fn=liqFn(tab),t=+st.liqT||0,f=b=>fn({...st,base:b});
+  let lo=0,hi=150000;
+  if(f(0)>=t){st.base=0;st._unreach=t>0?'low':'';return}
+  if(f(hi)<t){st.base=hi;st._unreach='high';return}
+  for(let i=0;i<55;i++){const m=(lo+hi)/2;if(f(m)<t)lo=m;else hi=m}
+  st.base=Math.ceil(hi*100)/100;st._unreach='';
+}
+function hintBase(tab){
+  const el=document.getElementById(tab+'_base_h');if(!el)return;const st=S[tab],per=perOf(tab,ALLF.base);
+  const r=tab==='u'?R.u&&R.u.r:R[tab];if(!r)return;
+  const n=st.sem14?12:14;
+  if(st.baseMode==='liq'){
+    el.innerHTML=st._unreach==='low'?'Os outros abonos já garantem este líquido com base 0 €.':st._unreach==='high'?'<span class="warn">Valor demasiado alto.</span>':
+      `→ bruto necessário: <b>${E(st.base)}</b>/mês (${E(st.base*n)}/ano, ${n}×)${st.base<920&&tab!=='u'?' <span class="warn">abaixo da RMMG</span>':''}`;
+  }else{
+    el.innerHTML=`→ líquido: <b>${E(r.n.liq)}</b>/mês · <b>${E(r.a.liq)}</b>/ano`;
+  }
+}
+const SH=new Set(['estado','dep','depDef','defic','conjDef','vinculo','ssIsento','base','baseMode','diut','outrosTrib','hs','duod','premio','premioIsento','refVal','refTipo','refDias','ajDias','ajValor','km','kmValor','ajFaturadas','viatura','viatCusto','viatTipo','viatCustosAnuais','saude','saudeGeral','deducoes']);
+const TABS=['p','e','u','q'],DIRTY=new Set();
+function syncDom(t,k){const el=document.getElementById(t+'_'+k);if(!el||document.activeElement===el)return;const v=S[t][k];
+  if(el.type==='checkbox')el.checked=!!v;else if(el.tagName==='SELECT')el.value=String(v);else setDisp(t,k)}
+function shareK(tab,k){if(!SH.has(k))return;TABS.forEach(t=>{if(t===tab||(t==='q'&&k==='baseMode'))return;S[t][k]=S[tab][k];syncDom(t,k)})}
+function liqOf(t){if(t==='q'){if(!R.q)return 0;return r2(perOf('q',ALLF.base)==='ano'?R.q.salLiq:R.q.salLiq/12)}const r=t==='u'?(R.u&&R.u.r):R[t];if(!r)return 0;return r2(perOf(t,ALLF.base)==='ano'?r.a.liq:r.n.liq)}
+function renderTab(t,src){
+  if(t==='p')renderP();else if(t==='e')renderE();else if(t==='q')renderQ();else renderU();
+  if(S[t].baseMode==='liq'&&!src){S[t].liqT=liqOf(t);S[t]._unreach='';setDisp(t,'base')}
+  hintBase(t);DIRTY.delete(t);
+}
+function refresh(tab){
+  if(S[tab].baseMode==='liq'){resolveBase(tab);shareK(tab,'base')}
+  renderTab(tab,true);
+  TABS.forEach(t=>{if(t!==tab){DIRTY.add(t);vis(t)}});
+  save();
+}
+function setDisp(tab,k){const el=document.getElementById(tab+'_'+k),f=ALLF[k];if(el&&f&&document.activeElement!==el)el.value=fmtIn(dispVal(tab,f))}
+function fieldHtml(tab,f,st){
+  const id=tab+'_'+f.id,v=st[f.id],dk=`data-tab="${tab}" data-k="${f.id}"`;f=SH.has(f.id)&&!f._lk?{...f,l:f.l+' <span class="lk" title="Sincronizado entre abas">⇆</span>',_lk:1}:f;
+  if(f.t==='chk')return `<div class="fld chk" data-f="${f.id}"><label><input type="checkbox" id="${id}" ${dk} ${v?'checked':''}><span>${f.l}</span></label>${ib(f.id)}</div>`;
+  if(f.t==='sel')return `<div class="fld" data-f="${f.id}"><label for="${id}">${f.l}${ib(f.id)}</label><select id="${id}" ${dk}>${f.o.map(o=>`<option value="${o[0]}"${String(v)===String(o[0])?' selected':''}>${o[1]}</option>`).join('')}</select></div>`;
+  if(isMoney(f)){const per=perOf(tab,f);const bm=f.id==='base'?`<span class="seg" role="group"><button type="button" data-bm="bruto" data-tab="${tab}" class="${st.baseMode!=='liq'?'on':''}">Bruto</button><button type="button" data-bm="liq" data-tab="${tab}" class="${st.baseMode==='liq'?'on':''}">Líquido</button></span>`:'';
+    const lbl=f.id==='base'?(st.baseMode==='liq'?(tab==='u'?'Remuneração líquida pretendida':'Salário líquido pretendido'):f.l):f.l;
+    return `<div class="fld" data-f="${f.id}"><label for="${id}"><span id="${id}_l">${lbl}</span>${ib(f.id==='base'?'baseMode':f.id)}${bm}</label><div class="inp"><input id="${id}" type="text" inputmode="decimal" autocomplete="off" ${dk} value="${fmtIn(dispVal(tab,f))}"><button type="button" class="ut" data-ut="${f.id}" data-tab="${tab}" title="Alternar entre mensal e anual">${per==='mes'?'€/mês':'€/ano'}</button></div>${f.id==='base'?`<span class="hint" id="${id}_h"></span>`:''}</div>`}
+  return `<div class="fld" data-f="${f.id}"><label for="${id}">${f.l}${ib(f.id)}</label><div class="inp"><input id="${id}" type="text" inputmode="decimal" autocomplete="off" ${dk} value="${fmtIn(v)}">${f.u?`<span class="u">${f.u}</span>`:''}</div></div>`;
+}
+function invBox(tab){
+  if(tab==='p')return `<div class="card inv"><h3>Cálculo inverso ${ib('inv_p')}</h3><div class="row"><div class="inp"><input id="invP" type="text" inputmode="decimal" placeholder="Líquido desejado"><span class="u">€/mês</span></div><button class="btn pri" type="button" data-inv="p">Calcular bruto</button></div><div class="msg" id="invPm"></div></div>`;
+  return `<div class="card inv"><h3>Cálculo inverso ${ib('inv_e')}</h3><select id="invEt"><option value="total">Custo total anual máximo</option><option value="mensal">Custo médio mensal máximo</option><option value="liq">Líquido pretendido (mês normal)</option></select><div class="row"><div class="inp"><input id="invE" type="text" inputmode="decimal" placeholder="Valor"><span class="u">€</span></div><button class="btn pri" type="button" data-inv="e">Calcular bruto</button></div><div class="msg" id="invEm"></div></div>`;
+}
+function renderForm(tab){if(tab==='q')return;
+  const st=S[tab];let h='';
+  h+=`<p class="sync nopr">⇆ Os dados da pessoa (situação familiar, salário, subsídios, benefícios) estão ligados entre as três abas: alterar numa atualiza as outras.</p>`;
+  if(tab==='e')h+=invBox(tab);else if(tab==='u')h+=`<div class="card"><h3>Sócio-gerente único</h3><p class="note" style="margin:0">A sociedade paga IRC; o sócio recebe como gerente (salário, IRS categoria A, SS de gerente 34,75%) e/ou como sócio (dividendos, 28%). Veja no otimizador qual a combinação que deixa mais dinheiro disponível. ${ib('u_intro')}</p></div>`;
+  SCHEMA[tab].forEach((g,gi)=>{
+    h+=`<details class="grp" data-gi="${gi}"${g.open===false?'':' open'}><summary>${g.g}</summary><div class="flds">`;
+    g.f.forEach(f=>h+=fieldHtml(tab,f,st));h+='</div></details>';
+  });
+  $('#form-'+tab).innerHTML=h;vis(tab);
+}
+function vis(tab){if(tab==='q')return;
+  const st=S[tab],root=$('#form-'+tab);
+  SCHEMA[tab].forEach((g,gi)=>{
+    const el=root.querySelector(`[data-gi="${gi}"]`);if(el)el.classList.toggle('hid',!!(g.s&&!g.s(st)));
+    g.f.forEach(f=>{const d=root.querySelector(`[data-f="${f.id}"]`);if(d)d.classList.toggle('hid',!!(f.s&&!f.s(st)))});
+  });
+}
+let tmr=null;
+document.addEventListener('input',e=>{const el=e.target;if(!el.dataset.k)return;const tab=el.dataset.tab,k=el.dataset.k;
+  if(el.type==='text'){setFromInput(tab,k,parseNum(el.value));if(!(k==='base'&&S[tab].baseMode==='liq'))shareK(tab,k);clearTimeout(tmr);tmr=setTimeout(()=>{vis(tab);refresh(tab)},160)}});
+document.addEventListener('change',e=>{const el=e.target;if(!el.dataset.k)return;const tab=el.dataset.tab,k=el.dataset.k;
+  if(el.type==='checkbox')S[tab][k]=el.checked;else if(el.tagName==='SELECT')S[tab][k]=el.value;else{setFromInput(tab,k,parseNum(el.value));setDisp(tab,k)}
+  if(!(k==='base'&&S[tab].baseMode==='liq'))shareK(tab,k);
+  if(k==='sem14')setDisp(tab,'base');
+  if(tab==='q'&&k==='iva'){buildQ()}
+  vis(tab);refresh(tab)});
+
+/* ============ gráficos ============ */
+function donut(segs,center,sub){
+  segs=segs.filter(s=>s.v>0.005);const tot=sum(segs.map(s=>s.v))||1;const R0=62,C=2*Math.PI*R0;let off=0;
+  const arcs=segs.map(s=>{const L=s.v/tot*C;const a=`<circle r="${R0}" cx="80" cy="80" fill="none" stroke="${s.c}" stroke-width="26" stroke-dasharray="${L} ${C-L}" stroke-dashoffset="${-off}" transform="rotate(-90 80 80)"><title>${esc(s.l)}: ${E(s.v)}</title></circle>`;off+=L;return a}).join('');
+  const lg=segs.map(s=>`<li><i style="background:${s.c}"></i><span>${esc(s.l)}</span><b>${E(s.v)}</b><em>${Pc(s.v/tot,1)}</em></li>`).join('');
+  return `<div class="donut"><svg width="160" height="160" viewBox="0 0 160 160" role="img">${arcs}<text x="80" y="76" text-anchor="middle" font-size="11" fill="var(--mu)">${esc(sub)}</text><text x="80" y="94" text-anchor="middle" font-size="14" font-weight="700" fill="var(--tx)">${esc(center)}</text></svg><ul class="lg">${lg}</ul></div>`;
+}
+const LCD={};
+function lineChart(id,xs,series,mark){
+  const W=640,H=260,pl=58,pr=12,pt=10,pb=30;
+  const ymax=Math.max(...series.flatMap(s=>s.ys))*1.05||1, xmin=xs[0], xmax=xs[xs.length-1];
+  const X=x=>pl+(x-xmin)/(xmax-xmin)*(W-pl-pr), Y=y=>H-pb-(y/ymax)*(H-pt-pb);
+  const step=niceStep(ymax/5);let g='';
+  for(let v=0;v<=ymax;v+=step)g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--bd)"/><text x="${pl-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--mu)">${Math.round(v).toLocaleString('pt-PT')}</text>`;
+  const xstep=niceStep((xmax-xmin)/6);
+  for(let v=Math.ceil(xmin/xstep)*xstep;v<=xmax;v+=xstep)g+=`<text x="${X(v)}" y="${H-10}" text-anchor="middle" font-size="11" fill="var(--mu)">${Math.round(v).toLocaleString('pt-PT')}</text>`;
+  const paths=series.map(s=>`<path d="${s.ys.map((y,i)=>(i?'L':'M')+X(xs[i]).toFixed(1)+' '+Y(y).toFixed(1)).join('')}" fill="none" stroke="${s.c}" stroke-width="2.2"/>`).join('');
+  let mk='';if(mark!=null&&mark>=xmin&&mark<=xmax)mk=`<line x1="${X(mark)}" x2="${X(mark)}" y1="${pt}" y2="${H-pb}" stroke="var(--tx)" stroke-dasharray="4 4" opacity=".5"/><text x="${X(mark)+4}" y="${pt+12}" font-size="11" fill="var(--tx)">atual</text>`;
+  LCD[id]={xs,series,pl,pr,W,xmin,xmax};
+  return `<div class="lc" id="${id}"><svg viewBox="0 0 ${W} ${H}" role="img">${g}${paths}${mk}<line class="hv" y1="${pt}" y2="${H-pb}" stroke="var(--ac)" opacity="0"/></svg><div class="tip"></div></div><div class="leg">${series.map(s=>`<span><i style="background:${s.c}"></i>${esc(s.n)}</span>`).join('')}</div>`;
+}
+function niceStep(x){const p=Math.pow(10,Math.floor(Math.log10(x||1)));const n=x/p;return (n<1.5?1:n<3?2:n<7?5:10)*p}
+function bindLC(id){
+  const w=document.getElementById(id);if(!w)return;const d=LCD[id],svg=w.querySelector('svg'),tip=w.querySelector('.tip'),hv=svg.querySelector('.hv');
+  const mv=ev=>{const b=svg.getBoundingClientRect();const cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-b.left;const sx=cx/b.width*d.W;
+    const x=d.xmin+(sx-d.pl)/(d.W-d.pl-d.pr)*(d.xmax-d.xmin);let i=0,best=1e18;d.xs.forEach((v,j)=>{const dd=Math.abs(v-x);if(dd<best){best=dd;i=j}});
+    const px=d.pl+(d.xs[i]-d.xmin)/(d.xmax-d.xmin)*(d.W-d.pl-d.pr);hv.setAttribute('x1',px);hv.setAttribute('x2',px);hv.setAttribute('opacity','.7');
+    tip.innerHTML=`<b>${id==='lcU'?'Remuneração':'Base'} ${E(d.xs[i])}</b><br>`+d.series.map(s=>`<span style="color:${s.c}">●</span> ${esc(s.n)}: ${E(s.ys[i])}`).join('<br>');
+    tip.style.display='block';const tl=px/d.W*b.width;tip.style.left=Math.min(Math.max(0,tl+10),b.width-tip.offsetWidth)+'px';tip.style.top='10px'};
+  svg.addEventListener('mousemove',mv);svg.addEventListener('touchmove',mv,{passive:true});
+  svg.addEventListener('mouseleave',()=>{tip.style.display='none';hv.setAttribute('opacity','0')});
+}
+
+/* ============ tabelas de resultados ============ */
+function kpi(l,v,k,s,hl){return `<div class="kpi${hl?' hl':''}"><div class="l">${l} ${ib(k)}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`}
+const lab=(t,k)=>`<span class="lb">${t}${k?' '+ib(k):''}</span>`;
+function reciboRows(r){
+  const n=r.n,a=r.a,q=r.q,rows=[];
+  const add=(l,k,v,cls)=>rows.push({l,k,v,cls});
+  add('Abonos','',null,'sec');
+  add('Vencimento base','r_base',[r.B,r.B,r.B,a.base]);
+  if(r.D)add('Diuturnidades','diut',[r.D,r.D,r.D,a.diut]);
+  if(r.O)add('Complementos tributáveis','outrosTrib',[r.O,r.O,r.O,a.outros]);
+  if(r.HS)add('Trabalho suplementar','hs',[r.HS,r.HS,r.HS,a.hs]);
+  if(r.ref.isento)add('Subsídio de refeição (isento)','r_refI',[r.ref.isento,r.ref.isento,r.ref.isento,a.refI]);
+  if(r.ref.trib>0.004)add('Subsídio de refeição (tributável)','r_refT',[r.ref.trib,r.ref.trib,r.ref.trib,a.refT]);
+  if(r.aj.isento)add('Ajudas de custo / km (isento)','r_ajI',[r.aj.isento,r.aj.isento,r.aj.isento,a.ajI]);
+  if(r.aj.trib>0.004)add('Ajudas de custo / km (tributável)','r_ajT',[r.aj.trib,r.aj.trib,r.aj.trib,a.ajT]);
+  if(q){add('Duodécimo subsídio de férias','r_duo',[r.duoSF,r.duoSF,r.duoSF,a.duoSF]);add('Duodécimo subsídio de Natal','r_duo',[r.duoSN,r.duoSN,r.duoSN,a.duoSN])}
+  if(q<1){add('Subsídio de férias','r_SF',[0,a.SF,0,a.SF]);add('Subsídio de Natal','r_SN',[0,0,a.SN,a.SN])}
+  if(r.prem.P)add('Prémio anual'+(r.prem.isento?' (parte isenta '+E(r.prem.isento)+')':''),'premio',[0,0,0,r.prem.P]);
+  add('Total ilíquido','r_bruto',[n.bruto,r.sf.bruto,r.sn.bruto,a.bruto],'tot');
+  add('Descontos','',null,'sec');
+  add('Retenção IRS','r_irs',[n.irs,r.sf.irs,r.sn.irs,a.irs],'neg');
+  add(`Segurança Social (${Pc(r.rW,0)})`,'r_ss',[n.ss,r.sf.ss,r.sn.ss,a.ss],'neg');
+  add('Total de descontos','r_desc',[n.irs+n.ss,r.sf.irs+r.sf.ss,r.sn.irs+r.sn.ss,a.irs+a.ss],'tot');
+  add('Líquido a receber','r_liq',[n.liq,r.sf.liq,r.sn.liq,a.liq],'big');
+  if(r.esp.total)add('Rendimento em espécie (não pago)','r_esp',[r.esp.total,r.esp.total,r.esp.total,a.esp],'sub');
+  return rows;
+}
+function reciboTable(r){
+  const rows=reciboRows(r);
+  let h=`<div class="tw"><table class="t exp" data-t="Recibo de vencimento"><thead><tr><th></th><th>Mês normal ${ib('col_n')}</th><th>Mês c/ sub. férias ${ib('col_sf')}</th><th>Mês c/ sub. Natal ${ib('col_sn')}</th><th>Anual ${ib('col_a')}</th><th>Média/mês</th></tr></thead><tbody>`;
+  rows.forEach(x=>{
+    if(!x.v){h+=`<tr class="sec"><td colspan="6">${x.l}</td></tr>`;return}
+    h+=`<tr class="${x.cls||''}"><td>${lab(x.l,x.k)}</td>${x.v.map(v=>`<td>${E(v)}</td>`).join('')}<td>${E(x.v[3]/12)}</td></tr>`;
+  });
+  return h+'</tbody></table></div>';
+}
+function retTable(r){
+  const cols=[['Mês trabalhado',r.retN],['Subsídio de férias',r.retSF],['Subsídio de Natal',r.retSN]];
+  const f=(rt,fn)=>rt.R>0?fn(rt):'—';
+  const rw=(l,fn)=>`<tr><td>${l}</td>${cols.map(c=>`<td>${f(c[1],fn)}</td>`).join('')}</tr>`;
+  return `<div class="tw"><table class="t exp" data-t="Retenção de IRS"><thead><tr><th></th>${cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead><tbody>
+  ${rw('Remuneração (R)',rt=>E(rt.R))}
+  ${rw('Escalão (até)',rt=>isFinite(rt.lim)?E(rt.lim):'acima')}
+  ${rw('Taxa marginal',rt=>Pc(rt.rate))}
+  ${rw('Parcela a abater',rt=>E(rt.pa))}
+  ${rw('Parcela dependentes/deficiência',rt=>E(rt.padep+rt.defdep+rt.conj))}
+  <tr class="tot"><td>${lab('Retenção','r_irs')}</td>${cols.map(c=>`<td>${E(c[1].val)}</td>`).join('')}</tr>
+  ${rw('Taxa efetiva',rt=>Pc(rt.ef))}
+  </tbody></table></div><p class="note">${esc(T[r.retN.tab].n)}</p>`;
+}
+function empRows(r){
+  const e=r.emp,rows=[];const add=(l,k,v,cls)=>{if(v||cls)rows.push({l,k,v,cls})};
+  add('Salários e abonos pagos','r_bruto',r.a.bruto);
+  add(`TSU da empresa (${Pc(r.rE)})`,'r_tsu',e.tsu);
+  add('Seguro de acidentes de trabalho','r_segAT',e.segAT);
+  add('FGCT','r_fgct',e.fgct);
+  add('Provisão compensação (termo)','r_termo',e.termo);
+  add('Medicina / SST','r_med',e.med);
+  add('Formação','r_form',e.form);
+  add('Seguro de saúde','r_saude',e.saude);
+  add('Encargos com viatura','r_viat',e.viat);
+  add('Equipamento e outros','r_equip',e.equip);
+  add('Tributação autónoma','r_ta',e.ta);
+  add('Custo total para a empresa','r_custo',e.total,'big');
+  return rows;
+}
+function empTable(r,title){
+  const t=r.emp.total||1;
+  return `<div class="tw"><table class="t exp" data-t="${esc(title)}"><thead><tr><th></th><th>Anual</th><th>Média/mês</th><th>% do custo</th></tr></thead><tbody>${empRows(r).map(x=>`<tr class="${x.cls||''}"><td>${lab(x.l,x.k)}</td><td>${E(x.v)}</td><td>${E(x.v/12)}</td><td class="pc">${Pc(x.v/t,1)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function segsFor(r){return [
+  {l:'Líquido do trabalhador',v:r.a.liq,c:'var(--c1)'},
+  {l:'IRS retido',v:r.a.irs,c:'var(--c2)'},
+  {l:'SS do trabalhador',v:r.a.ss,c:'var(--c3)'},
+  {l:'TSU da empresa',v:r.emp.tsu,c:'var(--c4)'},
+  {l:'Outros encargos',v:r.emp.outros,c:'var(--c5)'},
+  {l:'Benefícios (saúde, viatura)',v:r.emp.benef,c:'var(--c6)'},
+  {l:'Tributação autónoma',v:r.emp.ta,c:'var(--c7)'}]}
+function curve(st,id){
+  const xmax=Math.max(4000,Math.ceil(st.base*1.6/500)*500),xs=[],s1=[],s2=[],s3=[];
+  for(let i=0;i<=60;i++){const x=920+(xmax-920)*i/60;const rr=calc({...st,base:x});xs.push(x);s1.push(x);s2.push(rr.n.liq);s3.push(rr.emp.mensal)}
+  return lineChart(id,xs,[{n:'Salário base',ys:s1,c:'var(--c8)'},{n:'Líquido (mês normal)',ys:s2,c:'var(--c1)'},{n:'Custo médio mensal p/ empresa',ys:s3,c:'var(--c4)'}],st.base);
+}
+const actions=tab=>`<div class="actions nopr"><button class="btn" type="button" data-act="save" data-tab="${tab}">＋ Guardar no comparador</button><button class="btn" type="button" data-act="copy" data-tab="${tab}">Copiar quadros</button><button class="btn" type="button" data-act="csv" data-tab="${tab}">Descarregar CSV</button><button class="btn" type="button" data-act="print" data-tab="${tab}">Imprimir / PDF</button></div>`;
+
+/* ============ render ============ */
+function renderP(){
+  const r=calc(S.p);R.p=r;const a=r.a;
+  let h=`<div class="printsum" id="ps-p"></div><div class="kpis">
+   ${kpi('Líquido — mês normal',E(r.n.liq),'r_liq',`de ${E(r.n.bruto)} ilíquidos`,1)}
+   ${kpi('Líquido anual',E(a.liq),'r_liqA',`média ${E(a.liq/12)}/mês`)}
+   ${kpi('IRS + SS no ano',E(a.irs+a.ss),'r_desc',`${Pc((a.irs+a.ss)/(a.bruto||1),1)} do ilíquido`)}
+   ${kpi('Custo anual p/ a empresa',E(r.emp.total),'r_custo',`média ${E(r.emp.mensal)}/mês`)}
+  </div>${actions('p')}
+  <div class="card"><h3>Recibo de vencimento <small>valores em euros</small></h3>${reciboTable(r)}
+   <p class="note">Rendimento anual sujeito a IRS (categoria A): <b>${E(a.tributavel)}</b> · isentos: ${E(a.isentos)} · taxa média de retenção: ${Pc(a.irs/(a.tributavel||1),1)}</p></div>
+  <div class="two"><div class="card"><h3>Retenção de IRS detalhada ${ib('r_irs')}</h3>${retTable(r)}</div>
+   <div class="card"><h3>Para onde vai o custo total ${ib('r_carga')}</h3>${donut(segsFor(r),E(r.emp.total),'custo anual')}
+   <p class="note">Por cada 1 € líquido a empresa gasta <b>${N2(r.emp.racio)} €</b>. Parte que vai para o Estado: <b>${Pc(r.emp.carga,1)}</b>.</p></div></div>
+  <div class="card"><h3>Como evolui com o salário base <small>passe o dedo/rato no gráfico</small></h3>${curve(S.p,'lcP')}</div>
+  <div class="card"><h3>Quanto custa este trabalhador à empresa ${ib('r_custo')}</h3>${empTable(r,'Custo para a empresa')}
+   <p class="note">Pressupostos da empresa: seguro AT ${N2(S.p.segAT)}%, medicina ${E(S.p.medTrab)}/ano${S.p.viatura?`, viatura ${E(S.p.viatCustosAnuais)}/ano`:''}. Personalize no separador <b>Empresas</b>.</p></div>`;
+  $('#res-p').innerHTML=h;bindLC('lcP');
+}
+function renderE(){
+  const r=calc(S.e);R.e=r;const c=irc(S.e,r);R.irc=c;const e=r.emp;
+  let h=`<div class="printsum" id="ps-e"></div><div class="kpis">
+   ${kpi('Custo anual por trabalhador',E(e.total),'r_custo',`${Pc(e.total/((r.B||1)*14)-1,1)} acima do salário base anual`,1)}
+   ${kpi('Custo médio mensal',E(e.mensal),'r_custo',`vs. base ${E(r.B)}`)}
+   ${kpi('Custo por hora efetiva',E(e.hora),'r_hora',`${N2(e.horas)} h/ano`)}
+   ${kpi('Por cada 1 € líquido',N2(e.racio)+' €','r_racio',`líquido anual ${E(r.a.liq)}`)}
+  </div>${actions('e')}
+  <div class="two"><div class="card"><h3>Custo do trabalhador ${ib('r_custo')}</h3>${empTable(r,'Custo do trabalhador para a empresa')}</div>
+   <div class="card"><h3>Onde vai cada euro ${ib('r_carga')}</h3>${donut(segsFor(r),E(e.total),'custo anual')}
+   <p class="note">Estado (IRS + SS + TSU + TA): <b>${E(e.estado)}</b> = ${Pc(e.carga,1)} do custo.</p></div></div>
+  <div class="card"><h3>Do lado do trabalhador</h3><div class="tw"><table class="t exp" data-t="Trabalhador"><thead><tr><th></th><th>Mês normal</th><th>Anual</th></tr></thead><tbody>
+   <tr><td>${lab('Total ilíquido','r_bruto')}</td><td>${E(r.n.bruto)}</td><td>${E(r.a.bruto)}</td></tr>
+   <tr class="neg"><td>${lab('Retenção IRS','r_irs')}</td><td>${E(r.n.irs)}</td><td>${E(r.a.irs)}</td></tr>
+   <tr class="neg"><td>${lab('Segurança Social (11%)','r_ss')}</td><td>${E(r.n.ss)}</td><td>${E(r.a.ss)}</td></tr>
+   <tr class="big"><td>${lab('Líquido','r_liq')}</td><td>${E(r.n.liq)}</td><td>${E(r.a.liq)}</td></tr></tbody></table></div>
+   <p class="note">Recibo completo, mês a mês, no separador <b>Pessoas</b> (use “Copiar perfil”).</p></div>
+  ${ircCard(r,c)}
+  <div class="card"><h3>Custo vs. líquido por salário base</h3>${curve(S.e,'lcE')}</div>`;
+  $('#res-e').innerHTML=h;bindLC('lcE');
+}
+function ircCard(r,c){
+  const e=S.e;const rows=[
+   ['Volume de negócios','fat',e.fat],
+   ['(−) Outros gastos','gastos',-e.gastos],
+   [`(−) Custos com pessoal (${e.nTrab} × ${E(r.emp.operacional)}${e.outrosPessoal?' + outros':''})`,'i_rai',-c.pessoal],
+   ...(e.repres?[['(−) Despesas de representação','repres',-e.repres]]:[]),
+   ['Resultado antes de impostos','i_rai',c.rai,'tot'],
+   ['Lucro tributável (simplificado)','i_lt',c.lt,'sub'],
+   ...(c.ded?[['(−) Prejuízos fiscais deduzidos','prejuizos',-c.ded,'sub']]:[]),
+   ['Matéria coletável','i_mc',c.mc,'sub'],
+   ['IRC','i_col',-c.coleta,'neg'],
+   ['Derrama municipal','i_dm',-c.dm,'neg'],
+   ...(c.de?[['Derrama estadual','i_de',-c.de,'neg']]:[]),
+   ['Tributação autónoma','i_ta',-c.ta,'neg'],
+   ['Total de impostos da empresa','i_tot',-c.total,'tot'],
+   ['Resultado líquido','i_rl',c.rl,'big'],
+   ...(c.div?[['Dividendos distribuídos','i_div',c.div,'sub'],['(−) Retenção 28%','i_div',-c.divRet,'neg'],['Dividendos líquidos para os sócios','i_div',c.divLiq,'tot'],['Lucro retido na empresa','i_rl',c.retido,'sub']]:[]),
+   ['Total entregue ao Estado (pessoal + empresa + sócios)','i_est',c.estado,'tot']];
+  const F=Math.max(e.fat,1);
+  const parts=[{l:'Outros gastos',v:e.gastos,c:'var(--c8)'},{l:'Pessoal',v:c.pessoal,c:'var(--c4)'},{l:'Representação',v:e.repres,c:'var(--c7)'},{l:'Impostos da empresa',v:Math.max(0,c.total),c:'var(--c2)'},{l:'Resultado líquido',v:Math.max(0,c.rl),c:'var(--c1)'}].filter(x=>x.v>0);
+  const tot=sum(parts.map(x=>x.v))||1;
+  return `<div class="card"><h3>IRC e resultado da empresa <small>${c.taxa!=null?'taxa efetiva '+Pc(c.taxa,1):'sem lucro tributável'}</small></h3>
+  <div class="stack">${parts.map(x=>`<div style="width:${x.v/tot*100}%;background:${x.c}" title="${esc(x.l)}: ${E(x.v)}"></div>`).join('')}</div>
+  <div class="leg">${parts.map(x=>`<span><i style="background:${x.c}"></i>${esc(x.l)} ${Pc(x.v/F,1)}</span>`).join('')}</div>
+  <div class="tw" style="margin-top:10px"><table class="t exp" data-t="IRC e resultado"><thead><tr><th></th><th>Anual</th><th>% faturação</th></tr></thead><tbody>
+  ${rows.map(x=>`<tr class="${x[3]||''}"><td>${lab(x[0],x[1])}</td><td>${E(x[2])}</td><td class="pc">${Pc(x[2]/F,1)}</td></tr>`).join('')}
+  </tbody></table></div>${c.rai<0?'<p class="note warn">A empresa apresenta prejuízo: não há IRC, mas a tributação autónoma é sempre devida.</p>':''}
+  <p class="note">Lucro tributável simplificado (= resultado contabilístico). Não inclui pagamentos por conta, benefícios fiscais nem acréscimos/deduções do quadro 07.</p></div>`;
+}
+
+function renderU(){
+  const o=calcU(S.u);R.u=o;const r=o.r,c=o.c,a=r.a,u=o.u;
+  const opt=optimU(S.u);
+  const M=Math.max(o.margem,1);
+  const parts=[{l:'Salário líquido do sócio',v:Math.max(0,o.salLiq),c:'var(--c1)'},{l:'Dividendos líquidos',v:o.divLiq,c:'var(--c6)'},{l:'Lucro retido na empresa',v:Math.max(0,c.retido),c:'var(--c8)'},
+    {l:'IRS do sócio',v:o.irsSal,c:'var(--c2)'},{l:'Imposto s/ dividendos',v:o.divTax,c:'var(--c7)'},{l:'Segurança Social (34,75%)',v:a.ss+r.emp.tsu,c:'var(--c3)'},
+    {l:'IRC, derramas e TA',v:Math.max(0,c.total),c:'var(--c4)'},{l:'Outros custos do gerente',v:r.emp.outros+r.emp.benef,c:'var(--c5)'}];
+  const row=(l,k,v,cls)=>`<tr class="${cls||''}"><td>${lab(l,k)}</td><td>${E(v)}</td><td class="pc">${Pc(v/M,1)}</td></tr>`;
+  const bestB=opt.best?opt.best.b:0, bestEg=opt.best?opt.best.eg:false, bestO=opt.best?calcU(S.u,{base:bestB,distrib:100,englob:bestEg}):null;
+  let h=`<div class="printsum" id="ps-u"></div><div class="kpis">
+   ${kpi('Total líquido para o sócio',E(o.total),'u_total',`${E(o.total/12)}/mês · salário + dividendos`,1)}
+   ${kpi('Remuneração líquida — mês',E(r.n.liq),'r_liq',`bruto ${E(r.n.bruto)}${u.sem14?' · 12 meses':' · 14 meses'}`)}
+   ${kpi('Dividendos líquidos',E(o.divLiq),'u_div',`${u.distrib}% do lucro · ${u.englob?'englobados':'28%'}`)}
+   ${kpi('Parte para o Estado',Pc(o.carga,1),'u_estado',`${E(o.estado)} da margem de ${E(o.margem)}`)}
+  </div>${actions('u')}
+  <div class="card"><h3>Para onde vai a margem ${ib('u_margem')} <small>margem antes do gerente: ${E(o.margem)}</small></h3>
+   <div class="two" style="align-items:center"><div>${donut(parts,E(o.margem),'margem anual')}</div>
+   <div class="tw"><table class="t exp" data-t="Fluxo da Unipessoal"><thead><tr><th></th><th>Anual</th><th>% margem</th></tr></thead><tbody>
+    ${row('Volume de negócios','fat',u.fat)}
+    ${row('(−) Gastos da atividade','gastos',-u.gastos)}
+    ${row('(−) Contabilista','contab',-12*u.contab)}
+    ${u.repres?row('(−) Despesas de representação','repres',-u.repres):''}
+    ${row('Margem antes do gerente','u_margem',o.margem,'tot')}
+    ${row('(−) Custo total do gerente (sem TA)','r_custo',-r.emp.operacional)}
+    ${row('Resultado antes de impostos','u_irc',c.rai,'tot')}
+    ${row('(−) IRC','u_irc',-c.coleta,'neg')}
+    ${row('(−) Derrama municipal','derramaM',-c.dm,'neg')}
+    ${c.de?row('(−) Derrama estadual','u_irc',-c.de,'neg'):''}
+    ${row('(−) Tributação autónoma','r_ta',-c.ta,'neg')}
+    ${row('Resultado líquido','u_irc',c.rl,'tot')}
+    ${row('Dividendos distribuídos','u_div',c.div,'sub')}
+    ${row('Lucro retido','distrib',c.retido,'sub')}
+   </tbody></table></div></div></div>
+  <div class="two">
+   <div class="card"><h3>O sócio-gerente</h3><div class="tw"><table class="t exp" data-t="Sócio-gerente"><thead><tr><th></th><th>Mês</th><th>Anual</th></tr></thead><tbody>
+    <tr><td>${lab('Remuneração base','r_base')}</td><td>${E(r.B)}</td><td>${E(a.base+a.SF+a.SN)}</td></tr>
+    ${r.ref.mes?`<tr><td>${lab('Subsídio de refeição','refVal')}</td><td>${E(r.ref.mes)}</td><td>${E(a.refI+a.refT)}</td></tr>`:''}
+    ${r.aj.mes?`<tr><td>${lab('Ajudas de custo / km','r_ajI')}</td><td>${E(r.aj.mes)}</td><td>${E(a.ajI+a.ajT)}</td></tr>`:''}
+    <tr class="tot"><td>${lab('Total ilíquido','r_bruto')}</td><td>${E(r.n.bruto)}</td><td>${E(a.bruto)}</td></tr>
+    <tr class="neg"><td>${lab('Retenção IRS (mensal)','r_irs')}</td><td>${E(r.n.irs)}</td><td>${E(a.irs)}</td></tr>
+    <tr class="neg"><td>${lab('Segurança Social 11%'+(r.floor&&r.ssBaseN<=r.floor+.001?' (base mínima IAS)':''),'ssIsento')}</td><td>${E(r.n.ss)}</td><td>${E(a.ss)}</td></tr>
+    <tr class="big"><td>${lab('Líquido recebido','r_liq')}</td><td>${E(r.n.liq)}</td><td>${E(a.liq)}</td></tr>
+    <tr><td>${lab('IRS final estimado (salário)','u_irs')}</td><td></td><td>${E(o.irsSal)}</td></tr>
+    <tr class="${o.acerto>0?'neg':''}"><td>${lab(o.acerto>0?'Acerto: a pagar em 2027':'Acerto: reembolso em 2027','u_acerto')}</td><td></td><td>${E(Math.abs(o.acerto))}</td></tr>
+    <tr class="sub"><td>${lab('TSU paga pela empresa (23,75%)','r_tsu')}</td><td>${E(r.emp.tsu/12)}</td><td>${E(r.emp.tsu)}</td></tr>
+   </tbody></table></div>${r.n.liq<0?'<p class="note warn">Com remuneração abaixo do IAS, os 11% da base mínima excedem o que recebe: o valor negativo é pago do bolso do gerente (ou assumido pela empresa).</p>':''}</div>
+   <div class="card"><h3>Dividendos e IRS anual ${ib('u_div')}</h3><div class="tw"><table class="t exp" data-t="Dividendos e IRS"><tbody>
+    <tr><td>${lab('Resultado líquido','u_irc')}</td><td>${E(c.rl)}</td></tr>
+    <tr><td>${lab(`Distribuído (${u.distrib}%)`,'distrib')}</td><td>${E(c.div)}</td></tr>
+    <tr class="neg"><td>${lab(u.englob?'Imposto por englobamento (50% à taxa marginal)':'Retenção liberatória 28%','englob')}</td><td>${E(o.divTax)}</td></tr>
+    <tr class="big"><td>${lab('Dividendos líquidos','u_div')}</td><td>${E(o.divLiq)}</td></tr>
+    <tr class="sec"><td colspan="2">IRS anual do sócio</td></tr>
+    <tr><td>${lab('Rendimento coletável','u_irs')}</td><td>${E((u.englob?o.ia:o.ias).rc)}</td></tr>
+    <tr><td>${lab('Taxa marginal','u_irs')}</td><td>${Pc((u.englob?o.ia:o.ias).rate,1)}</td></tr>
+    <tr class="tot"><td>${lab('IRS final estimado','u_irs')}</td><td>${E(u.englob?o.ia.irs:o.ias.irs)}</td></tr>
+   </tbody></table></div><p class="note">${(()=>{const alt=calcU(S.u,{englob:!u.englob});const d=alt.total-o.total;return d>1?`Com ${u.englob?'a taxa liberatória de 28%':'englobamento'} ficaria com mais <b>${E(d)}</b>/ano.`:`A opção atual (${u.englob?'englobamento':'28%'}) é a mais vantajosa neste cenário.`})()}</p></div>
+  </div>
+  <div class="card"><h3>Otimizador: salário vs dividendos ${ib('u_opt')} <small>100% do lucro distribuído · melhor opção de tributação dos dividendos</small></h3>
+   ${opt.pts.length>2?lineChartU('lcU',opt.pts,u.base,bestB):'<p class="note">A margem é insuficiente para simular.</p>'}
+   ${bestO?`<p style="margin:10px 0 6px">Melhor remuneração mensal: <b>${E(bestB)}</b> (${u.sem14?'12':'14'} meses) com dividendos ${bestEg?'<b>englobados</b>':'a <b>28%</b>'} → total líquido para o sócio <b>${E(bestO.total)}</b>/ano${bestO.total-o.total>1?`, mais ${E(bestO.total-o.total)} do que a situação atual`:''}.</p>
+   <div class="tw"><table class="t exp" data-t="Otimizador"><thead><tr><th>Remuneração mensal</th><th>Salário líquido/ano</th><th>Dividendos líquidos</th><th>Dividendos</th><th>Total para o sócio</th><th>Estado</th></tr></thead><tbody>
+   ${[...new Set([0,IAS,920,Math.round(u.base*100)/100,bestB,Math.round(bestB*1.5)])].sort((x,y)=>x-y).map(b=>{const qa=calcU(S.u,{base:b,distrib:100,englob:false}),qb=calcU(S.u,{base:b,distrib:100,englob:true});const q=qb.total>qa.total?qb:qa;if(q.c.rai<0)return '';return `<tr class="${b===bestB?'big':''}"><td>${E(b)}${b===bestB?' ★':''}${b===Math.round(u.base*100)/100?' (atual)':''}</td><td>${E(q.salLiq)}</td><td>${E(q.divLiq)}</td><td>${q.u.englob?'englob.':'28%'}</td><td>${E(q.total)}</td><td>${E(q.estado)}</td></tr>`}).join('')}
+   </tbody></table></div>
+   <div class="actions" style="margin:10px 0 0"><button class="btn pri" type="button" id="applyBest" data-b="${bestB}" data-eg="${bestEg?1:0}">Aplicar ${E(bestB)}, distribuir 100%${bestEg?" e englobar":""}</button></div>`:''}
+   <p class="note">Usa o IRS final estimado (não a retenção). A SS paga também gera direitos (reforma, doença, parentalidade, desemprego) — o máximo em dinheiro hoje não é necessariamente a melhor escolha.</p></div>`;
+  $('#res-u').innerHTML=h;bindLC('lcU');
+}
+function lineChartU(id,pts,cur,best){
+  const xs=pts.map(p=>p.b);
+  const html=lineChart(id,xs,[{n:'Total líquido para o sócio',ys:pts.map(p=>p.t),c:'var(--c1)'},{n:'Total para o Estado',ys:pts.map(p=>p.est),c:'var(--c2)'}],cur);
+  return html.replace('<b>Base ','<b>Remuneração ');
+}
+
+
+/* ============ esquema ============ */
+const QM=['fat','gastos','contab','repres','base'];
+function qPer(){return S.q.qPer==='mes'?'mes':'ano'}
+function qApplyPer(){S.q._per=S.q._per||{};QM.forEach(k=>S.q._per[k]=qPer())}
+const qU=()=>qPer()==='mes'?'€/mês':'€/ano';
+function qIn(k,sm){const f=ALLF[k];return `<span class="qi${sm?' sm':''}"><input id="q_${k}" type="text" inputmode="decimal" autocomplete="off" data-tab="q" data-k="${k}" value="${fmtIn(f&&isMoney(f)?dispVal('q',f):S.q[k])}"><span>${f&&isMoney(f)?qU():''}</span></span>`}
+const qInl=k=>`<input id="q_${k}" type="text" inputmode="decimal" autocomplete="off" data-tab="q" data-k="${k}" value="${fmtIn(dispVal('q',ALLF[k]))}"> ${qU()}`;
+function qCk(k,l,ik){return `<label class="qck"><input type="checkbox" id="q_${k}" data-tab="q" data-k="${k}" ${S.q[k]?'checked':''}>${l}${ik?' '+ib(ik):''}</label>`}
+const qv=(k,cls)=>`<span data-q="${k}"${cls?` class="${cls}"`:''}></span>`;
+const chip=(cls,html)=>`<span class="cp ${cls}">${html}</span>`;
+function buildQ(){
+  qApplyPer();const liq=S.q.baseMode==='liq',per=qPer(),iva=!!S.q.iva;
+  const pl=per==='mes'?'por mês (média anual ÷ 12)':'por ano';
+  const h=`<div class="qwrap"><div class="printsum" id="ps-q"></div>
+  <div class="qintro"><p>O percurso do dinheiro numa <b>Unipessoal Lda</b>, pela ordem em que acontece. Os campos a azul editam-se diretamente no esquema; tudo o resto é calculado. A remuneração do gerente é um custo da empresa (sai <b>antes</b> do IRC); os dividendos saem do lucro (<b>depois</b> do IRC).</p>
+   <div class="qleg"><span><i style="background:var(--c2)"></i>Estado</span><span><i style="background:var(--c1)"></i>Sócio</span><span><i style="background:var(--c8)"></i>Empresa / custos</span>${iva?'<span><i style="background:var(--c3)"></i>IVA (neutro)</span>':''}</div></div>
+  <div class="qbar"><span>Ver valores</span><span class="seg big"><button type="button" data-qper="mes" class="${per==='mes'?'on':''}">Por mês</button><button type="button" data-qper="ano" class="${per==='ano'?'on':''}">Por ano</button></span>
+   ${qCk('iva','Mostrar o caminho do IVA','iva_q')}</div>
+  ${actions('q')}
+  <div class="flow">
+   ${iva?`<div class="nd iv"><span class="st">0</span><div class="t">Recebido dos clientes (com IVA) ${ib('iva_q')}</div><div class="v">${qv('comIva')}</div>
+     <div class="qi sm"><span>Taxa de IVA</span><select id="q_ivaTx" data-tab="q" data-k="ivaTx">${[['23','23% normal'],['13','13% intermédia'],['6','6% reduzida'],['0','Isento (art. 9.º)']].map(o=>`<option value="${o[0]}"${String(S.q.ivaTx)===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select></div></div>
+   <div class="cn iv"><div class="ch">${chip('ivc',`− IVA cobrado ${qv('ivaCob')} → não é da empresa ${ib('iva_q')}`)}</div></div>`:''}
+   <div class="nd key" id="q_n1"><span class="st">1</span><div class="t">Receitas (faturação sem IVA) ${ib('fat')}</div>${qIn('fat')}<div class="balao" id="q_min" hidden></div></div>
+   <div class="cn"><div class="ch">${chip('cst',`− despesas ${qInl('gastos')} ${ib('gastos')}`)}${chip('cst',`− contabilista ${qInl('contab')} ${ib('contab')}`)}
+     ${iva?chip('ivc',`IVA pago nas despesas ${qv('ivaDed')} · <input id="q_ivaDesp" type="text" inputmode="decimal" autocomplete="off" data-tab="q" data-k="ivaDesp" value="${fmtIn(S.q.ivaDesp)}"> % com IVA ${ib('iva_ded')}`):''}</div></div>
+   <div class="nd key"><span class="st">2</span><div class="t">Margem disponível ${ib('u_margem')}</div><div class="v">${qv('margem')}</div><div class="s">dinheiro gerado antes de pagar o sócio e os impostos</div></div>
+   ${iva?`<div class="ivbox"><div class="t"><b>Declaração periódica de IVA</b> ${ib('iva_q')}</div>
+     <div class="ivrow"><span>IVA cobrado aos clientes</span><b>${qv('ivaCob')}</b></div>
+     <div class="ivrow"><span>− IVA pago a fornecedores (dedutível)</span><b>${qv('ivaDed')}</b></div>
+     <div class="ivrow tot"><span data-q-t="ivaLbl">= IVA a entregar ao Estado</span><b>${qv('ivaEnt')}</b></div>
+     <div class="s">${qv('ivaTri')} por trimestre · não altera a margem nem o lucro</div></div>`:''}
+   <div class="br">
+    <div><div class="bh"><span>Caminho A · Remuneração</span><small>o sócio trabalha como gerente</small></div>
+     <div class="flow">
+      <div class="nd"><span class="st">3A</span><div class="t"><span id="q_base_l">${liq?'Remuneração líquida pretendida':'Remuneração bruta'}</span> ${ib('baseMode')}</div>
+       <span class="seg" style="margin:6px auto 2px;display:inline-flex"><button type="button" data-bm="bruto" data-tab="q" class="${liq?'':'on'}">Bruto</button><button type="button" data-bm="liq" data-tab="q" class="${liq?'on':''}">Líquido</button></span>
+       ${qIn('base')}
+       <div class="s" id="q_bh"></div>
+       ${qCk('sem14','Pagar só 12 meses','sem14')}
+       <div class="qi sm" style="margin-top:6px"><span>Subs. refeição</span><input id="q_refVal" type="text" inputmode="decimal" autocomplete="off" data-tab="q" data-k="refVal" value="${fmtIn(S.q.refVal)}"><span>€/dia ${ib('refVal')}</span></div>
+       <div class="s">bruto total c/ subsídio: ${qv('brutoA')} ${pl}</div></div>
+      <div class="cn"><div class="ch">${chip('st8',`− TSU empresa 23,75% ${qv('tsu')} ${ib('r_tsu')}`)}</div></div>
+      <div class="nd co"><span class="st">4A</span><div class="t">Custo total do gerente ${ib('r_custo')}</div><div class="v">${qv('custoG')}</div><div class="s">é gasto da empresa → reduz o lucro tributável</div></div>
+      <div class="cn"><div class="ch">${chip('st8',`− SS gerente 11% ${qv('ss')} ${ib('ssIsento')}`)}${chip('st8',`− IRS ${qv('irsSal')} ${ib('u_irs')}`)}</div></div>
+      <div class="nd me"><span class="st">5A</span><div class="t">Remuneração líquida ${ib('r_liq')}</div><div class="v">${qv('salLiq')}</div><div class="s">${pl}</div></div>
+     </div></div>
+    <div><div class="bh"><span>Caminho B · Lucro e dividendos</span><small>o sócio recebe como dono</small></div>
+     <div class="flow">
+      <div class="nd"><span class="st">3B</span><div class="t">Resultado antes de impostos ${ib('u_irc')}</div><div class="v">${qv('rai')}</div><div class="s">margem − custo do gerente</div></div>
+      <div class="cn"><div class="ch">${chip('st8',`− IRC ${qv('irc')} ${ib('u_irc')}`)}${chip('st8',`− derramas ${qv('der')} ${ib('derramaM')}`)}<span data-q-show="ta">${chip('st8',`− trib. autónoma ${qv('ta')} ${ib('r_ta')}`)}</span></div></div>
+      <div class="nd"><span class="st">4B</span><div class="t">Lucro líquido ${ib('u_irc')}</div><div class="v">${qv('rl')}</div>
+       <div class="qi sm"><span>Distribuir</span><input id="q_distrib" type="text" inputmode="decimal" autocomplete="off" data-tab="q" data-k="distrib" value="${fmtIn(S.q.distrib)}"><span>% ${ib('distrib')}</span></div></div>
+      <div class="sub2"><div class="nd co"><div class="t" data-q-t="retLbl">Fica na empresa</div><div class="v">${qv('retido')}</div></div><div class="nd"><div class="t">Dividendos</div><div class="v">${qv('div')}</div></div></div>
+      <div class="cn"><div class="ch">${chip('st8',`− IRS s/ dividendos ${qv('divTax')} ${ib('u_div')}`)}</div></div>
+      ${qCk('englob','Englobar no IRS (em vez de 28%)','englob')}
+      <div class="nd me" style="margin-top:8px"><span class="st">5B</span><div class="t">Dividendos líquidos ${ib('u_div')}</div><div class="v">${qv('divLiq')}</div><div class="s">${pl}</div></div>
+     </div></div>
+   </div>
+   <div class="jn"></div><div class="jarr"></div>
+   <div class="nd tot"><span class="st">6</span><div class="t">Dinheiro pessoal do sócio ${ib('u_total')}</div><div class="v">${qv('total')}</div><div class="s">${pl} · remuneração + dividendos</div></div>
+   <div class="qwarn note" id="qwarn"></div>
+  </div>
+  <div class="card" style="margin-top:22px"><h3>Resumo de todas as etapas ${ib('u_estado')}</h3><div id="q-sum"></div></div></div>`;
+  $('#res-q').innerHTML=h;
+}
+function qMinFat(st){const rl=f=>calcU({...st,fat:f}).c.rl;let lo=st.fat,hi=Math.max(1000,st.fat*1.5);
+  for(let i=0;i<40&&rl(hi)<0;i++)hi*=1.6;for(let i=0;i<60;i++){const m=(lo+hi)/2;if(rl(m)<0)lo=m;else hi=m}return Math.ceil(hi*100)/100}
+function qIva(u){const tx=(+u.ivaTx||0)/100;const cob=u.fat*tx,ded=(u.gastos+12*u.contab)*Math.min(100,Math.max(0,u.ivaDesp))/100*.23;return {tx,cob,ded,ent:cob-ded}}
+function renderQ(){
+  if(!document.getElementById('q_fat'))buildQ();
+  const o=calcU(S.q);R.q=o;const r=o.r,c=o.c,a=r.a,u=o.u,iv=qIva(u);
+  const d=qPer()==='mes'?12:1;
+  const V={margem:o.margem,brutoA:a.bruto,tsu:r.emp.tsu,custoG:r.emp.operacional,ss:a.ss,irsSal:o.irsSal,salLiq:o.salLiq,
+    rai:c.rai,irc:c.coleta,der:c.dm+c.de,ta:c.ta,rl:c.rl,retido:c.retido,div:c.div,divTax:o.divTax,divLiq:o.divLiq,total:o.total,
+    comIva:u.fat+iv.cob,ivaCob:iv.cob,ivaDed:iv.ded,ivaEnt:Math.abs(iv.ent)};
+  $$('#res-q [data-q]').forEach(el=>{const k=el.dataset.q;el.textContent=k==='ivaTri'?E(Math.abs(iv.ent)/4):E(V[k]/d)});
+  const ta=$('#res-q [data-q-show="ta"]');if(ta)ta.style.display=c.ta>0.004?'':'none';
+  const rl=$('#res-q [data-q-t="retLbl"]');if(rl)rl.textContent=c.retido<0?'Prejuízo':'Fica na empresa';
+  const il=$('#res-q [data-q-t="ivaLbl"]');if(il)il.textContent=iv.ent<0?'= IVA a recuperar (crédito/reembolso)':'= IVA a entregar ao Estado';
+  const bh=$('#q_bh');if(bh){const n=u.sem14?12:14;bh.innerHTML=u.baseMode==='liq'?(u._unreach==='high'?'<span class="warn">valor demasiado alto</span>':`→ bruto necessário: <b>${E(u.base)}</b>/mês (${n}×)`):`→ líquido: <b>${E(o.salLiq/12)}</b>/mês · ${E(o.salLiq)}/ano`}
+  const bal=$('#q_min');
+  if(bal){if(c.rl<-0.005){const mf=qMinFat(S.q);bal.hidden=false;const bh=`<b>⚠ Valor mínimo para o lucro ser 0 → ${E(mf/d)}</b><span>${d>1?'por mês':'por ano'} (sem IVA) · faltam ${E((mf-u.fat)/d)}</span><button type="button" class="btn sm" data-qmin="${r2(mf)}">Aplicar</button>`;if(bal.innerHTML!==bh)bal.innerHTML=bh}else bal.hidden=true}
+  $('#qwarn').innerHTML=c.rai<0?'<span class="warn">A remuneração é maior do que a margem: a empresa fica com prejuízo e não há lucro para distribuir.</span>':
+    `Estado recebe <b>${E(o.estado/d)}</b> (${Pc(o.carga,1)} da margem) · empresa guarda <b>${E(c.retido/d)}</b>${d>1?' por mês':' por ano'}`;
+  const F=u.fat||1,oc=r.emp.outros+r.emp.benef;
+  const rows=[
+   ...(u.iva?[['0','Recebido dos clientes (com IVA)',u.fat+iv.cob,'Entrada','iv'],['','− IVA cobrado (entregue ao Estado após dedução)',-iv.cob,'IVA','iv']]:[]),
+   ['1','Receitas (sem IVA)',u.fat,'Entrada',''],
+   ['','− Despesas da atividade',-u.gastos,'Fornecedores',''],
+   ['','− Contabilista',-12*u.contab,'Fornecedores',''],
+   ...(u.repres?[['','− Despesas de representação',-u.repres,'Fornecedores','']]:[]),
+   ['2','= Margem disponível',o.margem,'','tot'],
+   ['3A','Remuneração bruta do gerente (inclui subs. refeição)',-a.bruto,'→ Caminho A',''],
+   ['','− TSU da empresa (23,75%)',-r.emp.tsu,'Estado','neg'],
+   ...(oc?[['','− Outros custos do gerente',-oc,'Fornecedores','']]:[]),
+   ['4A','= Custo total do gerente',-r.emp.operacional,'','sub'],
+   ['','− SS do gerente (11%)',-a.ss,'Estado','neg'],
+   ['','− IRS do gerente (final estimado)',-o.irsSal,'Estado','neg'],
+   ['5A','= Remuneração líquida',o.salLiq,'Sócio','big'],
+   ['3B','Resultado antes de impostos',c.rai,'→ Caminho B','tot'],
+   ['','− IRC',-c.coleta,'Estado','neg'],
+   ['','− Derramas',-(c.dm+c.de),'Estado','neg'],
+   ...(c.ta>0.004?[['','− Tributação autónoma',-c.ta,'Estado','neg']]:[]),
+   ['4B','= Lucro líquido',c.rl,'','tot'],
+   ['',c.retido<0?'Prejuízo (a cobrir pela empresa)':'Fica na empresa',c.retido,'Empresa',c.retido<0?'neg':'sub'],
+   ['','Dividendos distribuídos',c.div,'','sub'],
+   ['','− IRS sobre dividendos'+(u.englob?' (englobamento)':' (28%)'),-o.divTax,'Estado','neg'],
+   ['5B','= Dividendos líquidos',o.divLiq,'Sócio','big'],
+   ['6','Dinheiro pessoal do sócio',o.total,'Sócio','big'],
+   ...(u.iva?[['IVA','IVA cobrado aos clientes',iv.cob,'','iv'],['','− IVA pago a fornecedores (dedutível)',-iv.ded,'','iv'],['',iv.ent<0?'= IVA a recuperar':'= IVA entregue ao Estado',iv.ent,'Estado (neutro)','iv']]:[])];
+  const dest=[['Sócio (remuneração + dividendos)',o.total,'var(--c1)'],['Estado (TSU, SS, IRS, IRC, derramas, TA, dividendos)',o.estado,'var(--c2)'],[c.retido<0?'Prejuízo da empresa (sai de reservas/capital)':'Fica na empresa',c.retido,'var(--c8)'],['Fornecedores e contabilista',u.gastos+12*u.contab+u.repres+oc,'var(--c5)']];
+  $('#q-sum').innerHTML=`<div class="stack">${dest.filter(x=>x[1]>0).map(x=>`<div style="width:${x[1]/F*100}%;background:${x[2]}" title="${esc(x[0])}: ${E(x[1])}"></div>`).join('')}</div>
+   <div class="leg">${dest.map(x=>`<span><i style="background:${x[2]}"></i>${esc(x[0])} <b>${Pc(x[1]/F,1)}</b></span>`).join('')}</div>
+   <div class="tw" style="margin-top:10px"><table class="t exp" data-t="Esquema — resumo das etapas"><thead><tr><th>Etapa</th><th>Anual</th><th>Mensal</th><th>% receitas</th><th style="text-align:left">Destino</th></tr></thead><tbody>
+   ${rows.map(x=>`<tr class="${x[4]}"><td>${x[0]?`<span class="pill">${x[0]}</span> `:''}${esc(x[1])}</td><td>${E(x[2])}</td><td>${E(x[2]/12)}</td><td class="pc">${Pc(x[2]/F,1)}</td><td style="text-align:left">${x[3]}</td></tr>`).join('')}
+   <tr class="sec"><td colspan="5">Para onde vão as receitas (sem IVA)</td></tr>
+   ${dest.map(x=>`<tr class="tot"><td><span class="lb"><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${x[2]}"></i> ${esc(x[0])}</span></td><td>${E(x[1])}</td><td>${E(x[1]/12)}</td><td class="pc">${Pc(x[1]/F,1)}</td><td></td></tr>`).join('')}
+   </tbody></table></div><p class="note">IRS do gerente e dos dividendos pela liquidação anual estimada (o "líquido" mensal é a média anual ÷ 12). O IVA não entra nas receitas nem no lucro: a empresa cobra-o por conta do Estado e entrega a diferença para o IVA que pagou. Derrama municipal usada: ${N2(u.derramaM)}%.</p>`;
+}
+
+function update(tab){refresh(tab)}
+function curTab(){const b=$('nav.tabs button.on');return b?b.dataset.tab:'p'}
+function headK(){return;const t=curTab(),el=$('#hk');if(!el)return;
+  if(t==='p'&&R.p)el.innerHTML=`Líquido <b>${E(R.p.n.liq)}</b>/mês`;
+  else if(t==='e'&&R.e)el.innerHTML=`Custo <b>${E(R.e.emp.mensal)}</b>/mês · líquido ${E(R.e.n.liq)}`;
+  else if(t==='u'&&R.u)el.innerHTML=`Sócio recebe <b>${E(R.u.total)}</b>/ano`;}
+function setHH(){document.documentElement.style.setProperty('--hh',$('#stk').offsetHeight+'px')}
+window.addEventListener('resize',setHH);
+
+/* ============ cálculo inverso ============ */
+function solve(st,fn,target){
+  let lo=0,hi=100000;if(fn(calc({...st,base:hi}))<target)return null;
+  for(let i=0;i<70;i++){const m=(lo+hi)/2;if(fn(calc({...st,base:m}))<target)lo=m;else hi=m}
+  return Math.ceil(hi*100)/100;
+}
+function doInverse(tab){
+  if(tab==='p'){const t=parseNum($('#invP').value);const m=$('#invPm');if(!(t>0)){m.textContent='Indique um valor líquido.';return}
+    const b=solve(S.p,r=>r.n.liq,t);if(b==null){m.textContent='Valor fora do alcance.';return}
+    if(calc({...S.p,base:0}).n.liq>=t){m.textContent='Os outros abonos já garantem esse líquido com base 0 €.';return}
+    S.p.base=b;S.p.baseMode='bruto';renderForm('p');update('p');m.innerHTML=`Salário base necessário: <b>${E(b)}</b>${b<920?' <span class="warn">(abaixo da RMMG)</span>':''}`;
+  }else{const t=parseNum($('#invE').value),ty=$('#invEt').value,m=$('#invEm');if(!(t>0)){m.textContent='Indique um valor.';return}
+    const fn=ty==='total'?r=>r.emp.total:ty==='mensal'?r=>r.emp.mensal:r=>r.n.liq;
+    if(ty!=='liq'&&fn(calc({...S.e,base:0}))>t){m.textContent='Os custos fixos (sem salário) já ultrapassam esse orçamento.';return}
+    let b=solve(S.e,fn,t);if(b==null){m.textContent='Valor fora do alcance.';return}
+    if(ty!=='liq'){b=Math.floor(b*100)/100;while(b>0&&fn(calc({...S.e,base:b}))>t)b=r2(b-.01)}
+    TABS.forEach(x=>{S[x].base=b;S[x].baseMode='bruto'});TABS.forEach(renderForm);refresh('e');m.innerHTML=`Salário base: <b>${E(b)}</b>${b<920?' <span class="warn">(abaixo da RMMG de 920 €)</span>':''}`;
+  }
+}
+
+/* ============ exportar ============ */
+function tablesOf(tab){return $$(`#res-${tab} table.exp`)}
+function tableRows(t){return [...t.rows].map(tr=>[...tr.cells].map(td=>td.textContent.trim()))}
+function copyTables(tab){
+  let s='';tablesOf(tab).forEach(t=>{s+=t.dataset.t+'\n'+tableRows(t).map(r=>r.join('\t')).join('\n')+'\n\n'});
+  const ok=()=>toast('Quadros copiados — cole numa folha de cálculo');
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(s).then(ok,()=>fb(s,ok));else fb(s,ok);
+}
+function fb(s,ok){const ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){toast('Não foi possível copiar')}ta.remove()}
+const csvCell=v=>/[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;
+function download(name,txt){const b=new Blob(['\ufeff'+txt],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function csv(tab){
+  let s=`Simulador Salarial 2026 — ${({p:'Pessoas',e:'Empresas',u:'Unipessoal',q:'Esquema'})[tab]};${new Date().toLocaleString('pt-PT')}\n\nDados introduzidos\n`;
+  inputsSummary(tab).forEach(([k,v])=>s+=csvCell(k)+';'+csvCell(v)+'\n');
+  tablesOf(tab).forEach(t=>{s+='\n'+csvCell(t.dataset.t)+'\n'+tableRows(t).map(r=>r.map(csvCell).join(';')).join('\n')+'\n'});
+  download(`simulacao-${({p:'pessoas',e:'empresas',u:'unipessoal',q:'esquema'})[tab]}-${new Date().toISOString().slice(0,10)}.csv`,s);
+}
+function inputsSummary(tab){
+  const st=S[tab],out=[];
+  SCHEMA[tab].forEach(g=>{if(g.s&&!g.s(st))return;g.f.forEach(f=>{if(f.s&&!f.s(st))return;let v=st[f.id];
+    if(f.t==='chk')v=v?'Sim':'Não';else if(f.t==='sel')v=(f.o.find(o=>String(o[0])===String(v))||[0,v])[1];else v=N2(v)+(f.u?' '+f.u:'');
+    out.push([f.l,v])})});
+  return out;
+}
+function printTab(tab){
+  const el=$('#ps-'+tab);if(el)el.innerHTML=`<b>Dados da simulação</b> (${new Date().toLocaleDateString('pt-PT')})`+inputsSummary(tab).map(([k,v])=>`<div>${esc(k)}: <b>${esc(v)}</b></div>`).join('');
+  window.print();
+}
+
+/* ============ comparador ============ */
+const MET=[
+ ['Salário base',s=>E(s.base)],['Situação',s=>s.sit],
+ ['Ilíquido anual',s=>E(s.bruto)],['Líquido — mês normal',s=>E(s.liqN)],['Líquido anual',s=>E(s.liq)],['Líquido médio mensal',s=>E(s.liq/12)],
+ ['IRS (e imposto s/ dividendos)',s=>E(s.irs)],['SS trabalhador anual',s=>E(s.ss)],['TSU empresa anual',s=>E(s.tsu)],['Outros custos / IRC',s=>E(s.outros)],
+ ['Dividendos líquidos',s=>E(s.div||0)],['Total líquido para a pessoa',s=>E((s.liq||0)+(s.div||0))],['Custo total anual',s=>E(s.custo)],['Custo médio mensal',s=>E(s.custo/12)],['Custo por 1 € líquido',s=>N2(s.custo/(s.liq||1))+' €'],['Parte para o Estado',s=>Pc(s.carga,1)]];
+function saveScenario(tab){
+  if(tab==='u'||tab==='q'){const o=tab==='q'&&R.q?R.q:R.u,r=o.r;const def=`Unipessoal ${SC.length+1} — ${E(r.B)}`;let name=def;try{const x=prompt('Nome do cenário:',def);if(x===null)return;name=x.trim()||def}catch(e){}
+    SC.push({name,tab,base:r.B,sit:`Sócio-gerente, ${o.u.distrib}% distribuído${o.u.englob?' (englobado)':''}`,bruto:r.a.bruto,liqN:r.n.liq,liq:o.salLiq,div:o.divLiq,irs:o.irsSal+o.divTax,ss:r.a.ss,tsu:r.emp.tsu,outros:o.c.total,custo:r.emp.total,carga:o.carga});
+    save();cmpCount();toast('Cenário guardado no comparador');return}
+  const r=R[tab];const def=`${tab==='p'?'Pessoa':'Empresa'} ${SC.length+1} — ${E(r.B)}`;
+  let name=def;try{const x=prompt('Nome do cenário:',def);if(x===null)return;name=x.trim()||def}catch(e){}
+  SC.push({name,tab,base:r.B,sit:`${EST.find(o=>o[0]===r.p.estado)[1].split(' —')[0]}${r.p.estado!=='nc'?' ('+(r.p.estado==='c1'?'único':'dois')+')':''}, ${r.p.dep} dep.${r.MOE?', MOE':''}`,
+    bruto:r.a.bruto,liqN:r.n.liq,liq:r.a.liq,irs:r.a.irs,ss:r.a.ss,tsu:r.emp.tsu,outros:r.emp.outros+r.emp.benef+r.emp.ta,custo:r.emp.total,carga:r.emp.carga});
+  save();cmpCount();toast('Cenário guardado no comparador');
+}
+function cmpCount(){$('#cmpN').textContent=SC.length}
+function renderCmp(){
+  const b=$('#cmpBody');
+  if(!SC.length){b.innerHTML='<p>Ainda não há cenários. Use “＋ Guardar no comparador” em qualquer separador para comparar salários, situações familiares ou pacotes de benefícios lado a lado.</p>';return}
+  const mx=Math.max(...SC.map(s=>s.custo),1);
+  b.innerHTML=`<div class="tw"><table class="t exp" data-t="Comparador"><thead><tr><th></th>${SC.map((s,i)=>`<th>${esc(s.name)} <button class="x-rm" type="button" data-rm="${i}" title="Remover">✕</button></th>`).join('')}</tr></thead><tbody>
+   ${MET.map(([l,f],j)=>`<tr class="${j===4||j===11||j===12?'tot':''}"><td>${l}</td>${SC.map(s=>`<td>${f(s)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+   <div class="cmpbars" style="margin-top:14px">${SC.map(s=>`<div class="r"><div>${esc(s.name)}</div><div><div class="bar" style="width:${s.liq/mx*100}%;background:var(--c1)"></div><div class="bar" style="width:${s.custo/mx*100}%;background:var(--c4)"></div><div class="bv">${E(s.liq)} líquido · ${E(s.custo)} custo</div></div></div>`).join('')}</div>
+   <div class="leg"><span><i style="background:var(--c1)"></i>Líquido anual</span><span><i style="background:var(--c4)"></i>Custo total anual</span></div>
+   <div class="actions" style="margin-top:14px"><button class="btn" type="button" id="cmpCsv">Descarregar CSV</button><button class="btn" type="button" id="cmpClr">Limpar tudo</button></div>`;
+}
+
+/* ============ eventos globais ============ */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.classList.contains('ib')){e.preventDefault();openInfo(t.dataset.i,t.closest('#tab-e')?'e':t.closest('#tab-u')?'u':t.closest('#tab-q')?'q':'p');return}
+  if(t.dataset.tab&&t.parentElement.classList.contains('tabs')){$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b===t));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+t.dataset.tab));if(DIRTY.has(t.dataset.tab))renderTab(t.dataset.tab,false);window.scrollTo({top:0});return}
+  if(t.dataset.ut){const tab=t.dataset.tab,k=t.dataset.ut,f=ALLF[k];S[tab]._per=S[tab]._per||{};const np=perOf(tab,f)==='mes'?'ano':'mes';
+    if(k==='base'&&S[tab].baseMode==='liq'){S[tab]._per[k]=np;S[tab].liqT=liqOf(tab)}
+    S[tab]._per[k]=np;t.textContent=np==='mes'?'€/mês':'€/ano';const el=document.getElementById(tab+'_'+k);if(el)el.value=fmtIn(dispVal(tab,f));update(tab);return}
+  if(t.dataset.bm){const tab=t.dataset.tab,st=S[tab];if(st.baseMode===t.dataset.bm)return;
+    if(t.dataset.bm==='liq'){st.liqT=liqOf(tab)}
+    st.baseMode=t.dataset.bm;if(tab==='q'){buildQ();update('q');return}TABS.forEach(x=>{if(x===tab||x==='q')return;S[x].baseMode=st.baseMode;if(st.baseMode==='liq')S[x].liqT=liqOf(x);renderForm(x)});t.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===t));
+    const l=document.getElementById(tab+'_base_l');if(l)l.textContent=st.baseMode==='liq'?(tab==='u'?'Remuneração líquida pretendida':'Salário líquido pretendido'):ALLF.base.l;
+    setDisp(tab,'base');update(tab);return}
+  if(t.dataset.qper){S.q.qPer=t.dataset.qper;qApplyPer();if(S.q.baseMode==='liq')S.q.liqT=liqOf('q');buildQ();renderQ();save();return}
+  if(t.dataset.inv){doInverse(t.dataset.inv);return}
+  if(t.dataset.act){const tab=t.dataset.tab;({save:saveScenario,copy:copyTables,csv,print:printTab})[t.dataset.act](tab);return}
+  if(t.id==='applyBest'){TABS.forEach(x=>{S[x].base=+t.dataset.b;S[x].baseMode='bruto'});S.u.distrib=100;S.u.englob=t.dataset.eg==='1';TABS.forEach(renderForm);refresh('u');toast('Remuneração ótima aplicada');return}
+  if(t.id==='cmpBtn'){renderCmp();$('#cmp').hidden=false;return}
+  if(t.dataset.rm!=null){SC.splice(+t.dataset.rm,1);save();cmpCount();renderCmp();return}
+  if(t.id==='cmpClr'){if(confirm('Remover todos os cenários?')){SC=[];save();cmpCount();renderCmp()}return}
+  if(t.id==='cmpCsv'){let s='Métrica;'+SC.map(x=>csvCell(x.name)).join(';')+'\n'+MET.map(([l,f])=>csvCell(l)+';'+SC.map(x=>csvCell(f(x))).join(';')).join('\n');download('comparador-cenarios.csv',s);return}
+  if(t.classList.contains('x')){t.closest('.modal').hidden=true;return}
+  if(t.id==='themeBtn'){const h=document.documentElement,cur=h.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');h.dataset.theme=cur==='dark'?'light':'dark';save();return}
+});
+document.addEventListener('mousedown',e=>{const t=e.target.closest('[data-qmin]');if(!t)return;e.preventDefault();applyQmin(+t.dataset.qmin)});
+document.addEventListener('keydown',e=>{const t=e.target.closest&&e.target.closest('[data-qmin]');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();applyQmin(+t.dataset.qmin)}});
+function applyQmin(v){clearTimeout(tmr);S.q.fat=v;const el=document.getElementById('q_fat');if(el)el.value=fmtIn(dispVal('q',ALLF.fat));refresh('q');toast('Receitas mínimas aplicadas')}
+$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.hidden=true}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.modal').forEach(m=>m.hidden=true);if(e.key==='Enter'&&(e.target.id==='invP'||e.target.id==='invE'))doInverse(e.target.id==='invP'?'p':'e')});
+
+/* ============ arranque ============ */
+TABS.forEach(t=>{S[t]._per={...(S[t]._per||{})}});qApplyPer();SH.forEach(k=>{S.e[k]=S.p[k];S.u[k]=S.p[k];if(k!=='baseMode')S.q[k]=S.p[k]});setHH();TABS.forEach(renderForm);TABS.forEach(t=>renderTab(t,false));save();cmpCount();setHH();
+</script>
+</body>
+</html>
