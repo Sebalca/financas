@@ -1,0 +1,41 @@
+# Finanças Pessoais — plano de versões
+
+Estado: ✅ feito · 🔜 próxima · ⬜ por fazer
+
+## Já feito
+- ✅ **v0.1** Separadores (Simulador Salarial + Finanças) e publicação em `financas.frisk.pt` (Cloudflare Workers).
+- ✅ **v0.2** Login opcional com as contas partilhadas da plataforma (`plataforma-core/auth.js`) e tabela `financas_dados` no Supabase.
+- ✅ **v0.3** Layout das abas Início, Extratos, Rendimentos e Despesas; filtro global de período.
+- ✅ **v0.4** Importação do CSV da CGD sem IA (validação de saldos, sem duplicados); categorias e referências do utilizador; regras automáticas (pré-definidas, editor, a partir de um movimento); coluna Observações; Pessoas (quem é) por identificadores TFI/TRF/MB WAY; previsto vs real.
+- ✅ **v0.5 — Guardar na conta**
+  1. Sincronizar movimentos, categorias, regras, pessoas e previstos com `financas_dados`.
+  2. Ao entrar pela primeira vez, os dados do browser passam para a conta (ou juntam-se aos que lá estiverem).
+  3. Conflitos entre dispositivos: fica a versão mais recente; cada movimento guarda a sua última edição; movimentos apagados não reaparecem.
+
+## Próximas versões
+- 🔜 **v0.6 — Extratos mais completos**
+  4. Adicionar movimentos à mão (ex.: dinheiro).
+  5. Edição em massa (selecionar vários e categorizar / atribuir pessoa).
+  6. Dividir um movimento por várias categorias.
+  7. Leitores para outros bancos (precisa de extrato de exemplo de cada).
+  8. Importar PDF da CGD, se útil.
+- ⬜ **v0.7 — Rendimentos**
+  9. Tabelas de recorrentes e pontuais a funcionar (preenchimento à mão).
+  10. Ler recibos de vencimento em PDF sem IA (precisa de recibo de exemplo).
+  11. Ligar cada rendimento ao movimento correspondente do extrato.
+  12. Resumo anual (bruto, IRS retido, SS) para comparar com a declaração de IRS.
+- ⬜ **v0.8 — Início e análises**
+  13. Previsto vs real por categoria e por mês, com alertas de desvio.
+  14. Evolução do saldo e comparação com o mesmo mês do ano anterior.
+  15. Relatório mensal/anual para imprimir ou exportar.
+- ⬜ **v0.9 — Ligação ao Simulador**
+  16. Usar os rendimentos reais no Simulador (Pessoas / Unipessoal).
+  17. Guardar também os dados do Simulador na conta.
+- ⬜ **v1.0 — Acabamentos**
+  18. Otimização para telemóvel (tabelas em cartões, importar pela câmara/ficheiros do telefone).
+  19. Cópia de segurança: exportar/importar tudo num ficheiro.
+  20. Revisão de segurança do Supabase (incluindo avisos antigos de outros sites).
+
+## O que é preciso da tua parte
+- Extratos de exemplo de outros bancos (v0.6).
+- Um recibo de vencimento em PDF (v0.7).

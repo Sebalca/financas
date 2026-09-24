@@ -148,6 +148,9 @@ td input.ed.obs{width:170px}
 .nm:hover{border-color:var(--bd)}.nm:focus{border-color:var(--ac);background:var(--card);outline:0}
 .pv{width:90px;text-align:right;border:1px solid var(--bd);border-radius:6px;background:var(--soft);padding:3px 6px;font-size:13px}
 .cat>summary .nm{font-weight:700}
+.syncst{border:1px solid var(--bd);background:var(--card);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--mu);cursor:pointer;margin-left:auto;white-space:nowrap}
+.syncst.ok{color:var(--ok);border-color:color-mix(in srgb,var(--c1) 40%,transparent)}.syncst.erro{color:var(--neg);border-color:color-mix(in srgb,var(--c2) 45%,transparent)}.syncst.busy{color:var(--ac)}
+@media (max-width:640px){.syncst{order:3;margin-left:0}}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:60}
 #toast.on{opacity:1}
 @media (max-width:640px){.top{padding:8px 0 4px}.top h1{font-size:17px}.top p{display:none}.nav span{min-width:110px;font-size:13px}.kpi .v{font-size:20px}}
@@ -157,6 +160,7 @@ td input.ed.obs{width:170px}
 <div class="stk"><div class="wrap">
   <div class="top">
     <div><h1>Finanças <span>pessoais</span></h1><p>Extratos, rendimentos e despesas num só sítio</p></div>
+    <button type="button" class="syncst" id="syncSt"></button>
     <div class="per" aria-label="Período">
       <div class="seg" id="perMode"><button type="button" data-m="mes" class="on">Mês</button><button type="button" data-m="ano">Ano</button><button type="button" data-m="int">Intervalo</button></div>
       <div class="nav" id="perNav"><button type="button" data-d="-1" aria-label="Anterior">‹</button><span id="perLbl"></span><button type="button" data-d="1" aria-label="Seguinte">›</button></div>
@@ -200,7 +204,7 @@ td input.ed.obs{width:170px}
           <button class="btn pri" type="button" id="btImp" style="width:100%;justify-content:center">Escolher ficheiro…</button>
         </div>
       </div>
-      <div id="impRes"></div><p class="note">Bancos suportados: <b>CGD</b> (CSV exportado em “Consultar saldos e movimentos”). Os movimentos já importados são reconhecidos e não ficam duplicados. Os dados ficam guardados neste browser.</p>
+      <div id="impRes"></div><p class="note">Bancos suportados: <b>CGD</b> (CSV exportado em “Consultar saldos e movimentos”). Os movimentos já importados são reconhecidos e não ficam duplicados. Com sessão iniciada, os dados ficam guardados na sua conta e sincronizam entre dispositivos; sem sessão, ficam só neste browser.</p>
     </div>
     <div class="card"><h3>Movimentos <small id="extSub"></small><span class="r"><button class="btn sm" data-todo="Adicionar movimento">＋ Movimento</button><button class="btn sm" id="btRegras">⚙ Regras</button><button class="btn sm" id="btPessoas">👥 Pessoas</button><button class="btn sm" id="btExp">⤓ Exportar</button><button class="btn sm" id="btImps">🗂 Importações</button></span></h3>
       <div class="filt">
@@ -310,16 +314,23 @@ const REGRAS_BASE=[
 const novaRegraBase=(r,i)=>({id:'rb'+i,txt:r[0],modo:r[1],tipo:r[2],cat:r[3],ref:r[4],ativo:true,predef:true});
 const isInterna=m=>m.cat==='Banco'&&m.ref==='Troca entre contas'; // não conta como entrada/saída
 
-/* ================= armazenamento (neste browser) ================= */
+/* ================= armazenamento: browser + conta (Supabase) ================= */
 const KEY='financas_v1';
-let DB={ver:2,mov:[],imports:[],seq:0,cats:null,regras:null,pessoas:[],prev:{}};
-try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&Array.isArray(j.mov))DB={...DB,...j}}catch(e){}
-if(!DB.cats)DB.cats=CATS_BASE.map(([n,r])=>({id:uid('c'),nome:n,refs:r.slice()}));
-if(!DB.regras)DB.regras=REGRAS_BASE.map(novaRegraBase);
-if(!DB.pessoas)DB.pessoas=[];if(!DB.prev)DB.prev={};
-if((DB.ver||1)<2){ // migração: referência bancária passa para Detalhes, "Quem é" limpo, Observações novo
-  DB.mov.forEach(m=>{if(m.ref){m.det=[m.det,m.ref].filter(Boolean).join(' · ')}m.ref='';m.quem='';m.obs=m.obs||'';m.catSrc=m.cat?'manual':''});DB.ver=2}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('Não foi possível guardar no browser')}}
+function fresh(){return {ver:2,mov:[],imports:[],seq:0,cats:null,regras:null,pessoas:[],prev:{},del:[],updatedAt:0,syncedAt:0,remoteAt:'',owner:''}}
+function normaliza(d){d={...fresh(),...d};
+  if(!Array.isArray(d.mov))d.mov=[];if(!Array.isArray(d.imports))d.imports=[];if(!Array.isArray(d.del))d.del=[];
+  if(!d.cats)d.cats=CATS_BASE.map(([n,r])=>({id:uid('c'),nome:n,refs:r.slice()}));
+  if(!d.regras)d.regras=REGRAS_BASE.map(novaRegraBase);
+  if(!d.pessoas)d.pessoas=[];if(!d.prev)d.prev={};
+  if((d.ver||1)<2){d.mov.forEach(m=>{if(m.ref){m.det=[m.det,m.ref].filter(Boolean).join(' · ')}m.ref='';m.quem='';m.obs=m.obs||'';m.catSrc=m.cat?'manual':''});d.ver=2}
+  d.seq=Math.max(d.seq||0,...d.mov.map(m=>+String(m.id).replace(/\D/g,'')||0));
+  return d}
+let DB=fresh();
+try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&Array.isArray(j.mov))DB=j}catch(e){}
+DB=normaliza(DB);
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('Não foi possível guardar no browser')}}
+function save(){DB.updatedAt=Date.now();saveLocal();agendaEnvio()}
+function apaga(ms){const ks=new Set(ms.map(chave));DB.del=DB.del.concat([...ks]).slice(-3000);DB.mov=DB.mov.filter(m=>!ks.has(chave(m)))}
 
 /* ================= leitura de ficheiros (sem IA) ================= */
 function decode(buf){try{return new TextDecoder('utf-8',{fatal:true}).decode(buf).replace(/^﻿/,'')}catch(e){return new TextDecoder('windows-1252').decode(buf)}}
@@ -390,6 +401,7 @@ async function importar(files){
       r.mov.forEach(m=>{const o={id:'m'+(++DB.seq),imp:impId,banco:r.banco,conta:r.conta,dm:m.dm,dv:m.dv,desc:m.desc,valor:m.valor,saldo:m.saldo,saldoDisp:m.saldoDisp,
         cat:'',ref:'',catSrc:'',det:[m.catBanco?`${r.banco}: ${m.catBanco}`:'',refBanco(m.desc)].filter(Boolean).join(' · '),obs:'',quem:'',quemMan:false,ord:m.ord};
         const k=chave(o);if(ex.has(k)){dup++;DB.seq--;return}ex.add(k);DB.mov.push(o);novos.push(o)});
+      if(novos.length){const nk=new Set(novos.map(chave));DB.del=DB.del.filter(k=>!nk.has(k))}
       aplicaRegras(novos);aplicaPessoas(novos);
       DB.imports.push({id:impId,ficheiro:f.name,banco:r.banco,conta:r.conta,titular:r.titular,inicio:r.inicio,fim:r.fim,em:new Date().toISOString(),novos:novos.length,dup});
       res.push({ok:true,f:f.name,r,v,novos:novos.length,auto:novos.filter(m=>m.cat).length,dup});
@@ -584,8 +596,8 @@ document.addEventListener('click',e=>{
   if(d.tab){go(d.tab);return}
   if(d.go){go(d.go);return}
   if(d.close){$('#'+d.close).hidden=true;return}
-  if(d.del){const m=DB.mov.find(x=>x.id===d.del);if(m&&confirm(`Apagar o movimento "${m.desc}" (${E(m.valor)})?`)){DB.mov=DB.mov.filter(x=>x!==m);save();render()}return}
-  if(d.undo){const im=DB.imports.find(x=>x.id===d.undo);if(im&&confirm(`Remover os movimentos importados de "${im.ficheiro}"?`)){DB.mov=DB.mov.filter(x=>x.imp!==im.id);DB.imports=DB.imports.filter(x=>x!==im);save();render();showImps()}return}
+  if(d.del){const m=DB.mov.find(x=>x.id===d.del);if(m&&confirm(`Apagar o movimento "${m.desc}" (${E(m.valor)})?`)){apaga([m]);save();render()}return}
+  if(d.undo){const im=DB.imports.find(x=>x.id===d.undo);if(im&&confirm(`Remover os movimentos importados de "${im.ficheiro}"?`)){apaga(DB.mov.filter(x=>x.imp===im.id));DB.imports=DB.imports.filter(x=>x!==im);save();render();showImps()}return}
   if(d.mv){const i=+t.closest('tr').dataset.ri,j=i+(+d.mv);if(j<0||j>=DB.regras.length)return;[DB.regras[i],DB.regras[j]]=[DB.regras[j],DB.regras[i]];regrasMudaram();return}
   if('rgdel' in d){const i=+t.closest('tr').dataset.ri;if(confirm(`Apagar a regra "${DB.regras[i].txt}"?`)){DB.regras.splice(i,1);regrasMudaram()}return}
   if(d.padd){const nome=t.closest('tr').querySelector('[data-pnome]').value.trim();if(!nome){toast('Escreva o nome da pessoa');return}DB.pessoas.push({id:uid('p'),match:d.padd,pessoa:nome});pessoasMudaram();toast(`${d.padd} → ${nome}`);return}
@@ -600,7 +612,7 @@ document.addEventListener('click',e=>{
 // edição na tabela de movimentos
 document.addEventListener('change',e=>{const el=e.target;
   const tr=el.closest('tr[data-id]');
-  if(tr&&el.classList.contains('ed')){const m=DB.mov.find(x=>x.id===tr.dataset.id);if(!m)return;const f=el.dataset.f,v=el.value.trim();
+  if(tr&&el.classList.contains('ed')){const m=DB.mov.find(x=>x.id===tr.dataset.id);if(!m)return;const f=el.dataset.f,v=el.value.trim();m.u=Date.now();
     if(f==='cat'){m.cat=v;m.ref='';if(v){m.catSrc='manual'}else{m.catSrc='';aplicaRegras([m])}save();render();
       const c=DB.cats.find(x=>x.nome===v);if(v&&c&&!c.refs.length)abreNovaRegra(m);return}
     if(f==='ref'){m.ref=v;m.catSrc='manual';save();render();if(m.cat&&v)abreNovaRegra(m);return}
@@ -638,13 +650,90 @@ $('#btImps').addEventListener('click',showImps);
 $('#btCloseImps').addEventListener('click',()=>$('#mImps').hidden=true);
 $$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.hidden=true}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.modal').forEach(m=>m.hidden=true)});
-$('#btClearAll').addEventListener('click',()=>{if(confirm('Apagar TODOS os movimentos e importações deste browser? (categorias, regras e pessoas mantêm-se)')){DB.mov=[];DB.imports=[];DB.seq=0;save();render();$('#mImps').hidden=true}});
+$('#btClearAll').addEventListener('click',()=>{if(confirm('Apagar TODOS os movimentos e importações? (categorias, regras e pessoas mantêm-se)')){apaga(DB.mov);DB.imports=[];save();render();$('#mImps').hidden=true}});
 $('#btExp').addEventListener('click',()=>{const [a,b]=range();const rows=ordena(DB.mov.filter(m=>m.dm>=a&&m.dm<=b));if(!rows.length){toast('Sem movimentos no período');return}
   const c=v=>{v=String(v??'');return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v},n=v=>v==null?'':v.toFixed(2).replace('.',',');
   const s='Data mov.;Data valor;Descrição;Valor;Saldo;Categoria;Referência;Detalhes;Observações;Quem é;Banco;Conta\n'+rows.map(m=>[fmtD(m.dm),fmtD(m.dv),m.desc,n(m.valor),n(m.saldo),m.cat,m.ref,m.det,m.obs,m.quem,m.banco,m.conta].map(c).join(';')).join('\n');
   const bl=new Blob(['﻿'+s],{type:'text/csv;charset=utf-8'}),aL=document.createElement('a');aL.href=URL.createObjectURL(bl);aL.download=`movimentos_${a}_${b}.csv`;document.body.appendChild(aL);aL.click();setTimeout(()=>{URL.revokeObjectURL(aL.href);aL.remove()},300)});
+
+/* ================= sincronização com a conta ================= */
+const SY={sb:null,user:null,t:null,busy:false,again:false,st:'',hora:''};
+const TAB='financas_dados',FERR='financas',CH='estado';
+function setSt(st,extra){SY.st=st;const el=$('#syncSt');if(!el)return;el.className='syncst '+st;
+  el.innerHTML=st==='local'?(SY.sb?'💾 Só neste browser · <u>Entrar</u> para guardar na conta':'💾 Só neste browser')
+   :st==='busy'?'☁ A sincronizar…':st==='ok'?`☁ Guardado na conta${SY.hora?' · '+SY.hora:''}`:`⚠ Erro a sincronizar · <u>tentar de novo</u>${extra?'':''}`;
+  el.title=SY.user?`Conta: ${SY.user.email}`:''}
+const payload=()=>{const {syncedAt,remoteAt,owner,...d}=DB;return d};
+function junta(novo,velho){ // fica a versão mais recente; movimentos que só existem na mais antiga são acrescentados (exceto os apagados)
+  const del=new Set([...(novo.del||[]),...(velho.del||[])]),ks=new Set(novo.mov.map(chave));let n=0;
+  const vm=new Map((velho.mov||[]).map(m=>[chave(m),m]));
+  novo.mov=novo.mov.map(m=>{const o=vm.get(chave(m));return o&&(o.u||0)>(m.u||0)?{...o,id:m.id}:m}); // edição mais recente de cada movimento
+  (velho.mov||[]).forEach(m=>{const k=chave(m);if(!ks.has(k)&&!del.has(k)){novo.mov.push(m);ks.add(k);n++}});
+  const ids=new Set(novo.imports.map(i=>i.id));(velho.imports||[]).forEach(i=>{if(!ids.has(i.id))novo.imports.push(i)});
+  novo.del=[...del].slice(-3000);novo.mov=novo.mov.filter(m=>!del.has(chave(m)));
+  const vistos=new Set();novo.mov.forEach(m=>{if(vistos.has(m.id))m.id='m'+(++novo.seq);vistos.add(m.id)});
+  return {d:novo,n}}
+async function lerRemoto(){const {data,error}=await SY.sb.from(TAB).select('dados,updated_at').eq('ferramenta',FERR).eq('chave',CH).maybeSingle();if(error)throw error;return data}
+function aplicaRemoto(r){const keep={owner:SY.user.id,syncedAt:0,remoteAt:r.updated_at};DB=normaliza({...r.dados,...keep});DB.syncedAt=DB.updatedAt;saveLocal();render()}
+async function enviar(){
+  if(!SY.user||!SY.sb)return;if(SY.busy){SY.again=true;return}
+  SY.busy=true;setSt('busy');
+  try{
+    const r=await lerRemoto();
+    if(r&&r.updated_at!==DB.remoteAt&&DB.remoteAt!==''){ // outro dispositivo gravou entretanto
+      const rem=normaliza(r.dados);const loc=DB.updatedAt>=(rem.updatedAt||0);
+      const {d}=loc?junta(DB,rem):junta(rem,DB);DB={...normaliza(d),owner:SY.user.id,remoteAt:DB.remoteAt,syncedAt:DB.syncedAt,updatedAt:Math.max(DB.updatedAt,rem.updatedAt||0)};aplicaRegras();aplicaPessoas();render()}
+    const {data,error}=await SY.sb.from(TAB).upsert({user_id:SY.user.id,ferramenta:FERR,chave:CH,dados:payload()},{onConflict:'user_id,ferramenta,chave'}).select('updated_at').single();
+    if(error)throw error;
+    DB.remoteAt=data.updated_at;DB.syncedAt=DB.updatedAt;DB.owner=SY.user.id;saveLocal();
+    SY.hora=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});setSt('ok');
+  }catch(e){console.warn('sync',e);setSt('erro')}
+  finally{SY.busy=false;if(SY.again){SY.again=false;agendaEnvio(300)}}
+}
+function agendaEnvio(ms){if(!SY.user)return;clearTimeout(SY.t);SY.t=setTimeout(enviar,ms??1200)}
+async function aoEntrar(u){
+  if(SY.user&&u&&SY.user.id===u.id)return; // p.ex. renovação de sessão
+  if(!u){const tinha=!!DB.owner;SY.user=null;
+    if(tinha){DB=normaliza(fresh());saveLocal();render();toast('Sessão terminada — os dados continuam guardados na conta')}
+    setSt('local');return}
+  SY.user=u;setSt('busy');
+  try{
+    if(DB.owner&&DB.owner!==u.id){DB=normaliza(fresh())} // cache de outra conta neste browser
+    const r=await lerRemoto();
+    const temLocal=DB.mov.length>0||DB.pessoas.length>0||Object.keys(DB.prev).length>0;
+    if(!r){ // primeira vez nesta conta: os dados do browser passam para a conta
+      DB.owner=u.id;DB.updatedAt=Date.now();saveLocal();await enviar();
+      if(temLocal)toast(`Dados deste browser guardados na conta (${DB.mov.length} movimentos)`);return}
+    const rem=normaliza(r.dados);
+    if(!DB.owner&&temLocal){ // dados locais nunca sincronizados + conta com dados → juntar
+      const {d,n}=junta(rem,DB);DB={...normaliza(d),owner:u.id,remoteAt:r.updated_at,syncedAt:0,updatedAt:Date.now()};aplicaRegras();aplicaPessoas();saveLocal();render();await enviar();
+      toast(n?`${n} movimento(s) deste browser juntados à conta`:'Dados da conta carregados');return}
+    if(DB.owner===u.id&&DB.updatedAt>(DB.syncedAt||0)){ // há alterações locais por enviar
+      DB.remoteAt=DB.remoteAt||'__';await enviar();return}
+    aplicaRemoto(r);SY.hora=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});setSt('ok');
+  }catch(e){console.warn('sync',e);setSt('erro')}
+}
+async function verificaRemoto(){ // ao voltar à página: há novidades de outro dispositivo?
+  if(!SY.user||SY.busy)return;
+  try{const r=await lerRemoto();if(!r||r.updated_at===DB.remoteAt)return;
+    if(DB.updatedAt>(DB.syncedAt||0)){agendaEnvio(0);return}
+    aplicaRemoto(r);SY.hora=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});setSt('ok')}catch(e){setSt('erro')}}
+function carregaScript(src){return new Promise((ok,ko)=>{const x=document.createElement('script');x.src=src;x.onload=ok;x.onerror=ko;document.head.appendChild(x)})}
+async function obterCliente(){
+  let emb=false;try{emb=window.parent!==window&&!!window.parent.document}catch(e){}
+  if(emb){for(let i=0;i<40;i++){try{if(window.parent.plataforma)return window.parent.plataforma}catch(e){}await new Promise(r=>setTimeout(r,250))}return null}
+  try{if(!window.plataforma){await carregaScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');await carregaScript('https://cdn.jsdelivr.net/gh/sebalca/plataforma-core@main/auth.js')}return window.plataforma||null}catch(e){return null}
+}
+function pedirLogin(){try{const b=window.parent!==window&&window.parent.document.getElementById('btEntrar');if(b){b.click();return}}catch(e){}
+  location.href='index.html#financas'}
+$('#syncSt').addEventListener('click',()=>{if(SY.st==='local'&&SY.sb)pedirLogin();else if(SY.st==='erro')agendaEnvio(0)});
+window.addEventListener('focus',verificaRemoto);document.addEventListener('visibilitychange',()=>{if(!document.hidden)verificaRemoto()});
+setSt('local');
+obterCliente().then(sb=>{SY.sb=sb;if(!sb){setSt('local');return}setSt('local');
+  sb.auth.onAuthStateChange((ev,session)=>{setTimeout(()=>aoEntrar(session&&session.user||null),0)});});
+
 // primeira execução: aplica regras e pessoas aos movimentos já existentes
-aplicaRegras();aplicaPessoas();save();
+aplicaRegras();aplicaPessoas();saveLocal();
 if(DB.mov.length){const l=DB.mov.map(m=>m.dm).sort().pop();P.d=new Date(+l.slice(0,4),+l.slice(5,7)-1,1)}
 perLabel();render();
 </script>
