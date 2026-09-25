@@ -337,6 +337,7 @@ td input.ed.obs{width:170px}
   <div class="fld"><label for="rdOut">Outros descontos</label><input id="rdOut" inputmode="decimal" placeholder="0,00"></div>
   <div class="fld"><label for="rdVale">Subsídio pago em cartão</label><input id="rdVale" inputmode="decimal" placeholder="0,00"></div>
   <div class="fld" id="rdPremF"><label for="rdPrem">Prémios / gratificações (incluídos no bruto)</label><input id="rdPrem" inputmode="decimal" placeholder="0,00"></div>
+  <div class="fld" id="rdSnfF"><label for="rdSnf">Subs. Natal / Férias (incluído no bruto)</label><input id="rdSnf" inputmode="decimal" placeholder="0,00"></div>
  </div>
  <p class="imp" id="rdTot" style="margin:2px 0 10px"></p>
  <div id="rdLig"></div><div id="rdDet"></div>
@@ -368,7 +369,7 @@ const CATS_BASE=[
  ['Banco',['Troca entre contas','Levantamentos','Depósitos','Poupanças']],
  ['Por tratar',['Por tratar','Emprestimo','Transferência','Transferência pag','Transferência rec','Por confirmar','Sem classificação','Por classificar']],
  ['Investimentos',['Revolut','Apartamento Matosinhos','Cães','Bolsa','Elastic','Kindness']],
- ['Rendimentos',['Salário','Subsídio refeição','Prémios','Reembolsos','Rendas','Outros - Rendimentos']]];
+ ['Rendimentos',['Salário','Subsídio refeição','Subsídio Natal / Férias','Prémios','Reembolsos','Rendas','Outros - Rendimentos']]];
 // [texto, modo, tipo, categoria, referência] — a ordem importa (a primeira que corresponde ganha)
 const REGRAS_BASE=[
  ['TRF CXD','inicio','','Banco','Troca entre contas'],
@@ -410,7 +411,8 @@ function normaliza(d){d={...fresh(),...d};
   if(!d.cats)d.cats=CATS_BASE.map(([n,r])=>({id:uid('c'),nome:n,refs:r.slice()}));
   if(!d.regras)d.regras=REGRAS_BASE.map(novaRegraBase);
   if(!d.pessoas)d.pessoas=[];if(!d.prev)d.prev={};if(!Array.isArray(d.rend))d.rend=[];
-  if(!d.rendCat){if(!d.cats.some(c=>c.nome==='Rendimentos'))d.cats.push({id:uid('c'),nome:'Rendimentos',refs:['Salário','Subsídio refeição','Prémios','Reembolsos','Rendas','Outros - Rendimentos']});d.rendCat=true}
+  if(!d.rendCat){if(!d.cats.some(c=>c.nome==='Rendimentos'))d.cats.push({id:uid('c'),nome:'Rendimentos',refs:['Salário','Subsídio refeição','Subsídio Natal / Férias','Prémios','Reembolsos','Rendas','Outros - Rendimentos']});d.rendCat=true}
+  {const rc=d.cats.find(c=>c.nome==='Rendimentos');if(rc&&!d.rendSNF){if(!rc.refs.includes('Subsídio Natal / Férias'))rc.refs.splice(2,0,'Subsídio Natal / Férias');d.rendSNF=true}}
   if((d.ver||1)<2){d.mov.forEach(m=>{if(m.ref){m.det=[m.det,m.ref].filter(Boolean).join(' · ')}m.ref='';m.quem='';m.obs=m.obs||'';m.catSrc=m.cat?'manual':''});d.ver=2}
   d.mov.forEach(m=>{if(m.det&&m.banco&&m.det.startsWith(m.banco+': '))m.det=m.det.slice(m.banco.length+2);
     if(!m.desc0&&!m.k&&m.banco!=='CGD'){const pf=separaTipo(m.desc);if(pf.tipo){m.desc0=m.desc;m.desc=pf.desc;m.det=[pf.tipo,m.det].filter(Boolean).join(' · ')}}});
@@ -777,12 +779,14 @@ const ehNum=s=>/^-?[\d.]*\d,\d{2}$/.test(s);
 function leRecibo({W,items}){
   // recibos com Original e Duplicado lado a lado: usar só a metade esquerda
   if(items.some(i=>/^duplicado$/i.test(i.s)&&i.x>W/2))items=items.filter(i=>i.x<W/2);
-  const txt=items.map(i=>i.s).join(' ');
+  const txt=items.slice().sort((a,b)=>Math.abs(a.y-b.y)>3?b.y-a.y:a.x-b.x).map(i=>i.s).join(' ');
   if(!/recibo/i.test(txt)||!/remunera/i.test(txt))throw new Error('Não parece um recibo de vencimento.');
   const r={tipo:'rec',linhas:[],descontos:[]};
   // mês / ano
   const mi=items.find(i=>MESN[norm(i.s).replace(/[^a-z]/g,'')]&&items.some(j=>/^\d{4}$/.test(j.s)&&Math.abs(j.y-i.y)<3));
   if(mi){const ano=items.find(j=>/^\d{4}$/.test(j.s)&&Math.abs(j.y-mi.y)<3).s;r.mes=`${ano}-${pad(MESN[norm(mi.s).replace(/[^a-z]/g,'')])}`}
+  const nr=txt.match(/recibo[^0-9]{0,40}?(?:[a-zç]+\s+)?(\d{2,6})\s*\/\s*(\d{4})/i);if(nr)r.num=nr[1]+'/'+nr[2];
+  if(!mi){const mm=norm(txt).match(/recibo de vencimento(?: de)?\s+([a-z]+)\b/);if(mm&&MESN[mm[1]]&&nr)r.mes=`${nr[2]}-${pad(MESN[mm[1]])}`}
   const dt=txt.match(/\b(\d{2})[.\/-](\d{2})[.\/-](\d{4})\b/);if(dt)r.data=`${dt[3]}-${dt[2]}-${dt[1]}`;
   if(!r.mes&&r.data)r.mes=r.data.slice(0,7);if(!r.data&&r.mes)r.data=r.mes+'-28';
   if(!r.mes)throw new Error('Não encontrei o mês do recibo.');
@@ -813,11 +817,13 @@ function leRecibo({W,items}){
   r.ss=soma(r.descontos,/seg.*social|\bss\b/);r.irs=soma(r.descontos,/irs|reten/);
   r.outros=r2(soma(r.descontos)-r.ss-r.irs);if(!r.descontos.length&&r.tDescontos){r.outros=r.tDescontos}
   r.vale=r.tVale!=null?r.tVale:soma(r.linhas,/cartao|vale/);
-  r.premios=soma(r.linhas,/pr[eé]mio|gratifica|b[oó]nus/);
+  r.premios=soma(r.linhas,/premio|gratifica|bonus/);r.subsNF=soma(r.linhas,/natal|ferias/);
   r.liquido=r2(r.bruto-r.ss-r.irs-r.outros);
   r.ok=(r.tTotal==null||Math.abs(r.tTotal-r.liquido)<.011)&&(r.tTransf==null||Math.abs(r.tTransf-(r.liquido-r.vale))<.011);
   if(!r.bruto)throw new Error('Não consegui ler os valores do recibo.');
-  r.desc='Vencimento '+MESES[+r.mes.slice(5)-1].toLowerCase()+' '+r.mes.slice(0,4);r.ref='Salário';
+  const mt=MESES[+r.mes.slice(5)-1].toLowerCase()+' '+r.mes.slice(0,4);
+  if(r.subsNF&&Math.abs(r.subsNF-r.bruto)<.011){const f=r.linhas.some(l=>/ferias/.test(norm(l.desc)));r.desc=(f?'Subsídio de férias ':'Subsídio de Natal ')+mt;r.ref='Subsídio Natal / Férias'}
+  else{r.desc='Vencimento '+mt+(r.num?' (n.º '+r.num+')':'');r.ref='Salário'}
   return r}
 
 /* ================= rendimentos ================= */
@@ -841,25 +847,25 @@ function autoLiga(){const K=new Map(DB.mov.map(m=>[chave(m),m]));let n=0;
     if(x){if(m.catSrc!=='manual'){const ref=x.c==='v'?'Subsídio refeição':(x.r.ref||'Salário');if(m.cat!==REND||m.ref!==ref||m.catSrc!=='rend'){m.cat=REND;m.ref=ref;m.catSrc='rend';m.u=Date.now()}}}
     else if(m.catSrc==='rend'){m.cat='';m.ref='';m.catSrc='';aplicaRegras([m])}});
   return n}
-const refsRend=()=>{const c=DB.cats.find(x=>x.nome===REND);return c?c.refs:['Salário','Subsídio refeição','Prémios','Reembolsos','Rendas','Outros - Rendimentos']};
+const refsRend=()=>{const c=DB.cats.find(x=>x.nome===REND);return c?c.refs:['Salário','Subsídio refeição','Subsídio Natal / Férias','Prémios','Reembolsos','Rendas','Outros - Rendimentos']};
 const noPeriodo=(r,a,b)=>r.tipo==='rec'?(r.mes>=a.slice(0,7)&&r.mes<=b.slice(0,7)):(r.data>=a&&r.data<=b);
 const mesTxt=m=>m?`${MESES[+m.slice(5)-1]} ${m.slice(0,4)}`:'—';
 function celLig(r,K){const out=[];[['t','Transf.'],['v','Cartão']].forEach(([c,l])=>{const v=alvo(r,c);if(!(v>0))return;const m=r.lk&&r.lk[c]&&K.get(r.lk[c]);
   out.push(m?`<span class="lk ok" data-golk="${esc(chave(m))}" title="Ir para o movimento: ${esc(l)} ${E(v)} → ${esc(m.banco)} · ${fmtD(m.dm)} · ${esc(m.desc)}">🔗 ${l} ${fmtD(m.dm).slice(0,5)}</span>`:`<span class="lk no" title="Nenhum movimento de ${E(v)} encontrado — clique em ✏ para escolher">⚠ ${l} por ligar</span>`)});
   return out.join(' ')||'—'}
 /* partes do bruto: ordenado / prémios / outros rendimentos / subsídio em cartão */
-const ePremio=t=>/pr[eé]mio|gratifica|b[oó]nus/i.test(t||'');
+const ePremio=t=>/premio|gratifica|bonus/.test(norm(t));const eSNF=t=>/natal|ferias/.test(norm(t));
 function partes(r){const b=+r.bruto||0,v=+r.vale||0;
-  if(r.tipo==='pon'){const p=ePremio(r.ref+' '+r.desc)?b:0;return {ord:0,prem:p,outr:r2(b-p),vale:v}}
-  const p=r.premios!=null?+r.premios:r2((r.linhas||[]).filter(l=>ePremio(l.desc)).reduce((s,l)=>s+l.valor,0));
-  return {ord:r2(b-p-v),prem:p,outr:0,vale:v}}
-const val2=(r,f)=>['ord','prem','outr'].includes(f)?partes(r)[f]:(+r[f]||0);
-const RCOLS=[['ord','Ordenado'],['prem','Prémios / gratif.'],['outr','Outros rend.'],['vale','Subs. cartão'],['bruto','Bruto'],['irs','IRS retido'],['ss','Seg. Social'],['outros','Outros desc.'],['liquido','Líquido']];
+  if(r.tipo==='pon'){const t=r.ref+' '+r.desc,n=eSNF(t)?b:0,p=!n&&ePremio(t)?b:0;return {ord:0,prem:p,snf:n,outr:r2(b-p-n),vale:v}}
+  const L=r.linhas||[],p=r.premios!=null?+r.premios:r2(L.filter(l=>ePremio(l.desc)).reduce((s,l)=>s+l.valor,0)),n=r.subsNF!=null?+r.subsNF:r2(L.filter(l=>eSNF(l.desc)).reduce((s,l)=>s+l.valor,0));
+  return {ord:r2(b-p-n-v),prem:p,snf:n,outr:0,vale:v}}
+const val2=(r,f)=>['ord','prem','snf','outr'].includes(f)?partes(r)[f]:(+r[f]||0);
+const RCOLS=[['ord','Ordenado'],['snf','Subs. Natal / Férias'],['prem','Prémios / gratif.'],['outr','Outros rend.'],['vale','Subs. cartão'],['bruto','Bruto'],['irs','IRS retido'],['ss','Seg. Social'],['outros','Outros desc.'],['liquido','Líquido']];
 function renderRend(a,b){
   const K=new Map(DB.mov.map(m=>[chave(m),m]));
   const ano=String(P.m==='int'&&P.fim?P.fim.slice(0,4):P.d.getFullYear()),doAno=DB.rend.filter(r=>(r.tipo==='rec'?r.mes:r.data||'').startsWith(ano));
   const S=(l,f)=>r2(l.reduce((s,r)=>s+val2(r,f),0)),per=DB.rend.filter(r=>noPeriodo(r,a,b));
-  $('#renKpis').innerHTML=kpi('Líquido no período',E(S(per,'liquido')),`${per.length} registo(s)`,'pos')+kpi(`Ordenado em ${ano}`,E(S(doAno,'ord')),`subs. cartão ${E(S(doAno,'vale'))}`)
+  $('#renKpis').innerHTML=kpi('Líquido no período',E(S(per,'liquido')),`${per.length} registo(s)`,'pos')+kpi(`Ordenado em ${ano}`,E(S(doAno,'ord')),`subs. Natal/férias ${E(S(doAno,'snf'))} · cartão ${E(S(doAno,'vale'))}`)
     +kpi(`Prémios / gratif. em ${ano}`,E(S(doAno,'prem')),`outros rendimentos ${E(S(doAno,'outr'))}`)+kpi(`IRS retido em ${ano}`,E(S(doAno,'irs')),`SS ${E(S(doAno,'ss'))} · bruto ${E(S(doAno,'bruto'))}`);
   $('#renAnoSub').textContent=ano+' · para comparar com a declaração de IRS';
   const ents=uniq(doAno.map(r=>r.entidade||'(sem entidade)'));if(RA.ent&&!ents.includes(RA.ent))RA.ent='';
@@ -867,7 +873,7 @@ function renderRend(a,b){
   const doAnoF=doAno.filter(r=>!RA.ent||(r.entidade||'(sem entidade)')===RA.ent);
   const linhas=MESES.map((n,i)=>{const p=`${ano}-${pad(i+1)}`,l=doAnoF.filter(r=>(r.tipo==='rec'?r.mes:(r.data||'').slice(0,7))===p).sort((a,b)=>a.tipo===b.tipo?(a.entidade||'').localeCompare(b.entidade||'','pt'):a.tipo==='rec'?-1:1);return {n,p,l}});
   RA.meses=linhas.filter(x=>x.l.length).map(x=>x.p);
-  const cols=`<colgroup><col style="width:21%">${RCOLS.map(()=>'<col style="width:6.8%">').join('')}<col style="width:11%"><col style="width:6.8%"></colgroup>`;
+  const cols=`<colgroup><col style="width:19%">${RCOLS.map(()=>'<col style="width:6.5%">').join('')}<col style="width:10%"><col style="width:6%"></colgroup>`;
   const porLigar=r=>['t','v'].filter(c=>alvo(r,c)>0&&!(r.lk&&r.lk[c]&&K.get(r.lk[c]))).length;
   $('#renAno').innerHTML=doAnoF.length?`<table class="t ra">${cols}<thead><tr><th>Mês</th>${RCOLS.map(c=>`<th class="num">${c[1]}</th>`).join('')}<th>Ligação ao extrato</th><th></th></tr></thead><tbody>${linhas.map(({n,p,l})=>{
       if(!l.length)return `<tr class="muted"><td style="padding-left:22px">${n}</td>${RCOLS.map(()=>'<td class="num">—</td>').join('')}<td></td><td></td></tr>`;
@@ -893,7 +899,7 @@ let RD=null;
 const campoN=id=>{const v=$('#'+id).value.replace(/[€\s]/g,'');return r2(Math.abs(/^\d+(\.\d{1,2})?$/.test(v)?parseFloat(v):num(v)))};
 function rdCalc(){const b=campoN('rdBruto'),l=r2(b-campoN('rdIrs')-campoN('rdSs')-campoN('rdOut')),v=campoN('rdVale');
   $('#rdTot').innerHTML=`Líquido <b>${E(l)}</b>${v?` · transferência <b>${E(r2(l-v))}</b> + cartão <b>${E(v)}</b>`:''}`;return {b,l,v}}
-function rdTipo(t){$('#rdPremF').style.display=t==='rec'?'':'none';$$('#rdTipo button').forEach(x=>x.classList.toggle('on',x.dataset.t===t));$('#rdMesF').style.display=t==='rec'?'':'none';$('#rdDataL').textContent=t==='rec'?'Data do recibo':'Data'}
+function rdTipo(t){$('#rdPremF').style.display=$('#rdSnfF').style.display=t==='rec'?'':'none';$$('#rdTipo button').forEach(x=>x.classList.toggle('on',x.dataset.t===t));$('#rdMesF').style.display=t==='rec'?'':'none';$('#rdDataL').textContent=t==='rec'?'Data do recibo':'Data'}
 function rdLigOpts(r,c){const v=alvo(r,c);if(!(v>0))return '';const d=baseData(r),a=addDias(d,-45),b=addDias(d,45),usados=ligados();
   const ms=DB.mov.filter(m=>m.valor>0&&m.dm>=a&&m.dm<=b).sort((x,y)=>Math.abs(x.valor-v)-Math.abs(y.valor-v)||Math.abs(difDias(x.dm,d))-Math.abs(difDias(y.dm,d))).slice(0,40);
   const cur=r.lk&&r.lk[c]||'';
@@ -904,7 +910,7 @@ function abreRend(r,tipo){RD=r||null;const x=r||{tipo:tipo||'rec',mes:hoje().sli
   $('#rdTit').textContent=r?'Editar rendimento':(x.tipo==='rec'?'Novo rendimento recorrente':'Novo rendimento pontual');
   rdTipo(x.tipo);$('#rdMes').value=x.mes||'';$('#rdData').value=x.data||'';$('#rdEnt').value=x.entidade||'';$('#rdDesc').value=x.desc||'';
   $('#rdRef').innerHTML=refsRend().map(f=>`<option${f===x.ref?' selected':''}>${esc(f)}</option>`).join('')+(x.ref&&!refsRend().includes(x.ref)?`<option selected>${esc(x.ref)}</option>`:'');
-  $('#rdPes').value=x.pessoa||'';[['rdBruto','bruto'],['rdIrs','irs'],['rdSs','ss'],['rdOut','outros'],['rdVale','vale']].forEach(([id,f])=>$('#'+id).value=x[f]?String(x[f].toFixed(2)).replace('.',','):'');{const pm=r&&r.tipo==='rec'?partes(r).prem:0;$('#rdPrem').value=pm?pm.toFixed(2).replace('.',','):''}
+  $('#rdPes').value=x.pessoa||'';[['rdBruto','bruto'],['rdIrs','irs'],['rdSs','ss'],['rdOut','outros'],['rdVale','vale']].forEach(([id,f])=>$('#'+id).value=x[f]?String(x[f].toFixed(2)).replace('.',','):'');{const pt=r&&r.tipo==='rec'?partes(r):{};$('#rdPrem').value=pt.prem?pt.prem.toFixed(2).replace('.',','):'';$('#rdSnf').value=pt.snf?pt.snf.toFixed(2).replace('.',','):''}
   $('#rdDet').innerHTML=r&&(r.linhas||[]).length?`<details><summary class="note">Detalhe lido do recibo${r.ficheiro?' ('+esc(r.ficheiro)+')':''}</summary><table class="t"><tbody>${r.linhas.map(l=>`<tr><td>${esc(l.desc)}</td><td class="num">${E(l.valor)}</td></tr>`).join('')}${(r.descontos||[]).map(l=>`<tr><td>− ${esc(l.desc)} ${esc(l.taxa||'')}</td><td class="num">${E(-l.valor)}</td></tr>`).join('')}</tbody></table></details>`:'';
   $('#rdLig').innerHTML=r?rdLigOpts(r,'t')+rdLigOpts(r,'v'):'<p class="note">A ligação ao movimento do extrato é feita automaticamente ao guardar.</p>';
   $('#rdDel').style.display=r?'':'none';rdCalc();$('#mRend').hidden=false}
@@ -913,14 +919,15 @@ function guardaRend(){const t=$('#rdTipo .on').dataset.t,{b,l,v}=rdCalc();
   if(!data){toast('Indique a data');return}if(!b){toast('Indique o valor bruto');$('#rdBruto').focus();return}
   const r=RD||{id:uid('r'),lk:{},lkMan:{}};
   Object.assign(r,{tipo:t,mes,data,entidade:$('#rdEnt').value.trim(),desc:$('#rdDesc').value.trim(),ref:$('#rdRef').value,pessoa:$('#rdPes').value.trim(),
-    bruto:b,irs:campoN('rdIrs'),ss:campoN('rdSs'),outros:campoN('rdOut'),vale:v,liquido:l,premios:t==='rec'?campoN('rdPrem'):0,u:Date.now()});
+    bruto:b,irs:campoN('rdIrs'),ss:campoN('rdSs'),outros:campoN('rdOut'),vale:v,liquido:l,premios:t==='rec'?campoN('rdPrem'):0,subsNF:t==='rec'?campoN('rdSnf'):0,u:Date.now()});
   $$('#rdLig select[data-rdlk]').forEach(s=>{const c=s.dataset.rdlk;if(s.value==='__auto'){if(r.lkMan[c]){r.lkMan[c]=false;r.lk[c]=''}}else{r.lkMan[c]=true;r.lk[c]=s.value}});
   if(!RD)DB.rend.push(r);RA.open.add(r.tipo==='rec'?r.mes:r.data.slice(0,7));autoLiga();$('#mRend').hidden=true;RD=null;save();render();toast('Rendimento guardado')}
 /* ---- carregar recibos (PDF) ---- */
 async function carregaRecibos(files){const res=[];
   for(const f of files){try{if(!/\.pdf$/i.test(f.name))throw new Error('Tem de ser um PDF.');
       const r=leRecibo(await textoPDF(await f.arrayBuffer()));
-      const dup=DB.rend.find(x=>x.tipo==='rec'&&x.mes===r.mes&&(x.nif&&r.nif?x.nif===r.nif:norm(x.entidade)===norm(r.entidade))&&Math.abs(x.liquido-r.liquido)<.011);
+      const assin=x=>(x.linhas||[]).map(l=>norm(l.desc)+':'+l.valor).sort().join('|');
+      const dup=DB.rend.find(x=>x.tipo==='rec'&&(x.nif&&r.nif?x.nif===r.nif:norm(x.entidade)===norm(r.entidade))&&(r.num&&x.num?x.num===r.num:(x.mes===r.mes&&x.data===r.data&&Math.abs(x.liquido-r.liquido)<.011&&assin(x)===assin(r))));
       if(dup){res.push({ok:true,dup:true,f:f.name,r});continue}
       Object.assign(r,{id:uid('r'),ficheiro:f.name,pessoa:'',lk:{},lkMan:{},u:Date.now()});DB.rend.push(r);res.push({ok:true,f:f.name,r});
     }catch(e){res.push({ok:false,f:f.name,msg:e.message})}}
