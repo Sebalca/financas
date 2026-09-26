@@ -191,6 +191,8 @@ td input.ed.obs{width:170px}
 .cat>summary .nm{font-weight:700}
 .ord{display:inline-flex;gap:2px;margin-right:6px}.ord .btn{padding:1px 5px}
 .addcat{margin:0 0 12px}
+.seg.mini button{padding:4px 9px;font-size:12px}.seg.mini button.on{background:var(--ac);color:#fff}
+tr.clk{cursor:pointer}
 .fora-t{margin:6px 0 10px;font-size:14px;color:var(--mu)}.fora-t small{font-weight:400}
 tr.fora-r td{background:var(--soft);font-weight:700;color:var(--mu);padding-top:14px}
 table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px}
@@ -238,7 +240,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
     </div>
     <div class="grid2">
       <div class="card"><h3>Últimos movimentos<span class="r"><button class="btn sm" data-go="ext">Ver extratos →</button></span></h3><div class="tw" id="homeLast"></div></div>
-      <div class="card"><h3>Por categorizar <span class="tag wait" id="homeUncCnt">0</span><span class="r"><button class="btn sm" data-gounc>Categorizar →</button></span></h3><div class="tw" id="homeUnc"></div></div>
+      <div class="card"><h3>Por categorizar <span class="tag wait" id="homeUncCnt">0</span><span class="r"><span class="seg mini" id="uncVista"><button type="button" class="on" data-v="ext">Extrato</button><button type="button" data-v="freq">Mais frequentes</button></span><button class="btn sm" data-gounc>Categorizar →</button></span></h3><div class="tw" id="homeUnc"></div></div>
     </div>
   </section>
 
@@ -655,7 +657,10 @@ function render(){
   const last=ordena(per).slice(0,8);
   $('#homeLast').innerHTML=last.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th></tr></thead><tbody>${last.map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td>${m.cat?`<span class="tag">${esc(m.cat)}${m.ref?' · '+esc(m.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos no período</b></div>';
   $('#homeUncCnt').textContent=unc.length;
-  $('#homeUnc').innerHTML=unc.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th></tr></thead><tbody>${unc.slice(0,8).map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td></tr>`).join('')}</tbody></table>${unc.length>8?`<p class="note">+ ${unc.length-8} outros</p>`:''}`:(per.length?'<div class="empty"><b>Tudo categorizado ✓</b></div>':'<div class="empty"><b>Sem movimentos no período</b></div>');
+  if(UNCV==='freq'&&unc.length){const g=new Map();unc.forEach(m=>{const k=norm(m.desc);const x=g.get(k)||{d:m.desc,n:0,t:0,u:''};x.n++;x.t+=m.valor;if(m.dm>x.u)x.u=m.dm;g.set(k,x)});
+    const gs=[...g.values()].sort((a,b)=>b.n-a.n||Math.abs(b.t)-Math.abs(a.t));
+    $('#homeUnc').innerHTML=`<table class="t"><thead><tr><th>Descrição</th><th class="num">Vezes</th><th class="num">Total</th><th>Última</th></tr></thead><tbody>${gs.slice(0,10).map(x=>`<tr class="clk" data-gouncq="${esc(x.d)}" title="Ver estes movimentos nos Extratos"><td class="desc">${esc(x.d)}</td><td class="num"><b>${x.n}</b></td><td class="num">${val(x.t)}</td><td>${fmtD(x.u)}</td></tr>`).join('')}</tbody></table>${gs.length>10?`<p class="note">+ ${gs.length-10} outras descrições</p>`:''}`}
+  else $('#homeUnc').innerHTML=unc.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th></tr></thead><tbody>${unc.slice(0,8).map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td></tr>`).join('')}</tbody></table>${unc.length>8?`<p class="note">+ ${unc.length-8} outros</p>`:''}`:(per.length?'<div class="empty"><b>Tudo categorizado ✓</b></div>':'<div class="empty"><b>Sem movimentos no período</b></div>');
 
   /* ---- Extratos ---- */
   const q=norm($('#fQ').value),ft=$('#fTipo').value;
@@ -686,7 +691,7 @@ function render(){
 
 /* ---- Despesas: mês (previsto vs real) ou ano (grelha 12 meses); modo Editar para estrutura ---- */
 let soValores=false;
-const DES={edit:false,open:new Set()};
+const DES={edit:false,open:new Set()};let UNCV='ext';
 const FORA=['Banco','Por tratar','Investimentos','Rendimentos','Poupanças'];
 const eFora=n=>FORA.includes(n);
 function desNome(txt,attr,bold){return DES.edit?`<input class="nm" ${attr} value="${esc(txt)}"${bold?' style="font-weight:700"':''}>`:`<span${bold?' style="font-weight:700"':''}>${esc(txt)}</span>`}
@@ -1030,13 +1035,14 @@ $('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==
 /* ================= eventos ================= */
 function go(tab,keep){$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(!keep)window.scrollTo({top:0});fixaCab()}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-gounc]');if(!t)return;
+  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-gounc],[data-gouncq]');if(!t)return;
   const d=t.dataset;
   if(d.edit){abreMov(DB.mov.find(x=>x.id===d.edit));return}
   if(d.cmv){e.preventDefault();const [i,dd]=d.cmv.split('|').map(Number);if(moveArr(DB.cats,i,dd)){save();render()}return}
   if(d.rmv){const [ci,ri,dd]=d.rmv.split('|').map(Number);if(moveArr(DB.cats[ci].refs,ri,dd)){save();render()}return}
   if(d.cadd){const n=prompt('Nome da nova categoria:');if(!n||!n.trim())return;if(DB.cats.some(c=>c.nome===n.trim()))return toast('Já existe');const i=DB.cats.findIndex(c=>eFora(c.nome));DB.cats.splice(i<0?DB.cats.length:i,0,{id:uid('c'),nome:n.trim(),refs:[]});save();render();return}
   if(d.dcat){DES.open.has(d.dcat)?DES.open.delete(d.dcat):DES.open.add(d.dcat);render();return}
+  if(d.gouncq!=null){['#fBanco','#fQuem','#fTipo'].forEach(i=>$(i).value='');render();$('#fCat').value='__unc';$('#fQ').value=d.gouncq;go('ext');render();return}
   if('gounc' in d){['#fQ','#fBanco','#fQuem','#fTipo'].forEach(i=>$(i).value='');render();$('#fCat').value='__unc';go('ext');render();return}
   if(d.golk){irMovimento(d.golk);return}
   if(d.gorend){irRendimento(d.gorend);return}
@@ -1089,6 +1095,7 @@ $('#rgNova').addEventListener('click',()=>{DB.regras.unshift({id:uid('r'),txt:''
 $('#btRegras').addEventListener('click',()=>{$('#rgQ').value='';renderRegras();$('#mRegras').hidden=false});
 $('#btPessoas').addEventListener('click',()=>{renderPessoas();$('#mPessoas').hidden=false});
 $('#pesNovo').addEventListener('click',()=>{const m=prompt('Texto que aparece na descrição (ex.: JOANA MORAIS ou 916XXX581):');if(!m||!m.trim())return;const p=prompt('Quem é?');if(!p||!p.trim())return;DB.pessoas.push({id:uid('p'),match:m.trim(),pessoa:p.trim()});pessoasMudaram()});
+$('#uncVista').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;UNCV=b.dataset.v;$$('#uncVista button').forEach(x=>x.classList.toggle('on',x===b));render()});
 $('#btDesEdit').addEventListener('click',()=>{DES.edit=!DES.edit;render()});
 $('#desAbrir').addEventListener('click',()=>{if(P.m==='ano'&&!DES.edit){DB.cats.forEach(c=>DES.open.add(c.nome));render()}else $$('#desCats details').forEach(d=>d.open=true)});
 $('#desFechar').addEventListener('click',()=>{if(P.m==='ano'&&!DES.edit){DES.open.clear();render()}else $$('#desCats details').forEach(d=>d.open=false)});
