@@ -88,9 +88,20 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D35','donut de despesas do Início sem categorias fora das contas',await ev(()=>{const m=DB.mov.find(x=>x.valor<0);m.cat='Por tratar';m.ref='Transferência pag';render();return ![...document.querySelectorAll('#homeDonut li')].some(li=>/Por tratar/.test(li.textContent))}));
   t('D30','caixa de rendimentos existe e despesas são clicáveis',await ev(()=>!!document.querySelector('#homeRend')&&!!document.querySelector('#homeDonut li.clk')));
   t('D36','"Por categorizar" mostra todas as descrições (sem limite)',await ev(()=>{const n=new Set(DB.mov.filter(x=>{const [a,b]=range();return x.dm>=a&&x.dm<=b&&isUnc(x)}).map(x=>norm(x.desc))).size;return document.querySelectorAll('#homeUnc tbody tr').length===n}));
+  t('D37','caixas do Início sem texto (só ao passar o rato) e Entradas/Saídas clicáveis',await ev(()=>!document.querySelector('#homeKpis .kpi .s')&&document.querySelector('#homeKpis .kpi').title.length>0&&!!document.querySelector('#homeKpis [data-gotipo="e"]')));
+  await ev(()=>document.querySelector('#homeKpis [data-gotipo="s"]').click());
+  t('D38','clicar em Saídas abre os Extratos com o filtro "Só saídas"',await ev(()=>document.querySelector('#tab-ext').classList.contains('on')&&document.querySelector('#fTipo').value==='s'));
+  t('D46','milhares sempre com espaço (1 234,56 €)',await ev(()=>/^1\s234,56\s€$/.test(E(1234.56))&&/^-4\s038,06\s€$/.test(E(-4038.06))));
+  t('D08b','tabela de movimentos com larguras de coluna fixas',await ev(()=>!!document.querySelector('#extTable table.tfix colgroup')));
+  await ev(()=>document.querySelector('[data-tab="home"]').click());
   t('D31','"Por categorizar" mostra só as mais frequentes (com ⚡)',await ev(()=>!document.querySelector('#uncVista')&&UNCV==='freq'));
   t('D32','caixa "Despesas por referência" e gráfico com opção Detalhado',await ev(()=>!!document.querySelector('#homeDonutRef')&&document.querySelectorAll('#barsVista button').length===2));
   t('D33','gráfico de entradas/saídas mostra sempre os 12 meses do ano',await ev(()=>mesesGraf().length===12));
+
+  console.log('Estado');
+  await go('ext');await p.fill('#fQ','NETFLIX');await p.selectOption('#fTipo','s');await p.waitForTimeout(100);
+  await p.reload();await p.waitForTimeout(500);
+  t('D45','ao atualizar mantém aba, pesquisa e filtros',await ev(()=>document.querySelector('#tab-ext').classList.contains('on')&&document.querySelector('#fQ').value==='NETFLIX'&&document.querySelector('#fTipo').value==='s'));
 
   console.log('Página principal');
   await p.goto(U+'/index.html');await p.waitForTimeout(300);

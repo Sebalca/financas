@@ -30,6 +30,9 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D07 Barra de pesquisa/filtros e títulos da tabela sempre visíveis; filtro de Referência que segue a Categoria.
 - D08 Dropdowns dos filtros (Categoria, Referência…) com largura fixa.
 - D09 Botão "✕ Limpar filtros".
+- D08b Tabela de movimentos com larguras de coluna fixas.
+- D46 Valores com milhares sempre separados por espaço (1 234,56 €), em todo o site.
+- D45 Ao atualizar a página mantém-se a aba, período, filtros, pesquisa, vistas e posição (só enquanto o separador do browser está aberto).
 - Detalhes sem "CGD:"; movimentos ligados mostram só o 🔗 nos Detalhes.
 - Combos Categoria/Referência com largura fixa e seta à direita.
 - Movimentos à mão = conta 💵 Dinheiro com saldo próprio.
@@ -42,6 +45,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D13 Vista Mês (previsto vs real) e vista Ano (grelha 12 meses + Total + Média/mês + Previsto ano), em duas tabelas com títulos.
 - D18 Dividir movimento (✂): a linha do banco mantém-se e mostra "✂ Dividido em N" com sub-linhas; a soma das partes tem de dar o valor original; todas as contas usam as partes; as regras não mexem em movimentos divididos.
 - D19 Movimento marcado como reembolso mostra só "↩ Reembolso de …" nos Detalhes.
+- D20b Janela do reembolso: mostra em destaque descrição, valor, data e quem; por defeito as saídas (todas as categorias) do próprio dia ou do anterior mais próximo, com valor maior que o reembolso; "Mostrar todas" com pesquisa; despesa sem categoria → escolher categoria/referência na hora (aplica-se às duas).
 - D17 Despesas: o **Real** é saídas − reembolsos (indicador "x € − y € reemb.").
 - D16 Nos Extratos, entradas têm o botão ↩ para escolher a despesa original (fica com a mesma categoria/referência e ligação ↩).
 - D14 Vista Ano, tabela "Não entram nas contas": uma linha por categoria com o saldo (entradas − saídas) por mês, Total e Média/mês; sem coluna "Entradas ano".
@@ -56,6 +60,8 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 
 **Início**
 - D30 Caixas "Despesas por categoria" (clicável → Extratos filtrados) e "Rendimentos" (por entidade/tipo, líquido; clicável).
+- D37 As 4 caixas do Início têm título e valor maiores e centrados; o texto explicativo só aparece ao passar o rato.
+- D38 Clicar em Entradas/Saídas do Início abre os Extratos com o filtro Só entradas/Só saídas.
 - D31 "Por categorizar" mostra só as descrições mais frequentes (⚡ criar regra); "Categorizar →" abre os Extratos filtrados.
 - D36 "Por categorizar" mostra todas as descrições (com scroll), não só as 10 primeiras.
 - D34 No Início (totais, gráfico por mês, despesas por categoria/referência) as categorias fora das contas não contam — nem saídas nem entradas — **exceto as entradas de Rendimentos** (salário, etc.).
@@ -67,6 +73,13 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7n — 26/09/2026
+- Início: caixas maiores e centradas, explicação só ao passar o rato; Entradas/Saídas clicáveis → Extratos filtrados.
+- Extratos: colunas com largura fixa.
+- Reembolso: cabeçalho com descrição/valor/data/quem em destaque; sugestões do próprio dia (ou anterior) com valor maior; "Mostrar todas" com pesquisa; categorizar a despesa na hora se não tiver categoria.
+- Milhares sempre com espaço (1 234,56 €) nas Finanças e no Simulador.
+- Ao atualizar a página fica tudo como estava (aba, período, filtros, posição).
 
 ### v0.7m — 26/09/2026
 - Extratos: botão ✂ para dividir um movimento em várias linhas (categoria, referência, observações); a soma tem de dar o valor original; sub-linhas por baixo da linha do banco; Início e Despesas usam as partes.

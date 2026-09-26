@@ -313,10 +313,11 @@ table.t tr.iv td{color:color-mix(in srgb,var(--c3) 75%,var(--tx))}
 'use strict';
 /* ============ utilitários ============ */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR'});
-const fN=new Intl.NumberFormat('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2});
-const E=x=>fE.format(isFinite(x)&&Math.abs(x)>=0.005?x:0);
-const N2=x=>fN.format(isFinite(x)?x:0);
+const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
+const fN=new Intl.NumberFormat('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:'always'});
+const milhar=t=>t.replace(/(^|[^\d\s\u00a0\u202f.,])(\d)(\d{3})(?=[,\s\u00a0]|$)/g,'$1$2\u00a0$3');
+const E=x=>milhar(fE.format(isFinite(x)&&Math.abs(x)>=0.005?x:0));
+const N2=x=>milhar(fN.format(isFinite(x)?x:0));
 const Pc=(x,d=2)=>(isFinite(x)&&Math.abs(x)>=Math.pow(10,-d-2)/2?(x*100).toLocaleString('pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d}):'0')+' %';
 const r2=x=>Math.round((x+Number.EPSILON)*100)/100;
 const sum=a=>a.reduce((s,x)=>s+(+x||0),0);
