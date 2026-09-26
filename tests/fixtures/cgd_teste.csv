@@ -1,0 +1,14 @@
+Consultar saldos e movimentos à ordem - 21-09-2026
+
+Conta ;0000000000000 - EUR - Teste 
+Data de início ;01-09-2026
+Data de fim ;21-09-2026
+
+Data mov. ;Data valor ;Descrição ;Débito ;Crédito ;Saldo contabilístico ;Saldo disponível ;Categoria ;
+20-09-2026;20-09-2026;Compra: CONTINENTE PORTO ;23,40;;2.162,62;2.162,62;COMPRAS ;
+18-09-2026;18-09-2026;NETFLIX.COM ;13,99;;2.186,02;2.186,02;COMPRAS ;
+15-09-2026;15-09-2026;TRF DEMO EMPRESA LDA ;;850,00;2.200,01;2.200,01;COMPRAS ;
+12-09-2026;12-09-2026;LOJA SEM REGRA XPTO ;40,00;;1.350,01;1.350,01;COMPRAS ;
+10-09-2026;10-09-2026;STEAMGAMES.COM ;9,99;;1.390,01;1.390,01;COMPRAS ;
+05-09-2026;05-09-2026;TRF CXD 123456 ;100,00;;1.400,00;1.400,00;COMPRAS ;
+ ; ; ; ;Saldo contabilístico ;2.162,62 EUR ; ; ;

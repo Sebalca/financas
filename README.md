@@ -38,5 +38,7 @@ O site é publicado pelo Cloudflare a cada `push` para `main` (comando `npx wran
 ## Bibliotecas
 `public/lib/` tem o pdf.js 3.11 (Mozilla, Apache-2.0) e o SheetJS 0.18.5 (Apache-2.0), carregados só quando se lê um PDF ou um Excel.
 
-## Plano
-Ver [ROADMAP.md](ROADMAP.md).
+## Plano e alterações
+- [ROADMAP.md](ROADMAP.md) — versões planeadas.
+- [PATCH NOTES.md](PATCH%20NOTES.md) — histórico de alterações e **decisões fixas**.
+- Testes: `NODE_PATH=$(npm root -g) node tests/regressao.cjs` (Playwright, dados fictícios).

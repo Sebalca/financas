@@ -213,7 +213,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 <body>
 <div class="stk"><div class="wrap">
   <div class="top">
-    <div><h1>Finanças <span>pessoais</span></h1><p>Extratos, rendimentos e despesas num só sítio</p></div>
+    <div><h1>Finanças <span>pessoais</span></h1><p>Extratos, rendimentos e despesas num só sítio · <span id="appVer" title="Versão (ver PATCH NOTES.md)"></span></p></div>
     <button type="button" class="syncst" id="syncSt"></button>
     <div class="per" aria-label="Período">
       <div class="seg" id="perMode"><button type="button" data-m="mes" class="on">Mês</button><button type="button" data-m="ano">Ano</button><button type="button" data-m="int">Intervalo</button></div>
@@ -383,6 +383,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <script>
 'use strict';
+const APP_VERSAO='0.7h'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR'});
 const E=x=>fE.format(Math.abs(x)<.005?0:x);
@@ -850,6 +851,7 @@ function fixaCab(){const t=$('#extTable table'),h=t&&t.tHead;if(!h)return;
   const esc_=t.offsetWidth?r.width/t.offsetWidth:1,off=Math.max(0,Math.min(topo-r.top,r.height-hh*2));
   [...h.rows[0].cells].forEach(c=>c.style.transform=off?`translateY(${off/esc_}px)`:'');h.classList.toggle('fix',off>0)}
 const stkH=()=>document.documentElement.style.setProperty('--stkH',$('.stk').offsetHeight+'px');stkH();
+$('#appVer').textContent='v'+APP_VERSAO;
 addEventListener('scroll',fixaCab,{passive:true});addEventListener('resize',()=>{stkH();fixaCab()});
 
 /* ================= edição em massa ================= */
