@@ -55,12 +55,14 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .menu{position:fixed;right:10px;top:50px;z-index:60;width:270px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:6px;font:14px system-ui,sans-serif}
 .menu[hidden]{display:none}
 .menu [hidden]{display:none!important}
+.menu .ver{align-self:flex-start;font-size:11px;color:var(--mu);font-weight:600;white-space:nowrap}
 .menu .hd{display:flex;gap:10px;align-items:center;padding:10px 10px 12px;border-bottom:1px solid var(--bd);margin-bottom:4px}
 .menu .hd .av{width:34px;height:34px;font-size:14px}.menu .hd b{display:block;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;max-width:190px}.menu .hd small{color:var(--mu);font-size:12px}
 .menu button.it{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:var(--tx);text-align:left;padding:9px 10px;border-radius:9px;cursor:pointer;font:inherit}
 .menu button.it:hover{background:var(--ac2)}.menu .it .ic{width:20px;text-align:center}.menu .it .rt{margin-left:auto;color:var(--mu);font-size:12px}
 .menu hr{border:0;border-top:1px solid var(--bd);margin:4px 0}
-.sw{width:34px;height:20px;border-radius:999px;background:var(--bd);position:relative;transition:.15s}.sw::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}
+.menu .it .rt{display:flex;align-items:center}
+.sw{display:inline-block;flex:none;vertical-align:middle;width:34px;height:20px;border-radius:999px;background:var(--bd);position:relative;transition:.15s}.sw::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}
 .sw.on{background:var(--ac)}.sw.on::after{left:16px}
 .big{max-width:760px!important;padding:0!important;display:flex;flex-direction:column;max-height:88vh;overflow:hidden}
 .big .bh{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--bd)}.big .bh h2{margin:0;flex:1;font-size:17px}
@@ -101,7 +103,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
   <button class="mbtn" id="btMenu" type="button" aria-haspopup="menu" aria-expanded="false" title="Menu"><span class="av" id="av">☰</span><span class="em" id="mail">Menu</span><span class="ch">▾</span></button>
 </div>
 <div class="menu" id="menu" role="menu" hidden>
-  <div class="hd"><div class="av" id="mAv">?</div><div><b id="mMail">Sem sessão</b><small id="mSub">Os dados ficam só neste dispositivo</small></div></div>
+  <div class="hd"><div class="av" id="mAv">?</div><div style="min-width:0;flex:1"><b id="mMail">Sem sessão</b><small id="mSub">Os dados ficam só neste dispositivo</small></div><span class="ver" id="mVer" title="Versão da aplicação"></span></div>
   <button class="it" id="miEntrar" type="button"><span class="ic">🔑</span>Entrar / criar conta</button>
   <button class="it" data-set="tema" type="button"><span class="ic">⚙️</span>Definições</button>
   <button class="it" id="miPlano" type="button"><span class="ic">⭐</span>Plano<span class="rt">Grátis</span></button>
@@ -204,7 +206,8 @@ const FPTema=(function(){const h=document.documentElement;
 
 /* ===== menu (avatar ▾) ===== */
 const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let U=null;
-  const abre=v=>{m.hidden=!v;$('btMenu').setAttribute('aria-expanded',v)};
+  const abre=v=>{m.hidden=!v;$('btMenu').setAttribute('aria-expanded',v);if(v){let ver='';try{ver=document.querySelector('iframe[data-id="financas"]').contentWindow.FP_VERSAO||''}catch(e){}$('mVer').textContent=ver?'v'+ver:''}};
+  window.addEventListener('blur',()=>setTimeout(()=>{if(document.activeElement&&document.activeElement.tagName==='IFRAME')abre(false)},0)); // clique dentro da página (iframe) fecha o menu
   $('btMenu').addEventListener('click',e=>{e.stopPropagation();abre(m.hidden)});
   document.addEventListener('click',e=>{if(!m.hidden&&!m.contains(e.target))abre(false)});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){abre(false);['mSet','mPlano'].forEach(i=>$(i).hidden=true)}});

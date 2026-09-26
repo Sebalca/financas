@@ -68,11 +68,26 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   const d17=await ev(()=>{const [a,b]=range(),sa=-DB.mov.filter(m=>m.dm>=a&&m.dm<=b&&m.cat==='Alimentação'&&m.valor<0).reduce((s,m)=>s+m.valor,0),esp=E(sa-20),txt=document.querySelector('#desCats details[data-c="Alimentação"] summary').textContent;return {ok:txt.includes('Real '+esp)&&/reemb/.test(txt),esp,txt}});
   t('D17','Despesas: real = saídas − reembolsos',d17.ok,d17);
 
+  console.log('Dividir');
+  await go('ext');await p.fill('#fQ','NETFLIX');await p.waitForTimeout(150);
+  const nid=await ev(()=>DB.mov.find(x=>x.desc.startsWith('NETFLIX')).id);
+  await p.click(`#extTable [data-split="${nid}"]`);await p.waitForTimeout(150);
+  await p.fill('#spRows tr:nth-child(1) [data-spv]','10');await p.selectOption('#spRows tr:nth-child(1) [data-spc]','Lazer');await p.selectOption('#spRows tr:nth-child(1) [data-spr]','Jogos');
+  await p.fill('#spRows tr:nth-child(2) [data-spv]','2');
+  t('D18a','dividir só guarda quando a soma bate com o valor original',await ev(()=>document.querySelector('#spOk').disabled));
+  await p.fill('#spRows tr:nth-child(2) [data-spv]','3,99');await p.selectOption('#spRows tr:nth-child(2) [data-spc]','Casa');await p.selectOption('#spRows tr:nth-child(2) [data-spr]','Internet');
+  await p.click('#spOk');await p.waitForTimeout(150);
+  const sp=await ev(()=>{const m=DB.mov.find(x=>x.desc.startsWith('NETFLIX'));const x=expande([m]);return {n:m.partes.length,soma:r2(x.reduce((s,y)=>s+y.valor,0)),cats:x.map(y=>y.cat),sub:document.querySelectorAll('#extTable tr.parte').length}});
+  t('D18','movimento dividido: partes somam o original, contam nas categorias e aparecem como sub-linhas',sp.n===2&&sp.soma===-13.99&&sp.cats.join()==='Lazer,Casa'&&sp.sub===2,sp);
+  await p.fill('#fQ','');
+  t('D19','reembolso mostra só a ligação nos Detalhes',await ev(()=>{render();const tr=document.querySelector('#extTable tr[data-id="mRb"]');return !tr||(/Reembolso de/.test(tr.children[8].textContent)&&!/Diversos|COMPRAS/.test(tr.children[8].textContent))}));
+
   console.log('Início');
   await go('home');
   t('D34','Início não conta categorias fora das contas, exceto entradas de Rendimentos',await ev(()=>!contaInicio({valor:-10,cat:'Por tratar',ref:'x'})&&!contaInicio({valor:10,cat:'Por tratar'})&&!contaInicio({valor:10,cat:'Banco',ref:'x'})&&!contaInicio({valor:-10,cat:'Investimentos'})&&contaInicio({valor:-10,cat:'Alimentação'})&&contaInicio({valor:10,cat:'Rendimentos'})&&!contaInicio({valor:-10,cat:'Rendimentos'})&&contaInicio({valor:-10,cat:''})));
   t('D35','donut de despesas do Início sem categorias fora das contas',await ev(()=>{const m=DB.mov.find(x=>x.valor<0);m.cat='Por tratar';m.ref='Transferência pag';render();return ![...document.querySelectorAll('#homeDonut li')].some(li=>/Por tratar/.test(li.textContent))}));
   t('D30','caixa de rendimentos existe e despesas são clicáveis',await ev(()=>!!document.querySelector('#homeRend')&&!!document.querySelector('#homeDonut li.clk')));
+  t('D36','"Por categorizar" mostra todas as descrições (sem limite)',await ev(()=>{const n=new Set(DB.mov.filter(x=>{const [a,b]=range();return x.dm>=a&&x.dm<=b&&isUnc(x)}).map(x=>norm(x.desc))).size;return document.querySelectorAll('#homeUnc tbody tr').length===n}));
   t('D31','"Por categorizar" mostra só as mais frequentes (com ⚡)',await ev(()=>!document.querySelector('#uncVista')&&UNCV==='freq'));
   t('D32','caixa "Despesas por referência" e gráfico com opção Detalhado',await ev(()=>!!document.querySelector('#homeDonutRef')&&document.querySelectorAll('#barsVista button').length===2));
   t('D33','gráfico de entradas/saídas mostra sempre os 12 meses do ano',await ev(()=>mesesGraf().length===12));
@@ -83,6 +98,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D40','Finanças é o primeiro separador',tabs[0]==='Finanças',tabs);
   t('D41','separadores externos nunca recebem sessão/tema (data-ext)',await ev(()=>{location.hash='#biblia';return new Promise(r=>setTimeout(()=>r(!!document.querySelector('iframe[data-ext]')&&/:not\(\[data-ext\]\)/.test(document.body.innerHTML)),300))}));
   t('D42','menu (avatar ▾) com Definições, Plano, Onboarding e modo escuro',await ev(()=>!!document.querySelector('#btMenu')&&['[data-set="tema"]','#miPlano','#miOnb','#miTema'].every(q=>document.querySelector(q))));
+  t('D44','versão no canto do menu da conta (sem subtítulo nas Finanças)',await ev(()=>{document.querySelector('#btMenu').click();const v=document.querySelector('#mVer').textContent;document.querySelector('#btMenu').click();const f=document.querySelector('iframe[data-id="financas"]').contentDocument;return /^v0\./.test(v)&&!f.querySelector('.top p')}));
   t('D43','onboarding abre e tem vários passos',await ev(()=>{FPOnb.abre();const ok=!document.querySelector('#mOnb').hidden&&document.querySelectorAll('#onbDots i').length>=5;document.querySelector('#mOnb').hidden=true;return ok}));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);

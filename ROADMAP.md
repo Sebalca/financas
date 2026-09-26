@@ -20,7 +20,6 @@ Estado: ✅ feito · 🔜 próxima · ⬜ por fazer
 - 🔜 **v0.6.x — Outros bancos** (à medida que chegam os extratos)
   7. Leitores para outros bancos.
 - ⬜ **Para mais tarde**
-  6. Dividir um movimento por várias categorias.
   8. Importar o extrato mensal da CGD em PDF (meses antigos sem CSV).
 - ✅ **v0.7 — Rendimentos**
   9. Recorrentes (uma linha por recibo) e pontuais, com adicionar/editar/apagar à mão.
@@ -31,6 +30,7 @@ Estado: ✅ feito · 🔜 próxima · ⬜ por fazer
   - Rendimentos num só resumo anual (ordenado, prémios/gratificações, outros rendimentos, subsídio em cartão…), com barra para carregar recibos e adicionar recorrentes/pontuais.
   - Separadores externos na página principal: Bíblia financeira e Stock casa.
   - Ajustes: 🔗 clicáveis (rendimento ↔ movimento), resumo anual com meses que abrem e filtro por entidade, "Compra:" passa para os detalhes, títulos da tabela de movimentos fixos, aba Previsões (estrutura).
+- ✅ **Feito fora do plano:** 6. Dividir um movimento por várias categorias (v0.7m).
 - 🧪 **Em desenvolvimento (abas criadas, só com a explicação)**
   - Faturas: ler faturas (PDF/foto), extrair loja, NIF, linhas e preços, e ligar ao movimento do extrato.
   - Saúde financeira: diagnóstico da conta (taxa de poupança, fixas vs variáveis, fundo de emergência), alertas e conselhos.

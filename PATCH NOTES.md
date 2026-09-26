@@ -18,6 +18,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D41 Sites externos nunca recebem a sessão nem o tema.
 - D42 Menu no canto direito (avatar ▾ / ☰): Entrar/criar conta, Definições, Plano, Onboarding, Modo escuro, Ajuda, Enviar sugestão, Terminar sessão. Site a 85% em ecrãs largos (ajustável nas Definições); largura total da janela.
 - D43 Onboarding aparece sozinho no 1.º login depois de criar a conta; pode ser relançado no menu e nas Definições.
+- D44 Sem subtítulo nas Finanças; a versão aparece no canto superior direito do menu da conta. O menu da conta fecha ao clicar em qualquer sítio fora dele.
 - Definições: Tema e tamanho, Conta (mudar palavra-passe), Cópia de segurança (exportar/importar .json), Apagar dados (dispositivo / conta), Onboarding, Idioma, Ajuda, Enviar sugestão (os três últimos só visuais por agora).
 - Login opcional; com sessão os dados sincronizam com a conta (Supabase `financas_dados`); nunca credenciais privadas no código.
 
@@ -39,6 +40,8 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D06 Trocas entre contas, levantamentos, depósitos e Poupanças não contam como entrada/saída.
 - D12 Referências com ✓ "Só este movimento" não sugerem regra e as regras não as usam.
 - D13 Vista Mês (previsto vs real) e vista Ano (grelha 12 meses + Total + Média/mês + Previsto ano), em duas tabelas com títulos.
+- D18 Dividir movimento (✂): a linha do banco mantém-se e mostra "✂ Dividido em N" com sub-linhas; a soma das partes tem de dar o valor original; todas as contas usam as partes; as regras não mexem em movimentos divididos.
+- D19 Movimento marcado como reembolso mostra só "↩ Reembolso de …" nos Detalhes.
 - D17 Despesas: o **Real** é saídas − reembolsos (indicador "x € − y € reemb.").
 - D16 Nos Extratos, entradas têm o botão ↩ para escolher a despesa original (fica com a mesma categoria/referência e ligação ↩).
 - D14 Vista Ano, tabela "Não entram nas contas": uma linha por categoria com o saldo (entradas − saídas) por mês, Total e Média/mês; sem coluna "Entradas ano".
@@ -54,6 +57,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 **Início**
 - D30 Caixas "Despesas por categoria" (clicável → Extratos filtrados) e "Rendimentos" (por entidade/tipo, líquido; clicável).
 - D31 "Por categorizar" mostra só as descrições mais frequentes (⚡ criar regra); "Categorizar →" abre os Extratos filtrados.
+- D36 "Por categorizar" mostra todas as descrições (com scroll), não só as 10 primeiras.
 - D34 No Início (totais, gráfico por mês, despesas por categoria/referência) as categorias fora das contas não contam — nem saídas nem entradas — **exceto as entradas de Rendimentos** (salário, etc.).
 - D15 Entrada numa categoria de despesa = **reembolso**: abate à despesa dessa categoria/referência e não conta como entrada. Entradas = Rendimentos + por categorizar.
 - D32 Caixa "Despesas por referência" (entre as despesas por categoria e os rendimentos), clicável → Extratos com categoria e referência.
@@ -63,6 +67,12 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7m — 26/09/2026
+- Extratos: botão ✂ para dividir um movimento em várias linhas (categoria, referência, observações); a soma tem de dar o valor original; sub-linhas por baixo da linha do banco; Início e Despesas usam as partes.
+- Reembolso: nos Detalhes fica só a ligação "↩ Reembolso de …".
+- Início: "Por categorizar" mostra todas as descrições; a caixa Entradas indica quanto ficou de fora (fora das contas/reembolsos).
+- Menu da conta: fecha ao clicar na página; versão no canto superior direito; interruptor do modo escuro alinhado. Sai o subtítulo das Finanças.
 
 ### v0.7l — 26/09/2026
 - Reembolsos: uma entrada com categoria de despesa abate a essa despesa (ex.: almoço 100 € − 80 € devolvidos = 20 €) e não conta como entrada.
