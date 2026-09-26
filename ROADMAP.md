@@ -31,6 +31,9 @@ Estado: ✅ feito · 🔜 próxima · ⬜ por fazer
   - Rendimentos num só resumo anual (ordenado, prémios/gratificações, outros rendimentos, subsídio em cartão…), com barra para carregar recibos e adicionar recorrentes/pontuais.
   - Separadores externos na página principal: Bíblia financeira e Stock casa.
   - Ajustes: 🔗 clicáveis (rendimento ↔ movimento), resumo anual com meses que abrem e filtro por entidade, "Compra:" passa para os detalhes, títulos da tabela de movimentos fixos, aba Previsões (estrutura).
+- 🧪 **Em desenvolvimento (abas criadas, só com a explicação)**
+  - Faturas: ler faturas (PDF/foto), extrair loja, NIF, linhas e preços, e ligar ao movimento do extrato.
+  - Saúde financeira: diagnóstico da conta (taxa de poupança, fixas vs variáveis, fundo de emergência), alertas e conselhos.
 - ⬜ **v0.8 — Início e análises**
   13. Previsto vs real por categoria e por mês, com alertas de desvio.
   14. Evolução do saldo e comparação com o mesmo mês do ano anterior.
