@@ -389,7 +389,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <script>
 'use strict';
-const APP_VERSAO='0.7i'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.7j'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR'});
 const E=x=>fE.format(Math.abs(x)<.005?0:x);
@@ -444,6 +444,8 @@ const REGRAS_BASE=[
 (function(){const i=REGRAS_BASE.findIndex(r=>r[0]==='GALP ENERGIA'),j=REGRAS_BASE.findIndex(r=>r[0]==='GALP');if(i>j){const x=REGRAS_BASE.splice(i,1)[0];REGRAS_BASE.splice(j,0,x)}})();
 const novaRegraBase=(r,i)=>({id:'rb'+i,txt:r[0],modo:r[1],tipo:r[2],cat:r[3],ref:r[4],ativo:true,predef:true});
 const INTERNAS=['Troca entre contas','Levantamentos','Depósitos'];
+/* Início: sem movimentos entre contas nem saídas das categorias fora das contas (D34) */
+const contaInicio=m=>!isInterna(m)&&!(m.valor<0&&m.cat&&eFora(m.cat));
 const isUnc=m=>!m.cat||!m.ref;
 const isInterna=m=>(m.cat==='Banco'&&INTERNAS.includes(m.ref))||m.cat==='Poupanças'; // movimentos entre contas (incl. Dinheiro): não contam como entrada/saída
 const DIN='Dinheiro';
@@ -666,7 +668,7 @@ const refOpts=(cat,sel)=>{const c=DB.cats.find(x=>x.nome===cat);const rs=c?c.ref
 
 /* ================= render ================= */
 function render(){
-  const [a,b]=range();const all=DB.mov,per=all.filter(m=>m.dm>=a&&m.dm<=b),perC=per.filter(m=>!isInterna(m));
+  const [a,b]=range();const all=DB.mov,per=all.filter(m=>m.dm>=a&&m.dm<=b),perC=per.filter(contaInicio);
   const ent=perC.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0),sai=-perC.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0);
   const unc=ordena(per.filter(isUnc));
   const quems=uniq(DB.pessoas.map(p=>p.pessoa).concat(all.map(m=>m.quem)));
@@ -680,9 +682,9 @@ function render(){
 
   /* ---- Início ---- */
   $('#homeKpis').innerHTML=kpi('Entradas',E(ent),`${perC.filter(m=>m.valor>0).length} movimentos`,'pos')+kpi('Saídas',E(sai),`${perC.filter(m=>m.valor<0).length} movimentos`,'neg')
-    +kpi('Saldo do período',E(ent-sai),'entradas − saídas (sem movimentos entre contas)',ent-sai>=0?'pos':'neg')+kpi('Taxa de poupança',ent>0?((ent-sai)/ent*100).toLocaleString('pt-PT',{maximumFractionDigits:1})+' %':'—','do que entrou no período');
+    +kpi('Saldo do período',E(ent-sai),'entradas − saídas (sem categorias fora das contas)',ent-sai>=0?'pos':'neg')+kpi('Taxa de poupança',ent>0?((ent-sai)/ent*100).toLocaleString('pt-PT',{maximumFractionDigits:1})+' %':'—','do que entrou no período');
   const LGb=ligados(),corEnt=n=>{const es=uniq(DB.rend.map(r=>r.entidade||'(sem entidade)'));return CORES[(es.indexOf(n)+3)%CORES.length]};
-  const bd=mesesGraf().map(([y,m])=>{const p=`${y}-${pad(m+1)}`,ms=all.filter(x=>x.dm.startsWith(p)&&!isInterna(x));
+  const bd=mesesGraf().map(([y,m])=>{const p=`${y}-${pad(m+1)}`,ms=all.filter(x=>x.dm.startsWith(p)&&contaInicio(x));
     if(BARSV!=='d')return [MES3[m],ms.filter(x=>x.valor>0).reduce((s,x)=>s+x.valor,0),-ms.filter(x=>x.valor<0).reduce((s,x)=>s+x.valor,0)];
     const e={},sa={};ms.forEach(x=>{if(x.valor>0){const lk=LGb.get(chave(x)),l=lk?(lk.r.entidade||'(sem entidade)'):(x.cat||'Por categorizar');(e[l]=e[l]||{l,v:0,c:lk?corEnt(l):(x.cat?corCat(x.cat):'var(--c8)')}).v+=x.valor}
       else{const l=x.cat||'Por categorizar';(sa[l]=sa[l]||{l,v:0,c:x.cat?corCat(x.cat):'var(--c8)'}).v-=x.valor}});

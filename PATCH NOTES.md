@@ -51,6 +51,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 **Início**
 - D30 Caixas "Despesas por categoria" (clicável → Extratos filtrados) e "Rendimentos" (por entidade/tipo, líquido; clicável).
 - D31 "Por categorizar" mostra só as descrições mais frequentes (⚡ criar regra); "Categorizar →" abre os Extratos filtrados.
+- D34 No Início (totais, gráfico por mês, despesas por categoria/referência) as saídas das categorias fora das contas não contam; as entradas (ex.: Rendimentos) sim.
 - D32 Caixa "Despesas por referência" (entre as despesas por categoria e os rendimentos), clicável → Extratos com categoria e referência.
 - D33 "Entradas e saídas por mês": sempre os 12 meses do ano do período, mais largo que o "Saldo por banco"; opção Detalhado (cores por categoria / entidade).
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
@@ -58,6 +59,9 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7j — 26/09/2026
+- Início: saídas das categorias fora das contas (Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças) deixam de aparecer nas caixas Saídas/Saldo/Taxa de poupança, no gráfico por mês e nas despesas por categoria/referência.
 
 ### v0.7i — 26/09/2026
 - Menu no canto direito (avatar ▾): Definições, Plano, Onboarding, Modo escuro, Ajuda, Enviar sugestão, Entrar/Terminar sessão — **substitui o botão de tema da barra (D42 alterada, confirmado)**.

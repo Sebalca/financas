@@ -56,6 +56,8 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
 
   console.log('Início');
   await go('home');
+  t('D34','Início não conta saídas das categorias fora das contas (entradas sim)',await ev(()=>!contaInicio({valor:-10,cat:'Por tratar',ref:'x'})&&!contaInicio({valor:-10,cat:'Investimentos'})&&contaInicio({valor:-10,cat:'Alimentação'})&&contaInicio({valor:10,cat:'Rendimentos'})&&contaInicio({valor:-10,cat:''})));
+  t('D35','donut de despesas do Início sem categorias fora das contas',await ev(()=>{const m=DB.mov.find(x=>x.valor<0);m.cat='Por tratar';m.ref='Transferência pag';render();return ![...document.querySelectorAll('#homeDonut li')].some(li=>/Por tratar/.test(li.textContent))}));
   t('D30','caixa de rendimentos existe e despesas são clicáveis',await ev(()=>!!document.querySelector('#homeRend')&&!!document.querySelector('#homeDonut li.clk')));
   t('D31','"Por categorizar" mostra só as mais frequentes (com ⚡)',await ev(()=>!document.querySelector('#uncVista')&&UNCV==='freq'));
   t('D32','caixa "Despesas por referência" e gráfico com opção Detalhado',await ev(()=>!!document.querySelector('#homeDonutRef')&&document.querySelectorAll('#barsVista button').length===2));
