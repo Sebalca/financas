@@ -55,6 +55,19 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D22','subsídio no cartão é procurado só na conta Cartão refeição',await ev(()=>{const r={tipo:'rec',data:'2026-09-01',mes:'2026-09',liquido:150,vale:150,lk:{},lkMan:{}};return candidatos(r,'v').every(m=>m.banco===CARTAO)&&candidatos(r,'t').every(m=>m.banco!==CARTAO)}));
   await p.fill('#fQ','');
 
+  console.log('Reembolsos');
+  await ev(()=>{DB.mov.push({id:'mRb',k:'rbteste',man:true,banco:'Dinheiro',conta:'',dm:'2026-09-21',dv:'2026-09-21',desc:'DEVOLUCAO AMIGO',valor:20,saldo:null,cat:'',ref:'',catSrc:'',det:'',obs:'',quem:'',ord:0});P.m='mes';P.d=new Date(2026,8,1);perLabel();render()});
+  await go('ext');await p.fill('#fQ','DEVOLUCAO');await p.waitForTimeout(150);
+  await p.click('#extTable [data-reemb="mRb"]');await p.waitForTimeout(150);
+  const cont=await ev(()=>DB.mov.find(x=>x.desc.startsWith('CONTINENTE')).id);
+  await p.click(`#rbList [data-rbsel="${cont}"]`);await p.waitForTimeout(150);await p.fill('#fQ','');
+  const rb=await ev(()=>{const m=DB.mov.find(x=>x.id==='mRb');return [m.cat,m.ref,!!m.reemb]});
+  t('D16','atalho ↩ dá ao reembolso a categoria/referência da despesa original',rb[0]==='Alimentação'&&rb[1]==='Supermercado'&&rb[2],rb);
+  t('D15','entrada em categoria de despesa = reembolso: abate às saídas e não conta como entrada',await ev(()=>eReemb(DB.mov.find(x=>x.id==='mRb'))&&!eReemb({valor:50,cat:'Rendimentos'})&&!eReemb({valor:50,cat:''})));
+  await go('des');
+  const d17=await ev(()=>{const [a,b]=range(),sa=-DB.mov.filter(m=>m.dm>=a&&m.dm<=b&&m.cat==='Alimentação'&&m.valor<0).reduce((s,m)=>s+m.valor,0),esp=E(sa-20),txt=document.querySelector('#desCats details[data-c="Alimentação"] summary').textContent;return {ok:txt.includes('Real '+esp)&&/reemb/.test(txt),esp,txt}});
+  t('D17','Despesas: real = saídas − reembolsos',d17.ok,d17);
+
   console.log('Início');
   await go('home');
   t('D34','Início não conta categorias fora das contas, exceto entradas de Rendimentos',await ev(()=>!contaInicio({valor:-10,cat:'Por tratar',ref:'x'})&&!contaInicio({valor:10,cat:'Por tratar'})&&!contaInicio({valor:10,cat:'Banco',ref:'x'})&&!contaInicio({valor:-10,cat:'Investimentos'})&&contaInicio({valor:-10,cat:'Alimentação'})&&contaInicio({valor:10,cat:'Rendimentos'})&&!contaInicio({valor:-10,cat:'Rendimentos'})&&contaInicio({valor:-10,cat:''})));

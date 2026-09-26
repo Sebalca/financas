@@ -196,6 +196,7 @@ td input.ed.obs{width:170px}
 .addcat{margin:0 0 12px}
 .seg.mini button{padding:4px 9px;font-size:12px}.seg.mini button.on{background:var(--ac);color:#fff}
 tr.clk{cursor:pointer}
+.reemb{display:block;font-size:10.5px;color:var(--mu);font-weight:400;white-space:nowrap}
 .des-t{margin:4px 0 12px;font-size:15px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.des-t small{font-weight:400;color:var(--mu);font-size:12.5px}
 .des-t.fora{margin-top:34px;padding-top:18px;border-top:2px dashed var(--bd);color:var(--mu)}
 label.so{font-size:11.5px;color:var(--mu);margin-left:8px;white-space:nowrap;cursor:pointer}label.so input{vertical-align:middle;accent-color:var(--ac)}
@@ -385,11 +386,14 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
  <div id="rdLig"></div><div id="rdDet"></div>
  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap"><button class="btn" id="rdDel" type="button">🗑 Apagar</button><span style="flex:1"></span><button class="btn pri" id="rdOk" type="button">Guardar</button></div>
 </div></div></div>
+<div class="modal" id="mReemb" hidden><div class="sheet wide"><div class="mh"><h3>Reembolso de que despesa?</h3><button class="mx" type="button" data-close="mReemb" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
+ <p class="note" style="margin:0 0 10px">Entrada: <b id="rbDesc"></b>. Escolha a despesa que está a ser devolvida: a entrada fica com a mesma categoria e referência e passa a abater a essa despesa (ex.: almoço de 100 € − 80 € devolvidos = 20 €). Mostra as saídas dos 60 dias anteriores.</p>
+ <div class="tw" id="rbList"></div></div></div></div>
 <div class="modal" id="mImps" hidden><div class="sheet"><div class="mh"><h3>Importações</h3><button class="mx" type="button" data-close="mImps" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd"><div id="impsList"></div><div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end"><button class="btn" id="btClearAll">Apagar todos os movimentos</button></div></div></div></div>
 
 <script>
 'use strict';
-const APP_VERSAO='0.7k'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.7l'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR'});
 const E=x=>fE.format(Math.abs(x)<.005?0:x);
@@ -445,6 +449,8 @@ const REGRAS_BASE=[
 const novaRegraBase=(r,i)=>({id:'rb'+i,txt:r[0],modo:r[1],tipo:r[2],cat:r[3],ref:r[4],ativo:true,predef:true});
 const INTERNAS=['Troca entre contas','Levantamentos','Depósitos'];
 /* Início: sem movimentos entre contas nem categorias fora das contas, exceto entradas de Rendimentos (D34) */
+/* entrada numa categoria de despesa = reembolso (abate à despesa); entrada em Rendimentos ou por categorizar = entrada (D15) */
+const eReemb=m=>m.valor>0&&!!m.cat&&!eFora(m.cat);
 const contaInicio=m=>!isInterna(m)&&!(m.cat&&eFora(m.cat)&&!(m.cat===REND&&m.valor>0)); // das fora das contas só contam as entradas de Rendimentos
 const isUnc=m=>!m.cat||!m.ref;
 const isInterna=m=>(m.cat==='Banco'&&INTERNAS.includes(m.ref))||m.cat==='Poupanças'; // movimentos entre contas (incl. Dinheiro): não contam como entrada/saída
@@ -669,7 +675,7 @@ const refOpts=(cat,sel)=>{const c=DB.cats.find(x=>x.nome===cat);const rs=c?c.ref
 /* ================= render ================= */
 function render(){
   const [a,b]=range();const all=DB.mov,per=all.filter(m=>m.dm>=a&&m.dm<=b),perC=per.filter(contaInicio);
-  const ent=perC.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0),sai=-perC.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0);
+  const reembP=perC.filter(eReemb).reduce((s,m)=>s+m.valor,0),ent=perC.filter(m=>m.valor>0&&!eReemb(m)).reduce((s,m)=>s+m.valor,0),sai=-perC.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0)-reembP;
   const unc=ordena(per.filter(isUnc));
   const quems=uniq(DB.pessoas.map(p=>p.pessoa).concat(all.map(m=>m.quem)));
   $('#dlQuem').innerHTML=quems.map(c=>`<option value="${esc(c)}">`).join('');
@@ -681,14 +687,14 @@ function render(){
   $('#fQuem').innerHTML=`<option value="">Todos (quem é)</option><option value="__none"${fq==='__none'?' selected':''}>Sem pessoa</option>`+quems.map(v=>`<option${v===fq?' selected':''}>${esc(v)}</option>`).join('');
 
   /* ---- Início ---- */
-  $('#homeKpis').innerHTML=kpi('Entradas',E(ent),`${perC.filter(m=>m.valor>0).length} movimentos`,'pos')+kpi('Saídas',E(sai),`${perC.filter(m=>m.valor<0).length} movimentos`,'neg')
+  $('#homeKpis').innerHTML=kpi('Entradas',E(ent),`${perC.filter(m=>m.valor>0&&!eReemb(m)).length} movimentos · rendimentos e por categorizar`,'pos')+kpi('Saídas',E(sai),`${perC.filter(m=>m.valor<0).length} movimentos${reembP>.004?` · −${E(reembP)} reembolsos`:''}`,'neg')
     +kpi('Saldo do período',E(ent-sai),'entradas − saídas (sem categorias fora das contas)',ent-sai>=0?'pos':'neg')+kpi('Taxa de poupança',ent>0?((ent-sai)/ent*100).toLocaleString('pt-PT',{maximumFractionDigits:1})+' %':'—','do que entrou no período');
   const LGb=ligados(),corEnt=n=>{const es=uniq(DB.rend.map(r=>r.entidade||'(sem entidade)'));return CORES[(es.indexOf(n)+3)%CORES.length]};
   const bd=mesesGraf().map(([y,m])=>{const p=`${y}-${pad(m+1)}`,ms=all.filter(x=>x.dm.startsWith(p)&&contaInicio(x));
-    if(BARSV!=='d')return [MES3[m],ms.filter(x=>x.valor>0).reduce((s,x)=>s+x.valor,0),-ms.filter(x=>x.valor<0).reduce((s,x)=>s+x.valor,0)];
-    const e={},sa={};ms.forEach(x=>{if(x.valor>0){const lk=LGb.get(chave(x)),l=lk?(lk.r.entidade||'(sem entidade)'):(x.cat||'Por categorizar');(e[l]=e[l]||{l,v:0,c:lk?corEnt(l):(x.cat?corCat(x.cat):'var(--c8)')}).v+=x.valor}
+    if(BARSV!=='d')return [MES3[m],ms.filter(x=>x.valor>0&&!eReemb(x)).reduce((s,x)=>s+x.valor,0),Math.max(0,-ms.filter(x=>x.valor<0||eReemb(x)).reduce((s,x)=>s+x.valor,0))];
+    const e={},sa={};ms.forEach(x=>{if(x.valor>0&&!eReemb(x)){const lk=LGb.get(chave(x)),l=lk?(lk.r.entidade||'(sem entidade)'):(x.cat||'Por categorizar');(e[l]=e[l]||{l,v:0,c:lk?corEnt(l):(x.cat?corCat(x.cat):'var(--c8)')}).v+=x.valor}
       else{const l=x.cat||'Por categorizar';(sa[l]=sa[l]||{l,v:0,c:x.cat?corCat(x.cat):'var(--c8)'}).v-=x.valor}});
-    return {l:MES3[m],e:Object.values(e).sort((a,b)=>b.v-a.v),s:Object.values(sa).sort((a,b)=>b.v-a.v)}});
+    return {l:MES3[m],e:Object.values(e).sort((a,b)=>b.v-a.v),s:Object.values(sa).filter(x=>x.v>.004).sort((a,b)=>b.v-a.v)}});
   $('#barsSub').textContent=String(mesesGraf()[0][0])+(BARSV==='d'?' · cores por categoria / entidade':'');
   $('#homeBars').innerHTML=all.length?bars(bd,BARSV==='d'):'<div class="empty"><b>Sem dados</b>Importe extratos para ver a evolução.</div>';
   const contas={};ordena(all.filter(m=>m.dm<=b&&m.saldo!=null)).forEach(m=>{const k=m.banco+'|'+m.conta;if(!contas[k])contas[k]=m});
@@ -700,10 +706,10 @@ function render(){
   const ks=Object.keys(contas),tb=ks.reduce((s,k)=>s+contas[k].saldo,0)+(dnS||0)+tpou;
   $('#homeBanks').innerHTML=ks.length||dnS!=null||pou.length?ks.map(k=>{const m=contas[k];return `<li><div class="bi" style="background:${BCOR[m.banco]||'#555'}">${BICO[m.banco]||esc(m.banco.slice(0,3))}</div><div class="bn">${esc(m.banco)}<small>${m.conta?`Conta ${esc(m.conta)} · `:''}saldo a ${fmtD(m.dm)}</small></div><b>${E(m.saldo)}</b></li>`}).join('')+(dnS!=null?`<li><div class="bi" style="background:${BCOR[DIN]}">💵</div><div class="bn">Dinheiro<small>movimentos à mão + levantamentos</small></div><b>${E(dnS)}</b></li>`:'')+pou.map(x=>`<li class="clk" data-goref="${esc('Poupanças›'+(x.r==='(sem referência)'?'':x.r))}" title="Ver nos Extratos"><div class="bi" style="background:#c05fa0">🐷</div><div class="bn">Poupanças - ${esc(x.r)}<small>o que entrou menos o que saiu</small></div><b>${E(x.v)}</b></li>`).join('')+(ks.length+(dnS!=null)+pou.length>1?`<li class="tot"><div class="bn"><b>Total</b></div><b>${E(tb)}</b></li>`:'')
     :'<li><div class="empty" style="width:100%"><b>Sem bancos</b>Os bancos aparecem ao importar extratos.</div></li>';
-  const porCat={};perC.filter(m=>m.valor<0).forEach(m=>{const c=m.cat||'Por categorizar';porCat[c]=(porCat[c]||0)-m.valor});
+  const porCat={};perC.filter(m=>m.valor<0||eReemb(m)).forEach(m=>{const c=m.cat||'Por categorizar';porCat[c]=(porCat[c]||0)-m.valor});Object.keys(porCat).forEach(k=>{if(porCat[k]<.005)delete porCat[k]});
   const segs=Object.entries(porCat).sort((x,y)=>y[1]-x[1]).map(([l,v])=>({l,v,c:l==='Por categorizar'?'var(--c8)':corCat(l),a:`data-gocat="${esc(l==='Por categorizar'?'__unc':l)}" title="Ver estes movimentos nos Extratos"`}));
   $('#homeDonut').innerHTML=segs.length?donut(segs):'<div class="empty"><b>Sem despesas no período</b></div>';
-  {const pr={};perC.filter(m=>m.valor<0&&m.cat&&m.ref).forEach(m=>{const k=m.cat+'›'+m.ref;pr[k]=(pr[k]||0)-m.valor});
+  {const pr={};perC.filter(m=>(m.valor<0||eReemb(m))&&m.cat&&m.ref).forEach(m=>{const k=m.cat+'›'+m.ref;pr[k]=(pr[k]||0)-m.valor});Object.keys(pr).forEach(k=>{if(pr[k]<.005)delete pr[k]});
    let rs=Object.entries(pr).sort((x,y)=>y[1]-x[1]);const out=rs.slice(0,9).map(([k,v])=>{const [c,r]=k.split('›');return {l:r,v,c:corCat(c),a:`data-goref="${esc(k)}" title="${esc(c)} › ${esc(r)} — ver nos Extratos"`}});
    const resto=rs.slice(9).reduce((s,x)=>s+x[1],0);if(resto>.004)out.push({l:'Outras referências',v:resto,c:'var(--c8)'});
    $('#homeDonutRef').innerHTML=out.length?donut(out):'<div class="empty"><b>Sem despesas com referência no período</b></div>'}
@@ -712,7 +718,7 @@ function render(){
    else rp.forEach(r=>{const k=r.entidade||'(sem entidade)';g[k]=(g[k]||0)+(+r.liquido||0)});
    const rs=Object.entries(g).filter(x=>x[1]>.004).sort((x,y)=>y[1]-x[1]).map(([l,v],i)=>({l,v:r2(v),c:CORES[(i+1)%CORES.length],a:RENDV==='ent'?`data-gorent="${esc(l)}" title="Ver nos Rendimentos"`:'data-go="ren" title="Ver nos Rendimentos"'}));
    $('#homeRend').innerHTML=rs.length?donut(rs)+(RENDV==='tipo'?'<p class="note">Por tipo: o subsídio em cartão entra por inteiro; os descontos (IRS, SS) são repartidos pelas outras partes na proporção do bruto.</p>':''):'<div class="empty"><b>Sem rendimentos no período</b>Carregue recibos na aba Rendimentos.</div>'}
-  const k=mesesPeriodo(),resumo=DB.cats.filter(c=>!eFora(c.nome)).map(c=>{const p=c.refs.reduce((s,r)=>s+(+DB.prev[c.nome+'›'+r]||0),0)*k,r=-per.filter(m=>m.valor<0&&m.cat===c.nome).reduce((s,m)=>s+m.valor,0);return {c,p,r}}).filter(x=>(x.p||Math.abs(x.r)>.004));
+  const k=mesesPeriodo(),resumo=DB.cats.filter(c=>!eFora(c.nome)).map(c=>{const p=c.refs.reduce((s,r)=>s+(+DB.prev[c.nome+'›'+r]||0),0)*k,r=-per.filter(m=>m.cat===c.nome).reduce((s,m)=>s+m.valor,0);return {c,p,r}}).filter(x=>(x.p||Math.abs(x.r)>.004));
   $('#homeBudget').innerHTML=resumo.length?`<table class="t"><thead><tr><th>Categoria</th><th class="num">Previsto</th><th class="num">Real</th><th></th></tr></thead><tbody>${resumo.map(({c,p,r})=>{const pc=p>0?Math.min(100,r/p*100):(r>0?100:0);return `<tr><td><i class="dot" style="background:${corCat(c.nome)}"></i>${esc(c.nome)}</td><td class="num">${p?E(p):'—'}</td><td class="num">${E(r)}</td><td style="width:30%"><div class="bar"><i style="width:${Math.max(0,pc)}%;background:${p&&r>p?'var(--c2)':p?'var(--c1)':'var(--c8)'}"></i></div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem valores no período</b></div>';
   const last=ordena(per).slice(0,8);
   $('#homeLast').innerHTML=last.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th></tr></thead><tbody>${last.map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td>${m.cat?`<span class="tag">${esc(m.cat)}${m.ref?' · '+esc(m.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos no período</b></div>';
@@ -729,16 +735,16 @@ function render(){
   $$('[data-cnt="ext"]').forEach(x=>x.textContent=unc.length||'');
   $('#extSub').textContent=all.length?`${rows.length} de ${per.length} no período · ${unc.length} por categorizar · ${all.length} no total`:'';
   const rc=rows.filter(m=>!isInterna(m)),re=rc.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0),rs=-rc.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0);
-  const LG=ligados();const ids=new Set(rows.map(m=>m.id));SEL=new Set([...SEL].filter(i=>ids.has(i)));const DS=dinheiro().por;
+  const LG=ligados(),RK=new Map(DB.mov.map(x=>[chave(x),x]));const ids=new Set(rows.map(m=>m.id));SEL=new Set([...SEL].filter(i=>ids.has(i)));const DS=dinheiro().por;
   $('#extTable').innerHTML=rows.length?`<table class="t"><thead><tr>${EXT_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map(m=>`<tr data-id="${m.id}" class="${m.man?'man':''}${SEL.has(m.id)?' selr':''}">
     <td class="ck"><input type="checkbox" class="sel"${SEL.has(m.id)?' checked':''} aria-label="Selecionar"></td>
     <td>${fmtD(m.dm)}</td><td>${fmtD(m.dv)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td class="num">${m.man?(DS.has(m.id)?E(DS.get(m.id)):'—'):m.saldo==null?'—':E(m.saldo)}</td>
     <td><select class="ed${m.cat?'':' unc'}" data-f="cat">${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':m.catSrc==='rend'?'<span class="auto" title="Atribuído pela ligação a um rendimento">🔗</span>':''}</td>
     <td><select class="ed${m.cat&&!m.ref?' unc':''}" data-f="ref"${m.cat?'':' disabled'}>${refOpts(m.cat,m.ref)}</select></td>
-    <td class="muted" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:esc(m.det))(LG.get(chave(m)))}</td>
+    <td class="muted" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:(m.reemb&&RK.get(m.reemb)?`<span class="lk ok" data-golk="${esc(m.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(RK.get(m.reemb).desc)}</span> `:'')+esc(m.det))(LG.get(chave(m)))}</td>
     <td><input class="ed obs" data-f="obs" value="${esc(m.obs)}" placeholder="…"></td>
     <td><input class="ed" data-f="quem" list="dlQuem" value="${esc(m.quem)}" style="width:110px"></td>
-    <td>${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td style="white-space:nowrap">${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button> `:''}<button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></td></tr>`).join('')}
+    <td>${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td style="white-space:nowrap">${m.valor>0&&!LG.get(chave(m))?`<button class="btn ic sm" data-reemb="${m.id}" title="É um reembolso? Escolher a despesa original">↩</button> `:''}${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button> `:''}<button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></td></tr>`).join('')}
     <tr class="tot"><td colspan="4">Total (filtrado)</td><td class="num">${val(re-rs)}</td><td colspan="8" class="muted" style="font-weight:400">Entradas ${E(re)} · Saídas ${E(rs)}${rows.some(isInterna)?' · movimentos entre contas (trocas, levantamentos, depósitos) excluídos':''}</td></tr></tbody></table>`
     :emptyTbl(EXT_COLS,all.length?'Nenhum movimento neste período/filtro':'Ainda não há movimentos',all.length?'Mude o período no topo ou limpe os filtros.':'Importe um extrato acima ou adicione um movimento em dinheiro.');
   const sa=$('#selAll');if(sa){sa.checked=rows.length>0&&SEL.size===rows.length;sa.indeterminate=SEL.size>0&&SEL.size<rows.length}
@@ -758,35 +764,37 @@ function desNome(txt,attr,bold){return DES.edit?`<input class="nm" ${attr} value
 function desSetas(tipo,idx){return DES.edit?`<span class="ord"><button class="btn ic sm" data-${tipo}="${idx}|-1" title="Subir">↑</button><button class="btn ic sm" data-${tipo}="${idx}|1" title="Descer">↓</button></span>`:''}
 function renderDespesas(per,k){
   const [a,b]=range(),ano=P.m==='ano';
+  const liqP=(l,c,r)=>saiP(l,c,r)-entP(l,c,r);
   const saiP=(l,c,r)=>-l.filter(m=>m.valor<0&&m.cat===c&&(r==null||m.ref===r)).reduce((s,m)=>s+m.valor,0);
   const entP=(l,c,r)=>l.filter(m=>m.valor>0&&m.cat===c&&(r==null||m.ref===r)).reduce((s,m)=>s+m.valor,0);
   const prv=(c,r)=>+DB.prev[c+'›'+r]||0,prvC=c=>c.refs.reduce((s,r)=>s+prv(c.nome,r),0);
   const norm_=DB.cats.map((c,ci)=>({c,ci})).filter(x=>!eFora(x.c.nome)),fora=DB.cats.map((c,ci)=>({c,ci})).filter(x=>eFora(x.c.nome));
-  const tp=norm_.reduce((s,x)=>s+prvC(x.c),0)*k,tr=norm_.reduce((s,x)=>s+saiP(per,x.c.nome),0);
-  $('#desKpis').innerHTML=kpi('Previsto',E(tp),k>1?`${k} meses`:'orçamento do mês')+kpi('Real',E(tr),'saídas no período (categorias normais)','neg')+kpi('Diferença',E(tp-tr),tp-tr>=0?'abaixo do previsto':'acima do previsto',tp-tr>=0?'pos':'neg')+kpi('Categorias',String(norm_.length),`${norm_.reduce((s,x)=>s+x.c.refs.length,0)} referências · ${fora.length} fora das contas`);
+  const tp=norm_.reduce((s,x)=>s+prvC(x.c),0)*k,tr=norm_.reduce((s,x)=>s+liqP(per,x.c.nome),0);
+  $('#desKpis').innerHTML=kpi('Previsto',E(tp),k>1?`${k} meses`:'orçamento do mês')+kpi('Real',E(tr),'saídas − reembolsos no período (categorias normais)','neg')+kpi('Diferença',E(tp-tr),tp-tr>=0?'abaixo do previsto':'acima do previsto',tp-tr>=0?'pos':'neg')+kpi('Categorias',String(norm_.length),`${norm_.reduce((s,x)=>s+x.c.refs.length,0)} referências · ${fora.length} fora das contas`);
   $('#btPrevOnly').textContent=soValores?'Mostrar todas':'Só com valores';$('#btPrevOnly').style.display=DES.edit?'none':'';
   $('#btDesEdit').textContent=DES.edit?'✓ Concluir':'✏ Editar';$('#btDesEdit').classList.toggle('pri',DES.edit);
   $('#desNota').innerHTML=DES.edit?'Modo <b>Editar</b>: mude nomes, use ↑ ↓ para a ordem, 🗑 para apagar e ＋ para adicionar. Clique em <b>Concluir</b> no fim.'
-    :ano?'Vista <b>Ano</b>: saídas de cada mês por categoria (abra uma categoria para ver as referências). O previsto do ano é o previsto mensal × 12.'
-    :'O <b>previsto</b> é mensal (escreva à mão). O <b>real</b> soma as saídas dos Extratos com essa categoria e referência, no período escolhido.';
+    :ano?'Vista <b>Ano</b>: saídas − reembolsos de cada mês por categoria (abra uma categoria para ver as referências). O previsto do ano é o previsto mensal × 12.'
+    :'O <b>previsto</b> é mensal (escreva à mão). O <b>real</b> é o que saiu menos os reembolsos (entradas com a mesma categoria e referência), no período escolhido.';
   if(ano&&!DES.edit){renderDesAno(norm_,fora,saiP,entP,prv,prvC);return}
   const open=new Set($$('#desCats details[open]').map(d=>d.dataset.c));
   const bloco=({c,ci},isF)=>{
-    const semRef=saiP(per,c.nome,'');
-    const linhas=c.refs.map((r,ri)=>{const pv=prv(c.nome,r),p=pv*k,rv=saiP(per,c.nome,r),en=entP(per,c.nome,r),d=rv-p,pc=p>0?Math.min(100,rv/p*100):(rv>0?100:0);
+    const semRef=isF?saiP(per,c.nome,''):liqP(per,c.nome,'');
+    const rTxt=(sa,en)=>en>.004?`${E(sa-en)}<small class="reemb" title="Saídas ${E(sa)} − reembolsos ${E(en)}">${E(sa)} − ${E(en)} reemb.</small>`:E(sa);
+    const linhas=c.refs.map((r,ri)=>{const pv=prv(c.nome,r),p=pv*k,sr=saiP(per,c.nome,r),en=entP(per,c.nome,r),rv=isF?sr:sr-en,d=rv-p,pc=p>0?Math.min(100,rv/p*100):(rv>0?100:0);
       if(soValores&&!DES.edit&&!pv&&Math.abs(rv)<.005&&Math.abs(en)<.005)return '';
       const nome=`<td>${desSetas('rmv',ci+'|'+ri)}${desNome(r,`data-rn="${ci}|${ri}"`)}${DES.edit?` <label class="so" title="Ao escolher esta referência num movimento não sugere regra (fica só nesse movimento)"><input type="checkbox" data-rso="${esc(c.nome+'›'+r)}"${soMov(c.nome,r)?' checked':''}> Só este movimento</label>`:soMov(c.nome,r)?' <span class="auto" title="Só este movimento: não sugere nem usa regras">📌</span>':''}</td>`,del=DES.edit?`<td><button class="btn ic sm" data-rdel="${ci}|${ri}" title="Apagar referência">🗑</button></td>`:'<td></td>';
       if(isF)return `<tr>${nome}<td class="num">${rv?E(rv):'—'}</td><td class="num">${en?E(en):'—'}</td><td class="num">${val(en-rv)}</td>${del}</tr>`;
-      return `<tr>${nome}<td class="num"><input class="pv" data-pv="${esc(c.nome+'›'+r)}" value="${pv?String(pv).replace('.',','):''}" placeholder="0,00" inputmode="decimal"></td><td class="num">${p?E(p):'—'}</td><td class="num">${E(rv)}</td><td class="num">${p||rv?`<span class="${d>0.004?'neg':'pos'}">${d>0?'+':''}${E(d)}</span>`:'—'}</td><td style="min-width:100px"><div class="bar"><i style="width:${Math.max(0,pc)}%;background:${p&&d>0?'var(--c2)':p?'var(--c1)':'var(--c8)'}"></i></div></td>${del}</tr>`}).join('');
-    const p=prvC(c)*k,rv=saiP(per,c.nome),en=entP(per,c.nome);
+      return `<tr>${nome}<td class="num"><input class="pv" data-pv="${esc(c.nome+'›'+r)}" value="${pv?String(pv).replace('.',','):''}" placeholder="0,00" inputmode="decimal"></td><td class="num">${p?E(p):'—'}</td><td class="num">${rTxt(sr,en)}</td><td class="num">${p||rv?`<span class="${d>0.004?'neg':'pos'}">${d>0?'+':''}${E(d)}</span>`:'—'}</td><td style="min-width:100px"><div class="bar"><i style="width:${Math.max(0,pc)}%;background:${p&&d>0?'var(--c2)':p?'var(--c1)':'var(--c8)'}"></i></div></td>${del}</tr>`}).join('');
+    const p=prvC(c)*k,sc=saiP(per,c.nome),en=entP(per,c.nome),rv=isF?sc:sc-en;
     if(soValores&&!DES.edit&&!p&&Math.abs(rv)<.005&&Math.abs(en)<.005)return '';
     const nc=isF?5:7,hd=isF?'<th>Referência</th><th class="num">Saídas</th><th class="num">Entradas</th><th class="num">Saldo</th><th></th>':'<th>Referência</th><th class="num">Previsto/mês</th><th class="num">Previsto período</th><th class="num">Real</th><th class="num">Diferença</th><th>Execução</th><th></th>';
-    const resumo=isF?`<span class="m">Saídas <b>${E(rv)}</b> · Entradas <b>${E(en)}</b></span>`:`<span class="m">Previsto <b>${E(p)}</b> · Real <b>${E(rv)}</b></span>${p?`<span class="pill ${rv>p?'over':'ok'}">${rv>p?'+':''}${E(rv-p)}</span>`:''}`;
+    const resumo=isF?`<span class="m">Saídas <b>${E(rv)}</b> · Entradas <b>${E(en)}</b></span>`:`<span class="m">Previsto <b>${E(p)}</b> · Real <b>${E(rv)}</b>${en>.004?` <small>(−${E(en)} reemb.)</small>`:''}</span>${p?`<span class="pill ${rv>p?'over':'ok'}">${rv>p?'+':''}${E(rv-p)}</span>`:''}`;
     return `<details class="cat" data-c="${esc(c.nome)}"${open.has(c.nome)||DES.edit?' open':''}><summary>${desSetas('cmv',ci)}<span class="ci" style="background:color-mix(in srgb,${corCat(c.nome)} 22%,transparent)"><i class="dot" style="background:${corCat(c.nome)};margin:0"></i></span>${DES.edit?`<input class="nm" data-cn="${ci}" value="${esc(c.nome)}" style="font-weight:700" onclick="event.preventDefault()"> <button class="btn ic sm" data-cdel="${ci}" title="Apagar categoria">🗑</button>`:esc(c.nome)}<span class="sp"></span>${resumo}</summary>
     <div class="tw"><table class="t"><thead><tr>${hd}</tr></thead><tbody>
     ${linhas}${Math.abs(semRef)>.004?`<tr><td class="muted">(sem referência)</td>${isF?`<td class="num">${E(semRef)}</td><td colspan="3"></td>`:`<td></td><td></td><td class="num">${E(semRef)}</td><td colspan="3"></td>`}</tr>`:''}
     ${DES.edit?`<tr class="addrow"><td colspan="${nc}" data-radd="${ci}">＋ Adicionar referência</td></tr>`:''}
-    ${isF?`<tr class="tot"><td>Total ${esc(c.nome)}</td><td class="num">${E(rv)}</td><td class="num">${E(en)}</td><td class="num">${val(en-rv)}</td><td></td></tr>`:`<tr class="tot"><td>Total ${esc(c.nome)}</td><td></td><td class="num">${E(p)}</td><td class="num">${E(rv)}</td><td class="num">${p?`<span class="${rv>p?'neg':'pos'}">${rv>p?'+':''}${E(rv-p)}</span>`:'—'}</td><td colspan="2"></td></tr>`}</tbody></table></div></details>`};
+    ${isF?`<tr class="tot"><td>Total ${esc(c.nome)}</td><td class="num">${E(rv)}</td><td class="num">${E(en)}</td><td class="num">${val(en-rv)}</td><td></td></tr>`:`<tr class="tot"><td>Total ${esc(c.nome)}</td><td></td><td class="num">${E(p)}</td><td class="num">${rTxt(sc,en)}</td><td class="num">${p?`<span class="${rv>p?'neg':'pos'}">${rv>p?'+':''}${E(rv-p)}</span>`:'—'}</td><td colspan="2"></td></tr>`}</tbody></table></div></details>`};
   $('#desCats').innerHTML='<h4 class="des-t">Despesas <small>entram nas contas</small></h4>'+norm_.map(x=>bloco(x,false)).join('')
     +(DES.edit?`<div class="addcat"><button class="btn sm" data-cadd="n">＋ Adicionar categoria</button></div>`:'')
     +`<div class="tw"><table class="t" style="margin:4px 0 18px"><tbody><tr class="tot"><td>Total das despesas</td><td class="num">Previsto ${E(tp)}</td><td class="num">Real ${E(tr)}</td><td class="num"><span class="${tr>tp?'neg':'pos'}">${tr>tp?'+':''}${E(tr-tp)}</span></td></tr></tbody></table></div>`
@@ -797,7 +805,7 @@ function renderDesAno(norm_,fora,saiP,entP,prv,prvC){
   const porMes=ms.map(p=>doAno.filter(m=>m.dm.startsWith(p)));
   const nMes=Math.max(1,porMes.filter(l=>l.length).length); // meses com movimentos importados
   const cel=v=>`<td class="num">${Math.abs(v)>.004?E(v):'—'}</td>`;
-  const vMes=(l,c,r,isF)=>isF?entP(l,c,r)-saiP(l,c,r):saiP(l,c,r);
+  const vMes=(l,c,r,isF)=>isF?entP(l,c,r)-saiP(l,c,r):saiP(l,c,r)-entP(l,c,r);
   const cel2=(v,isF)=>isF?`<td class="num">${Math.abs(v)>.004?val(v):'—'}</td>`:cel(v);
   const linhaCat=({c},isF)=>{const vs=porMes.map(l=>vMes(l,c.nome,undefined,isF)),t=vs.reduce((s,v)=>s+v,0),p=isF?0:prvC(c)*12;
     if(soValores&&!p&&Math.abs(t)<.005&&!porMes.some(l=>l.some(m=>m.cat===c.nome)))return '';
@@ -805,7 +813,7 @@ function renderDesAno(norm_,fora,saiP,entP,prv,prvC){
     const refs=op?c.refs.map(r=>{const v=porMes.map(l=>vMes(l,c.nome,r,isF)),tt=v.reduce((s,x)=>s+x,0),pp=isF?0:prv(c.nome,r)*12;if(soValores&&!pp&&Math.abs(tt)<.005)return '';
       return `<tr class="ra-d"><td>${esc(r)}</td>${v.map(x=>cel2(x,isF)).join('')}<td class="num"><b>${isF?val(tt):E(tt)}</b></td>${cel2(tt/nMes,isF)}${isF?'':cel(pp)}</tr>`}).join(''):'';
     return `<tr class="ra-m${op?' open':''}" data-dcat="${esc(c.nome)}"><td><i class="dot" style="background:${corCat(c.nome)}"></i><b>${esc(c.nome)}</b></td>${vs.map(x=>cel2(x,isF)).join('')}<td class="num"><b>${isF?val(t):E(t)}</b></td>${cel2(t/nMes,isF)}${isF?'':`<td class="num">${p?E(p):'—'}</td>`}</tr>`+refs};
-  const tot=l=>ms.map((_,i)=>l.reduce((s,x)=>s+saiP(porMes[i],x.c.nome),0));
+  const tot=l=>ms.map((_,i)=>l.reduce((s,x)=>s+vMes(porMes[i],x.c.nome,undefined,false),0));
   const hd=(t,ult)=>`<thead><tr><th>${t}</th>${MES3.map(m=>`<th class="num">${m}</th>`).join('')}<th class="num">Total</th><th class="num" title="Total a dividir pelos ${nMes} mês(es) com movimentos importados">Média/mês</th>${ult?`<th class="num">${ult}</th>`:''}</tr></thead>`;
   const tn=tot(norm_),tnt=tn.reduce((s,v)=>s+v,0),tpa=norm_.reduce((s,x)=>s+prvC(x.c),0)*12;
   const tf=ms.map((_,i)=>fora.reduce((s,x)=>s+vMes(porMes[i],x.c.nome,undefined,true),0)),tft=tf.reduce((s,v)=>s+v,0);
@@ -884,6 +892,15 @@ window.fpRestaurar=o=>{const d=o&&o.dados;if(!d||!Array.isArray(d.mov))throw new
 window.fpApagar=async onde=>{const keep=onde==='conta'?{owner:DB.owner,remoteAt:DB.remoteAt}:{};DB={...normaliza(fresh()),...keep};
   if(onde==='conta'){save();if(SY.user)await enviar()}else{try{localStorage.removeItem(KEY)}catch(e){}if(SY.user){DB.owner='';aoEntrar(SY.user)}}render()};
 addEventListener('scroll',fixaCab,{passive:true});addEventListener('resize',()=>{stkH();fixaCab()});
+
+/* ================= reembolsos: escolher a despesa original ================= */
+let RB=null;
+function abreReemb(m){if(!m)return;RB=m;const d0=m.dm,a=addDias(d0,-60),b=addDias(d0,7);
+  const c=DB.mov.filter(o=>o.valor<0&&o.dm>=a&&o.dm<=b&&!isInterna(o)).sort((x,y)=>{const sx=(x.quem&&x.quem===m.quem?0:1),sy=(y.quem&&y.quem===m.quem?0:1);return sx-sy||(y.dm<x.dm?-1:1)}).slice(0,60);
+  $('#rbDesc').textContent=`“${m.desc}” (${E(m.valor)}) de ${fmtD(m.dm)}${m.quem?' · '+m.quem:''}`;
+  $('#rbList').innerHTML=c.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th><th></th></tr></thead><tbody>${c.map(o=>`<tr><td>${fmtD(o.dm)}</td><td class="desc">${esc(o.desc)}</td><td class="num">${val(o.valor)}</td><td>${o.cat?`<span class="tag">${esc(o.cat)}${o.ref?' · '+esc(o.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td><td><button class="btn sm pri" data-rbsel="${o.id}"${o.cat?'':' disabled title="Categorize primeiro a despesa original"'}>Escolher</button></td></tr>`).join('')}</tbody></table>`
+    :'<div class="empty"><b>Sem despesas nos 60 dias anteriores</b></div>';
+  $('#mReemb').hidden=false}
 
 /* ================= edição em massa ================= */
 let bkAberta=false;
@@ -1113,7 +1130,7 @@ $('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==
 function limpaFiltros(){['#fQ','#fBanco','#fCat','#fRef','#fQuem','#fTipo'].forEach(i=>$(i).value='')}
 function go(tab,keep){$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(!keep)window.scrollTo({top:0});fixaCab()}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-goref]');if(!t)return;
+  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-goref],[data-reemb],[data-rbsel]');if(!t)return;
   const d=t.dataset;
   if(d.edit){abreMov(DB.mov.find(x=>x.id===d.edit));return}
   if(d.cmv){e.preventDefault();const [i,dd]=d.cmv.split('|').map(Number);if(moveArr(DB.cats,i,dd)){save();render()}return}
@@ -1121,6 +1138,8 @@ document.addEventListener('click',e=>{
   if(d.cadd){const n=prompt('Nome da nova categoria:');if(!n||!n.trim())return;if(DB.cats.some(c=>c.nome===n.trim()))return toast('Já existe');const i=DB.cats.findIndex(c=>eFora(c.nome));DB.cats.splice(i<0?DB.cats.length:i,0,{id:uid('c'),nome:n.trim(),refs:[]});save();render();return}
   if(d.dcat){DES.open.has(d.dcat)?DES.open.delete(d.dcat):DES.open.add(d.dcat);render();return}
   if(d.nrg!=null){const m=DB.mov.find(x=>isUnc(x)&&norm(x.desc)===norm(d.nrg));if(m)abreNovaRegra(m,true);return}
+  if(d.reemb){abreReemb(DB.mov.find(x=>x.id===d.reemb));return}
+  if(d.rbsel!=null){const m=RB,o=DB.mov.find(x=>x.id===d.rbsel);if(m&&o){m.cat=o.cat;m.ref=o.ref;m.catSrc='manual';m.reemb=chave(o);m.u=Date.now();save();render();toast(`Reembolso de "${o.desc}" → ${o.cat}${o.ref?' › '+o.ref:''}`)}$('#mReemb').hidden=true;RB=null;return}
   if(d.goref!=null){limpaFiltros();render();$('#fCat').value=d.goref.split('›')[0];render();$('#fRef').value=d.goref;go('ext');render();return}
   if(d.gocat!=null){limpaFiltros();render();$('#fCat').value=d.gocat;go('ext');render();return}
   if(d.gorent!=null){RA.ent=d.gorent;go('ren');render();return}

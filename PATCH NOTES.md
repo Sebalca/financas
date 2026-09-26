@@ -39,6 +39,8 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D06 Trocas entre contas, levantamentos, depósitos e Poupanças não contam como entrada/saída.
 - D12 Referências com ✓ "Só este movimento" não sugerem regra e as regras não as usam.
 - D13 Vista Mês (previsto vs real) e vista Ano (grelha 12 meses + Total + Média/mês + Previsto ano), em duas tabelas com títulos.
+- D17 Despesas: o **Real** é saídas − reembolsos (indicador "x € − y € reemb.").
+- D16 Nos Extratos, entradas têm o botão ↩ para escolher a despesa original (fica com a mesma categoria/referência e ligação ↩).
 - D14 Vista Ano, tabela "Não entram nas contas": uma linha por categoria com o saldo (entradas − saídas) por mês, Total e Média/mês; sem coluna "Entradas ano".
 - Modo "✏ Editar" (nomes, ordem ↑↓, apagar, adicionar); "Abrir todas / Fechar todas".
 
@@ -53,6 +55,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D30 Caixas "Despesas por categoria" (clicável → Extratos filtrados) e "Rendimentos" (por entidade/tipo, líquido; clicável).
 - D31 "Por categorizar" mostra só as descrições mais frequentes (⚡ criar regra); "Categorizar →" abre os Extratos filtrados.
 - D34 No Início (totais, gráfico por mês, despesas por categoria/referência) as categorias fora das contas não contam — nem saídas nem entradas — **exceto as entradas de Rendimentos** (salário, etc.).
+- D15 Entrada numa categoria de despesa = **reembolso**: abate à despesa dessa categoria/referência e não conta como entrada. Entradas = Rendimentos + por categorizar.
 - D32 Caixa "Despesas por referência" (entre as despesas por categoria e os rendimentos), clicável → Extratos com categoria e referência.
 - D33 "Entradas e saídas por mês": sempre os 12 meses do ano do período, mais largo que o "Saldo por banco"; opção Detalhado (cores por categoria / entidade).
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
@@ -60,6 +63,12 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7l — 26/09/2026
+- Reembolsos: uma entrada com categoria de despesa abate a essa despesa (ex.: almoço 100 € − 80 € devolvidos = 20 €) e não conta como entrada.
+- Despesas: Real = saídas − reembolsos, com indicador "x € − y € reemb."; vista Ano também líquida.
+- Início: Entradas = Rendimentos + por categorizar; Saídas já descontam reembolsos (totais, gráfico, despesas por categoria/referência, previsto vs real).
+- Extratos: botão ↩ nas entradas para escolher a despesa original ("↩ Reembolso de …" nos Detalhes, clicável).
 
 ### v0.7k — 26/09/2026
 - Início: entradas das categorias fora das contas também deixam de contar, exceto Rendimentos (D34 atualizada, confirmado).
