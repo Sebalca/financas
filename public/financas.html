@@ -21,6 +21,7 @@
   --c1:#3ecf95;--c2:#ff6f86;--c3:#f5a543;--c4:#7d9bff;--c5:#b393ff;--c6:#4cc9d9;--c7:#c9937a;--c8:#7b8594;--sh:none;color-scheme:dark}
 @media (min-width:700px){html{zoom:.85}}
 *{box-sizing:border-box}
+html{overflow-y:scroll;scrollbar-gutter:stable}
 html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
 button,input,select{font:inherit;color:inherit}
 .wrap{margin:0 auto;padding:0 16px}
@@ -75,8 +76,8 @@ button.lk,span.lk[data-golk],span.lk[data-gorend]{cursor:pointer;border:0;font:i
 span.lk[data-golk]:hover,span.lk[data-gorend]:hover{outline:1px solid var(--c1)}
 @keyframes pisca{0%,60%{background:color-mix(in srgb,var(--c3) 35%,transparent)}100%{background:transparent}}
 tr.flash td{animation:pisca 2.2s ease-out}
-#extTable thead th{position:relative;z-index:3;will-change:transform}
-#extTable thead.fix th{box-shadow:0 1px 0 var(--bd),0 4px 8px -4px rgba(16,24,40,.18)}
+.exthead{overflow:hidden;margin:0 0 -1px}.exthead table.t{margin:0}.exthead table.t thead th{position:static;border-bottom:1px solid var(--bd)}
+.exthead:empty{display:none}
 table.ra{table-layout:fixed;min-width:1100px}table.t.ra td,table.t.ra th{overflow:hidden;text-overflow:ellipsis}table.t.ra th{white-space:normal;vertical-align:bottom}
 table.t.ra td:nth-last-child(2){white-space:normal}
 tr.ra-m{cursor:pointer}tr.ra-m td:first-child::before{content:'▸';display:inline-block;width:14px;color:var(--mu);transition:transform .15s}
@@ -292,7 +293,8 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
       <div class="bulk" id="bulk" hidden><b id="bkN"></b>
         <select id="bkCat" aria-label="Categoria"></select><select id="bkRef" aria-label="Referência" disabled><option value="">(manter referência)</option></select>
         <input id="bkQuem" list="dlQuem" placeholder="Quem é (manter)" aria-label="Quem é"><input id="bkObs" placeholder="Observações (manter)" aria-label="Observações">
-        <button class="btn sm pri" id="bkApl" type="button">Aplicar</button><span class="sp"></span><button class="btn sm" id="bkDel" type="button">🗑 Apagar</button><button class="btn sm" id="bkClr" type="button">Limpar seleção</button></div></div>
+        <button class="btn sm pri" id="bkApl" type="button">Aplicar</button><span class="sp"></span><button class="btn sm" id="bkDel" type="button">🗑 Apagar</button><button class="btn sm" id="bkClr" type="button">Limpar seleção</button></div>
+      <div class="exthead" id="extHead"></div></div>
       <div class="tw" id="extTable"></div>
     </div>
   </section>
@@ -411,7 +413,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <script>
 'use strict';
-const APP_VERSAO='0.7n'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.7o'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -689,7 +691,7 @@ function mesesGraf(){const out=[];{const y=P.m==='int'&&P.fim?+P.fim.slice(0,4):
   const end=P.m==='int'&&P.fim?new Date(+P.fim.slice(0,4),+P.fim.slice(5,7)-1,1):P.d;
   for(let i=5;i>=0;i--){const d=new Date(end.getFullYear(),end.getMonth()-i,1);out.push([d.getFullYear(),d.getMonth()])}return out}
 const EXT_COLS=[['<input type="checkbox" id="selAll" aria-label="Selecionar todos">','ck'],['Data mov.'],['Data valor'],['Descrição'],['Valor','num'],['Saldo','num'],['Categoria'],['Referência'],['Detalhes'],['Observações'],['Quem é'],['Banco'],['']];
-const EXT_W=[30,104,104,null,100,108,215,205,190,185,130,120,112]; // larguras fixas (px); a Descrição fica com o resto
+const EXT_W=[30,104,104,null,100,108,215,205,190,175,125,115,132]; // larguras fixas (px); a Descrição fica com o resto
 const extCols=()=>`<colgroup>${EXT_W.map(w=>`<col${w?` style="width:${w}px"`:''}>`).join('')}</colgroup>`;
 const REC_COLS=[['Mês'],['Entidade pagadora'],['Descrição'],['Pessoa'],['Bruto','num'],['IRS retido','num'],['SS','num'],['Subs. cartão','num'],['Líquido','num'],['Ligação ao extrato'],['']];
 const PON_COLS=[['Data'],['Entidade pagadora'],['Descrição'],['Referência'],['Pessoa'],['Bruto','num'],['IRS retido','num'],['SS','num'],['Líquido','num'],['Ligação ao extrato'],['']];
@@ -764,7 +766,8 @@ function render(){
   $('#extSub').textContent=all.length?`${rows.length} de ${per.length} no período · ${unc.length} por categorizar · ${all.length} no total`:'';
   const rc=rows.filter(m=>!isInterna(m)),re=rc.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0),rs=-rc.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0);
   const LG=ligados(),RK=new Map(DB.mov.map(x=>[chave(x),x]));const ids=new Set(rows.map(m=>m.id));SEL=new Set([...SEL].filter(i=>ids.has(i)));const DS=dinheiro().por;
-  $('#extTable').innerHTML=rows.length?`<table class="t tfix">${extCols()}<thead><tr>${EXT_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map(m=>`<tr data-id="${m.id}" class="${m.man?'man':''}${SEL.has(m.id)?' selr':''}">
+  $('#extHead').innerHTML=rows.length?`<table class="t tfix">${extCols()}<thead><tr>${EXT_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead></table>`:'';
+  $('#extTable').innerHTML=rows.length?`<table class="t tfix">${extCols()}<tbody>${rows.map(m=>`<tr data-id="${m.id}" class="${m.man?'man':''}${SEL.has(m.id)?' selr':''}">
     <td class="ck"><input type="checkbox" class="sel"${SEL.has(m.id)?' checked':''} aria-label="Selecionar"></td>
     <td>${fmtD(m.dm)}</td><td>${fmtD(m.dv)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td class="num">${m.man?(DS.has(m.id)?E(DS.get(m.id)):'—'):m.saldo==null?'—':E(m.saldo)}</td>
     ${m.partes&&m.partes.length?`<td colspan="2"><button class="btn sm${isUnc(m)?' unc':''}" data-split="${m.id}" title="Editar a divisão">✂ Dividido em ${m.partes.length}</button></td>`:`<td><select class="ed${m.cat?'':' unc'}" data-f="cat">${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':m.catSrc==='rend'?'<span class="auto" title="Atribuído pela ligação a um rendimento">🔗</span>':''}</td>
@@ -776,7 +779,7 @@ function render(){
     <tr class="tot"><td colspan="4">Total (filtrado)</td><td class="num">${val(re-rs)}</td><td colspan="8" class="muted" style="font-weight:400">Entradas ${E(re)} · Saídas ${E(rs)}${rows.some(isInterna)?' · movimentos entre contas (trocas, levantamentos, depósitos) excluídos':''}</td></tr></tbody></table>`
     :emptyTbl(EXT_COLS,all.length?'Nenhum movimento neste período/filtro':'Ainda não há movimentos',all.length?'Mude o período no topo ou limpe os filtros.':'Importe um extrato acima ou adicione um movimento em dinheiro.');
   const sa=$('#selAll');if(sa){sa.checked=rows.length>0&&SEL.size===rows.length;sa.indeterminate=SEL.size>0&&SEL.size<rows.length}
-  bulkBar();requestAnimationFrame(fixaCab);
+  bulkBar();ajustaLarg();requestAnimationFrame(ajustaLarg);
 
   /* ---- Rendimentos ---- */
   renderRend(a,b);
@@ -907,11 +910,12 @@ $('#nrSim').addEventListener('click',()=>{if(!NR)return;const txt=$('#nrTxt').va
   const n=aplicaRegras();save();render();$('#mNovaRegra').hidden=true;NR=null;toast(`Regra criada · ${n} movimento(s) atualizados`)});
 
 /* ================= títulos da tabela de movimentos sempre visíveis ================= */
-function fixaCab(){const t=$('#extTable table'),h=t&&t.tHead;if(!h)return;
-  if(!$('#tab-ext').classList.contains('on')){h.classList.remove('fix');[...h.rows[0].cells].forEach(c=>c.style.transform='');return}
-  const topo=Math.max($('.stk').getBoundingClientRect().bottom,$('#extBar').getBoundingClientRect().bottom),r=t.getBoundingClientRect(),hh=h.getBoundingClientRect().height;
-  const esc_=t.offsetWidth?r.width/t.offsetWidth:1,off=Math.max(0,Math.min(topo-r.top,r.height-hh*2));
-  [...h.rows[0].cells].forEach(c=>c.style.transform=off?`translateY(${off/esc_}px)`:'');h.classList.toggle('fix',off>0)}
+function fixaCab(){const h=$('#extHead'),t=$('#extTable');if(h&&t)h.scrollLeft=t.scrollLeft}
+/* título e corpo com exatamente as mesmas larguras (a Descrição fica com o espaço que sobra) */
+function ajustaLarg(){const W=$('#extTable').clientWidth;if(!W)return;const soma=EXT_W.reduce((s,w)=>s+(w||0),0),d=Math.max(240,W-soma-2);
+  $$('#extHead table,#extTable table.tfix').forEach(t=>{t.style.width=(soma+d)+'px';t.style.minWidth='0';const c=t.querySelectorAll('col')[3];if(c)c.style.width=d+'px'});fixaCab()}
+addEventListener('resize',ajustaLarg); // os títulos vivem na barra fixa; só acompanham o scroll horizontal
+$('#extTable').addEventListener('scroll',fixaCab,{passive:true});
 const stkH=()=>document.documentElement.style.setProperty('--stkH',$('.stk').offsetHeight+'px');stkH();
 window.FP_VERSAO=APP_VERSAO;
 /* API para o menu da página principal (definições): cópia de segurança e apagar dados */
@@ -1188,7 +1192,7 @@ $('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==
 
 /* ================= eventos ================= */
 function limpaFiltros(){['#fQ','#fBanco','#fCat','#fRef','#fQuem','#fTipo'].forEach(i=>$(i).value='')}
-function go(tab,keep){$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(!keep)window.scrollTo({top:0});fixaCab()}
+function go(tab,keep){setTimeout(ajustaLarg,0);$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(!keep)window.scrollTo({top:0});fixaCab()}
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-goref],[data-reemb],[data-rbsel],[data-split],[data-spdel],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
   const d=t.dataset;

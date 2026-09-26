@@ -33,7 +33,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D08','dropdowns Categoria/Referência com largura fixa + "Limpar filtros"',await ev(()=>{const a=document.querySelector('#fCat').offsetWidth,b=document.querySelector('#fRef').offsetWidth;document.querySelector('#fCat').value='Alimentação';render();return a===document.querySelector('#fCat').offsetWidth&&b===document.querySelector('#fRef').offsetWidth&&!!document.querySelector('#btLimpaF')}));
   await ev(()=>{document.querySelector('#btLimpaF').click()});
   t('D09','"Limpar filtros" limpa pesquisa e filtros',await ev(()=>['#fQ','#fCat','#fRef','#fBanco'].every(q=>!document.querySelector(q).value)));
-  t('D07','filtros e títulos da tabela de movimentos existem (fQ, fCat, fRef)',await ev(()=>!!(document.querySelector('#extBar #fQ')&&document.querySelector('#extBar #fRef')&&document.querySelector('#extTable thead'))));
+  t('D07','filtros e títulos da tabela de movimentos existem (fQ, fCat, fRef)',await ev(()=>!!(document.querySelector('#extBar #fQ')&&document.querySelector('#extBar #fRef')&&document.querySelector('#extHead thead'))));
 
   console.log('Despesas');
   t('D10','categorias fora das contas incluem Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças',await ev(()=>['Banco','Por tratar','Investimentos','Empresas','Rendimentos','Poupanças'].every(eFora)));
@@ -92,6 +92,9 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await ev(()=>document.querySelector('#homeKpis [data-gotipo="s"]').click());
   t('D38','clicar em Saídas abre os Extratos com o filtro "Só saídas"',await ev(()=>document.querySelector('#tab-ext').classList.contains('on')&&document.querySelector('#fTipo').value==='s'));
   t('D46','milhares sempre com espaço (1 234,56 €)',await ev(()=>/^1\s234,56\s€$/.test(E(1234.56))&&/^-4\s038,06\s€$/.test(E(-4038.06))));
+  await ev(()=>{document.querySelector('[data-tab="ext"]').click()});
+  const d08=await ev(()=>{const h=[...document.querySelectorAll('#extHead th')],tr=document.querySelector('#extTable tbody tr:not(.parte)'),c=[...tr.children];return {n:[h.length,c.length],L:h.map((x,i)=>Math.round(x.getBoundingClientRect().left)+'/'+Math.round(c[i].getBoundingClientRect().left)).join(' '),sl:[document.querySelector('#extHead').scrollLeft,document.querySelector('#extTable').scrollLeft,document.querySelector('#extHead').clientWidth,document.querySelector('#extTable').clientWidth],ok:h.length===c.length&&h.every((x,i)=>Math.abs(x.getBoundingClientRect().left-c[i].getBoundingClientRect().left)<1.5),ov:getComputedStyle(document.documentElement).overflowY}});
+  t('D08c','títulos da tabela na barra fixa, alinhados com as colunas, e barra de scroll reservada',d08.ok&&d08.ov==='scroll',d08);
   t('D08b','tabela de movimentos com larguras de coluna fixas',await ev(()=>!!document.querySelector('#extTable table.tfix colgroup')));
   await ev(()=>document.querySelector('[data-tab="home"]').click());
   t('D31','"Por categorizar" mostra só as mais frequentes (com ⚡)',await ev(()=>!document.querySelector('#uncVista')&&UNCV==='freq'));

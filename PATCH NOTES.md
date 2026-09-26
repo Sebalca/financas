@@ -31,6 +31,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D08 Dropdowns dos filtros (Categoria, Referência…) com largura fixa.
 - D09 Botão "✕ Limpar filtros".
 - D08b Tabela de movimentos com larguras de coluna fixas.
+- D08c Títulos das colunas dentro da barra fixa (junto à pesquisa e filtros), sempre alinhados com as colunas; a barra de scroll vertical fica sempre reservada para a largura não mudar ao filtrar.
 - D46 Valores com milhares sempre separados por espaço (1 234,56 €), em todo o site.
 - D45 Ao atualizar a página mantém-se a aba, período, filtros, pesquisa, vistas e posição (só enquanto o separador do browser está aberto).
 - Detalhes sem "CGD:"; movimentos ligados mostram só o 🔗 nos Detalhes.
@@ -73,6 +74,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7o — 26/09/2026
+- Extratos: a largura da página já não muda ao filtrar (espaço da barra de scroll sempre reservado).
+- Extratos: os títulos das colunas passam para a barra fixa da pesquisa/filtros — deixam de "abanar" ao fazer scroll; acompanham o scroll horizontal.
 
 ### v0.7n — 26/09/2026
 - Início: caixas maiores e centradas, explicação só ao passar o rato; Entradas/Saídas clicáveis → Extratos filtrados.
