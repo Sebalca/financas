@@ -389,7 +389,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <script>
 'use strict';
-const APP_VERSAO='0.7j'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.7k'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR'});
 const E=x=>fE.format(Math.abs(x)<.005?0:x);
@@ -444,8 +444,8 @@ const REGRAS_BASE=[
 (function(){const i=REGRAS_BASE.findIndex(r=>r[0]==='GALP ENERGIA'),j=REGRAS_BASE.findIndex(r=>r[0]==='GALP');if(i>j){const x=REGRAS_BASE.splice(i,1)[0];REGRAS_BASE.splice(j,0,x)}})();
 const novaRegraBase=(r,i)=>({id:'rb'+i,txt:r[0],modo:r[1],tipo:r[2],cat:r[3],ref:r[4],ativo:true,predef:true});
 const INTERNAS=['Troca entre contas','Levantamentos','Depósitos'];
-/* Início: sem movimentos entre contas nem saídas das categorias fora das contas (D34) */
-const contaInicio=m=>!isInterna(m)&&!(m.valor<0&&m.cat&&eFora(m.cat));
+/* Início: sem movimentos entre contas nem categorias fora das contas, exceto entradas de Rendimentos (D34) */
+const contaInicio=m=>!isInterna(m)&&!(m.cat&&eFora(m.cat)&&!(m.cat===REND&&m.valor>0)); // das fora das contas só contam as entradas de Rendimentos
 const isUnc=m=>!m.cat||!m.ref;
 const isInterna=m=>(m.cat==='Banco'&&INTERNAS.includes(m.ref))||m.cat==='Poupanças'; // movimentos entre contas (incl. Dinheiro): não contam como entrada/saída
 const DIN='Dinheiro';
@@ -797,22 +797,24 @@ function renderDesAno(norm_,fora,saiP,entP,prv,prvC){
   const porMes=ms.map(p=>doAno.filter(m=>m.dm.startsWith(p)));
   const nMes=Math.max(1,porMes.filter(l=>l.length).length); // meses com movimentos importados
   const cel=v=>`<td class="num">${Math.abs(v)>.004?E(v):'—'}</td>`;
-  const linhaCat=({c},isF)=>{const vs=porMes.map(l=>saiP(l,c.nome)),t=vs.reduce((s,v)=>s+v,0),p=isF?0:prvC(c)*12,en=isF?porMes.reduce((s,l)=>s+entP(l,c.nome),0):0;
-    if(soValores&&!p&&Math.abs(t)<.005&&Math.abs(en)<.005)return '';
+  const vMes=(l,c,r,isF)=>isF?entP(l,c,r)-saiP(l,c,r):saiP(l,c,r);
+  const cel2=(v,isF)=>isF?`<td class="num">${Math.abs(v)>.004?val(v):'—'}</td>`:cel(v);
+  const linhaCat=({c},isF)=>{const vs=porMes.map(l=>vMes(l,c.nome,undefined,isF)),t=vs.reduce((s,v)=>s+v,0),p=isF?0:prvC(c)*12;
+    if(soValores&&!p&&Math.abs(t)<.005&&!porMes.some(l=>l.some(m=>m.cat===c.nome)))return '';
     const op=DES.open.has(c.nome);
-    const refs=op?c.refs.map(r=>{const v=porMes.map(l=>saiP(l,c.nome,r)),tt=v.reduce((s,x)=>s+x,0),pp=isF?0:prv(c.nome,r)*12,er=isF?porMes.reduce((s,l)=>s+entP(l,c.nome,r),0):0;if(soValores&&!pp&&Math.abs(tt)<.005&&Math.abs(er)<.005)return '';
-      return `<tr class="ra-d"><td>${esc(r)}</td>${v.map(cel).join('')}<td class="num"><b>${E(tt)}</b></td>${cel(tt/nMes)}${isF?cel(er):cel(pp)}</tr>`}).join(''):'';
-    return `<tr class="ra-m${op?' open':''}" data-dcat="${esc(c.nome)}"><td><i class="dot" style="background:${corCat(c.nome)}"></i><b>${esc(c.nome)}</b></td>${vs.map(cel).join('')}<td class="num"><b>${E(t)}</b></td>${cel(t/nMes)}${isF?cel(en):`<td class="num">${p?E(p):'—'}</td>`}</tr>`+refs};
+    const refs=op?c.refs.map(r=>{const v=porMes.map(l=>vMes(l,c.nome,r,isF)),tt=v.reduce((s,x)=>s+x,0),pp=isF?0:prv(c.nome,r)*12;if(soValores&&!pp&&Math.abs(tt)<.005)return '';
+      return `<tr class="ra-d"><td>${esc(r)}</td>${v.map(x=>cel2(x,isF)).join('')}<td class="num"><b>${isF?val(tt):E(tt)}</b></td>${cel2(tt/nMes,isF)}${isF?'':cel(pp)}</tr>`}).join(''):'';
+    return `<tr class="ra-m${op?' open':''}" data-dcat="${esc(c.nome)}"><td><i class="dot" style="background:${corCat(c.nome)}"></i><b>${esc(c.nome)}</b></td>${vs.map(x=>cel2(x,isF)).join('')}<td class="num"><b>${isF?val(t):E(t)}</b></td>${cel2(t/nMes,isF)}${isF?'':`<td class="num">${p?E(p):'—'}</td>`}</tr>`+refs};
   const tot=l=>ms.map((_,i)=>l.reduce((s,x)=>s+saiP(porMes[i],x.c.nome),0));
-  const hd=(t,ult)=>`<thead><tr><th>${t}</th>${MES3.map(m=>`<th class="num">${m}</th>`).join('')}<th class="num">Total</th><th class="num" title="Total a dividir pelos ${nMes} mês(es) com movimentos importados">Média/mês</th><th class="num">${ult}</th></tr></thead>`;
+  const hd=(t,ult)=>`<thead><tr><th>${t}</th>${MES3.map(m=>`<th class="num">${m}</th>`).join('')}<th class="num">Total</th><th class="num" title="Total a dividir pelos ${nMes} mês(es) com movimentos importados">Média/mês</th>${ult?`<th class="num">${ult}</th>`:''}</tr></thead>`;
   const tn=tot(norm_),tnt=tn.reduce((s,v)=>s+v,0),tpa=norm_.reduce((s,x)=>s+prvC(x.c),0)*12;
-  const tf=tot(fora),tft=tf.reduce((s,v)=>s+v,0),tfe=fora.reduce((s,x)=>s+porMes.reduce((t,l)=>t+entP(l,x.c.nome),0),0);
+  const tf=ms.map((_,i)=>fora.reduce((s,x)=>s+vMes(porMes[i],x.c.nome,undefined,true),0)),tft=tf.reduce((s,v)=>s+v,0);
   $('#desCats').innerHTML=`<h4 class="des-t">Despesas <small>entram nas contas · média sobre ${nMes} ${nMes>1?'meses':'mês'} com movimentos</small></h4>
     <div class="tw"><table class="t des-ano">${hd('Categoria','Previsto ano')}<tbody>${norm_.map(x=>linhaCat(x,false)).join('')}
     <tr class="tot"><td>Total das despesas</td>${tn.map(v=>`<td class="num">${E(v)}</td>`).join('')}<td class="num">${E(tnt)}</td><td class="num">${E(tnt/nMes)}</td><td class="num">${E(tpa)}</td></tr></tbody></table></div>`
-    +(fora.length?`<h4 class="des-t fora">Não entram nas contas <small>${fora.map(x=>esc(x.c.nome)).join(', ')} · saídas por mês; na última coluna, as entradas do ano</small></h4>
-    <div class="tw"><table class="t des-ano">${hd('Categoria','Entradas ano')}<tbody>${fora.map(x=>linhaCat(x,true)).join('')}
-    <tr class="tot"><td>Total</td>${tf.map(v=>`<td class="num">${E(v)}</td>`).join('')}<td class="num">${E(tft)}</td><td class="num">${E(tft/nMes)}</td><td class="num">${E(tfe)}</td></tr></tbody></table></div>`:'');
+    +(fora.length?`<h4 class="des-t fora">Não entram nas contas <small>${fora.map(x=>esc(x.c.nome)).join(', ')} · saldo por mês: entradas − saídas (positivo = entrou mais do que saiu)</small></h4>
+    <div class="tw"><table class="t des-ano">${hd('Categoria','')}<tbody>${fora.map(x=>linhaCat(x,true)).join('')}
+    <tr class="tot"><td>Total</td>${tf.map(v=>`<td class="num">${val(v)}</td>`).join('')}<td class="num">${val(tft)}</td><td class="num">${val(tft/nMes)}</td></tr></tbody></table></div>`:'');
 }
 function moveArr(a,i,d){const j=i+d;if(j<0||j>=a.length)return false;[a[i],a[j]]=[a[j],a[i]];return true}
 function renomeiaCat(ci,novo){const c=DB.cats[ci];novo=novo.trim();if(!novo||novo===c.nome)return;if(DB.cats.some(x=>x.nome===novo)){toast('Já existe uma categoria com esse nome');return}

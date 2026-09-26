@@ -39,6 +39,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D06 Trocas entre contas, levantamentos, depósitos e Poupanças não contam como entrada/saída.
 - D12 Referências com ✓ "Só este movimento" não sugerem regra e as regras não as usam.
 - D13 Vista Mês (previsto vs real) e vista Ano (grelha 12 meses + Total + Média/mês + Previsto ano), em duas tabelas com títulos.
+- D14 Vista Ano, tabela "Não entram nas contas": uma linha por categoria com o saldo (entradas − saídas) por mês, Total e Média/mês; sem coluna "Entradas ano".
 - Modo "✏ Editar" (nomes, ordem ↑↓, apagar, adicionar); "Abrir todas / Fechar todas".
 
 **Rendimentos**
@@ -51,7 +52,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 **Início**
 - D30 Caixas "Despesas por categoria" (clicável → Extratos filtrados) e "Rendimentos" (por entidade/tipo, líquido; clicável).
 - D31 "Por categorizar" mostra só as descrições mais frequentes (⚡ criar regra); "Categorizar →" abre os Extratos filtrados.
-- D34 No Início (totais, gráfico por mês, despesas por categoria/referência) as saídas das categorias fora das contas não contam; as entradas (ex.: Rendimentos) sim.
+- D34 No Início (totais, gráfico por mês, despesas por categoria/referência) as categorias fora das contas não contam — nem saídas nem entradas — **exceto as entradas de Rendimentos** (salário, etc.).
 - D32 Caixa "Despesas por referência" (entre as despesas por categoria e os rendimentos), clicável → Extratos com categoria e referência.
 - D33 "Entradas e saídas por mês": sempre os 12 meses do ano do período, mais largo que o "Saldo por banco"; opção Detalhado (cores por categoria / entidade).
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
@@ -59,6 +60,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7k — 26/09/2026
+- Início: entradas das categorias fora das contas também deixam de contar, exceto Rendimentos (D34 atualizada, confirmado).
+- Despesas (vista Ano): "Não entram nas contas" passa a mostrar uma linha por categoria com entradas − saídas; sai a coluna "Entradas ano".
 
 ### v0.7j — 26/09/2026
 - Início: saídas das categorias fora das contas (Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças) deixam de aparecer nas caixas Saídas/Saldo/Taxa de poupança, no gráfico por mês e nas despesas por categoria/referência.

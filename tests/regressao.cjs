@@ -42,6 +42,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D12','referência "Só este movimento" não é usada pelas regras',await ev(()=>!DB.mov.some(m=>m.ref==='Jogos'&&m.catSrc==='regra')));
   await go('des');await p.click('#perMode [data-m="ano"]');await p.waitForTimeout(200);
   t('D13','vista Ano tem Média/mês e duas tabelas',await ev(()=>document.querySelectorAll('#desCats table.des-ano').length===2&&/Média\/mês/.test(document.querySelector('#desCats').innerText)));
+  t('D14','vista Ano: fora das contas numa linha por categoria (entradas − saídas), sem coluna "Entradas ano"',await ev(()=>!/Entradas ano/.test(document.querySelector('#desCats').innerText)&&/entradas − saídas/.test(document.querySelector('#desCats').innerText)));
   await p.click('#perMode [data-m="mes"]');
 
   console.log('Rendimentos');
@@ -56,7 +57,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
 
   console.log('Início');
   await go('home');
-  t('D34','Início não conta saídas das categorias fora das contas (entradas sim)',await ev(()=>!contaInicio({valor:-10,cat:'Por tratar',ref:'x'})&&!contaInicio({valor:-10,cat:'Investimentos'})&&contaInicio({valor:-10,cat:'Alimentação'})&&contaInicio({valor:10,cat:'Rendimentos'})&&contaInicio({valor:-10,cat:''})));
+  t('D34','Início não conta categorias fora das contas, exceto entradas de Rendimentos',await ev(()=>!contaInicio({valor:-10,cat:'Por tratar',ref:'x'})&&!contaInicio({valor:10,cat:'Por tratar'})&&!contaInicio({valor:10,cat:'Banco',ref:'x'})&&!contaInicio({valor:-10,cat:'Investimentos'})&&contaInicio({valor:-10,cat:'Alimentação'})&&contaInicio({valor:10,cat:'Rendimentos'})&&!contaInicio({valor:-10,cat:'Rendimentos'})&&contaInicio({valor:-10,cat:''})));
   t('D35','donut de despesas do Início sem categorias fora das contas',await ev(()=>{const m=DB.mov.find(x=>x.valor<0);m.cat='Por tratar';m.ref='Transferência pag';render();return ![...document.querySelectorAll('#homeDonut li')].some(li=>/Por tratar/.test(li.textContent))}));
   t('D30','caixa de rendimentos existe e despesas são clicáveis',await ev(()=>!!document.querySelector('#homeRend')&&!!document.querySelector('#homeDonut li.clk')));
   t('D31','"Por categorizar" mostra só as mais frequentes (com ⚡)',await ev(()=>!document.querySelector('#uncVista')&&UNCV==='freq'));
