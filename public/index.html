@@ -49,6 +49,43 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .msg{min-height:1.2em;font-size:13px;margin-top:10px}
 .msg.err{color:#c0392b}.msg.ok{color:#0f7a55}
 @media (max-width:520px){.who span{display:none}.acc .bt{padding:5px 9px}}
+.mbtn{flex:none;display:flex;align-items:center;gap:7px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:999px;padding:3px 10px 3px 3px;cursor:pointer;font:600 13px system-ui,sans-serif;max-width:260px}
+.mbtn:hover{border-color:var(--ac)}.mbtn .av{width:26px;height:26px}.mbtn .em{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mu)}.mbtn .ch{color:var(--mu);font-size:11px}
+@media (max-width:520px){.mbtn .em{display:none}}
+.menu{position:fixed;right:10px;top:50px;z-index:60;width:270px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:6px;font:14px system-ui,sans-serif}
+.menu[hidden]{display:none}
+.menu [hidden]{display:none!important}
+.menu .hd{display:flex;gap:10px;align-items:center;padding:10px 10px 12px;border-bottom:1px solid var(--bd);margin-bottom:4px}
+.menu .hd .av{width:34px;height:34px;font-size:14px}.menu .hd b{display:block;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;max-width:190px}.menu .hd small{color:var(--mu);font-size:12px}
+.menu button.it{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:var(--tx);text-align:left;padding:9px 10px;border-radius:9px;cursor:pointer;font:inherit}
+.menu button.it:hover{background:var(--ac2)}.menu .it .ic{width:20px;text-align:center}.menu .it .rt{margin-left:auto;color:var(--mu);font-size:12px}
+.menu hr{border:0;border-top:1px solid var(--bd);margin:4px 0}
+.sw{width:34px;height:20px;border-radius:999px;background:var(--bd);position:relative;transition:.15s}.sw::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}
+.sw.on{background:var(--ac)}.sw.on::after{left:16px}
+.big{max-width:760px!important;padding:0!important;display:flex;flex-direction:column;max-height:88vh;overflow:hidden}
+.big .bh{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--bd)}.big .bh h2{margin:0;flex:1;font-size:17px}
+.big .bx{border:0;background:transparent;color:var(--mu);font-size:18px;cursor:pointer;width:32px;height:32px;border-radius:8px}.big .bx:hover{background:var(--ac2)}
+.big .bb{display:flex;min-height:0;flex:1}
+.big nav.sn{flex:none;width:170px;border-right:1px solid var(--bd);padding:8px;display:flex;flex-direction:column;gap:2px;height:auto;overflow:auto}
+.big nav.sn button{border:0;background:transparent;color:var(--mu);text-align:left;padding:8px 10px;border-radius:8px;cursor:pointer;font:600 13px system-ui,sans-serif}
+.big nav.sn button.on{background:var(--ac2);color:var(--ac)}
+.big .sc{flex:1;overflow:auto;padding:16px 18px}
+.big .sc h3{margin:0 0 6px;font-size:15px}.big .sc p{color:var(--mu);font-size:13px;margin:0 0 12px}
+.big .grp{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.big .opt{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:9px;padding:7px 12px;cursor:pointer;font:600 13px system-ui,sans-serif}
+.big .opt.on{border-color:var(--ac);background:var(--ac2);color:var(--ac)}
+.big .opt:disabled{opacity:.5;cursor:not-allowed}
+.big .danger{border-color:#d1495b;color:#d1495b}
+.big textarea,.big select,.big .sc input{width:100%;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;padding:9px;font:14px system-ui,sans-serif}
+.big .sc label{display:block;font-size:12.5px;color:var(--mu);margin:8px 0 4px}
+.big .note2{font-size:12px;color:var(--mu);margin-top:6px}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.plan{border:1px solid var(--bd);border-radius:12px;padding:12px}.plan.cur{border-color:var(--ac);background:var(--ac2)}
+.plan b{display:block;font-size:15px}.plan .pr{font-size:20px;font-weight:800;margin:6px 0}.plan ul{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:var(--mu)}
+@media (max-width:620px){.big nav.sn{width:auto;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd)}.big .bb{flex-direction:column}.plans{grid-template-columns:1fr}}
+.onb{max-width:520px!important;text-align:center;padding:26px 24px 18px!important}
+.onb .ico{font-size:44px;line-height:1;margin-bottom:10px}.onb h2{font-size:19px;margin:0 0 8px}.onb p{font-size:14px!important;color:var(--mu);line-height:1.55;margin:0 0 6px!important}
+.onb ul{text-align:left;font-size:13.5px;color:var(--tx);line-height:1.6;margin:8px auto 0;max-width:380px;padding-left:18px}
+.onb .dots{display:flex;gap:6px;justify-content:center;margin:16px 0 12px}.onb .dots i{width:7px;height:7px;border-radius:50%;background:var(--bd)}.onb .dots i.on{background:var(--ac);width:18px;border-radius:4px}
 @media (max-width:420px){.brand{display:none}}
 </style>
 <script>
@@ -61,13 +98,56 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
   <div class="brand">Finanças <span>Pessoais</span></div>
   <nav id="tabs" role="tablist"></nav>
   <div class="sp"></div>
-  <button class="tema" id="btTema" type="button" title="Modo claro/escuro" aria-label="Modo claro/escuro"></button>
-  <div class="acc" id="acc" hidden>
-    <button class="bt" id="btEntrar" type="button">Entrar</button>
-    <div class="who" id="who" hidden><div class="av" id="av"></div><span id="mail"></span></div>
-    <button class="bt" id="btSair" type="button" hidden>Sair</button>
-  </div>
+  <button class="mbtn" id="btMenu" type="button" aria-haspopup="menu" aria-expanded="false" title="Menu"><span class="av" id="av">☰</span><span class="em" id="mail">Menu</span><span class="ch">▾</span></button>
 </div>
+<div class="menu" id="menu" role="menu" hidden>
+  <div class="hd"><div class="av" id="mAv">?</div><div><b id="mMail">Sem sessão</b><small id="mSub">Os dados ficam só neste dispositivo</small></div></div>
+  <button class="it" id="miEntrar" type="button"><span class="ic">🔑</span>Entrar / criar conta</button>
+  <button class="it" data-set="tema" type="button"><span class="ic">⚙️</span>Definições</button>
+  <button class="it" id="miPlano" type="button"><span class="ic">⭐</span>Plano<span class="rt">Grátis</span></button>
+  <button class="it" id="miOnb" type="button"><span class="ic">🧭</span>Onboarding</button>
+  <button class="it" id="miTema" type="button"><span class="ic">🌙</span>Modo escuro<span class="rt"><span class="sw" id="swTema"></span></span></button>
+  <hr>
+  <button class="it" data-set="ajuda" type="button"><span class="ic">❓</span>Ajuda</button>
+  <button class="it" data-set="sugestao" type="button"><span class="ic">💬</span>Enviar sugestão</button>
+  <button class="it" id="miSair" type="button" hidden><span class="ic">⎋</span>Terminar sessão</button>
+</div>
+
+<div class="mod" id="mSet" hidden><div class="box big" role="dialog" aria-label="Definições">
+  <div class="bh"><h2>Definições</h2><button class="bx" data-fecha="mSet" type="button" aria-label="Fechar">✕</button></div>
+  <div class="bb"><nav class="sn" id="setNav">
+    <button data-s="tema" type="button">🎨 Tema e tamanho</button><button data-s="conta" type="button">👤 Conta</button><button data-s="backup" type="button">💾 Cópia de segurança</button>
+    <button data-s="apagar" type="button">🗑 Apagar dados</button><button data-s="onb" type="button">🧭 Onboarding</button><button data-s="idioma" type="button">🌐 Idioma</button>
+    <button data-s="ajuda" type="button">❓ Ajuda</button><button data-s="sugestao" type="button">💬 Enviar sugestão</button></nav>
+  <div class="sc" id="setSc">
+    <section data-s="tema"><h3>Tema</h3><p>Aplica-se a todos os separadores e fica guardado neste dispositivo.</p>
+      <div class="grp" id="gTema"><button class="opt" data-v="" type="button">Automático</button><button class="opt" data-v="light" type="button">☀️ Claro</button><button class="opt" data-v="dark" type="button">🌙 Escuro</button></div>
+      <h3>Tamanho</h3><p>Tamanho do conteúdo das páginas.</p>
+      <div class="grp" id="gZoom"><button class="opt" data-v="" type="button">Automático (85% no computador)</button><button class="opt" data-v="0.75" type="button">75%</button><button class="opt" data-v="0.85" type="button">85%</button><button class="opt" data-v="1" type="button">100%</button><button class="opt" data-v="1.1" type="button">110%</button></div></section>
+    <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div></section>
+    <section data-s="backup" hidden><h3>Cópia de segurança</h3><p>Exporta tudo das Finanças (movimentos, categorias, regras, pessoas, rendimentos, previstos) para um ficheiro .json, que pode importar noutro dispositivo ou mais tarde.</p>
+      <div class="grp"><button class="opt" id="bkExp" type="button">⤓ Exportar ficheiro</button><button class="opt" id="bkImpBt" type="button">⤒ Importar ficheiro…</button><input type="file" id="bkImp" accept=".json,application/json" hidden></div><div class="note2" id="bkMsg"></div></section>
+    <section data-s="apagar" hidden><h3>Apagar dados</h3><p>Apaga os dados das Finanças. Exporte antes uma cópia de segurança se os quiser guardar.</p>
+      <div class="grp"><button class="opt danger" data-apaga="local" type="button">Apagar só neste dispositivo</button><button class="opt danger" data-apaga="conta" type="button">Apagar tudo (também na conta)</button></div><div class="note2" id="apMsg">Com sessão iniciada, "só neste dispositivo" volta a descarregar os dados da conta.</div></section>
+    <section data-s="onb" hidden><h3>Onboarding</h3><p>Visita guiada ao site. Aparece sozinha a primeira vez que entra depois de criar a conta.</p><button class="opt" id="setOnb" type="button">▶ Ver outra vez</button></section>
+    <section data-s="idioma" hidden><h3>Idioma</h3><p>Em breve poderá escolher outros idiomas.</p><select disabled><option>Português (Portugal)</option><option>English</option></select></section>
+    <section data-s="ajuda" hidden><h3>Ajuda</h3><p>Perguntas frequentes (em construção).</p>
+      <p><b>Como importo um extrato?</b><br>Finanças → Extratos → arraste o CSV da CGD (ou o Excel/CSV do cartão refeição) para a caixa de importar.</p>
+      <p><b>Como categorizo mais depressa?</b><br>Ao escolher categoria e referência num movimento, o site propõe criar uma regra para os semelhantes. No Início, em "Por categorizar", use ⚡.</p>
+      <p><b>Os meus dados estão seguros?</b><br>Sem sessão ficam só neste dispositivo; com sessão ficam na sua conta e só você lhes acede.</p></section>
+    <section data-s="sugestao" hidden><h3>Enviar sugestão</h3><p>Em breve poderá enviar ideias e problemas diretamente daqui.</p><textarea rows="5" placeholder="Escreva a sua sugestão…" disabled></textarea><div class="grp" style="margin-top:8px"><button class="opt" type="button" disabled>Enviar (em breve)</button></div></section>
+  </div></div></div></div>
+
+<div class="mod" id="mPlano" hidden><div class="box big" role="dialog" aria-label="Plano">
+  <div class="bh"><h2>Plano</h2><button class="bx" data-fecha="mPlano" type="button" aria-label="Fechar">✕</button></div>
+  <div class="sc"><p>Neste momento todas as funcionalidades estão disponíveis gratuitamente.</p>
+    <div class="plans"><div class="plan cur"><b>Grátis</b><div class="pr">0 €</div><small>O seu plano atual</small><ul><li>Extratos, rendimentos e despesas</li><li>Regras de categorização</li><li>Sincronização entre dispositivos</li></ul></div>
+      <div class="plan"><b>Pro</b><div class="pr">em breve</div><small>ideias em estudo</small><ul><li>Faturas lidas automaticamente</li><li>Saúde financeira e conselhos</li><li>Relatórios</li></ul></div>
+      <div class="plan"><b>Família</b><div class="pr">em breve</div><small>ideias em estudo</small><ul><li>Várias pessoas na mesma conta</li><li>Contas partilhadas</li></ul></div></div></div></div></div>
+
+<div class="mod" id="mOnb" hidden><div class="box onb" role="dialog" aria-label="Onboarding"><div id="onbCont"></div><div class="dots" id="onbDots"></div>
+  <div class="row" style="margin-top:0"><button class="bt" id="onbSalta" type="button">Saltar</button><button class="bt" id="onbAnt" type="button">‹ Anterior</button><button class="bt pri" id="onbSeg" type="button">Seguinte ›</button></div></div></div>
+
 <div class="mod" id="mod" hidden>
   <form class="box" id="fLogin" autocomplete="on">
     <h2>Entrar ou criar conta</h2>
@@ -110,11 +190,89 @@ abrir(location.hash.slice(1));
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/gh/sebalca/plataforma-core@main/auth.js"></script>
 <script>
+
+
+/* ===== tema e tamanho (partilhados com os separadores) ===== */
+const FPTema=(function(){const h=document.documentElement;
+  const envia=(tipo,obj)=>document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo,...obj},'*')}catch(e){}});
+  const atual=()=>h.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  const tema=t=>{if(t)h.dataset.theme=t;else delete h.dataset.theme;try{t?localStorage.setItem('fp_tema',t):localStorage.removeItem('fp_tema')}catch(e){}envia('fp-tema',{tema:t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')});FPMenu.pinta()};
+  const zoom=z=>{try{z?localStorage.setItem('fp_zoom',z):localStorage.removeItem('fp_zoom')}catch(e){}envia('fp-zoom',{zoom:z||''});FPMenu.pinta()};
+  document.getElementById('frames').addEventListener('load',()=>{if(h.dataset.theme)envia('fp-tema',{tema:h.dataset.theme});let z='';try{z=localStorage.getItem('fp_zoom')||''}catch(e){}if(z)envia('fp-zoom',{zoom:z})},true);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>FPMenu.pinta());
+  return {atual,tema,zoom,guardado:()=>{try{return localStorage.getItem('fp_tema')||''}catch(e){return ''}},zoomG:()=>{try{return localStorage.getItem('fp_zoom')||''}catch(e){return ''}}}})();
+
+/* ===== menu (avatar ▾) ===== */
+const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let U=null;
+  const abre=v=>{m.hidden=!v;$('btMenu').setAttribute('aria-expanded',v)};
+  $('btMenu').addEventListener('click',e=>{e.stopPropagation();abre(m.hidden)});
+  document.addEventListener('click',e=>{if(!m.hidden&&!m.contains(e.target))abre(false)});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){abre(false);['mSet','mPlano'].forEach(i=>$(i).hidden=true)}});
+  const pinta=()=>{const d=FPTema.atual()==='dark';$('swTema').classList.toggle('on',d);
+    $$('#gTema .opt').forEach(b=>b.classList.toggle('on',b.dataset.v===FPTema.guardado()));$$('#gZoom .opt').forEach(b=>b.classList.toggle('on',b.dataset.v===FPTema.zoomG()))};
+  const $$=q=>[...document.querySelectorAll(q)];
+  const sessao=u=>{U=u||null;const on=!!U,l=on?(U.email||'?')[0].toUpperCase():'☰';
+    $('av').textContent=l;$('mail').textContent=on?U.email:'Menu';$('mAv').textContent=on?l:'?';$('mMail').textContent=on?U.email:'Sem sessão';
+    $('mSub').textContent=on?'Dados guardados na conta':'Os dados ficam só neste dispositivo';$('miEntrar').hidden=on||!window.FP_AUTH;$('miSair').hidden=!on;
+    $('contaInfo').innerHTML=on?`<p>Sessão iniciada como <b>${U.email.replace(/</g,'&lt;')}</b>. A mesma conta funciona nos outros sites frisk.pt.</p>
+      <label for="novaPass">Mudar palavra-passe</label><input id="novaPass" type="password" minlength="6" autocomplete="new-password" placeholder="Nova palavra-passe (mín. 6)">
+      <div class="grp" style="margin-top:8px"><button class="opt" id="btPass" type="button">Guardar palavra-passe</button><button class="opt danger" id="btSair2" type="button">Terminar sessão</button></div><div class="note2" id="passMsg"></div>`
+      :`<p>Sem sessão iniciada: os dados ficam só neste dispositivo.</p><div class="grp"><button class="opt" id="btEntrar2" type="button">🔑 Entrar / criar conta</button></div>`;
+    const bp=$('btPass');if(bp)bp.onclick=async()=>{const v=$('novaPass').value;if(v.length<6){$('passMsg').textContent='Mínimo 6 caracteres.';return}
+      try{const {error}=await window.plataforma.auth.updateUser({password:v});$('passMsg').textContent=error?('Erro: '+error.message):'✓ Palavra-passe alterada.';$('novaPass').value=''}catch(e){$('passMsg').textContent='Não foi possível alterar.'}};
+    const s2=$('btSair2');if(s2)s2.onclick=()=>{$('mSet').hidden=true;window.sairConta&&window.sairConta()};
+    const e2=$('btEntrar2');if(e2)e2.onclick=()=>{$('mSet').hidden=true;window.abrirLogin?window.abrirLogin():alert('Sem ligação ao serviço de contas.')}};
+  $('miEntrar').onclick=()=>{abre(false);window.abrirLogin&&window.abrirLogin()};
+  $('miSair').onclick=()=>{abre(false);window.sairConta&&window.sairConta()};
+  $('miTema').onclick=()=>FPTema.tema(FPTema.atual()==='dark'?'light':'dark');
+  $('miPlano').onclick=()=>{abre(false);$('mPlano').hidden=false};
+  $('miOnb').onclick=()=>{abre(false);FPOnb.abre()};
+  const secao=s=>{$$('#setNav button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));$$('#setSc section').forEach(x=>x.hidden=x.dataset.s!==s)};
+  $$('[data-set]').forEach(b=>b.onclick=()=>{abre(false);secao(b.dataset.set);pinta();$('mSet').hidden=false});
+  $('setNav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)secao(b.dataset.s)});
+  $$('[data-fecha]').forEach(b=>b.onclick=()=>$(b.dataset.fecha).hidden=true);
+  ['mSet','mPlano'].forEach(i=>$(i).addEventListener('click',e=>{if(e.target.id===i)$(i).hidden=true}));
+  $('gTema').addEventListener('click',e=>{const b=e.target.closest('.opt');if(b)FPTema.tema(b.dataset.v)});
+  $('gZoom').addEventListener('click',e=>{const b=e.target.closest('.opt');if(b)FPTema.zoom(b.dataset.v)});
+  $('setOnb').onclick=()=>{$('mSet').hidden=true;FPOnb.abre()};
+  // cópia de segurança / apagar — usa a página das Finanças
+  const fin=()=>new Promise((ok,ko)=>{let f=document.querySelector('iframe[data-id="financas"]');if(!f){abrir('financas');f=document.querySelector('iframe[data-id="financas"]')}
+    let n=0;const t=setInterval(()=>{try{if(f.contentWindow.fpBackup){clearInterval(t);ok(f.contentWindow)}}catch(e){}if(++n>100){clearInterval(t);ko(new Error('As Finanças não carregaram'))}},100)});
+  $('bkExp').onclick=async()=>{try{const w=await fin(),o=w.fpBackup(),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:'application/json'}));
+    a.download=`financas-copia-${new Date().toISOString().slice(0,10)}.json`;a.click();$('bkMsg').textContent=`✓ Exportados ${o.dados.mov.length} movimentos.`}catch(e){$('bkMsg').textContent=e.message}};
+  $('bkImpBt').onclick=()=>$('bkImp').click();
+  $('bkImp').onchange=async()=>{const f=$('bkImp').files[0];$('bkImp').value='';if(!f)return;try{const o=JSON.parse(await f.text());
+    if(!confirm('Substituir os dados atuais pelos do ficheiro?'))return;const w=await fin(),n=w.fpRestaurar(o);$('bkMsg').textContent=`✓ Importados ${n} movimentos.`}catch(e){$('bkMsg').textContent='Ficheiro inválido: '+e.message}};
+  $$('[data-apaga]').forEach(b=>b.onclick=async()=>{const c=b.dataset.apaga==='conta';
+    if(!confirm(c?'Apagar TODOS os dados das Finanças, também na conta (em todos os dispositivos)? Não se pode desfazer.':'Apagar os dados das Finanças guardados neste dispositivo?'))return;
+    try{const w=await fin();await w.fpApagar(b.dataset.apaga);$('apMsg').textContent='✓ Dados apagados.'}catch(e){$('apMsg').textContent=e.message}});
+  pinta();sessao(null);
+  return {pinta,sessao}})();
+
+/* ===== onboarding (aparece no 1.º login depois de criar conta; relançável no menu) ===== */
+const FPOnb=(function(){const $=id=>document.getElementById(id);let i=0;
+  const P=[
+    ['👋','Bem-vindo às Finanças Pessoais','Em poucos passos vê como juntar extratos, rendimentos e despesas num só sítio.'],
+    ['📄','1. Importe os extratos','Em <b>Finanças → Extratos</b>, arraste o CSV do banco (CGD) ou o Excel/CSV do cartão refeição. Os movimentos repetidos são ignorados.'],
+    ['🏷️','2. Categorize com regras','Escolha categoria e referência num movimento e o site propõe uma <b>regra</b> para os semelhantes. No Início, "Por categorizar" mostra as descrições mais frequentes.'],
+    ['💶','3. Registe os rendimentos','Em <b>Rendimentos</b>, carregue o recibo de vencimento em PDF: os valores são lidos e ligados (🔗) à transferência do extrato.'],
+    ['📊','4. Controle as despesas','Em <b>Despesas</b>, ponha o previsto por mês e compare com o real. Use a vista Ano para ver os 12 meses.'],
+    ['☁️','5. Tudo guardado na conta','Com sessão iniciada, os dados sincronizam entre dispositivos. No menu (avatar ▾) tem definições, cópia de segurança e este guia.']];
+  const pinta=()=>{const [ic,t,x]=P[i];$('onbCont').innerHTML=`<div class="ico">${ic}</div><h2>${t}</h2><p>${x}</p>`;
+    $('onbDots').innerHTML=P.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('');$('onbAnt').style.visibility=i?'visible':'hidden';$('onbSeg').textContent=i===P.length-1?'Começar ✓':'Seguinte ›'};
+  const fecha=()=>{$('mOnb').hidden=true};
+  const abre=()=>{i=0;pinta();$('mOnb').hidden=false};
+  $('onbSeg').onclick=()=>{if(i<P.length-1){i++;pinta()}else fecha()};$('onbAnt').onclick=()=>{if(i>0){i--;pinta()}};$('onbSalta').onclick=fecha;
+  const talvez=u=>{try{const k='fp_onb_'+u.id;if(localStorage.getItem(k))return;
+      const novo=(localStorage.getItem('fp_onb_novo')||'')===(u.email||'').toLowerCase()||(u.created_at&&Date.now()-new Date(u.created_at)<864e5&&!u.last_sign_in_at)||(u.created_at&&u.last_sign_in_at&&Math.abs(new Date(u.last_sign_in_at)-new Date(u.created_at))<6e5);
+      if(!novo)return;localStorage.setItem(k,'1');localStorage.removeItem('fp_onb_novo');setTimeout(abre,400)}catch(e){}};
+  return {abre,talvez}})();
+
+/* ===== login partilhado ===== */
 (function(){
   const $=id=>document.getElementById(id);
   if(!window.Auth)return; // sem ligação ou sem auth.js: continua só local
-  const acc=$('acc'),mod=$('mod'),msg=$('lMsg');
-  acc.hidden=false;
+  const mod=$('mod'),msg=$('lMsg');window.FP_AUTH=true;
   const setMsg=(t,ok)=>{msg.textContent=t||'';msg.className='msg'+(t?(ok?' ok':' err'):'')};
   const traduz=e=>{const m=(e&&e.message)||'';
     if(/Invalid login/i.test(m))return 'Email ou palavra-passe incorretos.';
@@ -123,12 +281,11 @@ abrir(location.hash.slice(1));
     if(/Password should/i.test(m))return 'A palavra-passe tem de ter pelo menos 6 caracteres.';
     return m||'Não foi possível concluir. Tente novamente.';};
   function mostrar(user){
-    const on=!!user;$('btEntrar').hidden=on;$('who').hidden=!on;$('btSair').hidden=!on;
-    if(on){$('mail').textContent=user.email||'';$('av').textContent=(user.email||'?')[0];$('who').title=user.email||''}
+    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);
     window.financasUser=user||null; // disponível para os separadores (window.parent.financasUser)
     document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'financas-sessao',user:user?{id:user.id,email:user.email}:null},'*')}catch(e){}});
   }
-  $('btEntrar').onclick=()=>{setMsg('');mod.hidden=false;$('lEmail').focus()};
+  window.abrirLogin=()=>{setMsg('');mod.hidden=false;$('lEmail').focus()};
   $('btCancel').onclick=()=>{mod.hidden=true};
   mod.addEventListener('click',e=>{if(e.target===mod)mod.hidden=true});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')mod.hidden=true});
@@ -138,20 +295,11 @@ abrir(location.hash.slice(1));
   $('btCriar').onclick=async()=>{const f=$('fLogin');if(!f.reportValidity())return;setMsg('A criar conta…',true);
     const {data,error}=await Auth.signUp($('lEmail').value.trim(),$('lPass').value);
     if(error)return setMsg(traduz(error));
+    try{localStorage.setItem('fp_onb_novo',$('lEmail').value.trim().toLowerCase())}catch(e){} // mostrar o onboarding no 1.º login
     if(data.session){mod.hidden=true;mostrar(data.user)}else setMsg('Conta criada. Confirme o email e depois clique em "Entrar".',true)};
-  $('btSair').onclick=async()=>{await Auth.signOut();mostrar(null)};
+  window.sairConta=async()=>{await Auth.signOut();mostrar(null)};
   Auth.onChange((ev,session)=>mostrar(session&&session.user));
   Auth.getSession().then(s=>mostrar(s&&s.user));
-})();
-
-/* botão de modo claro/escuro */
-(function(){const K='fp_tema',b=document.getElementById('btTema'),h=document.documentElement;
-  const atual=()=>h.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
-  const pinta=()=>{const d=atual()==='dark';b.textContent=d?'☀️':'🌙';b.title=d?'Mudar para modo claro':'Mudar para modo escuro'};
-  const envia=t=>document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'fp-tema',tema:t},'*')}catch(e){}});
-  b.addEventListener('click',()=>{const t=atual()==='dark'?'light':'dark';h.dataset.theme=t;try{localStorage.setItem(K,t)}catch(e){}pinta();envia(t)});
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',pinta);pinta();
-  document.getElementById('frames').addEventListener('load',e=>{if(h.dataset.theme)envia(h.dataset.theme)},true);
 })();
 </script>
 </body>

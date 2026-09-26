@@ -1357,6 +1357,8 @@ TABS.forEach(t=>{S[t]._per={...(S[t]._per||{})}});qApplyPer();SH.forEach(k=>{S.e
 (function(){const ap=t=>{if(t==='dark'||t==='light')document.documentElement.dataset.theme=t};
   try{ap(localStorage.getItem('fp_tema'))}catch(e){}
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-tema')ap(e.data.tema)});
+  const zm=v=>{document.documentElement.style.zoom=v||''};try{zm(localStorage.getItem('fp_zoom'))}catch(e){}
+  addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-zoom')zm(e.data.zoom)});
   addEventListener('storage',e=>{if(e.key==='fp_tema')ap(e.newValue)});
   if(window.parent!==window){const b=document.getElementById('themeBtn');if(b)b.style.display='none'}
 })();

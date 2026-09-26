@@ -30,6 +30,9 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D05','"Por categorizar" = sem categoria OU sem referência',await ev(()=>{const m=DB.mov.find(x=>x.desc.startsWith('LOJA SEM'));m.cat='Outros';m.ref='';return isUnc(m)}));
   t('D06','trocas entre contas / levantamentos / Poupanças não contam como entrada/saída',await ev(()=>isInterna({cat:'Banco',ref:'Troca entre contas'})&&isInterna({cat:'Banco',ref:'Levantamentos'})&&isInterna({cat:'Poupanças',ref:'Férias'})));
   await go('ext');
+  t('D08','dropdowns Categoria/Referência com largura fixa + "Limpar filtros"',await ev(()=>{const a=document.querySelector('#fCat').offsetWidth,b=document.querySelector('#fRef').offsetWidth;document.querySelector('#fCat').value='Alimentação';render();return a===document.querySelector('#fCat').offsetWidth&&b===document.querySelector('#fRef').offsetWidth&&!!document.querySelector('#btLimpaF')}));
+  await ev(()=>{document.querySelector('#btLimpaF').click()});
+  t('D09','"Limpar filtros" limpa pesquisa e filtros',await ev(()=>['#fQ','#fCat','#fRef','#fBanco'].every(q=>!document.querySelector(q).value)));
   t('D07','filtros e títulos da tabela de movimentos existem (fQ, fCat, fRef)',await ev(()=>!!(document.querySelector('#extBar #fQ')&&document.querySelector('#extBar #fRef')&&document.querySelector('#extTable thead'))));
 
   console.log('Despesas');
@@ -54,14 +57,17 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   console.log('Início');
   await go('home');
   t('D30','caixa de rendimentos existe e despesas são clicáveis',await ev(()=>!!document.querySelector('#homeRend')&&!!document.querySelector('#homeDonut li.clk')));
-  t('D31','"Por categorizar" tem vistas Extrato / Mais frequentes',await ev(()=>document.querySelectorAll('#uncVista button').length===2));
+  t('D31','"Por categorizar" mostra só as mais frequentes (com ⚡)',await ev(()=>!document.querySelector('#uncVista')&&UNCV==='freq'));
+  t('D32','caixa "Despesas por referência" e gráfico com opção Detalhado',await ev(()=>!!document.querySelector('#homeDonutRef')&&document.querySelectorAll('#barsVista button').length===2));
+  t('D33','gráfico de entradas/saídas mostra sempre os 12 meses do ano',await ev(()=>mesesGraf().length===12));
 
   console.log('Página principal');
   await p.goto(U+'/index.html');await p.waitForTimeout(300);
   const tabs=await ev(()=>[...document.querySelectorAll('nav a')].map(a=>a.textContent));
   t('D40','Finanças é o primeiro separador',tabs[0]==='Finanças',tabs);
   t('D41','separadores externos nunca recebem sessão/tema (data-ext)',await ev(()=>{location.hash='#biblia';return new Promise(r=>setTimeout(()=>r(!!document.querySelector('iframe[data-ext]')&&/:not\(\[data-ext\]\)/.test(document.body.innerHTML)),300))}));
-  t('D42','botão de modo claro/escuro existe',await ev(()=>!!document.querySelector('#btTema')));
+  t('D42','menu (avatar ▾) com Definições, Plano, Onboarding e modo escuro',await ev(()=>!!document.querySelector('#btMenu')&&['[data-set="tema"]','#miPlano','#miOnb','#miTema'].every(q=>document.querySelector(q))));
+  t('D43','onboarding abre e tem vários passos',await ev(()=>{FPOnb.abre();const ok=!document.querySelector('#mOnb').hidden&&document.querySelectorAll('#onbDots i').length>=5;document.querySelector('#mOnb').hidden=true;return ok}));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();

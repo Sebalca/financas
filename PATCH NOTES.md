@@ -16,7 +16,9 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 **Geral / página principal**
 - D40 Separadores por esta ordem: **Finanças**, Simulador Salarial, Bíblia financeira, Stock casa (os externos embutidos, com "↗ Abrir numa nova aba").
 - D41 Sites externos nunca recebem a sessão nem o tema.
-- D42 Botão de modo claro/escuro ao lado do email; site a 85% em ecrãs largos; largura total da janela.
+- D42 Menu no canto direito (avatar ▾ / ☰): Entrar/criar conta, Definições, Plano, Onboarding, Modo escuro, Ajuda, Enviar sugestão, Terminar sessão. Site a 85% em ecrãs largos (ajustável nas Definições); largura total da janela.
+- D43 Onboarding aparece sozinho no 1.º login depois de criar a conta; pode ser relançado no menu e nas Definições.
+- Definições: Tema e tamanho, Conta (mudar palavra-passe), Cópia de segurança (exportar/importar .json), Apagar dados (dispositivo / conta), Onboarding, Idioma, Ajuda, Enviar sugestão (os três últimos só visuais por agora).
 - Login opcional; com sessão os dados sincronizam com a conta (Supabase `financas_dados`); nunca credenciais privadas no código.
 
 **Extratos**
@@ -25,6 +27,8 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D04 Reimportar nunca duplica (chave pela descrição original).
 - D05 **Por categorizar** = falta a categoria **ou** a referência.
 - D07 Barra de pesquisa/filtros e títulos da tabela sempre visíveis; filtro de Referência que segue a Categoria.
+- D08 Dropdowns dos filtros (Categoria, Referência…) com largura fixa.
+- D09 Botão "✕ Limpar filtros".
 - Detalhes sem "CGD:"; movimentos ligados mostram só o 🔗 nos Detalhes.
 - Combos Categoria/Referência com largura fixa e seta à direita.
 - Movimentos à mão = conta 💵 Dinheiro com saldo próprio.
@@ -46,12 +50,22 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 
 **Início**
 - D30 Caixas "Despesas por categoria" (clicável → Extratos filtrados) e "Rendimentos" (por entidade/tipo, líquido; clicável).
-- D31 "Por categorizar" com vistas Extrato / Mais frequentes (⚡ criar regra); "Categorizar →" abre os Extratos filtrados.
-- Poupanças: saldo de cada referência em "Saldo por banco".
+- D31 "Por categorizar" mostra só as descrições mais frequentes (⚡ criar regra); "Categorizar →" abre os Extratos filtrados.
+- D32 Caixa "Despesas por referência" (entre as despesas por categoria e os rendimentos), clicável → Extratos com categoria e referência.
+- D33 "Entradas e saídas por mês": sempre os 12 meses do ano do período, mais largo que o "Saldo por banco"; opção Detalhado (cores por categoria / entidade).
+- Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
 
 ---
 
 ## Histórico
+
+### v0.7i — 26/09/2026
+- Menu no canto direito (avatar ▾): Definições, Plano, Onboarding, Modo escuro, Ajuda, Enviar sugestão, Entrar/Terminar sessão — **substitui o botão de tema da barra (D42 alterada, confirmado)**.
+- Definições: tema e tamanho, conta (palavra-passe), cópia de segurança, apagar dados, onboarding, idioma/ajuda/sugestão (visuais).
+- Plano: Grátis (atual) + Pro/Família "em breve".
+- Onboarding em 6 passos, automático no 1.º login após criar conta.
+- Extratos: dropdowns dos filtros com largura fixa; "✕ Limpar filtros".
+- Início: nova caixa "Despesas por referência"; "Por categorizar" só com as mais frequentes (**D31 alterada, confirmado**); Poupanças como "Poupanças - referência" e clicáveis; gráfico mais largo e baixo, sempre o ano todo, com opção Detalhado.
 
 ### v0.7h — 26/09/2026
 - Criado este ficheiro (histórico reconstruído a partir dos commits) e a secção "Decisões fixas".
