@@ -65,8 +65,8 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D16','atalho ↩ dá ao reembolso a categoria/referência da despesa original',rb[0]==='Alimentação'&&rb[1]==='Supermercado'&&rb[2],rb);
   t('D15','entrada em categoria de despesa = reembolso: abate às saídas e não conta como entrada',await ev(()=>eReemb(DB.mov.find(x=>x.id==='mRb'))&&!eReemb({valor:50,cat:'Rendimentos'})&&!eReemb({valor:50,cat:''})));
   await go('des');
-  const d17=await ev(()=>{const [a,b]=range(),sa=-DB.mov.filter(m=>m.dm>=a&&m.dm<=b&&m.cat==='Alimentação'&&m.valor<0).reduce((s,m)=>s+m.valor,0),esp=E(sa-20),txt=document.querySelector('#desCats details[data-c="Alimentação"] summary').textContent;return {ok:txt.includes('Real '+esp)&&/reemb/.test(txt),esp,txt}});
-  t('D17','Despesas: real = saídas − reembolsos',d17.ok,d17);
+  const d17=await ev(()=>{const [a,b]=range(),sa=-DB.mov.filter(m=>m.dm>=a&&m.dm<=b&&m.cat==='Alimentação'&&m.valor<0).reduce((s,m)=>s+m.valor,0),esp=E(sa-20),txt=document.querySelector('#desCats details[data-c="Alimentação"] summary').textContent;return {ok:txt.includes('Saídas '+esp)&&/reemb/.test(txt),esp,txt}});
+  t('D17','Despesas: saídas (total) = saídas − reembolsos',d17.ok,d17);
 
   console.log('Dividir');
   await go('ext');await p.fill('#fQ','NETFLIX');await p.waitForTimeout(150);
@@ -124,7 +124,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
 
   console.log('Janelas e botões (v0.7r)');
   t('D55b','botões da linha pela ordem ↩ ✂ ✏ 🗑, encostados à direita',await ev(()=>{const tr=[...document.querySelectorAll('#extTable tbody tr[data-id]')].find(r=>r.querySelector('[data-edit]'))||document.querySelector('#extTable tbody tr[data-id]');const sl=[...tr.querySelectorAll('td.acts .sl')];const td=tr.querySelector('td.acts');return sl.length===4&&(!sl[1].firstChild||sl[1].querySelector('[data-split]'))&&sl[3].querySelector('[data-del]')&&getComputedStyle(td).textAlign==='right'}));
-  t('D56','filtros: tipo (entradas/saídas) logo a seguir à pesquisa e banco no fim',await ev(()=>{const ids=[...document.querySelectorAll('#extBar .filt select')].map(x=>x.id);return ids[0]==='fTipo'&&ids[ids.length-1]==='fBanco'}));
+  t('D56','filtros: tipo (entradas/saídas) logo a seguir à pesquisa e banco no fim',await ev(()=>{const ids=[...document.querySelectorAll('#extBar .filt select,#extBar .filt .ms')].map(x=>x.id);return ids[0]==='fTipo'&&ids[ids.length-1]==='fBanco'}));
   t('D57a','um só botão "Regras e pessoas" com duas abas',await ev(()=>{if(document.querySelector('#btPessoas'))return false;document.querySelector('#btRegras').click();const a=!document.querySelector('#mRegras').hidden;document.querySelector('#mRegras [data-mtab="mPessoas"]').click();const b=document.querySelector('#mRegras').hidden&&!document.querySelector('#mPessoas').hidden;document.querySelector('#mPessoas [data-mtab="mRegras"]').click();const c=!document.querySelector('#mRegras').hidden;document.querySelector('#mRegras').hidden=true;return a&&b&&c}));
   t('D57b','um só botão Importar/Exportar que abre a janela de escolha',await ev(()=>{if(document.querySelector('#btExp')||document.querySelector('#btImps'))return false;document.querySelector('#btIE').click();const a=!document.querySelector('#mIE').hidden;document.querySelector('#ieImps').click();const b=document.querySelector('#mIE').hidden&&!document.querySelector('#mImps').hidden;document.querySelector('#mImps').hidden=true;return a&&b}));
   await ev(()=>{document.querySelector('#fQ').value='';render()});
@@ -138,6 +138,20 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   const d61=await ev(()=>{const m=document.querySelector('#mRegras');m.hidden=false;const sh=m.querySelector('.sheet');sh.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));m.dispatchEvent(new MouseEvent('click',{bubbles:true}));const a=!m.hidden;m.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));m.dispatchEvent(new MouseEvent('click',{bubbles:true}));return {a,b:m.hidden}});
   t('D59','janelas fecham ao clicar fora, mas não ao carregar dentro e largar fora',d61.a&&d61.b,d61);
   t('D60','Dividir: ⓘ mostra a explicação numa etiqueta (não na caixa)',await ev(()=>{abreSplit(DB.mov.find(x=>x.valor<0));const b=document.querySelector('#spAjuda');const h0=b.hidden;document.querySelector('#spInfo').click();const ok=h0&&!b.hidden&&!!b.closest('.mh')&&document.querySelector('#spInfo').title==='Como funciona';document.querySelector('#mSplit').hidden=true;SP=null;return ok}));
+
+  console.log('v0.7s');
+  const x61=await ev(()=>{P.m='mes';P.d=new Date(2026,8,1);perLabel();document.querySelector('[data-tab="des"]').click();render();
+    const ds=[...document.querySelectorAll('#desCats details.cat')],th=[...document.querySelector('#desCats details.cat table thead').querySelectorAll('th')].map(x=>x.textContent.trim()),k=[...document.querySelectorAll('#desKpis .kpi .l')].map(x=>x.textContent);
+    return {ok:ds.length>0&&ds.every(d=>d.open)&&th.join('|')==='Referência|Previsto/mês|Média mensal|Entradas|Saídas|Total|Diferença|'&&k.includes('Saídas')&&!k.includes('Real')&&getComputedStyle(document.querySelector('#desKpis .kpi')).textAlign==='center'&&!document.querySelector('#desKpis .kpi .s'),th,k}});
+  t('D61','Despesas (mês): categorias abertas, colunas Previsto/Média/Entradas/Saídas/Total/Diferença e caixas como no Início',x61.ok,x61);
+  const x62=await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();const m=DB.mov.find(x=>x.partes&&x.partes.length);SPOPEN.add(m.id);render();
+    const inp=document.querySelector(`#extTable [data-pobs="${m.id}#0"]`);inp.value='Nota X';inp.dispatchEvent(new Event('change',{bubbles:true}));
+    const tx=document.querySelector('#tab-ext').textContent;return {ok:m.partes[0].obs==='Nota X'&&!/Suportados:/.test(tx)&&!/Total \(filtrado\)/.test(tx)&&!!document.querySelector('#extTable tr.fim')&&!document.querySelector('#spRows [data-spo][placeholder*="ex."]')&&!/ex\.: Eletricidade/.test(document.body.innerHTML)}});
+  t('D62','Extratos: sem "Suportados", sem total no fundo (barra cinzenta), observações editáveis nas linhas divididas',x62.ok,x62);
+  const x63=await ev(()=>{const f=document.querySelector('#fCat');f.value=['Alimentação','Lazer'].join('\u0001');render();const ids=[...document.querySelectorAll('#extTable tbody tr[data-id]')].map(tr=>DB.mov.find(x=>x.id===tr.dataset.id));
+    const ok=ids.length>0&&ids.every(m=>(m.partes&&m.partes.length?m.partes.some(p=>['Alimentação','Lazer'].includes(p.cat)):['Alimentação','Lazer'].includes(m.cat)))&&ids.some(m=>m.cat==='Alimentação')&&f.classList.contains('on');
+    f.querySelector('.msb').click();const cb=f.querySelectorAll('.msl input[type=checkbox]').length;f.querySelector('.msb').click();limpaFiltros();render();return {ok:ok&&cb>2&&!f.value,n:ids.length,cb}});
+  t('D63','filtros Categoria/Referência/Quem é/Banco com multiseleção',x63.ok,x63);
 
   console.log('Início');
   await go('home');

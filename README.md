@@ -69,7 +69,7 @@ No topo: **Mês / Ano / Intervalo**, setas ‹ › e um **calendário** ao clica
 - **Tabela** com colunas de largura fixa. Os títulos das colunas ficam na barra fixa, junto à pesquisa e aos filtros.
 - **Pesquisa** por texto, e também por data: `16/09`, `16/09/2026` ou `09/2026` (data mov. ou data valor, em todos os períodos).
 - **Filtros**:
-  - Tipo, Categoria (ou "Por categorizar"), Referência, Quem é e Banco;
+  - Tipo; Categoria (ou "Por categorizar"), Referência, Quem é e Banco com **multiseleção**;
   - botão "Limpar filtros".
 - **Categorizar**: combos de categoria e referência em cada linha.
   - Ao categorizar à mão, pergunta se quer criar uma regra ou só para este movimento.
@@ -119,7 +119,7 @@ No topo: **Mês / Ano / Intervalo**, setas ‹ › e um **calendário** ao clica
 - Os Extratos são a fonte do **dinheiro** que entra; os Rendimentos são a visão **fiscal** (bruto, IRS, SS).
 
 ### Despesas
-- **Vista Mês**: previsto vs real por categoria › referência. O real é as saídas menos os reembolsos (indica "x € − y € reemb.").
+- **Vista Mês** (categorias abertas por defeito): por referência, Previsto/mês, Média mensal (últimos 12 meses), Entradas, Saídas, **Total** (saídas − reembolsos) e Diferença face ao previsto. As caixas de cima mostram Previsto, Saídas, Diferença e Categorias.
 - **Vista Ano**: grelha de 12 meses com Média/mês.
 - Tabela separada para as **categorias fora das contas** (entradas − saídas por categoria).
 - **Modo Editar**: ordenar (↑↓), acrescentar ou apagar categorias e referências, valores previstos.

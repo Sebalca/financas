@@ -52,6 +52,8 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D48 Ao dividir, a 1.ª linha tem o valor fechado = valor original − as outras linhas (não se edita nem se apaga). Se as outras linhas passarem o original, a 1.ª fica negativa (vermelho), aparece um aviso e não deixa guardar; fora disso não há texto de soma.
 - D53 Janela Dividir: título com descrição · data · valor em destaque; explicação só no ⓘ ao lado do ✕; "＋ Linha" por baixo da coluna do valor.
 - D54 Numa entrada dividida, cada linha pode ser reembolso de uma despesa: ↩ à direita de cada linha na janela Dividir e nas sub-linhas da tabela.
+- D62 Extratos: sem o texto "Suportados…" na importação; no fundo da tabela só uma barra cinzenta fina (sem total); nas linhas divididas as Observações escrevem-se na própria linha; sem texto de exemplo nas observações da janela Dividir.
+- D63 Filtros Categoria, Referência, Quem é e Banco com multiseleção (caixas de escolha, largura fixa); o Tipo continua simples.
 - D55 Os botões do fim da linha do extrato têm lugares fixos, pela ordem ↩ reembolso, ✂ dividir, ✏ editar, 🗑 apagar, encostados à direita; quando um não se aplica, o lugar fica vazio. (atualizada v0.7r — antes ↩ ✏ ✂ 🗑)
 - D56 Filtros dos Extratos: pesquisa, Tipo (entradas/saídas), Categoria, Referência, Quem é, Banco.
 - D57 Um só botão "⚙ Regras e pessoas" (janela com as abas Regras | Pessoas) e um só "⇅ Importar/Exportar" (janela com Exportar movimentos | Importações feitas).
@@ -63,7 +65,8 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D47 A pesquisa dos Extratos aceita datas (dd/mm, dd/mm/aaaa, mm/aaaa) e procura na data mov. ou data valor, em todos os períodos.
 - D19 Movimento marcado como reembolso mostra só "↩ Reembolso de …" nos Detalhes.
 - D20b Janela do reembolso: mostra em destaque descrição, valor, data e quem; por defeito as saídas (todas as categorias) do próprio dia ou do anterior mais próximo, com valor maior que o reembolso; "Mostrar todas" com pesquisa; despesa sem categoria → escolher categoria/referência na hora (aplica-se às duas).
-- D17 Despesas: o **Real** é saídas − reembolsos (indicador "x € − y € reemb.").
+- D17 Despesas: **Saídas** (antes "Real") = saídas − reembolsos; nas linhas chama-se **Total** (colunas Entradas e Saídas ao lado). (atualizada v0.7s)
+- D61 Despesas, vista Mês: categorias abertas por defeito (lembra as que se fecham); colunas Referência | Previsto/mês | Média mensal (total dos últimos 12 meses ÷ meses com movimentos) | Entradas | Saídas | Total | Diferença; caixas como no Início (explicação só ao passar o rato); linhas mais baixas.
 - D16 Nos Extratos, entradas têm o botão ↩ para escolher a despesa original (fica com a mesma categoria/referência e ligação ↩).
 - D14 Vista Ano, tabela "Não entram nas contas": uma linha por categoria com o saldo (entradas − saídas) por mês, Total e Média/mês; sem coluna "Entradas ano".
 - Modo "✏ Editar" (nomes, ordem ↑↓, apagar, adicionar); "Abrir todas / Fechar todas".
@@ -90,6 +93,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7s — 27/09/2026
+- Despesas: linhas mais baixas; caixas como no Início; "Real" → "Saídas"; vista Mês com categorias abertas por defeito e colunas Previsto/mês, Média mensal (12 meses), Entradas, Saídas, Total, Diferença (sai "Previsto período" e "Execução").
+- Extratos: sem "Suportados…"; fundo da tabela só com barra cinzenta; observações editáveis nas linhas divididas; sem exemplo no Dividir; filtros com multiseleção (menos o Tipo).
 
 ### v0.7r — 27/09/2026
 - README reescrito: objetivo, arquitetura, como funciona cada aba, dados/sincronização, segurança e processo de desenvolvimento.
