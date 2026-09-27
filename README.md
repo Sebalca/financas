@@ -91,7 +91,7 @@ Na barra de cima da página principal (só no separador Finanças): **Mês / Ano
   - não voltam a entrar ao reimportar o extrato;
   - exceção: os de uma importação removida podem ser reimportados.
 - **⚙ Regras e pessoas** (uma janela, três abas):
-  - **Regras especiais**: referências "📌 Só este movimento" (não pedem regra).
+  - **Regras especiais**: regras com nome e tipo — 📌 *ao escolher* estas referências não pede regra (e as regras não as usam); ↪ *ao mudar a partir* destas referências não pede regra (ex.: "Transferências"). Guardadas em `esp`.
   - **Regras**: "contém", "tem a palavra" ou "começa por", para entradas, saídas ou ambas. Ganha a primeira regra que corresponder (ordem ↑↓). Não mexem nos movimentos categorizados à mão nem nos divididos.
   - **Pessoas**: identificadores encontrados nas descrições (TFI, TRF, MB WAY…) associados a um nome, que preenche "Quem é". Tem uma pesquisa fixa.
 - **⇅ Importar/Exportar** (menu por baixo do botão):
@@ -154,7 +154,7 @@ Principais campos do estado (`DB`):
 | `imports` | importações feitas (ficheiro, banco, período, novos, duplicados) |
 | `rend` / `delR` | rendimentos (recibos e pontuais) / ids apagados |
 | `cats`, `regras`, `pessoas` | categorias › referências, regras de categorização, pessoas |
-| `prev`, `refSo` | valores previstos / movimentos "só este" (sem regra) |
+| `prev`, `esp` | valores previstos / regras especiais (nome, tipo, referências; `refSo` é o formato antigo) |
 | `del`, `delImp`, `delM`, `rep` | chaves apagadas (para sempre), apagadas por remover importação, últimos 50 apagados completos, reposições |
 
 ### Segurança

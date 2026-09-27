@@ -56,6 +56,10 @@ button,input,select{font:inherit;color:inherit}
 tr.rbparte td{background:var(--soft);font-size:12.5px}
 #mReemb{z-index:60}
 table.t td.acts{text-align:right;padding-right:4px}
+.espc{border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:10px}.esph{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.esph .espn{flex:1;min-width:180px;font-weight:700;font-size:14.5px;border:1px solid transparent;border-radius:8px;padding:5px 8px;background:transparent;color:inherit}.esph .espn:hover,.esph .espn:focus{border-color:var(--bd);background:var(--soft)}
+.esph select,.espa select{border:1px solid var(--bd);border-radius:8px;background:var(--card);color:inherit;padding:5px 8px;font-size:13px}
+.espr{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.chip{display:inline-flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--bd);border-radius:999px;padding:3px 4px 3px 10px;font-size:12.5px}.chip small{color:var(--mu)}.chip button{border:0;background:none;color:var(--mu);cursor:pointer;font-size:11px;border-radius:50%;width:18px;height:18px}.chip button:hover{background:var(--bd)}
+.espa{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .mtabs{display:flex;gap:4px;flex:1;flex-wrap:wrap}.mtabs button{border:0;background:transparent;padding:7px 12px;border-radius:9px;font:inherit;font-weight:700;font-size:15px;color:var(--mu);cursor:pointer}
 .mtabs button.on{background:var(--soft);color:inherit;box-shadow:inset 0 -2px 0 var(--ac)}
 .spinfo{position:relative}.spbal{position:absolute;right:0;top:calc(100% + 6px);width:300px;z-index:5;background:var(--card);color:inherit;border:1px solid var(--bd);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:10px 12px;font-size:13px;line-height:1.45;text-align:left;font-weight:400}
@@ -397,9 +401,9 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <aside class="drawer" id="calcPan" hidden aria-labelledby="calcTit" role="complementary"><div class="dh"><h3 id="calcTit">Como foi calculado</h3><button class="mx" type="button" id="calcX" aria-label="Fechar" title="Fechar">✕</button></div><div class="db" id="calcBody"></div></aside>
 <div class="modal" id="mEsp" hidden><div class="sheet wide"><div class="mh"><div class="mtabs" role="tablist"><button type="button" role="tab" data-mtab="mRegras">⚙ Regras</button><button type="button" role="tab" data-mtab="mPessoas">👥 Pessoas</button><button type="button" class="on" role="tab" aria-selected="true">⭐ Regras especiais</button></div><button class="mx" type="button" data-close="mEsp" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
- <p class="note" style="margin:0 0 10px"><b>📌 Só este movimento</b> — ao escolher uma destas referências num movimento, o site <b>não pergunta se quer criar regra</b> e as regras automáticas não a usam: o movimento fica classificado só à mão (útil para transferências, empréstimos, coisas pontuais).</p>
- <div class="filt"><input type="search" id="espQ" placeholder="Procurar…"><select id="espC" aria-label="Categoria"></select><select id="espR" aria-label="Referência"></select><button class="btn sm pri" id="espAdd" type="button">＋ Adicionar</button></div>
- <div class="tw" id="espList"></div>
+ <p class="note" style="margin:0 0 10px">Regras que mudam o comportamento do site. Há dois tipos: <b>Ao escolher</b> — ao escolher uma destas referências num movimento não pergunta se quer criar regra, e as regras automáticas não a usam; <b>Ao mudar a partir de</b> — ao mudar a categoria/referência de uma linha que tinha uma destas referências, não pergunta se quer criar regra (a linha fica classificada à mão).</p>
+ <div id="espList"></div>
+ <div style="margin-top:10px"><button class="btn sm pri" id="espNova" type="button">＋ Nova regra especial</button></div>
  </div></div></div>
 <div class="modal" id="mRegras" hidden><div class="sheet wide"><div class="mh"><div class="mtabs" role="tablist"><button type="button" class="on" role="tab" aria-selected="true">⚙ Regras</button><button type="button" role="tab" data-mtab="mPessoas">👥 Pessoas</button><button type="button" role="tab" data-mtab="mEsp">⭐ Regras especiais</button></div><button class="mx" type="button" data-close="mRegras" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
  <p class="note" style="margin:0 0 10px">A primeira regra que corresponder à descrição ganha (use ↑ ↓ para mudar a ordem). As regras aplicam-se ao importar e aos movimentos existentes, <b>exceto os que classificou à mão</b>.</p>
@@ -476,7 +480,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <script>
 'use strict';
-const APP_VERSAO='0.8c'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.8d'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -549,12 +553,14 @@ const DIN='Dinheiro';
 
 /* ================= armazenamento: browser + conta (Supabase) ================= */
 const KEY='financas_v1';
-function fresh(){return {refSo:{},ver:2,mov:[],imports:[],rend:[],seq:0,cats:null,regras:null,pessoas:[],prev:{},del:[],delM:[],rep:{},updatedAt:0,syncedAt:0,remoteAt:'',owner:''}}
+function fresh(){return {refSo:{},esp:null,ver:2,mov:[],imports:[],rend:[],seq:0,cats:null,regras:null,pessoas:[],prev:{},del:[],delM:[],rep:{},updatedAt:0,syncedAt:0,remoteAt:'',owner:''}}
 function normaliza(d){d={...fresh(),...d};
   if(!Array.isArray(d.mov))d.mov=[];if(!Array.isArray(d.imports))d.imports=[];if(!Array.isArray(d.del))d.del=[];if(!Array.isArray(d.delM))d.delM=[];if(!Array.isArray(d.delImp))d.delImp=[];if(!d.rep||typeof d.rep!=='object')d.rep={};
   if(!d.cats)d.cats=CATS_BASE.map(([n,r])=>({id:uid('c'),nome:n,refs:r.slice()}));
   if(!d.regras)d.regras=REGRAS_BASE.map(novaRegraBase);
   if(!d.pessoas)d.pessoas=[];if(!d.prev)d.prev={};if(!Array.isArray(d.rend))d.rend=[];if(!d.refSo||typeof d.refSo!=='object')d.refSo={};
+  if(!Array.isArray(d.esp)){d.esp=[{id:'so',nome:'Só este movimento',tipo:'para',refs:Object.keys(d.refSo).filter(k=>d.refSo[k])},
+    {id:'transf',nome:'Transferências',tipo:'de',refs:['Por tratar›Transferência','Por tratar›Transferência rec','Por tratar›Transferência pag']}]} // v0.8d: regras especiais com nome
   if(!d.poupCat){if(!d.cats.some(c=>c.nome==='Poupanças')){const i=d.cats.findIndex(c=>c.nome==='Rendimentos');d.cats.splice(i<0?d.cats.length:i,0,{id:uid('c'),nome:'Poupanças',refs:['Fundo de emergência','Férias','Outros - Poupanças']})}d.poupCat=true}
   if(!d.rendCat){if(!d.cats.some(c=>c.nome==='Rendimentos'))d.cats.push({id:uid('c'),nome:'Rendimentos',refs:['Salário','Subsídio refeição','Subsídio Natal / Férias','Prémios','Reembolsos','Rendas','Outros - Rendimentos']});d.rendCat=true}
   {const rc=d.cats.find(c=>c.nome==='Rendimentos');if(rc&&!d.rendSNF){if(!rc.refs.includes('Subsídio Natal / Férias'))rc.refs.splice(2,0,'Subsídio Natal / Férias');d.rendSNF=true}}
@@ -622,7 +628,12 @@ function corresponde(r,m){
   if(r.modo==='palavra')return new RegExp('(^|[^a-z0-9])'+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'($|[^a-z0-9])').test(d);
   return d.includes(t);
 }
-const soMov=(c,r)=>!!(DB.refSo&&DB.refSo[c+'›'+r]);
+/* regras especiais: tipo 'para' = ao escolher a referência não pede regra (e as regras não a usam); tipo 'de' = ao mudar uma linha que tinha a referência não pede regra */
+const espL=()=>Array.isArray(DB.esp)?DB.esp:[];
+const soMov=(c,r)=>espL().some(x=>x.tipo==='para'&&x.refs.includes(c+'›'+r));
+const deEsp=(c,r)=>!!c&&espL().some(x=>x.tipo==='de'&&x.refs.includes(c+'›'+r));
+function espSo(){let x=espL().find(e=>e.id==='so')||espL().find(e=>e.tipo==='para');if(!x){x={id:'so',nome:'Só este movimento',tipo:'para',refs:[]};DB.esp=[x,...espL()]}return x}
+const ESP_DE=new Map(); // id do movimento → referência de origem (entre mudar a categoria e escolher a referência)
 const regraDe=m=>DB.regras.find(r=>!soMov(r.cat,r.ref)&&corresponde(r,m));
 function aplicaRegras(lista){let n=0;(lista||DB.mov).forEach(m=>{if(m.catSrc==='manual'||m.catSrc==='rend'||(m.partes&&m.partes.length))return;const r=regraDe(m);const c=r?r.cat:'',f=r?r.ref:'';
   if(m.cat!==c||m.ref!==f){m.cat=c;m.ref=f;n++}m.catSrc=r?'regra':''});return n}
@@ -1039,10 +1050,10 @@ function renderDesAno(norm_,fora,saiP,entP,prv,prvC){
 function moveArr(a,i,d){const j=i+d;if(j<0||j>=a.length)return false;[a[i],a[j]]=[a[j],a[i]];return true}
 function renomeiaCat(ci,novo){const c=DB.cats[ci];novo=novo.trim();if(!novo||novo===c.nome)return;if(DB.cats.some(x=>x.nome===novo)){toast('Já existe uma categoria com esse nome');return}
   const v=c.nome;DB.mov.forEach(m=>{if(m.cat===v)m.cat=novo});DB.regras.forEach(r=>{if(r.cat===v)r.cat=novo});
-  [DB.prev,DB.refSo].forEach(o=>Object.keys(o).forEach(k=>{if(k.startsWith(v+'›')){o[novo+k.slice(v.length)]=o[k];delete o[k]}}));c.nome=novo}
+  [DB.prev,DB.refSo].forEach(o=>Object.keys(o).forEach(k=>{if(k.startsWith(v+'›')){o[novo+k.slice(v.length)]=o[k];delete o[k]}}));espL().forEach(e=>{e.refs=e.refs.map(k=>k.startsWith(v+'›')?novo+k.slice(v.length):k)});c.nome=novo}
 function renomeiaRef(ci,ri,novo){const c=DB.cats[ci],v=c.refs[ri];novo=novo.trim();if(!novo||novo===v)return;if(c.refs.includes(novo)){toast('Já existe essa referência');return}
   DB.mov.forEach(m=>{if(m.cat===c.nome&&m.ref===v)m.ref=novo});DB.regras.forEach(r=>{if(r.cat===c.nome&&r.ref===v)r.ref=novo});
-  const k0=c.nome+'›'+v;[DB.prev,DB.refSo].forEach(o=>{if(k0 in o){o[c.nome+'›'+novo]=o[k0];delete o[k0]}});c.refs[ri]=novo}
+  const k0=c.nome+'›'+v;[DB.prev,DB.refSo].forEach(o=>{if(k0 in o){o[c.nome+'›'+novo]=o[k0];delete o[k0]}});espL().forEach(e=>{e.refs=e.refs.map(k=>k===k0?c.nome+'›'+novo:k)});c.refs[ri]=novo}
 
 /* ================= regras: editor ================= */
 function renderRegras(){
@@ -1072,15 +1083,20 @@ function renderPessoas(){
   $('#pesList').innerHTML=DB.pessoas.length?`<table class="t"><thead><tr><th>A descrição contém</th><th>Quem é</th><th class="num">Mov.</th><th></th></tr></thead><tbody>${DB.pessoas.map((p,i)=>!pOk(p.match,p.pessoa)?'':`<tr data-pi="${i}"><td><input class="ed" data-pf="match" value="${esc(p.match)}" style="width:200px;border-color:var(--bd)"></td><td><input class="ed" list="dlQuem" data-pf="pessoa" value="${esc(p.pessoa)}" style="width:150px;border-color:var(--bd)"></td><td class="num">${DB.mov.filter(m=>p.match&&norm(m.desc).includes(norm(p.match))).length}</td><td><button class="btn ic sm" data-pdel="${i}" title="Apagar">🗑</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Ainda não identificou ninguém.</div>';
 }
 $('#pesQ').addEventListener('input',renderPessoas);
-function renderEsp(){const q=norm($('#espQ').value),ks=Object.keys(DB.refSo||{}).filter(k=>DB.refSo[k]).sort();
-  const c=$('#espC').value;$('#espC').innerHTML=catOpts(c);$('#espR').innerHTML=refOpts($('#espC').value,$('#espR').value);
-  const l=ks.filter(k=>!q||norm(k).includes(q));
-  $('#espList').innerHTML=l.length?`<table class="t"><thead><tr><th>Categoria</th><th>Referência</th><th class="num">Movimentos</th><th></th></tr></thead><tbody>${l.map(k=>{const [ca,r]=k.split('›');return `<tr><td>📌 ${esc(ca)}</td><td>${esc(r)}</td><td class="num">${expande(DB.mov).filter(m=>m.cat===ca&&m.ref===r).length}</td><td><button class="btn ic sm" type="button" data-espdel="${esc(k)}" title="Tirar (volta a sugerir regras)">✕</button></td></tr>`}).join('')}</tbody></table>`
-    :`<div class="empty"><b>${ks.length?'Nada encontrado':'Sem regras especiais'}</b>Escolha a categoria e a referência acima e carregue em ＋ Adicionar.</div>`}
-$('#espQ').addEventListener('input',renderEsp);
-$('#espC').addEventListener('change',()=>{$('#espR').innerHTML=refOpts($('#espC').value,'')});
-$('#espAdd').addEventListener('click',()=>{const c=$('#espC').value,r=$('#espR').value;if(!c||!r){toast('Escolha a categoria e a referência');return}DB.refSo=DB.refSo||{};DB.refSo[c+'›'+r]=true;aplicaRegras();save();render();renderEsp();toast(`📌 ${c} › ${r}: só este movimento`)});
-document.addEventListener('click',e=>{const b=e.target.closest('[data-espdel]');if(!b)return;delete DB.refSo[b.dataset.espdel];aplicaRegras();save();render();renderEsp()});
+function renderEsp(){const n=k=>expande(DB.mov).filter(m=>m.cat+'›'+m.ref===k).length;
+  $('#espList').innerHTML=espL().length?espL().map((e,i)=>`<div class="espc" data-ei="${i}"><div class="esph"><input class="espn" data-en="${i}" value="${esc(e.nome)}" aria-label="Nome da regra"><select data-et="${i}" aria-label="Tipo"><option value="para"${e.tipo==='para'?' selected':''}>📌 Ao escolher estas referências</option><option value="de"${e.tipo==='de'?' selected':''}>↪ Ao mudar a partir destas referências</option></select><button class="btn ic sm" type="button" data-edel="${i}" title="Apagar esta regra especial">🗑</button></div>
+    <div class="espr">${e.refs.map(k=>`<span class="chip" title="${n(k)} movimento(s)">${esc(k.replace('›',' › '))} <small>${n(k)}</small><button type="button" data-erdel="${i}|${esc(k)}" aria-label="Tirar">✕</button></span>`).join('')||'<span class="note" style="margin:0">Sem referências.</span>'}</div>
+    <div class="espa"><select data-eac="${i}" aria-label="Categoria">${catOpts('')}</select><select data-ear="${i}" aria-label="Referência">${refOpts('','')}</select><button class="btn sm" type="button" data-eadd="${i}">＋ Adicionar referência</button></div></div>`).join('')
+    :'<div class="empty"><b>Sem regras especiais</b>Carregue em ＋ Nova regra especial.</div>'}
+$('#espNova').addEventListener('click',()=>{DB.esp=[...espL(),{id:uid('e'),nome:'Nova regra especial',tipo:'para',refs:[]}];save();renderEsp();const l=$$('#espList .espn');if(l.length){l[l.length-1].focus();l[l.length-1].select()}});
+$('#espList').addEventListener('change',e=>{const t=e.target,d=t.dataset;
+  if(d.en!=null){const x=espL()[+d.en];x.nome=t.value.trim()||x.nome;save();return}
+  if(d.et!=null){espL()[+d.et].tipo=t.value;aplicaRegras();save();render();renderEsp();return}
+  if(d.eac!=null){t.parentNode.querySelector('[data-ear]').innerHTML=refOpts(t.value,'')}});
+$('#espList').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(d.edel!=null){const x=espL()[+d.edel];if(!confirm(`Apagar a regra especial "${x.nome}"?`))return;DB.esp=espL().filter(y=>y!==x);aplicaRegras();save();render();renderEsp();return}
+  if(d.erdel){const [i,k]=[d.erdel.slice(0,d.erdel.indexOf('|')),d.erdel.slice(d.erdel.indexOf('|')+1)];const x=espL()[+i];x.refs=x.refs.filter(y=>y!==k);aplicaRegras();save();render();renderEsp();return}
+  if(d.eadd!=null){const w=b.parentNode,c=w.querySelector('[data-eac]').value,r=w.querySelector('[data-ear]').value;if(!c||!r){toast('Escolha a categoria e a referência');return}const x=espL()[+d.eadd],k=c+'›'+r;if(!x.refs.includes(k))x.refs.push(k);aplicaRegras();save();render();renderEsp()}});
 function pessoasMudaram(){aplicaPessoas();save();render();renderPessoas()}
 
 /* ================= criar regra a partir de um movimento ================= */
@@ -1467,9 +1483,9 @@ document.addEventListener('change',e=>{const el=e.target;
     const sa=$('#selAll'),n=$$('#extTable tr[data-id]').length;if(sa){sa.checked=SEL.size===n;sa.indeterminate=SEL.size>0&&SEL.size<n}bulkBar();return}
   const tr=el.closest('tr[data-id]');
   if(tr&&el.classList.contains('ed')){const m=DB.mov.find(x=>x.id===tr.dataset.id);if(!m)return;const f=el.dataset.f,v=el.value.trim();m.u=Date.now();
-    if(f==='cat'){m.cat=v;m.ref='';if(v){m.catSrc='manual'}else{m.catSrc='';aplicaRegras([m])}save();render();
-      const c=DB.cats.find(x=>x.nome===v);if(v&&c&&!c.refs.length)abreNovaRegra(m);return}
-    if(f==='ref'){m.ref=v;m.catSrc='manual';save();render();if(m.cat&&v&&!soMov(m.cat,v))abreNovaRegra(m);return}
+    if(f==='cat'){const deAntes=deEsp(m.cat,m.ref)||ESP_DE.has(m.id);if(deAntes)ESP_DE.set(m.id,1);else ESP_DE.delete(m.id);m.cat=v;m.ref='';if(v){m.catSrc='manual'}else{m.catSrc='';aplicaRegras([m])}save();render();
+      const c=DB.cats.find(x=>x.nome===v);if(v&&c&&!c.refs.length&&!deAntes)abreNovaRegra(m);return}
+    if(f==='ref'){const deAntes=deEsp(m.cat,m.ref)||ESP_DE.has(m.id);ESP_DE.delete(m.id);m.ref=v;m.catSrc='manual';save();render();if(m.cat&&v&&!soMov(m.cat,v)&&!deAntes)abreNovaRegra(m);return}
     if(f==='quem'){m.quem=v;m.quemMan=!!v;if(!v)aplicaPessoas([m])}
     else m[f]=v;
     save();clearTimeout(render.h);render.h=setTimeout(render,60);return}
@@ -1482,7 +1498,7 @@ document.addEventListener('change',e=>{const el=e.target;
   // despesas: nomes e previsto
   if(el.dataset.cn!=null){renomeiaCat(+el.dataset.cn,el.value);save();render();return}
   if(el.dataset.rn){const [ci,ri]=el.dataset.rn.split('|').map(Number);renomeiaRef(ci,ri,el.value);save();render();return}
-  if(el.dataset.rso){if(el.checked)DB.refSo[el.dataset.rso]=true;else delete DB.refSo[el.dataset.rso];aplicaRegras();save();render();return}
+  if(el.dataset.rso){const k=el.dataset.rso;if(el.checked){const x=espSo();if(!x.refs.includes(k))x.refs.push(k)}else espL().forEach(e=>{if(e.tipo==='para')e.refs=e.refs.filter(y=>y!==k)});aplicaRegras();save();render();return}
   if(el.dataset.pv){const v=num(el.value);if(v)DB.prev[el.dataset.pv]=v;else delete DB.prev[el.dataset.pv];save();render();return}
 });
 $('#rgQ').addEventListener('input',renderRegras);

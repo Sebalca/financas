@@ -38,7 +38,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   console.log('Despesas');
   t('D10','categorias fora das contas incluem Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças',await ev(()=>['Banco','Por tratar','Investimentos','Empresas','Rendimentos','Poupanças'].every(eFora)));
   t('D11','categoria Poupanças e Rendimentos existem',await ev(()=>['Poupanças','Rendimentos'].every(n=>DB.cats.some(c=>c.nome===n))));
-  await ev(()=>{DB.refSo['Lazer›Jogos']=true;aplicaRegras();render()});
+  await ev(()=>{espSo().refs.push('Lazer›Jogos');aplicaRegras();render()});
   t('D12','referência "Só este movimento" não é usada pelas regras',await ev(()=>!DB.mov.some(m=>m.ref==='Jogos'&&m.catSrc==='regra')));
   await go('des');await p.click('#perMode [data-m="ano"]');await p.waitForTimeout(200);
   t('D13','vista Ano tem Média/mês e duas tabelas',await ev(()=>document.querySelectorAll('#desCats table.des-ano').length===2&&/Média\/mês/.test(document.querySelector('#desCats').innerText)));
@@ -200,10 +200,18 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     SPOPEN.add(m.id);render();const tr=document.querySelector(`#extTable tr.parte[data-pid="${m.id}#0"]`);
     return {ok:mig&&th.includes('Descrição')&&!th.includes('Observações')&&m.partes[0].desc==='Descr A'&&m.partes[0].obs==='Nota X'&&/Descr A/.test(tr.textContent)&&tr.querySelector('[data-pobs]').value==='Nota X',th,p:m.partes[0]}});
   t('D75','linhas divididas: Descrição na janela Dividir, Observações na tabela (separadas)',z75.ok,z75);
-  t('D76','Regras especiais: aba na janela Regras para marcar referências "Só este movimento"',await ev(()=>{document.querySelector('#btRegras').click();document.querySelector('#mRegras [data-mtab="mEsp"]').click();const vis=!document.querySelector('#mEsp').hidden;
-    const c=document.querySelector('#espC');c.value='Por tratar';c.dispatchEvent(new Event('change'));const r=document.querySelector('#espR');r.value=[...r.options].find(o=>o.value)?.value;const k='Por tratar›'+r.value;document.querySelector('#espAdd').click();
-    const ok1=soMov('Por tratar',r.value)&&[...document.querySelectorAll('#espList tbody tr')].some(tr=>tr.textContent.includes(r.value));document.querySelector(`#espList [data-espdel="${CSS.escape(k)}"]`)?.click()||document.querySelector('#espList [data-espdel]').click();
-    const ok2=!soMov('Por tratar',r.value);document.querySelector('#mEsp').hidden=true;return vis&&ok1&&ok2}));
+  t('D76','Regras especiais com nome e tipo; "Só este movimento" e "Transferências" já criadas; adicionar/tirar referências',await ev(()=>{document.querySelector('#btRegras').click();document.querySelector('#mRegras [data-mtab="mEsp"]').click();const vis=!document.querySelector('#mEsp').hidden;
+    const nomes=[...document.querySelectorAll('#espList .espn')].map(x=>x.value);const tr=DB.esp.find(e=>e.nome==='Transferências');
+    const w=document.querySelector('#espList .espc'),c=w.querySelector('[data-eac]');c.value='Lazer';c.dispatchEvent(new Event('change',{bubbles:true}));const r=w.querySelector('[data-ear]');r.value='Jogos';w.querySelector('[data-eadd]').click();
+    const ok1=soMov('Lazer','Jogos');document.querySelector('#espList .espc [data-erdel$="Lazer›Jogos"]').click();const ok2=!soMov('Lazer','Jogos');
+    const n0=DB.esp.length;document.querySelector('#espNova').click();const ok3=DB.esp.length===n0+1;DB.esp.pop();document.querySelector('#mEsp').hidden=true;
+    return vis&&nomes.includes('Só este movimento')&&nomes.includes('Transferências')&&tr.tipo==='de'&&tr.refs.length===3&&ok1&&ok2&&ok3}));
+  t('D77','linhas com Transferência / rec / pag: ao mudar a categoria ou referência não pergunta se quer criar regra',await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();
+    const m=DB.mov.find(x=>!x.man&&!(x.partes&&x.partes.length));m.cat='Por tratar';m.ref='Transferência rec';render();
+    const tr=()=>document.querySelector(`#extTable tr[data-id="${m.id}"]`);const sc=tr().querySelector('[data-f="cat"]');sc.value='Casa';sc.dispatchEvent(new Event('change',{bubbles:true}));
+    const sr=tr().querySelector('[data-f="ref"]');sr.value='Água';sr.dispatchEvent(new Event('change',{bubbles:true}));const semPergunta=document.querySelector('#mNovaRegra').hidden;
+    const sr2=tr().querySelector('[data-f="ref"]');sr2.value='Internet';sr2.dispatchEvent(new Event('change',{bubbles:true}));const pergunta=!document.querySelector('#mNovaRegra').hidden;document.querySelector('#mNovaRegra').hidden=true;
+    return semPergunta&&pergunta&&m.cat==='Casa'&&m.catSrc==='manual'}));
 
   console.log('Início');
   await go('home');

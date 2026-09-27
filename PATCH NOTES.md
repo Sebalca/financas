@@ -54,7 +54,8 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D51 A janela Pessoas tem uma caixa de pesquisa fixa no topo que filtra as duas listas.
 
 - D74 Filtro Entradas/Saídas com caixa branca e destacado a azul quando está ativo (como os outros filtros).
-- D76 Janela Regras com a aba "⭐ Regras especiais": lista das referências "📌 Só este movimento" (não pede para criar regra e as regras não as usam), com pesquisa, ＋ Adicionar e ✕ para tirar. É o mesmo que a opção do modo Editar das Despesas.
+- D76 Janela Regras com a aba "⭐ Regras especiais": lista de regras com **nome** (editável), **tipo** e referências; ＋ Nova regra especial, 🗑 apagar, ＋/✕ referências. Tipos: **📌 Ao escolher estas referências** (não pede para criar regra e as regras automáticas não as usam — é o mesmo que o 📌 do modo Editar das Despesas) e **↪ Ao mudar a partir destas referências** (ao mudar a categoria/referência de uma linha que tinha uma delas, não pede para criar regra; a linha fica classificada à mão). (atualizada v0.8d)
+- D77 Regras especiais criadas por defeito: "Só este movimento" (📌, com as referências já marcadas) e "Transferências" (↪, Por tratar › Transferência / Transferência rec / Transferência pag).
 
 **Despesas**
 - D10 Fora das contas (tabela de baixo): **Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças**.
@@ -109,6 +110,9 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8d — 27/09/2026
+- Regras especiais passam a ter nome e tipo (lista de regras). Criadas: "Só este movimento" (ao escolher) e "Transferências" (ao mudar a partir de Transferência / rec / pag não pede regra).
 
 ### v0.8c — 27/09/2026
 - Barra de cima: fica só um "Finanças pessoais"; o período, o estado de gravação e o novo botão **Hoje** passam para a barra (só no separador Finanças).
