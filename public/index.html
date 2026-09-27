@@ -167,7 +167,13 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <p><b>Como importo um extrato?</b><br>Finanças → Extratos → arraste o CSV da CGD (ou o Excel/CSV do cartão refeição) para a caixa de importar.</p>
       <p><b>Como categorizo mais depressa?</b><br>Ao escolher categoria e referência num movimento, o site propõe criar uma regra para os semelhantes. No Início, em "Por categorizar", use ⚡.</p>
       <p><b>Os meus dados estão seguros?</b><br>Sem sessão ficam só neste dispositivo; com sessão ficam na sua conta e só você lhes acede.</p></section>
-    <section data-s="sugestao" hidden><h3>Enviar sugestão</h3><p>Em breve poderá enviar ideias e problemas diretamente daqui.</p><textarea rows="5" placeholder="Escreva a sua sugestão…" disabled></textarea><div class="grp" style="margin-top:8px"><button class="opt" type="button" disabled>Enviar (em breve)</button></div></section>
+    <section data-s="sugestao" hidden><h3>Enviar sugestão</h3><p>Ideias, problemas ou dúvidas — seguem diretamente para quem desenvolve o site.</p>
+      <div class="grp" id="sgTipo"><button class="opt on" data-v="Ideia" type="button">💡 Ideia</button><button class="opt" data-v="Problema" type="button">🐞 Problema</button><button class="opt" data-v="Outro" type="button">💬 Outro</button></div>
+      <textarea id="sgTxt" rows="6" maxlength="4000" placeholder="Escreva a sua sugestão…" style="margin-top:8px"></textarea>
+      <input id="sgSite" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px" placeholder="site">
+      <label class="sw2" id="sgMailW" hidden><input type="checkbox" id="sgMail"> <span>Incluir o meu email (<b id="sgMailTxt"></b>) para poderem responder</span></label>
+      <p class="note2" style="margin:6px 0">Não escreva dados bancários nem outros dados pessoais. É enviado também o separador aberto e a versão do site.</p>
+      <div class="grp" style="margin-top:8px"><button class="opt" id="sgEnviar" type="button">Enviar</button><span id="sgMsg" class="note2" style="align-self:center"></span></div></section>
   </div></div></div></div>
 
 <div class="mod" id="mPlano" hidden><div class="box big" role="dialog" aria-label="Plano">
@@ -374,6 +380,24 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
   document.getElementById('frames').addEventListener('load',()=>setTimeout(pinta,50),true);
   setTimeout(pinta,300);
   return {pinta}})();
+</script>
+<script>
+/* sugestões → Google Sheet (Apps Script, ver tools/sugestoes-apps-script.gs). O URL só permite acrescentar linhas; não é uma credencial. */
+(function(){const SUG_URL='';const $=id=>document.getElementById(id);let tipo='Ideia';
+  const pinta=()=>{let u=null;try{u=window.financasUser||null}catch(e){}const em=u&&u.email;$('sgMailW').hidden=!em;if(em)$('sgMailTxt').textContent=em;
+    if(!SUG_URL){$('sgEnviar').disabled=true;$('sgMsg').textContent='Envio ainda não configurado.'}};
+  $('sgTipo').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b)return;tipo=b.dataset.v;[...$('sgTipo').children].forEach(x=>x.classList.toggle('on',x===b))});
+  document.querySelectorAll('[data-set="sugestao"],#setNav [data-s="sugestao"]').forEach(b=>b.addEventListener('click',()=>setTimeout(pinta,0)));
+  $('sgEnviar').addEventListener('click',async()=>{const t=$('sgTxt').value.trim();if(t.length<3){$('sgMsg').textContent='Escreva a sugestão primeiro.';return}if(!SUG_URL)return;
+    let u=null;try{u=window.financasUser||null}catch(e){}
+    const sep=(document.querySelector('#tabs a.on')||{}).textContent||'';
+    const d={tipo,texto:t,email:$('sgMail').checked&&u?u.email:'',separador:sep,versao:(()=>{try{return document.querySelector('iframe[data-id="financas"]').contentWindow.FP_VERSAO||''}catch(e){return ''}})(),browser:navigator.userAgent.slice(0,200),site:$('sgSite').value};
+    $('sgEnviar').disabled=true;$('sgMsg').textContent='A enviar…';
+    try{const r=await fetch(SUG_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)});let j={ok:r.ok};try{j=await r.json()}catch(e){}
+      if(!j.ok)throw new Error(j.erro||'Erro');$('sgTxt').value='';$('sgMail').checked=false;$('sgMsg').textContent='✓ Obrigado! Sugestão enviada.'}
+    catch(e){try{await fetch(SUG_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)});$('sgTxt').value='';$('sgMsg').textContent='✓ Enviada.'}catch(x){$('sgMsg').textContent='Não foi possível enviar. Tente mais tarde.'}}
+    finally{$('sgEnviar').disabled=false}});
+  pinta()})();
 </script>
 </body>
 </html>

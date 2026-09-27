@@ -37,6 +37,7 @@ public/
 supabase/001_financas_dados.sql   tabela e regras de acesso (RLS)
 tests/regressao.cjs               testes automáticos (Playwright)
 tests/fixtures/                   extratos FICTÍCIOS usados nos testes
+tools/sugestoes-apps-script.gs    código do Google Apps Script que recebe as sugestões (Google Sheet)
 CLAUDE.md                         processo obrigatório para cada alteração
 PATCH NOTES.md                    decisões fixas + histórico de versões
 ROADMAP.md                        plano de versões

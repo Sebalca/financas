@@ -213,6 +213,10 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const sr2=tr().querySelector('[data-f="ref"]');sr2.value='Internet';sr2.dispatchEvent(new Event('change',{bubbles:true}));const pergunta=!document.querySelector('#mNovaRegra').hidden;document.querySelector('#mNovaRegra').hidden=true;
     return semPergunta&&pergunta&&m.cat==='Casa'&&m.catSrc==='manual'}));
 
+  t('D78','reembolso ligado mostra na Descrição o nome da despesa original (e pesquisa por ele)',await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();const m=DB.mov.find(x=>x.id==='mRb');const o=mapaChaves().get(m.reemb);
+    const tr=document.querySelector('#extTable tr[data-id="mRb"]');const ok1=!!tr&&tr.querySelector('td.desc').textContent.includes(nomeMov(o))&&/DEVOLUCAO AMIGO/.test(tr.querySelector('td.desc').title);
+    document.querySelector('#fQ').value=o.desc.split(' ')[0];render();const ok2=!!document.querySelector('#extTable tr[data-id="mRb"]');limpaFiltros();render();return ok1&&ok2}));
+
   console.log('Início');
   await go('home');
   t('D34','Início não conta categorias fora das contas, exceto entradas de Rendimentos',await ev(()=>!contaInicio({valor:-10,cat:'Por tratar',ref:'x'})&&!contaInicio({valor:10,cat:'Por tratar'})&&!contaInicio({valor:10,cat:'Banco',ref:'x'})&&!contaInicio({valor:-10,cat:'Investimentos'})&&contaInicio({valor:-10,cat:'Alimentação'})&&contaInicio({valor:10,cat:'Rendimentos'})&&!contaInicio({valor:-10,cat:'Rendimentos'})&&contaInicio({valor:-10,cat:''})));
@@ -256,6 +260,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const sync=document.querySelector('#pSync').textContent.length>0;
     location.hash='#simulador';setTimeout(()=>{const esc=document.querySelector('#fPer').hidden;location.hash='#financas';ok({ok:vis&&topHidden&&lbl&&ano&&hj&&cal&&jun&&sync&&esc,vis,topHidden,lbl,ano,hj,cal,jun,sync,esc})},300)}catch(e){ok({ok:false,err:String(e)})}},600)}));
   t('D73','período (Mês/Ano/Intervalo, data, calendário, Guardado) e botão "Hoje" na barra de cima; título das Finanças sai; escondidos noutros separadores',z73.ok,z73);
+  t('D79','Enviar sugestão: formulário (tipo, texto, email opcional, armadilha anti-robôs)',await ev(()=>['#sgTipo','#sgTxt','#sgSite','#sgMail','#sgEnviar'].every(q=>document.querySelector(q))));
   t('D43','onboarding abre e tem vários passos',await ev(()=>{FPOnb.abre();const ok=!document.querySelector('#mOnb').hidden&&document.querySelectorAll('#onbDots i').length>=5;document.querySelector('#mOnb').hidden=true;return ok}));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);

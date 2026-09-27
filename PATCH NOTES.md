@@ -57,6 +57,8 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D76 Janela Regras com a aba "⭐ Regras especiais": lista de regras com **nome** (editável), **tipo** e referências; ＋ Nova regra especial, 🗑 apagar, ＋/✕ referências. Tipos: **📌 Ao escolher estas referências** (não pede para criar regra e as regras automáticas não as usam — é o mesmo que o 📌 do modo Editar das Despesas) e **↪ Ao mudar a partir destas referências** (ao mudar a categoria/referência de uma linha que tinha uma delas, não pede para criar regra; a linha fica classificada à mão). (atualizada v0.8d)
 - D77 Regras especiais criadas por defeito: "Só este movimento" (📌, com as referências já marcadas) e "Transferências" (↪, Por tratar › Transferência / Transferência rec / Transferência pag).
 
+- D79 Sugestões (Definições › Enviar sugestão): tipo (Ideia/Problema/Outro), texto, email só se o utilizador marcar; vão para um Google Sheet através de uma Aplicação Web do Apps Script (`tools/sugestoes-apps-script.gs`). O URL /exec só permite acrescentar linhas (não é credencial); campo-armadilha anti-robôs e limite por minuto.
+
 **Despesas**
 - D10 Fora das contas (tabela de baixo): **Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças**.
 - D06 Trocas entre contas, levantamentos, depósitos e Poupanças não contam como entrada/saída.
@@ -79,6 +81,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D50 O reembolso (↩) pode ligar a uma linha de um movimento dividido; a ligação abre o movimento com as linhas visíveis.
 - D47 A pesquisa dos Extratos aceita datas (dd/mm, dd/mm/aaaa, mm/aaaa) e procura na data mov. ou data valor, em todos os períodos.
 - D19 Movimento marcado como reembolso mostra só "↩ Reembolso de …" nos Detalhes.
+- D78 Um reembolso ligado mostra na Descrição "↩ nome da despesa original" (a descrição do extrato fica no tooltip) e a pesquisa encontra-o pelos dois nomes. (v0.8e)
 - D20b Janela do reembolso: mostra em destaque descrição, valor, data e quem; por defeito as saídas (todas as categorias) do próprio dia ou do anterior mais próximo, com valor maior que o reembolso; "Mostrar todas" com pesquisa; despesa sem categoria → escolher categoria/referência na hora (aplica-se às duas).
 - D17 Despesas: **Saídas** (antes "Real") = saídas − reembolsos; nas linhas chama-se **Total** (colunas Entradas e Saídas ao lado). (atualizada v0.7s)
 - D61 Despesas, vista Mês: categorias abertas por defeito (lembra as que se fecham); colunas Referência | Previsto/mês | Média mensal (total dos últimos 12 meses ÷ meses com movimentos) | Entradas | Saídas | Total | Diferença; caixas como no Início (explicação só ao passar o rato); linhas mais baixas.
@@ -110,6 +113,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8e — 27/09/2026
+- Extratos: reembolsos ligados mostram o nome da despesa original na Descrição.
+- Sugestões: formulário ativo em Definições › Enviar sugestão, pronto para enviar para um Google Sheet (falta o URL do Apps Script).
 
 ### v0.8d — 27/09/2026
 - Regras especiais passam a ter nome e tipo (lista de regras). Criadas: "Só este movimento" (ao escolher) e "Transferências" (ao mudar a partir de Transferência / rec / pag não pede regra).

@@ -480,7 +480,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <script>
 'use strict';
-const APP_VERSAO='0.8d'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.8e'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -936,10 +936,10 @@ function render(){
 
   /* ---- Extratos ---- */
   $('#fTipo').classList.toggle('on',!!$('#fTipo').value);
-  const q=norm($('#fQ').value),ft=$('#fTipo').value,frf=$('#fRef').vals,fc=$('#fCat').vals,fq=$('#fQuem').vals,fb=$('#fBanco').vals,qd=dataQ($('#fQ').value);
+  const RKq=mapaChaves(),q=norm($('#fQ').value),ft=$('#fTipo').value,frf=$('#fRef').vals,fc=$('#fCat').vals,fq=$('#fQuem').vals,fb=$('#fBanco').vals,qd=dataQ($('#fQ').value);
   const okC=c=>fc.includes(c),okR=(c,r)=>frf.includes(c+'›'+r);
   const rows=(l=>ORDEM==='asc'?l.reverse():l)(ordena(qd?all:per)).filter(m=>(!fb.length||fb.includes(m.banco))&&(!fq.length||(fq.includes('__none')&&!m.quem)||(!!m.quem&&fq.includes(m.quem)))&&(!fc.length||(fc.includes('__unc')&&isUnc(m))||(m.partes&&m.partes.length?m.partes.some(p=>okC(p.cat)):okC(m.cat)))&&(!frf.length||(m.partes&&m.partes.length?m.partes.some(p=>okR(p.cat,p.ref)):okR(m.cat,m.ref)))&&(!ft||(ft==='e'?m.valor>0:m.valor<0))
-    &&(qd?(qd(m.dm)||qd(m.dv)):(!q||norm([m.desc,m.ref,m.det,m.cat,m.obs,m.quem].join(' ')).includes(q))));
+    &&(qd?(qd(m.dm)||qd(m.dv)):(!q||norm([m.desc,m.ref,m.det,m.cat,m.obs,m.quem,m.reemb&&RKq.get(m.reemb)?nomeMov(RKq.get(m.reemb)):''].join(' ')).includes(q))));
   $$('[data-cnt="ext"]').forEach(x=>x.textContent=unc.length||'');
   $('#extSub').textContent=all.length?qd?`${rows.length} movimento(s) com a data “${$('#fQ').value.trim()}” (todos os períodos) · ${unc.length} por categorizar · ${all.length} no total`:`${rows.length} de ${per.length} no período · ${unc.length} por categorizar · ${all.length} no total`:'';
   const rc=rows.filter(m=>!isInterna(m)),re=rc.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0),rs=-rc.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0);
@@ -947,7 +947,7 @@ function render(){
   $('#extHead').innerHTML=rows.length?`<table class="t tfix">${extCols()}<thead><tr>${EXT_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead></table>`:'';
   $('#extTable').innerHTML=rows.length?`<table class="t tfix">${extCols()}<tbody>${rows.map(m=>`<tr data-id="${m.id}" class="${m.man?'man':''}${SEL.has(m.id)?' selr':''}">
     <td class="ck"><input type="checkbox" class="sel"${SEL.has(m.id)?' checked':''} aria-label="Selecionar"></td>
-    <td>${fmtD(m.dm)}</td><td>${fmtD(m.dv)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td class="num">${m.man?(DS.has(m.id)?E(DS.get(m.id)):'—'):m.saldo==null?'—':E(m.saldo)}</td>
+    <td>${fmtD(m.dm)}</td><td>${fmtD(m.dv)}</td>${(o=>o?`<td class="desc" title="Reembolso de: ${esc(nomeMov(o))}\nDescrição no extrato: ${esc(m.desc)}">↩ ${esc(nomeMov(o))}</td>`:`<td class="desc">${esc(m.desc)}</td>`)(m.reemb&&RK.get(m.reemb))}<td class="num">${val(m.valor)}</td><td class="num">${m.man?(DS.has(m.id)?E(DS.get(m.id)):'—'):m.saldo==null?'—':E(m.saldo)}</td>
     ${m.partes&&m.partes.length?`<td colspan="2"><button type="button" class="sptog" data-sptog="${m.id}" title="${SPOPEN.has(m.id)?'Esconder':'Mostrar'} as linhas" aria-expanded="${SPOPEN.has(m.id)}">${SPOPEN.has(m.id)?'▾':'▸'}</button><button class="btn sm${isUnc(m)?' unc':''}" data-split="${m.id}" title="Editar a divisão">✂ Dividido em ${m.partes.length}</button></td>`:`<td><select class="ed${m.cat?'':' unc'}" data-f="cat">${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':m.catSrc==='rend'?'<span class="auto" title="Atribuído pela ligação a um rendimento">🔗</span>':''}</td>
     <td><select class="ed${m.cat&&!m.ref?' unc':''}" data-f="ref"${m.cat?'':' disabled'}>${refOpts(m.cat,m.ref)}</select></td>`}
     <td class="muted" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:(m.reemb&&RK.get(m.reemb)?`<span class="lk ok" data-golk="${esc(m.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(m.reemb)))}</span>`:esc(m.det)))(LG.get(chave(m)))}</td>
