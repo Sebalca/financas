@@ -47,7 +47,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
 
   console.log('Rendimentos');
   await ev(()=>{P.d=new Date(2026,8,1);perLabel()});await go('ren');
-  await p.click('[data-radd2]');await p.click('#rdTipo [data-t="pon"]');await p.fill('#rdEnt','DEMO EMPRESA');await p.fill('#rdDesc','Teste');await p.fill('#rdData','2026-09-14');await p.fill('#rdBruto','850');await p.click('#rdOk');await p.waitForTimeout(200);
+  await p.click('[data-dd="ddRend"]');await p.click('[data-radd2]');await p.click('#rdTipo [data-t="pon"]');await p.fill('#rdEnt','DEMO EMPRESA');await p.fill('#rdDesc','Teste');await p.fill('#rdData','2026-09-14');await p.fill('#rdBruto','850');await p.click('#rdOk');await p.waitForTimeout(200);
   const lig=await ev(()=>{const m=DB.mov.find(x=>x.desc.startsWith('TRF DEMO'));return [m.cat,m.catSrc]});
   t('D20','rendimento liga-se sozinho ao movimento com o mesmo valor → categoria Rendimentos',lig[0]==='Rendimentos'&&lig[1]==='rend',lig);
   t('D21','um só botão "Adicionar rendimento"',await ev(()=>document.querySelectorAll('[data-radd2]').length===1));
@@ -126,7 +126,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D55b','botões da linha pela ordem ↩ ✂ ✏ 🗑, encostados à direita',await ev(()=>{const tr=[...document.querySelectorAll('#extTable tbody tr[data-id]')].find(r=>r.querySelector('[data-edit]'))||document.querySelector('#extTable tbody tr[data-id]');const sl=[...tr.querySelectorAll('td.acts .sl')];const td=tr.querySelector('td.acts');return sl.length===4&&(!sl[1].firstChild||sl[1].querySelector('[data-split]'))&&sl[3].querySelector('[data-del]')&&getComputedStyle(td).textAlign==='right'}));
   t('D56','filtros: tipo (entradas/saídas) logo a seguir à pesquisa e banco no fim',await ev(()=>{const ids=[...document.querySelectorAll('#extBar .filt select,#extBar .filt .ms')].map(x=>x.id);return ids[0]==='fTipo'&&ids[ids.length-1]==='fBanco'}));
   t('D57a','um só botão "Regras e pessoas" com duas abas',await ev(()=>{if(document.querySelector('#btPessoas'))return false;document.querySelector('#btRegras').click();const a=!document.querySelector('#mRegras').hidden;document.querySelector('#mRegras [data-mtab="mPessoas"]').click();const b=document.querySelector('#mRegras').hidden&&!document.querySelector('#mPessoas').hidden;document.querySelector('#mPessoas [data-mtab="mRegras"]').click();const c=!document.querySelector('#mRegras').hidden;document.querySelector('#mRegras').hidden=true;return a&&b&&c}));
-  t('D57b','um só botão Importar/Exportar que abre a janela de escolha',await ev(()=>{if(document.querySelector('#btExp')||document.querySelector('#btImps'))return false;document.querySelector('#btIE').click();const a=!document.querySelector('#mIE').hidden;document.querySelector('#ieImps').click();const b=document.querySelector('#mIE').hidden&&!document.querySelector('#mImps').hidden;document.querySelector('#mImps').hidden=true;return a&&b}));
+  t('D57b','um só botão Importar/Exportar com menu por baixo (Exportar | Importações)',await ev(()=>{if(document.querySelector('#btExp')||document.querySelector('#btImps'))return false;document.querySelector('#btIE').click();const a=!document.querySelector('#ddIE').hidden;document.querySelector('#ieImps').click();const b=document.querySelector('#ddIE').hidden&&!document.querySelector('#mImps').hidden;document.querySelector('#mImps').hidden=true;return a&&b}));
   await ev(()=>{document.querySelector('#fQ').value='';render()});
   const d60=await ev(()=>{const m=DB.mov.find(x=>x.desc.startsWith('CONTINENTE')),k=chave(m),n=DB.mov.length;apaga([m]);render();
     document.querySelector('#btMov').click();document.querySelector('#mMov [data-mtab="mElim"]').click();const lst=!document.querySelector('#mElim').hidden&&!!document.querySelector(`#elimList [data-repor]`);
@@ -152,6 +152,17 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const ok=ids.length>0&&ids.every(m=>(m.partes&&m.partes.length?m.partes.some(p=>['Alimentação','Lazer'].includes(p.cat)):['Alimentação','Lazer'].includes(m.cat)))&&ids.some(m=>m.cat==='Alimentação')&&f.classList.contains('on');
     f.querySelector('.msb').click();const cb=f.querySelectorAll('.msl input[type=checkbox]').length;f.querySelector('.msb').click();limpaFiltros();render();return {ok:ok&&cb>2&&!f.value,n:ids.length,cb}});
   t('D63','filtros Categoria/Referência/Quem é/Banco com multiseleção',x63.ok,x63);
+
+  console.log('v0.7t');
+  const y64=await ev(()=>{P.m='mes';P.d=new Date(2026,8,1);perLabel();
+    const m={id:'mR64',k:'r64',man:true,banco:'Dinheiro',conta:'',dm:'2026-09-25',dv:'2026-09-25',desc:'PAGAMENTO XPTO',valor:123,saldo:null,cat:'Rendimentos',ref:'Prémios',catSrc:'manual',det:'',obs:'',quem:'',ord:0};DB.mov.push(m);render();
+    const cards=[...document.querySelectorAll('#tab-home .grid4 > .card')].length,li=[...document.querySelectorAll('#homeRend li')].map(x=>x.textContent),lt=[...document.querySelectorAll('#homeRendTipo li')].map(x=>x.textContent);
+    const semRec=li.some(t=>/por confirmar/.test(t));
+    DB.rend.push({id:'rT',tipo:'pon',data:m.dm,entidade:'Empresa Teste',desc:'teste',liquido:m.valor,bruto:m.valor,lk:{t:chave(m)},lkMan:{t:true}});render();
+    const li2=[...document.querySelectorAll('#homeRend li')].map(x=>x.textContent);DB.rend=DB.rend.filter(r=>r.id!=='rT');DB.mov=DB.mov.filter(x=>x.id!=='mR64');render();
+    return {ok:cards===4&&semRec&&lt.some(t=>/Prémios/.test(t))&&li2.some(t=>/Empresa Teste/.test(t)&&/✓/.test(t)),cards,li,lt,li2}});
+  t('D64','Início: Rendimentos do extrato por entidade (✓ = com recibo) e caixa Rendimentos por tipo — 4 caixas na linha',y64.ok,y64);
+  t('D65','Rendimentos: caixas como no Início e "＋ Adicionar rendimento" no Resumo anual com menu (recibo PDF | manual)',await ev(()=>{const k=document.querySelector('#renKpis .kpi');const b=document.querySelector('#renAno').closest('.card').querySelector('[data-dd="ddRend"]');if(!b||document.querySelector('#renKpis .kpi .s'))return false;b.click();const m=document.querySelector('#ddRend');const ok=!m.hidden&&m.querySelectorAll('button')[0].id==='btRec'&&m.querySelectorAll('button')[1].dataset.radd2==='rec'&&getComputedStyle(k).textAlign==='center';document.body.click();return ok&&m.hidden}));
 
   console.log('Início');
   await go('home');

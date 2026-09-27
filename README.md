@@ -93,7 +93,7 @@ No topo: **Mês / Ano / Intervalo**, setas ‹ › e um **calendário** ao clica
 - **⚙ Regras e pessoas** (uma janela, duas abas):
   - **Regras**: "contém", "tem a palavra" ou "começa por", para entradas, saídas ou ambas. Ganha a primeira regra que corresponder (ordem ↑↓). Não mexem nos movimentos categorizados à mão nem nos divididos.
   - **Pessoas**: identificadores encontrados nas descrições (TFI, TRF, MB WAY…) associados a um nome, que preenche "Quem é". Tem uma pesquisa fixa.
-- **⇅ Importar/Exportar**:
+- **⇅ Importar/Exportar** (menu por baixo do botão):
   - exportar em CSV os movimentos do período;
   - ver as importações feitas (e remover uma).
 
@@ -106,7 +106,7 @@ No topo: **Mês / Ano / Intervalo**, setas ‹ › e um **calendário** ao clica
 - Gráfico **entradas e saídas por mês** (sempre 12 meses; opção Detalhado por categoria/entidade).
 - **Saldo por banco**, incluindo "Poupanças – referência".
 - **Despesas por categoria** e **por referência**.
-- **Rendimentos**, por entidade ou tipo.
+- **Rendimentos** (por entidade) e **Rendimentos por tipo** (referência), a partir das entradas do extrato; o que está ligado a um recibo aparece com ✓, o resto "por confirmar".
 - **Por categorizar**: as descrições mais frequentes, com ⚡ para criar uma regra.
 
 ### Rendimentos

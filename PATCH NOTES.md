@@ -56,7 +56,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D63 Filtros Categoria, Referência, Quem é e Banco com multiseleção (caixas de escolha, largura fixa); o Tipo continua simples.
 - D55 Os botões do fim da linha do extrato têm lugares fixos, pela ordem ↩ reembolso, ✂ dividir, ✏ editar, 🗑 apagar, encostados à direita; quando um não se aplica, o lugar fica vazio. (atualizada v0.7r — antes ↩ ✏ ✂ 🗑)
 - D56 Filtros dos Extratos: pesquisa, Tipo (entradas/saídas), Categoria, Referência, Quem é, Banco.
-- D57 Um só botão "⚙ Regras e pessoas" (janela com as abas Regras | Pessoas) e um só "⇅ Importar/Exportar" (janela com Exportar movimentos | Importações feitas).
+- D57 Um só botão "⚙ Regras e pessoas" (janela com as abas Regras | Pessoas) e um só "⇅ Importar/Exportar" (menu por baixo do botão: Exportar movimentos | Importações feitas). (atualizada v0.7t)
 - D58 Movimentos apagados: a chave fica para sempre (não voltam a entrar ao reimportar); os dados completos dos últimos 50 ficam em ＋ Movimento › Movimentos eliminados, onde se podem repor. Exceção: os de uma importação removida (ou "Apagar todos") podem ser reimportados.
 - D59 As janelas fecham ao clicar fora, mas não quando se carrega dentro e se larga fora (em todas as páginas).
 - D60 Dividir: a explicação aparece numa etiqueta ao clicar no ⓘ (título "Como funciona" ao passar o rato), não dentro da janela.
@@ -74,12 +74,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 **Rendimentos**
 - D20 Cada rendimento liga-se sozinho ao movimento de entrada com o mesmo valor (−10 a +20 dias) e passa para a categoria Rendimentos.
 - D22 A transferência procura-se no banco; o subsídio de refeição só na conta Cartão refeição.
-- D21 Um só botão "＋ Adicionar rendimento" (+ "Carregar recibo (PDF)"); só o resumo anual (sem tabelas recorrentes/pontuais).
+- D21 Um só botão "＋ Adicionar rendimento" (azul), dentro da caixa Resumo anual, com menu: 📎 Carregar recibo (PDF) em cima e ✏ Adicionar manualmente; só o resumo anual (sem tabelas recorrentes/pontuais). (atualizada v0.7t)
+- D65 Caixas da aba Rendimentos como no Início (título/valor centrados, explicação só ao passar o rato).
 - Resumo anual: colunas Ordenado, Subs. Natal/Férias, Prémios/gratif., Outros rend., Subs. cartão, Bruto, IRS, SS, Outros desc., Líquido; meses fecham/abrem; linha do mês só mostra o que falta ligar; larguras fixas; filtro por entidade.
 - Recibos: duplicados pelo n.º do recibo; só os valores ficam guardados (não o PDF).
 
 **Início**
-- D30 Caixas "Despesas por categoria" (clicável → Extratos filtrados) e "Rendimentos" (por entidade/tipo, líquido; clicável).
+- D30 Caixas "Despesas por categoria" (clicável → Extratos filtrados) e "Rendimentos".
+- D64 Início: 4 caixas na mesma linha — Despesas por categoria, Despesas por referência, Rendimentos e Rendimentos por tipo. As de rendimentos vêm do **extrato** (entradas da categoria Rendimentos): Rendimentos por entidade, Por tipo pela referência (Salário, Prémios, Subsídios…); o que está ligado a um recibo aparece com ✓ e cor cheia, o resto esbatido "por confirmar". (v0.7t)
 - D37 As 4 caixas do Início têm título e valor maiores e centrados; o texto explicativo só aparece ao passar o rato.
 - D38 Clicar em Entradas/Saídas do Início abre os Extratos com o filtro Só entradas/Só saídas.
 - D31 "Por categorizar" mostra só as descrições mais frequentes (⚡ criar regra); "Categorizar →" abre os Extratos filtrados.
@@ -93,6 +95,11 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7t — 27/09/2026
+- Início: caixa Rendimentos passa a usar as entradas do extrato (✓ = confirmado com recibo; "por confirmar" esbatido); nova caixa Rendimentos por tipo (referência); 4 caixas na mesma linha.
+- Rendimentos: caixas como no Início; "＋ Adicionar rendimento" dentro do Resumo anual com menu (Carregar recibo | Adicionar manualmente); sai a caixa "Adicionar rendimentos".
+- Extratos: Importar/Exportar passa a menu por baixo do botão (igual ao de Rendimentos).
 
 ### v0.7s — 27/09/2026
 - Despesas: linhas mais baixas; caixas como no Início; "Real" → "Saídas"; vista Mês com categorias abertas por defeito e colunas Previsto/mês, Média mensal (12 meses), Entradas, Saídas, Total, Diferença (sai "Previsto período" e "Execução").
