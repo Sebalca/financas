@@ -15,7 +15,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   p.on('pageerror',e=>erros.push(e.message));p.on('dialog',d=>d.accept('Cartão refeição'));
   await p.route(/cdn\.jsdelivr\.net/,r=>r.abort()); // sem login nos testes
   await p.goto(U+'/financas.html');await p.evaluate(()=>localStorage.clear());await p.reload();
-  const ev=f=>p.evaluate(f);const go=async tab=>{await ev(`document.querySelector('[data-tab="${tab}"]').click()`)};
+  const ev=(f,a)=>p.evaluate(f,a);const go=async tab=>{await ev(`document.querySelector('[data-tab="${tab}"]').click()`)};
 
   console.log('Extratos');
   await go('ext');
@@ -72,15 +72,38 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await go('ext');await p.fill('#fQ','NETFLIX');await p.waitForTimeout(150);
   const nid=await ev(()=>DB.mov.find(x=>x.desc.startsWith('NETFLIX')).id);
   await p.click(`#extTable [data-split="${nid}"]`);await p.waitForTimeout(150);
-  await p.fill('#spRows tr:nth-child(1) [data-spv]','10');await p.selectOption('#spRows tr:nth-child(1) [data-spc]','Lazer');await p.selectOption('#spRows tr:nth-child(1) [data-spr]','Jogos');
-  await p.fill('#spRows tr:nth-child(2) [data-spv]','2');
+  await p.selectOption('#spRows tr:nth-child(1) [data-spc]','Lazer');await p.selectOption('#spRows tr:nth-child(1) [data-spr]','Jogos');
+  await p.fill('#spRows tr:nth-child(2) [data-spv]','20');
   t('D18a','dividir só guarda quando a soma bate com o valor original',await ev(()=>document.querySelector('#spOk').disabled));
-  await p.fill('#spRows tr:nth-child(2) [data-spv]','3,99');await p.selectOption('#spRows tr:nth-child(2) [data-spc]','Casa');await p.selectOption('#spRows tr:nth-child(2) [data-spr]','Internet');
+  await p.fill('#spRows tr:nth-child(2) [data-spv]','3,99');
+  t('D48','ao dividir, a 1.ª linha é fechada e vale o original − as outras linhas',await ev(()=>{const i=document.querySelector('#spRows tr:nth-child(1) [data-spv]');return i.readOnly&&i.value==='10,00'&&!document.querySelector('#spOk').disabled}));await p.selectOption('#spRows tr:nth-child(2) [data-spc]','Casa');await p.selectOption('#spRows tr:nth-child(2) [data-spr]','Internet');
   await p.click('#spOk');await p.waitForTimeout(150);
   const sp=await ev(()=>{const m=DB.mov.find(x=>x.desc.startsWith('NETFLIX'));const x=expande([m]);return {n:m.partes.length,soma:r2(x.reduce((s,y)=>s+y.valor,0)),cats:x.map(y=>y.cat),sub:document.querySelectorAll('#extTable tr.parte').length}});
+  t('D49','linhas divididas minimizadas por defeito',sp.sub===0,sp);
+  await p.click(`#extTable [data-sptog="${nid}"]`);await p.waitForTimeout(100);
+  sp.sub=await ev(()=>document.querySelectorAll('#extTable tr.parte').length);
   t('D18','movimento dividido: partes somam o original, contam nas categorias e aparecem como sub-linhas',sp.n===2&&sp.soma===-13.99&&sp.cats.join()==='Lazer,Casa'&&sp.sub===2,sp);
+  await ev(()=>{DB.mov.push({id:'mRb2',k:'rbteste2',man:true,banco:'Dinheiro',conta:'',dm:'2026-09-22',dv:'2026-09-22',desc:'DEVOLVE INTERNET',valor:2,saldo:null,cat:'',ref:'',catSrc:'',det:'',obs:'',quem:'',ord:0});render()});
+  await p.fill('#fQ','DEVOLVE INTERNET');await p.waitForTimeout(150);
+  await p.click('#extTable [data-reemb="mRb2"]');await p.waitForTimeout(150);await p.click('#rbTodas');await p.waitForTimeout(100);
+  await p.click(`#rbList [data-rbsel="${nid}#1"]`);await p.waitForTimeout(150);
+  const rp=await ev(n=>{const m=DB.mov.find(x=>x.id==='mRb2'),o=DB.mov.find(x=>x.id===n);return {ok:m.reemb===chaveParte(o,1)&&m.cat==='Casa'&&m.ref==='Internet'&&/Reembolso de NETFLIX/.test(document.querySelector('#extTable tr[data-id="mRb2"]').children[8].textContent),cat:m.cat,r:m.reemb}},nid);
+  t('D50','reembolso pode ligar a uma linha de um movimento dividido',rp.ok,rp);
   await p.fill('#fQ','');
   t('D19','reembolso mostra só a ligação nos Detalhes',await ev(()=>{render();const tr=document.querySelector('#extTable tr[data-id="mRb"]');return !tr||(/Reembolso de/.test(tr.children[8].textContent)&&!/Diversos|COMPRAS/.test(tr.children[8].textContent))}));
+
+  console.log('Pesquisa por data / calendário / pessoas');
+  const dq=await ev(()=>{const m=DB.mov.find(x=>!x.man),d=m.dm.split('-');const q1=`${d[2]}/${d[1]}/${d[0]}`,q2=`${d[1]}/${d[0]}`;
+    const f=q=>{document.querySelector('#fQ').value=q;render();return [...document.querySelectorAll('#extTable tbody tr[data-id]')].map(tr=>DB.mov.find(x=>x.id===tr.dataset.id))};
+    const r1=f(q1),r2=f(q2),r3=f(`${d[2]}/${d[1]}`);document.querySelector('#fQ').value='';render();
+    return {ok:r1.length>0&&r1.every(x=>x.dm===m.dm||x.dv===m.dm)&&r2.length>=r1.length&&r2.every(x=>x.dm.slice(0,7)===m.dm.slice(0,7)||x.dv.slice(0,7)===m.dm.slice(0,7))&&r3.length>=r1.length,n:[r1.length,r2.length,r3.length]}});
+  t('D47','pesquisa dos Extratos aceita datas (dd/mm, dd/mm/aaaa, mm/aaaa)',dq.ok,dq);
+  const cal=await ev(()=>{P.m='mes';P.d=new Date(2026,8,1);perLabel();document.querySelector('#perLbl').click();const pop=document.querySelector('#calPop');const vis=!pop.hidden&&pop.querySelectorAll('[data-cmes]').length===12;
+    pop.querySelector('[data-cy="-1"]').click();pop.querySelector('[data-cmes="2"]').click();const a=P.m==='mes'&&P.d.getFullYear()===2025&&P.d.getMonth()===2&&pop.hidden;
+    document.querySelector('#perLbl').click();pop.querySelector('[data-cano]').click();const b=P.m==='ano'&&P.d.getFullYear()===2025;
+    P.m='mes';P.d=new Date(2026,8,1);document.querySelectorAll('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel();render();return {ok:vis&&a&&b,vis,a,b}});
+  t('D52','clicar na data abre calendário (ano + 12 meses) para escolher mês ou ano',cal.ok,cal);
+  t('D51','janela Pessoas com pesquisa fixa que filtra as listas',await ev(()=>{document.querySelector('#btPessoas').click();const q=document.querySelector('#pesQ');const st=getComputedStyle(document.querySelector('#pesQw')).position;q.value='zzzqqq';q.dispatchEvent(new Event('input'));const n=document.querySelectorAll('#pesPend tbody tr,#pesList tbody tr').length;q.value='';q.dispatchEvent(new Event('input'));document.querySelector('#mPessoas').hidden=true;return st==='sticky'&&n===0}));
 
   console.log('Início');
   await go('home');

@@ -22,6 +22,8 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - Definições: Tema e tamanho, Conta (mudar palavra-passe), Cópia de segurança (exportar/importar .json), Apagar dados (dispositivo / conta), Onboarding, Idioma, Ajuda, Enviar sugestão (os três últimos só visuais por agora).
 - Login opcional; com sessão os dados sincronizam com a conta (Supabase `financas_dados`); nunca credenciais privadas no código.
 
+- D52 Clicar na data do canto superior direito abre um calendário: ano (‹ ›), "Ano inteiro" e os 12 meses; escolher um mês passa para o modo Mês.
+
 **Extratos**
 - D01 CGD (CSV) e cartão refeição (Excel/CSV genérico, conta "Cartão refeição") lidos sem IA.
 - D02 "Compra" (e prefixos tipo "Pagamento:") sai do início da descrição e vai para Detalhes — em todas as contas.
@@ -39,12 +41,18 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - Movimentos à mão = conta 💵 Dinheiro com saldo próprio.
 - Regras: "contém" / "tem a palavra" / "começa por"; a primeira que corresponde ganha; nunca mexem nos movimentos classificados à mão.
 
+- D51 A janela Pessoas tem uma caixa de pesquisa fixa no topo que filtra as duas listas.
+
 **Despesas**
 - D10 Fora das contas (tabela de baixo): **Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças**.
 - D06 Trocas entre contas, levantamentos, depósitos e Poupanças não contam como entrada/saída.
 - D12 Referências com ✓ "Só este movimento" não sugerem regra e as regras não as usam.
 - D13 Vista Mês (previsto vs real) e vista Ano (grelha 12 meses + Total + Média/mês + Previsto ano), em duas tabelas com títulos.
 - D18 Dividir movimento (✂): a linha do banco mantém-se e mostra "✂ Dividido em N" com sub-linhas; a soma das partes tem de dar o valor original; todas as contas usam as partes; as regras não mexem em movimentos divididos.
+- D48 Ao dividir, a 1.ª linha tem o valor fechado = valor original − as outras linhas (não se edita nem se apaga).
+- D49 As sub-linhas de um movimento dividido estão minimizadas por defeito (▸ mostra, ▾ esconde).
+- D50 O reembolso (↩) pode ligar a uma linha de um movimento dividido; a ligação abre o movimento com as linhas visíveis.
+- D47 A pesquisa dos Extratos aceita datas (dd/mm, dd/mm/aaaa, mm/aaaa) e procura na data mov. ou data valor, em todos os períodos.
 - D19 Movimento marcado como reembolso mostra só "↩ Reembolso de …" nos Detalhes.
 - D20b Janela do reembolso: mostra em destaque descrição, valor, data e quem; por defeito as saídas (todas as categorias) do próprio dia ou do anterior mais próximo, com valor maior que o reembolso; "Mostrar todas" com pesquisa; despesa sem categoria → escolher categoria/referência na hora (aplica-se às duas).
 - D17 Despesas: o **Real** é saídas − reembolsos (indicador "x € − y € reemb.").
@@ -74,6 +82,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7p — 27/09/2026
+- Extratos: pesquisa por data (16/09, 16/09/2026 ou 09/2026) na caixa de pesquisa — data mov. ou data valor, em todos os períodos.
+- Dividir: a 1.ª linha fica com o valor fechado (original − outras linhas); linhas novas começam a 0.
+- Linhas divididas minimizadas por defeito, com ▸/▾ para mostrar/esconder.
+- Reembolso ↩ pode escolher uma linha de um movimento dividido.
+- Pessoas: caixa de pesquisa fixa no topo.
+- Calendário ao clicar na data (canto superior direito) para escolher qualquer mês ou ano.
 
 ### v0.7o — 26/09/2026
 - Extratos: a largura da página já não muda ao filtrar (espaço da barra de scroll sempre reservado).
