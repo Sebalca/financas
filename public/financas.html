@@ -50,6 +50,11 @@ button,input,select{font:inherit;color:inherit}
 .sptog{width:22px;height:22px;padding:0;margin-right:4px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:inherit;cursor:pointer;font-size:11px;vertical-align:middle}
 #spRows tr:first-child [data-spv]{background:var(--soft);color:var(--mu);cursor:not-allowed}
 tr.rbparte td{background:var(--soft);font-size:12.5px}
+#mReemb{z-index:60}
+td.acts{white-space:nowrap}td.acts .sl{display:inline-block;width:30px;text-align:center;vertical-align:middle}td.acts .btn.ic.sm{padding:4px 5px}
+#spDesc{font-size:15px;margin:0 0 12px}#spAjuda{margin:0 0 10px}
+#spRows .sprb{font-size:11.5px;color:var(--mu);margin-top:3px}#spRows [data-spreemb].on{border-color:var(--c1);color:var(--c1)}
+#spFoot td{border-bottom:0;padding-top:8px}#spRows tr:first-child [data-spv].neg{color:var(--neg)}
 .rng{display:none;align-items:center;gap:6px}.rng.on{display:inline-flex}
 .rng input{border:1px solid var(--bd);border-radius:8px;background:var(--card);padding:5px 8px;font-size:13px}
 nav.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:5px;margin:4px 0 12px;box-shadow:var(--sh);overflow-x:auto;scrollbar-width:none}
@@ -417,17 +422,18 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
  <div class="rbbar"><span id="rbInfo" class="note" style="margin:0"></span><span style="flex:1"></span><input type="search" id="rbQ" placeholder="Pesquisar descrição ou valor…" hidden><button class="btn sm" id="rbTodas" type="button" data-rbtodas>Mostrar todas</button></div>
  <div id="rbCat" class="rbcat" hidden></div>
  <div class="tw" id="rbList"></div></div></div></div>
-<div class="modal" id="mSplit" hidden><div class="sheet wide"><div class="mh"><h3>Dividir movimento</h3><button class="mx" type="button" data-close="mSplit" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
- <p class="note" style="margin:0 0 10px" id="spDesc"></p>
- <div class="tw"><table class="t"><thead><tr><th class="num">Valor</th><th>Categoria</th><th>Referência</th><th>Observações</th><th></th></tr></thead><tbody id="spRows"></tbody></table></div>
- <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px"><button class="btn sm" id="spAdd" type="button">＋ Linha</button><span id="spSoma" class="note" style="margin:0"></span><span style="flex:1"></span>
+<div class="modal" id="mSplit" hidden><div class="sheet wide"><div class="mh"><h3 style="flex:1">Dividir movimento</h3><button class="mx" type="button" id="spInfo" aria-label="Ajuda" title="Como funciona">ⓘ</button><button class="mx" type="button" data-close="mSplit" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
+ <p id="spDesc"></p>
+ <p class="note" id="spAjuda" hidden>Divida o valor por várias categorias: escreva as outras linhas e a 1.ª fica com o resto (valor original − outras linhas). Nas contas passam a contar as linhas. Numa entrada, cada linha pode ser reembolso de uma despesa (↩).</p>
+ <div class="tw"><table class="t"><thead><tr><th class="num">Valor</th><th>Categoria</th><th>Referência</th><th>Observações</th><th></th></tr></thead><tbody id="spRows"></tbody><tfoot id="spFoot"><tr><td class="num"><button class="btn sm" id="spAdd" type="button">＋ Linha</button></td><td colspan="4"><span id="spSoma" class="note" style="margin:0"></span></td></tr></tfoot></table></div>
+ <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px"><span style="flex:1"></span>
   <button class="btn" id="spDesfaz" type="button">Desfazer divisão</button><button class="btn pri" id="spOk" type="button">Guardar</button></div>
 </div></div></div>
 <div class="modal" id="mImps" hidden><div class="sheet"><div class="mh"><h3>Importações</h3><button class="mx" type="button" data-close="mImps" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd"><div id="impsList"></div><div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end"><button class="btn" id="btClearAll">Apagar todos os movimentos</button></div></div></div></div>
 
 <script>
 'use strict';
-const APP_VERSAO='0.7p'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.7q'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -492,7 +498,7 @@ const SPOPEN=new Set();
 const chaveParte=(m,i)=>'man|'+(m.k||chave(m))+'#'+i;
 function mapaChaves(){const r=new Map(DB.mov.map(x=>[chave(x),x]));expande(DB.mov).forEach(x=>{if(x.parte!=null)r.set(chave(x),x)});return r}
 const nomeMov=o=>{if(o.parte==null)return o.desc;const pai=o.pai||DB.mov.find(x=>x.id===o.id.split('#')[0]),p=pai&&pai.partes&&pai.partes[o.parte];return `${o.desc} (${p&&p.obs||'parte '+(o.parte+1)})`};
-const expande=l=>l.flatMap(m=>Array.isArray(m.partes)&&m.partes.length?m.partes.map((p,i)=>({...m,id:m.id+'#'+i,valor:p.valor,cat:p.cat||'',ref:p.ref||'',obs:p.obs||m.obs,catSrc:'manual',partes:null,parte:i,k:(m.k||chave(m))+'#'+i})):[m]);
+const expande=l=>l.flatMap(m=>Array.isArray(m.partes)&&m.partes.length?m.partes.map((p,i)=>({...m,id:m.id+'#'+i,valor:p.valor,cat:p.cat||'',ref:p.ref||'',obs:p.obs||m.obs,catSrc:'manual',partes:null,reemb:p.reemb||'',parte:i,k:(m.k||chave(m))+'#'+i})):[m]);
 const contaInicio=m=>!isInterna(m)&&!(m.cat&&eFora(m.cat)&&!(m.cat===REND&&m.valor>0)); // das fora das contas só contam as entradas de Rendimentos
 const isUnc=m=>Array.isArray(m.partes)&&m.partes.length?m.partes.some(p=>!p.cat||!p.ref):(!m.cat||!m.ref);
 const isInterna=m=>(m.cat==='Banco'&&INTERNAS.includes(m.ref))||m.cat==='Poupanças'; // movimentos entre contas (incl. Dinheiro): não contam como entrada/saída
@@ -730,7 +736,7 @@ function mesesGraf(){const out=[];{const y=P.m==='int'&&P.fim?+P.fim.slice(0,4):
   const end=P.m==='int'&&P.fim?new Date(+P.fim.slice(0,4),+P.fim.slice(5,7)-1,1):P.d;
   for(let i=5;i>=0;i--){const d=new Date(end.getFullYear(),end.getMonth()-i,1);out.push([d.getFullYear(),d.getMonth()])}return out}
 const EXT_COLS=[['<input type="checkbox" id="selAll" aria-label="Selecionar todos">','ck'],['Data mov.'],['Data valor'],['Descrição'],['Valor','num'],['Saldo','num'],['Categoria'],['Referência'],['Detalhes'],['Observações'],['Quem é'],['Banco'],['']];
-const EXT_W=[30,104,104,null,100,108,215,205,190,175,125,115,132]; // larguras fixas (px); a Descrição fica com o resto
+const EXT_W=[30,104,104,null,100,108,215,205,190,175,125,115,152]; // larguras fixas (px); a Descrição fica com o resto
 const extCols=()=>`<colgroup>${EXT_W.map(w=>`<col${w?` style="width:${w}px"`:''}>`).join('')}</colgroup>`;
 const REC_COLS=[['Mês'],['Entidade pagadora'],['Descrição'],['Pessoa'],['Bruto','num'],['IRS retido','num'],['SS','num'],['Subs. cartão','num'],['Líquido','num'],['Ligação ao extrato'],['']];
 const PON_COLS=[['Data'],['Entidade pagadora'],['Descrição'],['Referência'],['Pessoa'],['Bruto','num'],['IRS retido','num'],['SS','num'],['Líquido','num'],['Ligação ao extrato'],['']];
@@ -814,7 +820,7 @@ function render(){
     <td class="muted" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:(m.reemb&&RK.get(m.reemb)?`<span class="lk ok" data-golk="${esc(m.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(m.reemb)))}</span>`:esc(m.det)))(LG.get(chave(m)))}</td>
     <td><input class="ed obs" data-f="obs" value="${esc(m.obs)}" placeholder="…"></td>
     <td><input class="ed" data-f="quem" list="dlQuem" value="${esc(m.quem)}" style="width:110px"></td>
-    <td>${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td style="white-space:nowrap">${m.valor>0&&!LG.get(chave(m))?`<button class="btn ic sm" data-reemb="${m.id}" title="É um reembolso? Escolher a despesa original">↩</button> `:''}${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button> `:''}<button class="btn ic sm" data-split="${m.id}" title="Dividir em várias linhas">✂</button> <button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></td></tr>${m.partes&&m.partes.length&&SPOPEN.has(m.id)?m.partes.map((p,i)=>`<tr class="parte" data-pid="${m.id}#${i}"><td></td><td></td><td></td><td class="desc">↳ ${esc(p.obs||'parte '+(i+1))}</td><td class="num">${val(p.valor)}</td><td></td><td>${p.cat?esc(p.cat):'<span class="tag wait">Por categorizar</span>'}</td><td>${esc(p.ref||'—')}</td><td colspan="6"></td></tr>`).join(''):''}`).join('')}
+    <td>${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td class="acts"><span class="sl">${m.valor>0&&!LG.get(chave(m))&&!(m.partes&&m.partes.length)?`<button class="btn ic sm" data-reemb="${m.id}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl">${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button>`:''}</span><span class="sl"><button class="btn ic sm" data-split="${m.id}" title="Dividir em várias linhas">✂</button></span><span class="sl"><button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></span></td></tr>${m.partes&&m.partes.length&&SPOPEN.has(m.id)?m.partes.map((p,i)=>`<tr class="parte" data-pid="${m.id}#${i}"><td></td><td></td><td></td><td class="desc">↳ ${esc(p.obs||'parte '+(i+1))}</td><td class="num">${val(p.valor)}</td><td></td><td>${p.cat?esc(p.cat):'<span class="tag wait">Por categorizar</span>'}</td><td>${esc(p.ref||'—')}</td><td class="muted" style="white-space:normal;font-size:12px">${p.reemb&&RK.get(p.reemb)?`<span class="lk ok" data-golk="${esc(p.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(p.reemb)))}</span>`:''}</td><td colspan="3"></td><td class="acts"><span class="sl">${p.valor>0?`<button class="btn ic sm" data-reembp="${m.id}#${i}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span></td></tr>`).join(''):''}`).join('')}
     <tr class="tot"><td colspan="4">Total (filtrado)</td><td class="num">${val(re-rs)}</td><td colspan="8" class="muted" style="font-weight:400">Entradas ${E(re)} · Saídas ${E(rs)}${rows.some(isInterna)?' · movimentos entre contas (trocas, levantamentos, depósitos) excluídos':''}</td></tr></tbody></table>`
     :emptyTbl(EXT_COLS,all.length?'Nenhum movimento neste período/filtro':'Ainda não há movimentos',all.length?'Mude o período no topo ou limpe os filtros.':'Importe um extrato acima ou adicione um movimento em dinheiro.');
   const sa=$('#selAll');if(sa){sa.checked=rows.length>0&&SEL.size===rows.length;sa.indeterminate=SEL.size>0&&SEL.size<rows.length}
@@ -968,24 +974,25 @@ addEventListener('scroll',fixaCab,{passive:true});addEventListener('resize',()=>
 
 /* ================= dividir um movimento em várias linhas (total = valor original) ================= */
 let SP=null;
-function spLinha(p){return `<tr><td class="num"><input class="pv" data-spv value="${p&&p.valor?Math.abs(p.valor).toFixed(2).replace('.',','):''}" placeholder="0,00" inputmode="decimal" style="width:100px"></td>
+function spLinha(p){const rk=p&&p.reemb||'',ro=rk?mapaChaves().get(rk):null;return `<tr data-reemb="${esc(rk)}"><td class="num"><input class="pv" data-spv value="${p&&p.valor?Math.abs(p.valor).toFixed(2).replace('.',','):''}" placeholder="0,00" inputmode="decimal" style="width:100px"></td>
   <td><select data-spc>${catOpts(p?p.cat:'')}</select></td><td><select data-spr>${refOpts(p?p.cat:'',p?p.ref:'')}</select></td>
-  <td><input data-spo value="${esc(p&&p.obs||'')}" placeholder="ex.: Eletricidade" style="width:100%;min-width:140px;border:1px solid var(--bd);border-radius:7px;background:var(--soft);padding:4px 6px"></td>
-  <td><button class="btn ic sm" data-spdel type="button" title="Tirar linha">🗑</button></td></tr>`}
+  <td><input data-spo value="${esc(p&&p.obs||'')}" placeholder="ex.: Eletricidade" style="width:100%;min-width:140px;border:1px solid var(--bd);border-radius:7px;background:var(--soft);padding:4px 6px"><div class="sprb">${ro?'↩ Reembolso de '+esc(nomeMov(ro)):''}</div></td>
+  <td style="white-space:nowrap">${SP&&SP.valor>0?`<button class="btn ic sm${rk?' on':''}" data-spreemb type="button" title="É um reembolso? Escolher a despesa original">↩</button> `:''}<button class="btn ic sm" data-spdel type="button" title="Tirar linha">🗑</button></td></tr>`}
 const spVal=v=>{v=String(v||'').replace(/[€\s]/g,'');return r2(Math.abs(/^\d+(\.\d{1,2})?$/.test(v)?parseFloat(v):num(v)))};
 function spSoma(){if(!SP)return 0;const vs=$$('#spRows [data-spv]'),alvo=Math.abs(SP.valor),out=r2(vs.slice(1).reduce((s,i)=>s+spVal(i.value),0)),p1=r2(alvo-out);
-  if(vs[0]){vs[0].readOnly=true;vs[0].tabIndex=-1;vs[0].title='Calculado: valor original menos as outras linhas';vs[0].value=p1.toFixed(2).replace('.',',')}
-  const t=r2(vs.reduce((s,i)=>s+spVal(i.value),0));let f=r2(alvo-t);if(p1<=0)f=-Math.abs(p1)||-.01;
-  if(p1<=0){$('#spSoma').innerHTML=`<span class="neg">As outras linhas somam ${E(out)} — mais do que o valor original (${E(alvo)})</span>`;$('#spOk').disabled=true;return f}
-  $('#spSoma').innerHTML=`Soma <b>${E(t)}</b> de ${E(alvo)} · ${Math.abs(f)<.005?'<span class="pos">✓ bate certo</span>':`<span class="neg">${f>0?'faltam':'sobram'} ${E(Math.abs(f))}</span>`}`;$('#spOk').disabled=Math.abs(f)>=.005;return f}
-function abreSplit(m){if(!m)return;SP=m;$('#spDesc').innerHTML=`<b>${esc(m.desc)}</b> · ${fmtD(m.dm)} · ${val(m.valor)}. Divida o valor por várias categorias: escreva as outras linhas e a primeira fica com o resto (valor original − outras linhas). Nas contas passam a contar as linhas.`;
+  if(vs[0]){vs[0].readOnly=true;vs[0].tabIndex=-1;vs[0].title='Calculado: valor original menos as outras linhas';vs[0].value=p1.toFixed(2).replace('.',',');vs[0].classList.toggle('neg',p1<0)}
+  if(p1<0){$('#spSoma').innerHTML=`<span class="neg">As outras linhas somam ${E(out)} — mais ${E(-p1)} do que o valor original (${E(alvo)})</span>`;$('#spOk').disabled=true;return p1}
+  $('#spSoma').innerHTML='';$('#spOk').disabled=false;return 0}
+function abreSplit(m){if(!m)return;SP=m;$('#spDesc').innerHTML=`<b>${esc(m.desc)}</b> · ${fmtD(m.dm)} · ${val(m.valor)}`;$('#spAjuda').hidden=true;
   const ps=m.partes&&m.partes.length?m.partes:[{valor:m.valor,cat:m.cat,ref:m.ref,obs:''},{valor:0,cat:'',ref:'',obs:''}];
   $('#spRows').innerHTML=ps.map(spLinha).join('');const d1=$('#spRows tr [data-spdel]');if(d1)d1.style.visibility='hidden';$('#spDesfaz').style.display=m.partes&&m.partes.length?'':'none';spSoma();$('#mSplit').hidden=false}
+$('#spInfo').addEventListener('click',()=>{$('#spAjuda').hidden=!$('#spAjuda').hidden});
 $('#spAdd').addEventListener('click',()=>{$('#spRows').insertAdjacentHTML('beforeend',spLinha({valor:0,cat:'',ref:'',obs:''}));spSoma();const v=$$('#spRows [data-spv]').pop();if(v)v.focus()});
 $('#spRows').addEventListener('input',e=>{if(e.target.matches('[data-spv]'))spSoma()});
-$('#spRows').addEventListener('change',e=>{if(e.target.matches('[data-spc]')){const tr=e.target.closest('tr');tr.querySelector('[data-spr]').innerHTML=refOpts(e.target.value,'')}});
+$('#spRows').addEventListener('change',e=>{if(e.target.matches('[data-spc]')){const tr=e.target.closest('tr');tr.querySelector('[data-spr]').innerHTML=refOpts(e.target.value,'');spTiraReemb(tr)}});
+function spTiraReemb(tr){if(!tr.dataset.reemb)return;tr.dataset.reemb='';tr.querySelector('.sprb').textContent='';const b=tr.querySelector('[data-spreemb]');if(b)b.classList.remove('on')}
 $('#spOk').addEventListener('click',()=>{if(!SP||Math.abs(spSoma())>=.005)return;const sg=SP.valor<0?-1:1;
-  const ps=$$('#spRows tr').map(tr=>({valor:r2(sg*spVal(tr.querySelector('[data-spv]').value)),cat:tr.querySelector('[data-spc]').value,ref:tr.querySelector('[data-spr]').value,obs:tr.querySelector('[data-spo]').value.trim()})).filter(p=>p.valor);
+  const ps=$$('#spRows tr').map(tr=>{const p={valor:r2(sg*spVal(tr.querySelector('[data-spv]').value)),cat:tr.querySelector('[data-spc]').value,ref:tr.querySelector('[data-spr]').value,obs:tr.querySelector('[data-spo]').value.trim()};if(tr.dataset.reemb&&sg>0)p.reemb=tr.dataset.reemb;return p}).filter(p=>p.valor);
   if(ps.length<2){toast('Precisa de pelo menos 2 linhas com valor');return}
   SP.partes=ps;SP.cat='';SP.ref='';SP.catSrc='manual';SP.u=Date.now();$('#mSplit').hidden=true;SP=null;save();render();toast(`Movimento dividido em ${ps.length} linhas`)});
 $('#spDesfaz').addEventListener('click',()=>{if(!SP)return;const p0=SP.partes[0]||{};SP.partes=null;SP.cat=p0.cat||'';SP.ref=p0.ref||'';SP.u=Date.now();$('#mSplit').hidden=true;SP=null;save();render();toast('Divisão desfeita')});
@@ -1008,7 +1015,11 @@ function listaReemb(){const m=RB;if(!m)return;const v=Math.abs(m.valor);let c,in
 function rbAlvo(id){const [pid,i]=String(id).split('#'),o=DB.mov.find(x=>x.id===pid);if(!o)return null;if(i==null)return o;
   const p=o.partes&&o.partes[+i];return p?{...o,id:o.id+'#'+i,valor:p.valor,cat:p.cat||'',ref:p.ref||'',obs:p.obs||'',partes:null,parte:+i,pai:o,pt:p,k:(o.k||chave(o))+'#'+i}:null}
 function aplicaReemb(m,o,cat,ref){if(!o.cat||!o.ref){o.cat=cat;o.ref=ref;if(o.pt){o.pt.cat=cat;o.pt.ref=ref;o.pai.u=Date.now()}else{o.catSrc='manual';o.u=Date.now()}}
-  m.cat=o.cat;m.ref=o.ref;m.catSrc='manual';m.reemb=o.pai?chaveParte(o.pai,o.parte):chave(o);m.u=Date.now();save();render();toast(`Reembolso de "${nomeMov(o)}" → ${o.cat}${o.ref?' › '+o.ref:''}`);$('#mReemb').hidden=true;RB=null}
+  const key=o.pai?chaveParte(o.pai,o.parte):chave(o);
+  if(m._tr){const tr=m._tr,c=tr.querySelector('[data-spc]');c.value=o.cat;tr.querySelector('[data-spr]').innerHTML=refOpts(o.cat,o.ref);tr.dataset.reemb=key;tr.querySelector('.sprb').textContent='↩ Reembolso de '+nomeMov(o);const b=tr.querySelector('[data-spreemb]');if(b)b.classList.add('on');
+    save();$('#mReemb').hidden=true;RB=null;return}
+  if(m._pai){const pt=m._pai.partes[m._i];pt.cat=o.cat;pt.ref=o.ref;pt.reemb=key;m._pai.u=Date.now();save();render();toast(`Reembolso de "${nomeMov(o)}" → ${o.cat}${o.ref?' › '+o.ref:''}`);$('#mReemb').hidden=true;RB=null;return}
+  m.cat=o.cat;m.ref=o.ref;m.catSrc='manual';m.reemb=key;m.u=Date.now();save();render();toast(`Reembolso de "${nomeMov(o)}" → ${o.cat}${o.ref?' › '+o.ref:''}`);$('#mReemb').hidden=true;RB=null}
 $('#rbQ').addEventListener('input',listaReemb);
 $('#rbCat').addEventListener('change',e=>{if(e.target.id==='rbC')$('#rbR').innerHTML=refOpts(e.target.value,'')});
 
@@ -1242,7 +1253,7 @@ $('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==
 function limpaFiltros(){['#fQ','#fBanco','#fCat','#fRef','#fQuem','#fTipo'].forEach(i=>$(i).value='')}
 function go(tab,keep){setTimeout(ajustaLarg,0);$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(!keep)window.scrollTo({top:0});fixaCab()}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-goref],[data-reemb],[data-rbsel],[data-sptog],[data-split],[data-spdel],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
+  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-goref],[data-reemb],[data-rbsel],[data-sptog],[data-split],[data-spdel],[data-spreemb],[data-reembp],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
   const d=t.dataset;
   if(d.edit){abreMov(DB.mov.find(x=>x.id===d.edit));return}
   if(d.cmv){e.preventDefault();const [i,dd]=d.cmv.split('|').map(Number);if(moveArr(DB.cats,i,dd)){save();render()}return}
@@ -1255,6 +1266,8 @@ document.addEventListener('click',e=>{
   if(d.split){abreSplit(DB.mov.find(x=>x.id===d.split));return}
   if('spdel' in d){const tr=t.closest('tr');if(tr!==$('#spRows tr')&&$$('#spRows tr').length>2)tr.remove();spSoma();return}
   if(d.reemb){abreReemb(DB.mov.find(x=>x.id===d.reemb));return}
+  if('spreemb' in d){const tr=t.closest('tr');if(!SP)return;abreReemb({desc:SP.desc+' (linha)',valor:spVal(tr.querySelector('[data-spv]').value),dm:SP.dm,quem:SP.quem,_tr:tr});return}
+  if(d.reembp){const [pid,i]=d.reembp.split('#'),pai=DB.mov.find(x=>x.id===pid),p=pai&&pai.partes[+i];if(!p)return;abreReemb({...pai,desc:`${pai.desc} (${p.obs||'parte '+(+i+1)})`,valor:p.valor,partes:null,_pai:pai,_i:+i});return}
   if(d.rbsel!=null){const m=RB,o=rbAlvo(d.rbsel);if(!m||!o)return;
     if(o.cat&&o.ref){aplicaReemb(m,o);return}
     RB_O=o;$('#rbCat').innerHTML=`<b>“${esc(nomeMov(o))}” ainda não tem ${o.cat?'referência':'categoria'}.</b> Escolha para a despesa e o reembolso: <select id="rbC">${catOpts(o.cat)}</select><select id="rbR">${refOpts(o.cat,o.ref)}</select><button class="btn sm pri" type="button" data-rbok>Aplicar</button>`;$('#rbCat').hidden=false;return}

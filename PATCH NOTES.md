@@ -49,7 +49,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D12 Referências com ✓ "Só este movimento" não sugerem regra e as regras não as usam.
 - D13 Vista Mês (previsto vs real) e vista Ano (grelha 12 meses + Total + Média/mês + Previsto ano), em duas tabelas com títulos.
 - D18 Dividir movimento (✂): a linha do banco mantém-se e mostra "✂ Dividido em N" com sub-linhas; a soma das partes tem de dar o valor original; todas as contas usam as partes; as regras não mexem em movimentos divididos.
-- D48 Ao dividir, a 1.ª linha tem o valor fechado = valor original − as outras linhas (não se edita nem se apaga).
+- D48 Ao dividir, a 1.ª linha tem o valor fechado = valor original − as outras linhas (não se edita nem se apaga). Se as outras linhas passarem o original, a 1.ª fica negativa (vermelho), aparece um aviso e não deixa guardar; fora disso não há texto de soma.
+- D53 Janela Dividir: título com descrição · data · valor em destaque; explicação só no ⓘ ao lado do ✕; "＋ Linha" por baixo da coluna do valor.
+- D54 Numa entrada dividida, cada linha pode ser reembolso de uma despesa: ↩ à direita de cada linha na janela Dividir e nas sub-linhas da tabela.
+- D55 Os botões do fim da linha do extrato têm lugares fixos (↩, ✏, ✂, 🗑); quando um não se aplica, o lugar fica vazio.
 - D49 As sub-linhas de um movimento dividido estão minimizadas por defeito (▸ mostra, ▾ esconde).
 - D50 O reembolso (↩) pode ligar a uma linha de um movimento dividido; a ligação abre o movimento com as linhas visíveis.
 - D47 A pesquisa dos Extratos aceita datas (dd/mm, dd/mm/aaaa, mm/aaaa) e procura na data mov. ou data valor, em todos os períodos.
@@ -82,6 +85,11 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7q — 27/09/2026
+- Dividir: sem o texto "bate certo"; "＋ Linha" por baixo do valor; título maior e explicação no ⓘ; 1.ª linha negativa + aviso se as outras passarem o original.
+- Reembolso de linhas repartidas (entradas divididas): ↩ em cada linha da janela Dividir e nas sub-linhas da tabela, com a ligação "↩ Reembolso de …".
+- Extratos: botões do fim da linha em posições fixas (coluna um pouco mais larga).
 
 ### v0.7p — 27/09/2026
 - Extratos: pesquisa por data (16/09, 16/09/2026 ou 09/2026) na caixa de pesquisa — data mov. ou data valor, em todos os períodos.

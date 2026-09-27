@@ -89,6 +89,23 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await p.click(`#rbList [data-rbsel="${nid}#1"]`);await p.waitForTimeout(150);
   const rp=await ev(n=>{const m=DB.mov.find(x=>x.id==='mRb2'),o=DB.mov.find(x=>x.id===n);return {ok:m.reemb===chaveParte(o,1)&&m.cat==='Casa'&&m.ref==='Internet'&&/Reembolso de NETFLIX/.test(document.querySelector('#extTable tr[data-id="mRb2"]').children[8].textContent),cat:m.cat,r:m.reemb}},nid);
   t('D50','reembolso pode ligar a uma linha de um movimento dividido',rp.ok,rp);
+  await ev(()=>{DB.mov.push({id:'mRb3',k:'rbteste3',man:true,banco:'Dinheiro',conta:'',dm:'2026-09-23',dv:'2026-09-23',desc:'TRF RECEBIDA GRUPO',valor:30,saldo:null,cat:'',ref:'',catSrc:'',det:'',obs:'',quem:'',ord:0});render()});
+  await p.fill('#fQ','TRF RECEBIDA GRUPO');await p.waitForTimeout(150);
+  await p.click('#extTable [data-split="mRb3"]');await p.waitForTimeout(150);
+  await p.fill('#spRows tr:nth-child(2) [data-spv]','10');
+  const d53=await ev(()=>({txt:document.querySelector('#spSoma').textContent,foot:!!document.querySelector('#spFoot #spAdd'),info:!!document.querySelector('#spInfo')&&!/Divida/.test(document.querySelector('#spDesc').textContent)}));
+  t('D53','Dividir: sem texto "bate certo", ＋ Linha por baixo do valor e ajuda no ⓘ',d53.txt===''&&d53.foot&&d53.info,d53);
+  await p.click('#spRows tr:nth-child(2) [data-spreemb]');await p.waitForTimeout(150);await p.click('#rbTodas');await p.waitForTimeout(100);
+  await p.click(`#rbList [data-rbsel="${cont}"]`);await p.waitForTimeout(150);
+  await p.click('#spOk');await p.waitForTimeout(150);
+  const d54a=await ev(()=>{const m=DB.mov.find(x=>x.id==='mRb3');return {ok:m.partes.length===2&&!!m.partes[1].reemb&&m.partes[1].cat==='Alimentação'&&eReemb(expande([m])[1]),p:m.partes}});
+  await p.click('#extTable [data-sptog="mRb3"]');await p.waitForTimeout(100);
+  await p.click('#extTable [data-reembp="mRb3#0"]');await p.waitForTimeout(150);await p.click('#rbTodas');await p.waitForTimeout(100);
+  await p.click(`#rbList [data-rbsel="${cont}"]`);await p.waitForTimeout(150);
+  const d54b=await ev(()=>{const m=DB.mov.find(x=>x.id==='mRb3');return !!m.partes[0].reemb&&document.querySelectorAll('#extTable tr.parte [data-golk]').length===2});
+  t('D54','entrada dividida: cada linha pode ser reembolso (↩ na janela Dividir e nas sub-linhas)',d54a.ok&&d54b,{d54a,d54b});
+  const d55=await ev(()=>{const rs=[...document.querySelectorAll('#extTable tbody tr[data-id]')];const all=[...DB.mov];document.querySelector('#fQ').value='';render();const rows=[...document.querySelectorAll('#extTable tbody tr[data-id]')];const pos=rows.map(tr=>[...tr.querySelectorAll('td.acts .sl')].map(s=>Math.round(s.getBoundingClientRect().left-tr.getBoundingClientRect().left)).join(','));return {ok:rows.length>1&&new Set(pos).size===1&&pos[0].split(',').length===4,pos:[...new Set(pos)]}});
+  t('D55','botões do fim da linha em posições fixas (4 lugares)',d55.ok,d55);
   await p.fill('#fQ','');
   t('D19','reembolso mostra só a ligação nos Detalhes',await ev(()=>{render();const tr=document.querySelector('#extTable tr[data-id="mRb"]');return !tr||(/Reembolso de/.test(tr.children[8].textContent)&&!/Diversos|COMPRAS/.test(tr.children[8].textContent))}));
 
