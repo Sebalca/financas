@@ -21,7 +21,7 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh}
 .bar::-webkit-scrollbar{display:none}
 .brand{font-weight:800;font-size:15px;white-space:nowrap;letter-spacing:-.01em;display:flex;align-items:center;gap:7px}.brand .logo{width:24px;height:24px;border-radius:6px;flex:none}
 .brand span{color:var(--ac)}
-nav{display:flex;gap:4px;height:100%}
+nav{display:flex;gap:4px;height:100%}#tabs{min-width:0;flex:0 1 auto;overflow-x:auto;scrollbar-width:none}#tabs::-webkit-scrollbar{display:none}
 nav a{display:flex;align-items:center;padding:0 14px;color:var(--mu);text-decoration:none;font-weight:600;font-size:14px;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-1px}
 nav a:hover{color:var(--tx)}
 nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
@@ -32,6 +32,19 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .extlink[hidden]{display:none}
 @media (max-width:520px){.bar{gap:6px;padding:0 10px;height:44px}.brand{font-size:13px}nav a{padding:0 8px;font-size:13px}}
 .sp{flex:1}
+.fper{display:flex;align-items:center;gap:8px;flex:none}.fper[hidden],.fper [hidden]{display:none!important}
+.fper .sy{border:1px solid var(--bd);background:var(--card);border-radius:999px;padding:4px 10px;font:12px system-ui,sans-serif;color:var(--mu);cursor:pointer;white-space:nowrap;max-width:230px;overflow:hidden;text-overflow:ellipsis}
+.fper .sy.ok{color:#15803d}.fper .sy.erro{color:#c2410c}.fper .sy.busy{color:var(--ac)}
+.fper .sg{display:inline-flex;border:1px solid var(--bd);border-radius:9px;overflow:hidden}.fper .sg button{border:0;background:var(--card);padding:5px 10px;font:600 12.5px system-ui,sans-serif;color:var(--mu);cursor:pointer}.fper .sg button.on{background:var(--ac);color:#fff}
+.fper .nv{display:inline-flex;align-items:center;border:1px solid var(--bd);border-radius:9px;background:var(--card)}.fper .nv button{border:0;background:none;width:28px;height:30px;cursor:pointer;color:var(--mu);font-size:15px}
+.fper .nv .lb{min-width:124px;text-align:center;font:700 13.5px system-ui,sans-serif;cursor:pointer;border-radius:6px;padding:4px 2px;color:var(--tx)}.fper .nv .lb:hover{background:var(--ac2)}
+.fper .rg{display:inline-flex;gap:4px;align-items:center;font-size:12px;color:var(--mu)}.fper .rg input{border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);padding:3px 5px;font:12.5px system-ui,sans-serif}
+.fper .hj{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:9px;padding:5px 11px;font:600 12.5px system-ui,sans-serif;cursor:pointer}.fper .hj:hover{border-color:var(--ac)}.fper .hj.atual{opacity:.45}
+.pcal{position:fixed;z-index:80;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:10px;width:240px;font:13px system-ui,sans-serif}.pcal[hidden]{display:none}
+.pcal .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.pcal button{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;cursor:pointer;font:inherit}
+.pcal .ch button{width:30px;height:30px}.pcal .ca{width:100%;padding:7px 0;margin-bottom:8px}.pcal .cm{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.pcal .cm button{padding:7px 0;position:relative}
+.pcal .cm button.dt::after{content:'';position:absolute;bottom:3px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#16a34a}.pcal button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+@media (max-width:1150px){.fper .sy{display:none}}@media (max-width:760px){.fper .sg button{padding:5px 7px}.fper .nv .lb{min-width:96px;font-size:12.5px}.fper .hj{padding:5px 8px}}
 .acc{flex:none;display:flex;align-items:center;gap:8px}
 .acc[hidden],.who[hidden],.bt[hidden]{display:none}
 .bt{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:9px;padding:6px 12px;font:600 13px system-ui,sans-serif;cursor:pointer;white-space:nowrap}
@@ -105,8 +118,16 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
   <div class="brand"><img class="logo" src="img/logo-64.png" width="24" height="24" alt="">Finanças <span>Pessoais</span></div>
   <nav id="tabs" role="tablist"></nav>
   <div class="sp"></div>
+  <div class="fper" id="fPer" hidden aria-label="Período das Finanças">
+    <button type="button" class="sy" id="pSync"></button>
+    <div class="sg" id="pMode"><button type="button" data-m="mes">Mês</button><button type="button" data-m="ano">Ano</button><button type="button" data-m="int">Intervalo</button></div>
+    <div class="nv" id="pNav"><button type="button" data-d="-1" aria-label="Anterior">‹</button><span class="lb" id="pLbl" role="button" tabindex="0" title="Escolher mês ou ano"></span><button type="button" data-d="1" aria-label="Seguinte">›</button></div>
+    <div class="rg" id="pRng" hidden><input type="date" id="pIni" aria-label="Início"> a <input type="date" id="pFim" aria-label="Fim"></div>
+    <button type="button" class="hj" id="pHoje" title="Ir para o período atual">Hoje</button>
+  </div>
   <button class="mbtn" id="btMenu" type="button" aria-haspopup="menu" aria-expanded="false" title="Menu"><span class="av" id="av">☰</span><span class="em" id="mail">Menu</span><span class="ch">▾</span></button>
 </div>
+<div class="pcal" id="pCal" hidden></div>
 <div class="menu" id="menu" role="menu" hidden>
   <div class="hd"><div class="av" id="mAv">?</div><div style="min-width:0;flex:1"><b id="mMail">Sem sessão</b><small id="mSub">Os dados ficam só neste dispositivo</small></div><span class="ver" id="mVer" title="Versão da aplicação"></span></div>
   <button class="it" id="miEntrar" type="button"><span class="ic">🔑</span>Entrar / criar conta</button>
@@ -192,6 +213,7 @@ function abrir(id){
   const ex=document.getElementById('extLink');ex.hidden=!s.url;if(s.url)ex.href=s.url;
   frames.querySelectorAll('iframe').forEach(x=>x.classList.toggle('on',x===f));
   tabs.querySelectorAll('a').forEach(a=>{const on=a.dataset.id===s.id;a.classList.toggle('on',on);a.setAttribute('aria-selected',on)});
+  if(window.FPPer)FPPer.pinta();
   document.title=s.nome+' · Finanças Pessoais';
 }
 window.addEventListener('hashchange',()=>abrir(location.hash.slice(1)));
@@ -323,6 +345,35 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);let i=0;
   Auth.onChange((ev,session)=>mostrar(session&&session.user));
   Auth.getSession().then(s=>mostrar(s&&s.user));
 })();
+</script>
+<script>
+/* período das Finanças na barra de cima: a lógica fica nas Finanças (window.fpPer); aqui só se mostra e se envia o que se clica */
+window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const api=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.classList.contains('on')&&f.contentWindow.fpPer||null}catch(e){return null}};
+  let CY=0;
+  function pinta(){const a=api();$('fPer').hidden=!a;if(!a){$('pCal').hidden=true;return}const e=a.estado();
+    [...$('pMode').children].forEach(b=>b.classList.toggle('on',b.dataset.m===e.m));$('pNav').hidden=e.m==='int';$('pRng').hidden=e.m!=='int';
+    $('pLbl').textContent=e.lbl;$('pIni').value=e.ini||'';$('pFim').value=e.fim||'';
+    $('pHoje').classList.toggle('atual',e.atual);$('pHoje').title=e.atual?'Já está no período atual':(e.m==='ano'?'Ir para o ano atual':e.m==='int'?'Do dia 1 deste mês até hoje':'Ir para o mês atual');
+    const y=$('pSync');y.className='sy '+(e.sync.st||'');y.innerHTML=e.sync.html;y.title=e.sync.title||y.textContent;if(!$('pCal').hidden)cal()}
+  function cal(){const a=api();if(!a)return;const e=a.estado(),tem=new Set(e.meses),pm=e.m==='mes'&&e.ano===CY?e.mes:-1;
+    $('pCal').innerHTML=`<div class="ch"><button type="button" data-cy="-1" aria-label="Ano anterior">‹</button><b>${CY}</b><button type="button" data-cy="1" aria-label="Ano seguinte">›</button></div><button type="button" class="ca${e.m==='ano'&&e.ano===CY?' on':''}" data-cano>Ano ${CY} inteiro</button><div class="cm">${MS.map((n,i)=>`<button type="button" data-cmes="${i}" class="${i===pm?'on':''}${tem.has(CY+'-'+String(i+1).padStart(2,'0'))?' dt':''}" title="${n} ${CY}">${n.slice(0,3)}</button>`).join('')}</div>`}
+  function abreCal(){const a=api();if(!a)return;const p=$('pCal');if(!p.hidden){p.hidden=true;return}CY=a.estado().ano;cal();p.hidden=false;const r=$('pLbl').getBoundingClientRect();p.style.top=(r.bottom+8)+'px';p.style.left=Math.max(8,Math.min(innerWidth-250,r.right-240))+'px'}
+  $('pMode').addEventListener('click',e=>{const b=e.target.closest('button'),a=api();if(b&&a)a.modo(b.dataset.m)});
+  $('pNav').addEventListener('click',e=>{const b=e.target.closest('button[data-d]'),a=api();if(b&&a)a.nav(b.dataset.d)});
+  $('pLbl').addEventListener('click',abreCal);$('pLbl').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();abreCal()}});
+  $('pHoje').addEventListener('click',()=>{const a=api();if(a)a.hoje()});
+  $('pSync').addEventListener('click',()=>{const a=api();if(a)a.sync()});
+  ['pIni','pFim'].forEach(id=>$(id).addEventListener('change',()=>{const a=api();if(a)a.intervalo($('pIni').value,$('pFim').value)}));
+  $('pCal').addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('button'),a=api();if(!b||!a)return;
+    if(b.dataset.cy){CY+=+b.dataset.cy;cal();return}if('cano' in b.dataset){a.escolhe('ano',CY);$('pCal').hidden=true;return}if(b.dataset.cmes!=null){a.escolhe('mes',CY,+b.dataset.cmes);$('pCal').hidden=true}});
+  document.addEventListener('click',e=>{if(!$('pCal').hidden&&!e.target.closest('#pCal,#pLbl'))$('pCal').hidden=true});
+  addEventListener('blur',()=>{$('pCal').hidden=true});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')$('pCal').hidden=true});
+  addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-per')pinta()});
+  document.getElementById('frames').addEventListener('load',()=>setTimeout(pinta,50),true);
+  setTimeout(pinta,300);
+  return {pinta}})();
 </script>
 </body>
 </html>

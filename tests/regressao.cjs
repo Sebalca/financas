@@ -190,6 +190,21 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D72','Dividir: 1.ª linha cinzenta, restantes valores e observações a branco',await ev(()=>{abreSplit(DB.mov.find(x=>x.valor<0&&!(x.partes&&x.partes.length)));const bg=q=>getComputedStyle(document.querySelector(q)).backgroundColor;const card=getComputedStyle(document.querySelector('.card')).backgroundColor;
     const ok=bg('#spRows tr:first-child [data-spv]')!==card&&bg('#spRows tr:nth-child(2) [data-spv]')===card&&bg('#spRows tr:first-child [data-spo]')===card;document.querySelector('#mSplit').hidden=true;SP=null;return ok}));
 
+  console.log('v0.8c');
+  t('D74','filtro Entradas/Saídas destacado a azul quando ativo e caixa branca',await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();const f=document.querySelector('#fTipo'),card=getComputedStyle(document.querySelector('.card')).backgroundColor;
+    const a=!f.classList.contains('on')&&getComputedStyle(f).backgroundColor===card;f.value='e';f.dispatchEvent(new Event('change'));const b=f.classList.contains('on');limpaFiltros();render();return a&&b}));
+  const z75=await ev(()=>{const n=normaliza({mov:[{id:'a',banco:'X',conta:'',dm:'2026-01-01',dv:'2026-01-01',desc:'D',valor:-10,saldo:null,partes:[{valor:-6,cat:'',ref:'',obs:'Luz'},{valor:-4,cat:'',ref:'',obs:''}]}]});
+    const mig=n.mov[0].partes[0].desc==='Luz'&&n.mov[0].partes[0].obs==='';
+    const m=DB.mov.find(x=>x.partes&&x.partes.length);abreSplit(m);const th=[...document.querySelectorAll('#mSplit thead th')].map(x=>x.textContent);
+    document.querySelector('#spRows tr:nth-child(1) [data-spo]').value='Descr A';document.querySelector('#spOk').click();
+    SPOPEN.add(m.id);render();const tr=document.querySelector(`#extTable tr.parte[data-pid="${m.id}#0"]`);
+    return {ok:mig&&th.includes('Descrição')&&!th.includes('Observações')&&m.partes[0].desc==='Descr A'&&m.partes[0].obs==='Nota X'&&/Descr A/.test(tr.textContent)&&tr.querySelector('[data-pobs]').value==='Nota X',th,p:m.partes[0]}});
+  t('D75','linhas divididas: Descrição na janela Dividir, Observações na tabela (separadas)',z75.ok,z75);
+  t('D76','Regras especiais: aba na janela Regras para marcar referências "Só este movimento"',await ev(()=>{document.querySelector('#btRegras').click();document.querySelector('#mRegras [data-mtab="mEsp"]').click();const vis=!document.querySelector('#mEsp').hidden;
+    const c=document.querySelector('#espC');c.value='Por tratar';c.dispatchEvent(new Event('change'));const r=document.querySelector('#espR');r.value=[...r.options].find(o=>o.value)?.value;const k='Por tratar›'+r.value;document.querySelector('#espAdd').click();
+    const ok1=soMov('Por tratar',r.value)&&[...document.querySelectorAll('#espList tbody tr')].some(tr=>tr.textContent.includes(r.value));document.querySelector(`#espList [data-espdel="${CSS.escape(k)}"]`)?.click()||document.querySelector('#espList [data-espdel]').click();
+    const ok2=!soMov('Por tratar',r.value);document.querySelector('#mEsp').hidden=true;return vis&&ok1&&ok2}));
+
   console.log('Início');
   await go('home');
   t('D34','Início não conta categorias fora das contas, exceto entradas de Rendimentos',await ev(()=>!contaInicio({valor:-10,cat:'Por tratar',ref:'x'})&&!contaInicio({valor:10,cat:'Por tratar'})&&!contaInicio({valor:10,cat:'Banco',ref:'x'})&&!contaInicio({valor:-10,cat:'Investimentos'})&&contaInicio({valor:-10,cat:'Alimentação'})&&contaInicio({valor:10,cat:'Rendimentos'})&&!contaInicio({valor:-10,cat:'Rendimentos'})&&contaInicio({valor:-10,cat:''})));
@@ -225,6 +240,14 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const g=document.querySelector('section[data-s="tema"]');const ok1=getComputedStyle(nav).flexDirection==='column'&&/Geral/.test(b.textContent)&&!g.hidden&&['#gTema','#gZoom','#optCalc','#gOrdem','select'].every(q=>g.querySelector(q))&&!nav.querySelector('[data-s="idioma"]');
     nav.querySelector('[data-s="onb"]').click();const h2=box.offsetHeight;document.querySelector('#mSet').hidden=true;
     const z=[...document.querySelectorAll('#gZoom .opt')].map(x=>x.textContent);return ok1&&h1===h2&&z.join('|')==='80%|90%|100% (padrão)|110%|120%'&&!!document.querySelector('link[rel="icon"]')}));
+  const z73=await ev(()=>new Promise(ok=>{location.hash='#financas';setTimeout(()=>{try{const f=document.querySelector('iframe[data-id="financas"]'),w=f.contentWindow,fp=document.querySelector('#fPer');
+    const vis=!fp.hidden,topHidden=getComputedStyle(w.document.querySelector('.top')).display==='none',lbl=document.querySelector('#pLbl').textContent===w.document.querySelector('#perLbl').textContent;
+    document.querySelector('#pMode [data-m="ano"]').click();FPPer.pinta();const ano=w.fpPer.estado().m==='ano'&&document.querySelector('#pLbl').textContent===String(w.fpPer.estado().ano);
+    document.querySelector('#pNav [data-d="-1"]').click();const y0=w.fpPer.estado().ano;document.querySelector('#pHoje').click();const hj=w.fpPer.estado().ano===new Date().getFullYear()&&y0===new Date().getFullYear()-1&&document.querySelector('#pHoje').classList.contains('atual');
+    document.querySelector('#pMode [data-m="mes"]').click();document.querySelector('#pLbl').click();const cal=!document.querySelector('#pCal').hidden;document.querySelector('#pCal [data-cmes="5"]').click();const jun=w.fpPer.estado().m==='mes'&&w.fpPer.estado().mes===5;
+    const sync=document.querySelector('#pSync').textContent.length>0;
+    location.hash='#simulador';setTimeout(()=>{const esc=document.querySelector('#fPer').hidden;location.hash='#financas';ok({ok:vis&&topHidden&&lbl&&ano&&hj&&cal&&jun&&sync&&esc,vis,topHidden,lbl,ano,hj,cal,jun,sync,esc})},300)}catch(e){ok({ok:false,err:String(e)})}},600)}));
+  t('D73','período (Mês/Ano/Intervalo, data, calendário, Guardado) e botão "Hoje" na barra de cima; título das Finanças sai; escondidos noutros separadores',z73.ok,z73);
   t('D43','onboarding abre e tem vários passos',await ev(()=>{FPOnb.abre();const ok=!document.querySelector('#mOnb').hidden&&document.querySelectorAll('#onbDots i').length>=5;document.querySelector('#mOnb').hidden=true;return ok}));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);

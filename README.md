@@ -58,7 +58,7 @@ Para acrescentar um separador: criar o HTML em `public/` e juntar `{id:'novo', n
 ## Como funciona a aplicação de Finanças (`financas.html`)
 
 ### Período
-No topo: **Mês / Ano / Intervalo**, setas ‹ › e um **calendário** ao clicar na data (ano + 12 meses; os meses com movimentos têm um ponto). Todas as abas usam o período escolhido.
+Na barra de cima da página principal (só no separador Finanças): **Mês / Ano / Intervalo**, setas ‹ ›, um **calendário** ao clicar na data (ano + 12 meses; os meses com movimentos têm um ponto), o botão **Hoje** e o estado de gravação. Todas as abas usam o período escolhido. As Finanças expõem `window.fpPer` e avisam a página principal com a mensagem `fp-per`.
 
 ### Extratos
 - **Importar**: arrastar ficheiros ou escolher (vários de uma vez).
@@ -90,7 +90,8 @@ No topo: **Mês / Ano / Intervalo**, setas ‹ › e um **calendário** ao clica
 - **Movimentos apagados**:
   - não voltam a entrar ao reimportar o extrato;
   - exceção: os de uma importação removida podem ser reimportados.
-- **⚙ Regras e pessoas** (uma janela, duas abas):
+- **⚙ Regras e pessoas** (uma janela, três abas):
+  - **Regras especiais**: referências "📌 Só este movimento" (não pedem regra).
   - **Regras**: "contém", "tem a palavra" ou "começa por", para entradas, saídas ou ambas. Ganha a primeira regra que corresponder (ordem ↑↓). Não mexem nos movimentos categorizados à mão nem nos divididos.
   - **Pessoas**: identificadores encontrados nas descrições (TFI, TRF, MB WAY…) associados a um nome, que preenche "Quem é". Tem uma pesquisa fixa.
 - **⇅ Importar/Exportar** (menu por baixo do botão):

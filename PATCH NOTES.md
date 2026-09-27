@@ -22,7 +22,8 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - Definições: Tema e tamanho, Conta (mudar palavra-passe), Cópia de segurança (exportar/importar .json), Apagar dados (dispositivo / conta), Onboarding, Idioma, Ajuda, Enviar sugestão (os três últimos só visuais por agora).
 - Login opcional; com sessão os dados sincronizam com a conta (Supabase `financas_dados`); nunca credenciais privadas no código.
 
-- D52 Clicar na data do canto superior direito abre um calendário: ano (‹ ›), "Ano inteiro" e os 12 meses; escolher um mês passa para o modo Mês.
+- D52 Clicar na data abre um calendário: ano (‹ ›), "Ano inteiro" e os 12 meses; escolher um mês passa para o modo Mês.
+- D73 O título "Finanças pessoais" (com o logo) fica só na barra de cima da página principal. O período (Mês/Ano/Intervalo, ‹ data ›, calendário), o estado "Guardado / Só neste browser" e o botão **Hoje** (vai para o mês/ano atual; no Intervalo: dia 1 deste mês até hoje; esbatido quando já está no período atual) ficam na barra de cima, entre os separadores e o menu da conta, e só aparecem no separador Finanças. Aberto sozinho (financas.html), o cabeçalho próprio continua a aparecer. (v0.8c)
 
 - D66 🧮 "Como foi calculado": ícone pequeno no canto das caixas do Início, Despesas e Rendimentos; abre um **painel lateral à direita** com a fórmula, os movimentos que contam (a soma = valor da caixa) e os que ficaram de fora agrupados pelo motivo; clicar numa linha leva ao movimento/rendimento. (v0.8a)
 - D67 O ícone 🧮 pode ser escondido em Definições › Geral › Opções (guardado no dispositivo).
@@ -52,11 +53,15 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 
 - D51 A janela Pessoas tem uma caixa de pesquisa fixa no topo que filtra as duas listas.
 
+- D74 Filtro Entradas/Saídas com caixa branca e destacado a azul quando está ativo (como os outros filtros).
+- D76 Janela Regras com a aba "⭐ Regras especiais": lista das referências "📌 Só este movimento" (não pede para criar regra e as regras não as usam), com pesquisa, ＋ Adicionar e ✕ para tirar. É o mesmo que a opção do modo Editar das Despesas.
+
 **Despesas**
 - D10 Fora das contas (tabela de baixo): **Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças**.
 - D06 Trocas entre contas, levantamentos, depósitos e Poupanças não contam como entrada/saída.
 - D12 Referências com ✓ "Só este movimento" não sugerem regra e as regras não as usam.
 - D13 Vista Mês (previsto vs real) e vista Ano (grelha 12 meses + Total + Média/mês + Previsto ano), em duas tabelas com títulos.
+- D75 Linhas divididas: a **Descrição** de cada linha escreve-se na janela Dividir (aparece como ↳ descrição); as **Observações** escrevem-se na tabela, como nas outras linhas. (v0.8c)
 - D18 Dividir movimento (✂): a linha do banco mantém-se e mostra "✂ Dividido em N" com sub-linhas; a soma das partes tem de dar o valor original; todas as contas usam as partes; as regras não mexem em movimentos divididos.
 - D48 Ao dividir, a 1.ª linha tem o valor fechado = valor original − as outras linhas (não se edita nem se apaga). Se as outras linhas passarem o original, a 1.ª fica negativa (vermelho), aparece um aviso e não deixa guardar; fora disso não há texto de soma.
 - D53 Janela Dividir: título com descrição · data · valor em destaque; explicação só no ⓘ ao lado do ✕; "＋ Linha" por baixo da coluna do valor.
@@ -104,6 +109,12 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8c — 27/09/2026
+- Barra de cima: fica só um "Finanças pessoais"; o período, o estado de gravação e o novo botão **Hoje** passam para a barra (só no separador Finanças).
+- Extratos: filtro Entradas/Saídas branco e destacado a azul quando ativo.
+- Linhas divididas: Descrição na janela Dividir, Observações na tabela (o texto que já existia passa para Descrição).
+- Regras: nova aba "⭐ Regras especiais" (referências "Só este movimento").
 
 ### v0.8b — 27/09/2026
 - Definições: volta o menu vertical; janela com tamanho fixo; Idioma passa para Geral; opção de ordem dos movimentos do extrato.
