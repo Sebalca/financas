@@ -177,6 +177,19 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     window.postMessage({tipo:'fp-calc',on:false},'*');return new Promise(ok=>setTimeout(()=>{const n=document.querySelectorAll('.kpi .kc').length;window.postMessage({tipo:'fp-calc',on:true},'*');setTimeout(()=>ok(d===3&&r===4&&n===0&&document.querySelectorAll('#homeKpis .kc').length===4),100)},100))}));
   t('D68a','logo ao lado do título e ícone da página',await ev(()=>!!document.querySelector('.top h1 img.logo')&&!!document.querySelector('link[rel="icon"]')));
 
+  console.log('v0.8b');
+  t('D69','tamanho padrão = 90% real (o novo 100%)',await ev(()=>getComputedStyle(document.documentElement).zoom==='0.9'||document.documentElement.style.zoom===''&&/zoom:\s*\.9/.test(document.querySelector('style').textContent)));
+  t('D70','ordem dos movimentos do extrato (mais recentes/antigos primeiro)',await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();const ds=()=>[...document.querySelectorAll('#extTable tbody tr[data-id]')].map(tr=>DB.mov.find(x=>x.id===tr.dataset.id).dm);
+    const a=ds();window.postMessage({tipo:'fp-ordem',ordem:'asc'},'*');return new Promise(ok=>setTimeout(()=>{const b=ds();window.postMessage({tipo:'fp-ordem',ordem:''},'*');setTimeout(()=>ok(a.length>2&&a[0]>=a[a.length-1]&&b[0]<=b[b.length-1]&&a[0]!==b[0]),80)},80))}));
+  const z71=await ev(()=>{const m=DB.mov.filter(x=>x.valor<0).sort((a,b)=>a.dm<b.dm?-1:1)[1];const r={id:'rb71',desc:'X',valor:5,dm:m.dm,cat:'',ref:''};abreReemb(r);
+    const tit=document.querySelector('#mReemb h3').textContent;document.querySelector('#rbTodas').click();const pb=!document.querySelector('#rbPost').hidden;
+    const d1=[...document.querySelectorAll('#rbList tbody tr:not(.rbparte)')].map(tr=>tr.children[0].textContent.split('/').reverse().join('-'));
+    document.querySelector('#rbPost').click();const d2=[...document.querySelectorAll('#rbList tbody tr:not(.rbparte)')].map(tr=>tr.children[0].textContent.split('/').reverse().join('-'));document.querySelector('#mReemb').hidden=true;RB=null;
+    return {ok:tit==='Reembolso'&&pb&&d1.length>0&&d1.every(d=>d<=m.dm)&&d1.every((d,i)=>!i||d<=d1[i-1])&&d2.every(d=>d>m.dm)&&d2.every((d,i)=>!i||d>=d2[i-1]),tit,d1,d2,dm:m.dm}});
+  t('D71','Reembolso: título, "Mostrar todas" da data para trás e botão "Posteriores"',z71.ok,z71);
+  t('D72','Dividir: 1.ª linha cinzenta, restantes valores e observações a branco',await ev(()=>{abreSplit(DB.mov.find(x=>x.valor<0&&!(x.partes&&x.partes.length)));const bg=q=>getComputedStyle(document.querySelector(q)).backgroundColor;const card=getComputedStyle(document.querySelector('.card')).backgroundColor;
+    const ok=bg('#spRows tr:first-child [data-spv]')!==card&&bg('#spRows tr:nth-child(2) [data-spv]')===card&&bg('#spRows tr:first-child [data-spo]')===card;document.querySelector('#mSplit').hidden=true;SP=null;return ok}));
+
   console.log('Início');
   await go('home');
   t('D34','Início não conta categorias fora das contas, exceto entradas de Rendimentos',await ev(()=>!contaInicio({valor:-10,cat:'Por tratar',ref:'x'})&&!contaInicio({valor:10,cat:'Por tratar'})&&!contaInicio({valor:10,cat:'Banco',ref:'x'})&&!contaInicio({valor:-10,cat:'Investimentos'})&&contaInicio({valor:-10,cat:'Alimentação'})&&contaInicio({valor:10,cat:'Rendimentos'})&&!contaInicio({valor:-10,cat:'Rendimentos'})&&contaInicio({valor:-10,cat:''})));
@@ -208,7 +221,10 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D41','separadores externos nunca recebem sessão/tema (data-ext)',await ev(()=>{location.hash='#biblia';return new Promise(r=>setTimeout(()=>r(!!document.querySelector('iframe[data-ext]')&&/:not\(\[data-ext\]\)/.test(document.body.innerHTML)),300))}));
   t('D42','menu (avatar ▾) com Definições, Plano, Onboarding e modo escuro',await ev(()=>!!document.querySelector('#btMenu')&&['[data-set="tema"]','#miPlano','#miOnb','#miTema'].every(q=>document.querySelector(q))));
   t('D44','versão no canto do menu da conta (sem subtítulo nas Finanças)',await ev(()=>{document.querySelector('#btMenu').click();const v=document.querySelector('#mVer').textContent;document.querySelector('#btMenu').click();const f=document.querySelector('iframe[data-id="financas"]').contentDocument;return /^v0\./.test(v)&&!f.querySelector('.top p')}));
-  t('D68','Definições com abas horizontais; "Geral" tem tema, tamanho e a opção do ícone 🧮; página com ícone',await ev(()=>{document.querySelector('[data-set="tema"]').click();const nav=document.querySelector('#setNav'),b=nav.querySelector('button');const ok=getComputedStyle(nav).flexDirection==='row'&&/Geral/.test(b.textContent)&&!document.querySelector('#setSc section[data-s="tema"]').hidden&&!!document.querySelector('section[data-s="tema"] #gTema')&&!!document.querySelector('section[data-s="tema"] #gZoom')&&!!document.querySelector('section[data-s="tema"] #optCalc')&&!!document.querySelector('link[rel="icon"]');document.querySelector('#mSet').hidden=true;return ok}));
+  t('D68','Definições com menu vertical e tamanho fixo; "Geral" tem tema, tamanho, idioma, ordem dos movimentos e a opção do ícone 🧮',await ev(()=>{document.querySelector('[data-set="tema"]').click();const nav=document.querySelector('#setNav'),b=nav.querySelector('button'),box=document.querySelector('#mSet .big'),h1=box.offsetHeight;
+    const g=document.querySelector('section[data-s="tema"]');const ok1=getComputedStyle(nav).flexDirection==='column'&&/Geral/.test(b.textContent)&&!g.hidden&&['#gTema','#gZoom','#optCalc','#gOrdem','select'].every(q=>g.querySelector(q))&&!nav.querySelector('[data-s="idioma"]');
+    nav.querySelector('[data-s="onb"]').click();const h2=box.offsetHeight;document.querySelector('#mSet').hidden=true;
+    const z=[...document.querySelectorAll('#gZoom .opt')].map(x=>x.textContent);return ok1&&h1===h2&&z.join('|')==='80%|90%|100% (padrão)|110%|120%'&&!!document.querySelector('link[rel="icon"]')}));
   t('D43','onboarding abre e tem vários passos',await ev(()=>{FPOnb.abre();const ok=!document.querySelector('#mOnb').hidden&&document.querySelectorAll('#onbDots i').length>=5;document.querySelector('#mOnb').hidden=true;return ok}));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);

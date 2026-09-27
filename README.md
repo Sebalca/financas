@@ -47,7 +47,7 @@ ROADMAP.md                        plano de versões
   - Link direto: `index.html#financas`, `#simulador`…
   - Os sites externos têm `data-ext` e **nunca recebem a sessão nem o tema**.
 - **Conta**: botão Entrar / avatar ▾ com menu (Definições, Plano, Onboarding, modo escuro, Ajuda, Enviar sugestão, Terminar sessão) e a versão no canto.
-- **Definições** (abas horizontais): Geral (tema, tamanho do texto/zoom, opção do ícone 🧮), cópia de segurança (exportar/importar ficheiro), apagar dados, conta, onboarding, idioma, ajuda.
+- **Definições** (menu vertical): Geral (tema, tamanho 80–120% com padrão = 90% real, idioma, ordem dos movimentos, opção do ícone 🧮), cópia de segurança (exportar/importar ficheiro), apagar dados, conta, onboarding, ajuda.
 - **Onboarding**: 6 passos; abre sozinho no primeiro login depois de criar conta.
 - Tema e zoom passam para os separadores internos por `postMessage` (`fp-tema`, `fp-zoom`).
 

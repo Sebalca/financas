@@ -22,7 +22,7 @@
   --bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--soft:#1c222b;
   --ac:#7d9bff;--ac2:#1c2740;--ok:#3ecf95;--neg:#ff7d62;--warn:#f0b35a;
   --c1:#3ecf95;--c2:#ff6f86;--c3:#f5a543;--c4:#7d9bff;--c5:#b393ff;--c6:#4cc9d9;--c7:#c9937a;--c8:#7b8594;--sh:none;color-scheme:dark}
-@media (min-width:700px){html{zoom:.85}}
+html{zoom:.9}
 *{box-sizing:border-box}
 html{overflow-y:scroll;scrollbar-gutter:stable}
 html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
@@ -51,7 +51,7 @@ button,input,select{font:inherit;color:inherit}
 #pesQw{position:sticky;top:-14px;z-index:3;background:var(--card);margin:-14px -18px 10px;padding:12px 18px 10px;border-bottom:1px solid var(--bd)}
 #pesQ{width:100%;border:1px solid var(--bd);border-radius:9px;background:var(--soft);color:inherit;padding:8px 10px;font:inherit}
 .sptog{width:22px;height:22px;padding:0;margin-right:4px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:inherit;cursor:pointer;font-size:11px;vertical-align:middle}
-#spRows tr:first-child [data-spv]{background:var(--soft);color:var(--mu);cursor:not-allowed}
+#spRows tr:first-child [data-spv]{background:var(--soft);color:var(--mu);cursor:not-allowed}#spRows tr:not(:first-child) [data-spv],#spRows [data-spo]{background:var(--card)!important}
 tr.rbparte td{background:var(--soft);font-size:12.5px}
 #mReemb{z-index:60}
 table.t td.acts{text-align:right;padding-right:4px}
@@ -454,9 +454,9 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
  <div id="rdLig"></div><div id="rdDet"></div>
  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap"><button class="btn" id="rdDel" type="button">🗑 Apagar</button><span style="flex:1"></span><button class="btn pri" id="rdOk" type="button">Guardar</button></div>
 </div></div></div>
-<div class="modal" id="mReemb" hidden><div class="sheet wide"><div class="mh"><h3>Reembolso de que despesa?</h3><button class="mx" type="button" data-close="mReemb" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
+<div class="modal" id="mReemb" hidden><div class="sheet wide"><div class="mh"><h3>Reembolso</h3><button class="mx" type="button" data-close="mReemb" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
  <div class="rbcab" id="rbDesc"></div>
- <div class="rbbar"><span id="rbInfo" class="note" style="margin:0"></span><span style="flex:1"></span><input type="search" id="rbQ" placeholder="Pesquisar descrição ou valor…" hidden><button class="btn sm" id="rbTodas" type="button" data-rbtodas>Mostrar todas</button></div>
+ <div class="rbbar"><span id="rbInfo" class="note" style="margin:0"></span><span style="flex:1"></span><button class="btn sm" id="rbPost" type="button" hidden title="Mostrar as saídas depois da data do reembolso">Posteriores</button><input type="search" id="rbQ" placeholder="Pesquisar descrição ou valor…" hidden><button class="btn sm" id="rbTodas" type="button" data-rbtodas>Mostrar todas</button></div>
  <div id="rbCat" class="rbcat" hidden></div>
  <div class="tw" id="rbList"></div></div></div></div>
 <div class="modal" id="mSplit" hidden><div class="sheet wide"><div class="mh"><h3 style="flex:1">Dividir movimento</h3><span class="spinfo"><button class="mx" type="button" id="spInfo" aria-label="Ajuda" title="Como funciona" aria-expanded="false">ⓘ</button><span class="spbal" id="spAjuda" role="tooltip" hidden>Divida o valor por várias categorias: escreva as outras linhas e a 1.ª fica com o resto (valor original − outras linhas). Nas contas passam a contar as linhas. Numa entrada, cada linha pode ser reembolso de uma despesa (↩).</span></span><button class="mx" type="button" data-close="mSplit" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
@@ -469,7 +469,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <script>
 'use strict';
-const APP_VERSAO='0.8a'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.8b'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -763,7 +763,7 @@ function msPinta(el){const b=el.querySelector('.msb');if(!b)return;const n=el.va
 document.addEventListener('click',e=>{if(!e.target.closest('.ms'))$$('.ms .msp').forEach(x=>x.hidden=true)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.ms .msp').forEach(x=>x.hidden=true)});
 $$('.ms').forEach(msInit);
-let CALC_ON=true;try{CALC_ON=localStorage.getItem('fp_calc')!=='0'}catch(e){}
+let CALC_ON=true,ORDEM='';try{CALC_ON=localStorage.getItem('fp_calc')!=='0';ORDEM=localStorage.getItem('fp_ordem')||''}catch(e){}
 const CALC={};let CALC_ID=null;
 function motivoFora(m){if(isInterna(m))return m.cat==='Poupanças'?`Entre contas — Poupanças${m.ref?' › '+m.ref:''}`:`Entre contas — Banco › ${m.ref}`;
   if(m.cat&&eFora(m.cat)&&!(m.cat===REND&&m.valor>0))return `Fora das contas — ${m.cat}${m.ref?' › '+m.ref:''}`;
@@ -904,7 +904,7 @@ function render(){
   /* ---- Extratos ---- */
   const q=norm($('#fQ').value),ft=$('#fTipo').value,frf=$('#fRef').vals,fc=$('#fCat').vals,fq=$('#fQuem').vals,fb=$('#fBanco').vals,qd=dataQ($('#fQ').value);
   const okC=c=>fc.includes(c),okR=(c,r)=>frf.includes(c+'›'+r);
-  const rows=ordena(qd?all:per).filter(m=>(!fb.length||fb.includes(m.banco))&&(!fq.length||(fq.includes('__none')&&!m.quem)||(!!m.quem&&fq.includes(m.quem)))&&(!fc.length||(fc.includes('__unc')&&isUnc(m))||(m.partes&&m.partes.length?m.partes.some(p=>okC(p.cat)):okC(m.cat)))&&(!frf.length||(m.partes&&m.partes.length?m.partes.some(p=>okR(p.cat,p.ref)):okR(m.cat,m.ref)))&&(!ft||(ft==='e'?m.valor>0:m.valor<0))
+  const rows=(l=>ORDEM==='asc'?l.reverse():l)(ordena(qd?all:per)).filter(m=>(!fb.length||fb.includes(m.banco))&&(!fq.length||(fq.includes('__none')&&!m.quem)||(!!m.quem&&fq.includes(m.quem)))&&(!fc.length||(fc.includes('__unc')&&isUnc(m))||(m.partes&&m.partes.length?m.partes.some(p=>okC(p.cat)):okC(m.cat)))&&(!frf.length||(m.partes&&m.partes.length?m.partes.some(p=>okR(p.cat,p.ref)):okR(m.cat,m.ref)))&&(!ft||(ft==='e'?m.valor>0:m.valor<0))
     &&(qd?(qd(m.dm)||qd(m.dv)):(!q||norm([m.desc,m.ref,m.det,m.cat,m.obs,m.quem].join(' ')).includes(q))));
   $$('[data-cnt="ext"]').forEach(x=>x.textContent=unc.length||'');
   $('#extSub').textContent=all.length?qd?`${rows.length} movimento(s) com a data “${$('#fQ').value.trim()}” (todos os períodos) · ${unc.length} por categorizar · ${all.length} no total`:`${rows.length} de ${per.length} no período · ${unc.length} por categorizar · ${all.length} no total`:'';
@@ -1113,14 +1113,14 @@ $('#spDesfaz').addEventListener('click',()=>{if(!SP)return;const p0=SP.partes[0]
 
 /* ================= reembolsos: escolher a despesa original ================= */
 let RB=null;
-let RB_TODAS=false,RB_O=null;
-function abreReemb(m){if(!m)return;RB=m;RB_TODAS=false;RB_O=null;$('#rbQ').value='';
+let RB_TODAS=false,RB_O=null,RB_POST=false;
+function abreReemb(m){if(!m)return;RB=m;RB_TODAS=false;RB_POST=false;RB_O=null;$('#rbQ').value='';
   $('#rbDesc').innerHTML=`<div class="d">${esc(m.desc)}</div><div class="v">${E(m.valor)}</div><div class="m">${fmtD(m.dm)}${m.quem?' · '+esc(m.quem):''}</div><div></div>`;
   listaReemb();$('#mReemb').hidden=false}
 function listaReemb(){const m=RB;if(!m)return;const v=Math.abs(m.valor);let c,info;
-  $('#rbQ').hidden=!RB_TODAS;$('#rbTodas').textContent=RB_TODAS?'Só as sugeridas':'Mostrar todas';$('#rbCat').hidden=true;
-  if(RB_TODAS){const q=norm($('#rbQ').value);c=DB.mov.filter(o=>o.valor<0&&(!q||norm(o.desc+' '+Math.abs(o.valor).toFixed(2).replace('.',',')+' '+(o.cat||'')+' '+(o.ref||'')).includes(q))).sort((x,y)=>x.dm<y.dm?1:x.dm>y.dm?-1:0);
-    info=`${c.length} saídas${c.length>200?' (mostram-se as 200 mais recentes)':''}`;c=c.slice(0,200)}
+  $('#rbQ').hidden=!RB_TODAS;$('#rbPost').hidden=!RB_TODAS;$('#rbPost').textContent=RB_POST?'Anteriores':'Posteriores';$('#rbPost').title=RB_POST?'Voltar às saídas até à data do reembolso':'Mostrar as saídas depois da data do reembolso';$('#rbTodas').textContent=RB_TODAS?'Só as sugeridas':'Mostrar todas';$('#rbCat').hidden=true;
+  if(RB_TODAS){const q=norm($('#rbQ').value);c=DB.mov.filter(o=>o.valor<0&&(!q||norm(o.desc+' '+Math.abs(o.valor).toFixed(2).replace('.',',')+' '+(o.cat||'')+' '+(o.ref||'')).includes(q))&&(RB_POST?o.dm>m.dm:o.dm<=m.dm)).sort((x,y)=>RB_POST?(x.dm<y.dm?-1:x.dm>y.dm?1:0):(x.dm<y.dm?1:x.dm>y.dm?-1:0));
+    info=`${c.length} saídas ${RB_POST?'depois de':'até'} ${fmtD(m.dm)}${RB_POST?' (mais próximas primeiro)':' (mais recentes primeiro)'}${c.length>200?' — mostram-se 200':''}`;c=c.slice(0,200)}
   else{const cand=DB.mov.filter(o=>o.valor<0&&Math.abs(o.valor)>v&&o.dm<=m.dm);const dia=cand.map(o=>o.dm).sort().pop();
     c=dia?cand.filter(o=>o.dm===dia):[];info=dia?`Saídas de ${fmtD(dia)} maiores do que ${E(v)}`:'Não há saídas maiores neste dia nem antes'}
   $('#rbInfo').textContent=info;
@@ -1135,6 +1135,7 @@ function aplicaReemb(m,o,cat,ref){if(!o.cat||!o.ref){o.cat=cat;o.ref=ref;if(o.pt
   if(m._pai){const pt=m._pai.partes[m._i];pt.cat=o.cat;pt.ref=o.ref;pt.reemb=key;m._pai.u=Date.now();save();render();toast(`Reembolso de "${nomeMov(o)}" → ${o.cat}${o.ref?' › '+o.ref:''}`);$('#mReemb').hidden=true;RB=null;return}
   m.cat=o.cat;m.ref=o.ref;m.catSrc='manual';m.reemb=key;m.u=Date.now();save();render();toast(`Reembolso de "${nomeMov(o)}" → ${o.cat}${o.ref?' › '+o.ref:''}`);$('#mReemb').hidden=true;RB=null}
 $('#rbQ').addEventListener('input',listaReemb);
+$('#rbPost').addEventListener('click',()=>{RB_POST=!RB_POST;listaReemb()});
 $('#rbCat').addEventListener('change',e=>{if(e.target.id==='rbC')$('#rbR').innerHTML=refOpts(e.target.value,'')});
 
 /* ================= edição em massa ================= */
@@ -1397,7 +1398,7 @@ document.addEventListener('click',e=>{
     if(o.cat&&o.ref){aplicaReemb(m,o);return}
     RB_O=o;$('#rbCat').innerHTML=`<b>“${esc(nomeMov(o))}” ainda não tem ${o.cat?'referência':'categoria'}.</b> Escolha para a despesa e o reembolso: <select id="rbC">${catOpts(o.cat)}</select><select id="rbR">${refOpts(o.cat,o.ref)}</select><button class="btn sm pri" type="button" data-rbok>Aplicar</button>`;$('#rbCat').hidden=false;return}
   if('rbok' in d){const c=$('#rbC').value,r=$('#rbR').value;if(!c||!r){toast('Escolha a categoria e a referência');return}if(RB&&RB_O)aplicaReemb(RB,RB_O,c,r);return}
-  if('rbtodas' in d){RB_TODAS=!RB_TODAS;listaReemb();if(RB_TODAS)$('#rbQ').focus();return}
+  if('rbtodas' in d){RB_TODAS=!RB_TODAS;RB_POST=false;listaReemb();if(RB_TODAS)$('#rbQ').focus();return}
   if(d.goref!=null){limpaFiltros();render();$('#fCat').value=d.goref.split('›')[0];render();$('#fRef').value=d.goref;go('ext');render();return}
   if(d.gorendx!=null){limpaFiltros();render();$('#fCat').value='Rendimentos';$('#fTipo').value='e';$('#fQ').value=d.gorendx;go('ext');render();return}
   if(d.gocat!=null){limpaFiltros();render();$('#fCat').value=d.gocat;go('ext');render();return}
@@ -1601,7 +1602,8 @@ if(EST){try{render();Object.entries(EST.f||{}).forEach(([i,v])=>{$('#'+i).value=
 (function(){const ap=t=>{if(t==='dark'||t==='light')document.documentElement.dataset.theme=t};
   try{ap(localStorage.getItem('fp_tema'))}catch(e){}
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-tema')ap(e.data.tema)});
-  const zm=v=>{document.documentElement.style.zoom=v||''};try{zm(localStorage.getItem('fp_zoom'))}catch(e){}
+  const zm=v=>{if(['0.75','0.85','1','1.1'].includes(v))v='';document.documentElement.style.zoom=v||''};try{zm(localStorage.getItem('fp_zoom'))}catch(e){}
+  addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-ordem'){ORDEM=e.data.ordem||'';render()}});
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-calc'){CALC_ON=!!e.data.on;if(!CALC_ON)calcFecha();render()}});
   addEventListener('storage',e=>{if(e.key==='fp_calc'){CALC_ON=e.newValue!=='0';if(!CALC_ON)calcFecha();render()}});
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-zoom')zm(e.data.zoom)});

@@ -26,7 +26,12 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 
 - D66 🧮 "Como foi calculado": ícone pequeno no canto das caixas do Início, Despesas e Rendimentos; abre um **painel lateral à direita** com a fórmula, os movimentos que contam (a soma = valor da caixa) e os que ficaram de fora agrupados pelo motivo; clicar numa linha leva ao movimento/rendimento. (v0.8a)
 - D67 O ícone 🧮 pode ser escondido em Definições › Geral › Opções (guardado no dispositivo).
-- D68 Definições com abas horizontais; a primeira é "Geral" (tema, tamanho e opções que vamos acrescentando). Logo (montanha/reflexo, fundo azul-escuro com cantos arredondados) no separador do browser e ao lado de "Finanças pessoais".
+- D68 Definições com menu vertical e janela de tamanho fixo (não muda ao trocar de secção); a primeira secção é "Geral" (tema, tamanho, idioma, ordem dos movimentos, opções que vamos acrescentando). (atualizada v0.8b) Logo (montanha/reflexo, fundo azul-escuro com cantos arredondados) no separador do browser e ao lado de "Finanças pessoais".
+
+- D69 Tamanho: o padrão (100%) corresponde a 90% real, em computador e telemóvel; opções 80% · 90% · 100% · 110% · 120%. Tamanhos antigos guardados voltam ao padrão.
+- D70 Ordem dos movimentos nos Extratos escolhida em Definições › Geral (mais recentes primeiro por defeito).
+- D71 Janela "Reembolso": "Mostrar todas" lista as saídas até à data do reembolso, da mais recente para a mais antiga; o botão "Posteriores" (à esquerda da pesquisa) mostra as saídas depois dessa data.
+- D72 Janela Dividir: valor da 1.ª linha fixo a cinzento; valores das outras linhas e observações a branco.
 
 **Extratos**
 - D01 CGD (CSV) e cartão refeição (Excel/CSV genérico, conta "Cartão refeição") lidos sem IA.
@@ -99,6 +104,12 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8b — 27/09/2026
+- Definições: volta o menu vertical; janela com tamanho fixo; Idioma passa para Geral; opção de ordem dos movimentos do extrato.
+- Tamanho: novo 100% = 90% real (padrão); opções 80–120%.
+- Reembolso: título "Reembolso"; "Mostrar todas" da data para trás; botão "Posteriores".
+- Dividir: 1.ª linha cinzenta, outras linhas e observações a branco.
 
 ### v0.8a — 27/09/2026 (v0.8 — Validar os números do Início, passo 1)
 - 🧮 "Como foi calculado" nas caixas do Início (Entradas, Saídas, Saldo, Taxa de poupança), Despesas (Previsto, Saídas, Diferença) e Rendimentos (Líquido, Ordenado, Prémios, IRS): painel lateral com fórmula, o que conta e o que fica de fora (e porquê).
