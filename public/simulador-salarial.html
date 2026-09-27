@@ -1348,7 +1348,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('mousedown',e=>{const t=e.target.closest('[data-qmin]');if(!t)return;e.preventDefault();applyQmin(+t.dataset.qmin)});
 document.addEventListener('keydown',e=>{const t=e.target.closest&&e.target.closest('[data-qmin]');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();applyQmin(+t.dataset.qmin)}});
 function applyQmin(v){clearTimeout(tmr);S.q.fat=v;const el=document.getElementById('q_fat');if(el)el.value=fmtIn(dispVal('q',ALLF.fat));refresh('q');toast('Receitas mínimas aplicadas')}
-$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.hidden=true}));
+$$('.modal').forEach(m=>{let ini=null;m.addEventListener('pointerdown',e=>{ini=e.target});m.addEventListener('click',e=>{if(e.target===m&&ini===m)m.hidden=true;ini=null})});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.modal').forEach(m=>m.hidden=true);if(e.key==='Enter'&&(e.target.id==='invP'||e.target.id==='invE'))doInverse(e.target.id==='invP'?'p':'e')});
 
 /* ============ arranque ============ */

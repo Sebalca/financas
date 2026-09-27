@@ -5,13 +5,13 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.7q)
+## Já feito (v0.1 → v0.7r)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.
 - ✅ **v0.6** Movimentos em dinheiro, edição em massa, modo escuro, zoom.
 - ✅ **v0.7** Rendimentos: recibos em PDF, ligação ao extrato, resumo anual; cartão refeição (Excel/CSV).
-- ✅ **v0.7a–q** Ajustes: despesas por ano e modo Editar, reembolsos, dividir movimentos, menu da conta (definições, plano, onboarding básico, cópia de segurança), Início com mais caixas, filtros e títulos fixos, estado ao atualizar…
+- ✅ **v0.7a–r** Ajustes: despesas por ano e modo Editar, reembolsos, dividir movimentos, menu da conta (definições, plano, onboarding básico, cópia de segurança), Início com mais caixas, filtros e títulos fixos, estado ao atualizar…
 
 ---
 

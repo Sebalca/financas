@@ -290,7 +290,7 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);let i=0;
   }
   window.abrirLogin=()=>{setMsg('');mod.hidden=false;$('lEmail').focus()};
   $('btCancel').onclick=()=>{mod.hidden=true};
-  mod.addEventListener('click',e=>{if(e.target===mod)mod.hidden=true});
+  {let ini=null;mod.addEventListener('pointerdown',e=>{ini=e.target});mod.addEventListener('click',e=>{if(e.target===mod&&ini===mod)mod.hidden=true;ini=null})}
   document.addEventListener('keydown',e=>{if(e.key==='Escape')mod.hidden=true});
   $('fLogin').addEventListener('submit',async e=>{e.preventDefault();setMsg('A entrar…',true);
     const {data,error}=await Auth.signIn($('lEmail').value.trim(),$('lPass').value);

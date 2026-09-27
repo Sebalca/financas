@@ -52,7 +52,12 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D48 Ao dividir, a 1.ª linha tem o valor fechado = valor original − as outras linhas (não se edita nem se apaga). Se as outras linhas passarem o original, a 1.ª fica negativa (vermelho), aparece um aviso e não deixa guardar; fora disso não há texto de soma.
 - D53 Janela Dividir: título com descrição · data · valor em destaque; explicação só no ⓘ ao lado do ✕; "＋ Linha" por baixo da coluna do valor.
 - D54 Numa entrada dividida, cada linha pode ser reembolso de uma despesa: ↩ à direita de cada linha na janela Dividir e nas sub-linhas da tabela.
-- D55 Os botões do fim da linha do extrato têm lugares fixos (↩, ✏, ✂, 🗑); quando um não se aplica, o lugar fica vazio.
+- D55 Os botões do fim da linha do extrato têm lugares fixos, pela ordem ↩ reembolso, ✂ dividir, ✏ editar, 🗑 apagar, encostados à direita; quando um não se aplica, o lugar fica vazio. (atualizada v0.7r — antes ↩ ✏ ✂ 🗑)
+- D56 Filtros dos Extratos: pesquisa, Tipo (entradas/saídas), Categoria, Referência, Quem é, Banco.
+- D57 Um só botão "⚙ Regras e pessoas" (janela com as abas Regras | Pessoas) e um só "⇅ Importar/Exportar" (janela com Exportar movimentos | Importações feitas).
+- D58 Movimentos apagados: a chave fica para sempre (não voltam a entrar ao reimportar); os dados completos dos últimos 50 ficam em ＋ Movimento › Movimentos eliminados, onde se podem repor. Exceção: os de uma importação removida (ou "Apagar todos") podem ser reimportados.
+- D59 As janelas fecham ao clicar fora, mas não quando se carrega dentro e se larga fora (em todas as páginas).
+- D60 Dividir: a explicação aparece numa etiqueta ao clicar no ⓘ (título "Como funciona" ao passar o rato), não dentro da janela.
 - D49 As sub-linhas de um movimento dividido estão minimizadas por defeito (▸ mostra, ▾ esconde).
 - D50 O reembolso (↩) pode ligar a uma linha de um movimento dividido; a ligação abre o movimento com as linhas visíveis.
 - D47 A pesquisa dos Extratos aceita datas (dd/mm, dd/mm/aaaa, mm/aaaa) e procura na data mov. ou data valor, em todos os períodos.
@@ -85,6 +90,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.7r — 27/09/2026
+- README reescrito: objetivo, arquitetura, como funciona cada aba, dados/sincronização, segurança e processo de desenvolvimento.
+- Extratos: botões da linha pela ordem ↩ ✂ ✏ 🗑, encostados à direita; filtro Tipo passa para o lugar do Banco (Banco vai para o fim).
+- "⚙ Regras e pessoas": um botão, janela com duas abas. "⇅ Importar/Exportar": um botão, janela para escolher.
+- ＋ Movimento: aba "Movimentos eliminados" para repor os últimos 50 apagados; apagados deixam de voltar ao reimportar (antes voltavam).
+- Dividir: ⓘ mostra a explicação numa etiqueta.
+- Janelas (Finanças, Simulador e página principal): carregar dentro e largar fora já não fecha.
 
 ### v0.7q — 27/09/2026
 - Dividir: sem o texto "bate certo"; "＋ Linha" por baixo do valor; título maior e explicação no ⓘ; 1.ª linha negativa + aviso se as outras passarem o original.
