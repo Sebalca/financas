@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Finanças Pessoais</title>
+<link rel="icon" type="image/png" sizes="32x32" href="img/logo-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="img/logo-64.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <style>
 :root{--bg:#f4f5f7;--card:#fff;--tx:#18202b;--mu:#667085;--bd:#e2e5ea;--ac:#2451d6;--ac2:#e9eefc;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--ac:#7d9bff;--ac2:#1c2740;color-scheme:dark}}
@@ -16,7 +19,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:15px/1.
 body{display:flex;flex-direction:column;height:100vh;height:100dvh}
 .bar{flex:none;display:flex;align-items:center;gap:16px;padding:0 16px;height:48px;background:var(--card);border-bottom:1px solid var(--bd);overflow-x:auto;scrollbar-width:none}
 .bar::-webkit-scrollbar{display:none}
-.brand{font-weight:800;font-size:15px;white-space:nowrap;letter-spacing:-.01em}
+.brand{font-weight:800;font-size:15px;white-space:nowrap;letter-spacing:-.01em;display:flex;align-items:center;gap:7px}.brand .logo{width:24px;height:24px;border-radius:6px;flex:none}
 .brand span{color:var(--ac)}
 nav{display:flex;gap:4px;height:100%}
 nav a{display:flex;align-items:center;padding:0 14px;color:var(--mu);text-decoration:none;font-weight:600;font-size:14px;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-1px}
@@ -67,10 +70,11 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .big{max-width:760px!important;padding:0!important;display:flex;flex-direction:column;max-height:88vh;overflow:hidden}
 .big .bh{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--bd)}.big .bh h2{margin:0;flex:1;font-size:17px}
 .big .bx{border:0;background:transparent;color:var(--mu);font-size:18px;cursor:pointer;width:32px;height:32px;border-radius:8px}.big .bx:hover{background:var(--ac2)}
-.big .bb{display:flex;min-height:0;flex:1}
-.big nav.sn{flex:none;width:170px;border-right:1px solid var(--bd);padding:8px;display:flex;flex-direction:column;gap:2px;height:auto;overflow:auto}
-.big nav.sn button{border:0;background:transparent;color:var(--mu);text-align:left;padding:8px 10px;border-radius:8px;cursor:pointer;font:600 13px system-ui,sans-serif}
-.big nav.sn button.on{background:var(--ac2);color:var(--ac)}
+.big .bb{display:flex;flex-direction:column;min-height:0;flex:1}
+.big nav.sn{flex:none;border-bottom:1px solid var(--bd);padding:8px 10px 0;display:flex;flex-direction:row;gap:2px;overflow-x:auto;scrollbar-width:thin}
+.big nav.sn button{border:0;background:transparent;color:var(--mu);padding:8px 12px 10px;border-radius:8px 8px 0 0;cursor:pointer;font:600 13px system-ui,sans-serif;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px}
+.big nav.sn button.on{background:var(--ac2);color:var(--ac);border-bottom-color:var(--ac)}
+.sw2{display:flex!important;flex-direction:row;gap:10px;align-items:center;cursor:pointer;padding:6px 0;text-align:left}.sw2 input{width:18px!important;height:18px;flex:none;margin:0;accent-color:var(--ac)}.sw2 span{flex:1}
 .big .sc{flex:1;overflow:auto;padding:16px 18px}
 .big .sc h3{margin:0 0 6px;font-size:15px}.big .sc p{color:var(--mu);font-size:13px;margin:0 0 12px}
 .big .grp{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
@@ -83,7 +87,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .big .note2{font-size:12px;color:var(--mu);margin-top:6px}
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.plan{border:1px solid var(--bd);border-radius:12px;padding:12px}.plan.cur{border-color:var(--ac);background:var(--ac2)}
 .plan b{display:block;font-size:15px}.plan .pr{font-size:20px;font-weight:800;margin:6px 0}.plan ul{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:var(--mu)}
-@media (max-width:620px){.big nav.sn{width:auto;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--bd)}.big .bb{flex-direction:column}.plans{grid-template-columns:1fr}}
+@media (max-width:620px){.plans{grid-template-columns:1fr}}
 .onb{max-width:520px!important;text-align:center;padding:26px 24px 18px!important}
 .onb .ico{font-size:44px;line-height:1;margin-bottom:10px}.onb h2{font-size:19px;margin:0 0 8px}.onb p{font-size:14px!important;color:var(--mu);line-height:1.55;margin:0 0 6px!important}
 .onb ul{text-align:left;font-size:13.5px;color:var(--tx);line-height:1.6;margin:8px auto 0;max-width:380px;padding-left:18px}
@@ -97,7 +101,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 </head>
 <body>
 <div class="bar">
-  <div class="brand">Finanças <span>Pessoais</span></div>
+  <div class="brand"><img class="logo" src="img/logo-64.png" width="24" height="24" alt="">Finanças <span>Pessoais</span></div>
   <nav id="tabs" role="tablist"></nav>
   <div class="sp"></div>
   <button class="mbtn" id="btMenu" type="button" aria-haspopup="menu" aria-expanded="false" title="Menu"><span class="av" id="av">☰</span><span class="em" id="mail">Menu</span><span class="ch">▾</span></button>
@@ -118,14 +122,17 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 <div class="mod" id="mSet" hidden><div class="box big" role="dialog" aria-label="Definições">
   <div class="bh"><h2>Definições</h2><button class="bx" data-fecha="mSet" type="button" aria-label="Fechar">✕</button></div>
   <div class="bb"><nav class="sn" id="setNav">
-    <button data-s="tema" type="button">🎨 Tema e tamanho</button><button data-s="conta" type="button">👤 Conta</button><button data-s="backup" type="button">💾 Cópia de segurança</button>
+    <button data-s="tema" type="button">⚙ Geral</button><button data-s="conta" type="button">👤 Conta</button><button data-s="backup" type="button">💾 Cópia de segurança</button>
     <button data-s="apagar" type="button">🗑 Apagar dados</button><button data-s="onb" type="button">🧭 Onboarding</button><button data-s="idioma" type="button">🌐 Idioma</button>
     <button data-s="ajuda" type="button">❓ Ajuda</button><button data-s="sugestao" type="button">💬 Enviar sugestão</button></nav>
   <div class="sc" id="setSc">
     <section data-s="tema"><h3>Tema</h3><p>Aplica-se a todos os separadores e fica guardado neste dispositivo.</p>
       <div class="grp" id="gTema"><button class="opt" data-v="" type="button">Automático</button><button class="opt" data-v="light" type="button">☀️ Claro</button><button class="opt" data-v="dark" type="button">🌙 Escuro</button></div>
       <h3>Tamanho</h3><p>Tamanho do conteúdo das páginas.</p>
-      <div class="grp" id="gZoom"><button class="opt" data-v="" type="button">Automático (85% no computador)</button><button class="opt" data-v="0.75" type="button">75%</button><button class="opt" data-v="0.85" type="button">85%</button><button class="opt" data-v="1" type="button">100%</button><button class="opt" data-v="1.1" type="button">110%</button></div></section>
+      <div class="grp" id="gZoom"><button class="opt" data-v="" type="button">Automático (85% no computador)</button><button class="opt" data-v="0.75" type="button">75%</button><button class="opt" data-v="0.85" type="button">85%</button><button class="opt" data-v="1" type="button">100%</button><button class="opt" data-v="1.1" type="button">110%</button></div>
+      <h3>Opções</h3>
+      <label class="sw2"><input type="checkbox" id="optCalc"> <span>Mostrar o ícone 🧮 <b>Como foi calculado</b> nas caixas (Início, Despesas, Rendimentos)</span></label>
+    </section>
     <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div></section>
     <section data-s="backup" hidden><h3>Cópia de segurança</h3><p>Exporta tudo das Finanças (movimentos, categorias, regras, pessoas, rendimentos, previstos) para um ficheiro .json, que pode importar noutro dispositivo ou mais tarde.</p>
       <div class="grp"><button class="opt" id="bkExp" type="button">⤓ Exportar ficheiro</button><button class="opt" id="bkImpBt" type="button">⤒ Importar ficheiro…</button><input type="file" id="bkImp" accept=".json,application/json" hidden></div><div class="note2" id="bkMsg"></div></section>
@@ -211,7 +218,7 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
   $('btMenu').addEventListener('click',e=>{e.stopPropagation();abre(m.hidden)});
   document.addEventListener('click',e=>{if(!m.hidden&&!m.contains(e.target))abre(false)});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){abre(false);['mSet','mPlano'].forEach(i=>$(i).hidden=true)}});
-  const pinta=()=>{const d=FPTema.atual()==='dark';$('swTema').classList.toggle('on',d);
+  const pinta=()=>{const d=FPTema.atual()==='dark';$('swTema').classList.toggle('on',d);try{$('optCalc').checked=localStorage.getItem('fp_calc')!=='0'}catch(e){}
     $$('#gTema .opt').forEach(b=>b.classList.toggle('on',b.dataset.v===FPTema.guardado()));$$('#gZoom .opt').forEach(b=>b.classList.toggle('on',b.dataset.v===FPTema.zoomG()))};
   const $$=q=>[...document.querySelectorAll(q)];
   const sessao=u=>{U=u||null;const on=!!U,l=on?(U.email||'?')[0].toUpperCase():'☰';
@@ -237,6 +244,11 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
   ['mSet','mPlano'].forEach(i=>$(i).addEventListener('click',e=>{if(e.target.id===i)$(i).hidden=true}));
   $('gTema').addEventListener('click',e=>{const b=e.target.closest('.opt');if(b)FPTema.tema(b.dataset.v)});
   $('gZoom').addEventListener('click',e=>{const b=e.target.closest('.opt');if(b)FPTema.zoom(b.dataset.v)});
+  // opção: ícone 🧮 "Como foi calculado" (guardado neste dispositivo; enviado às Finanças)
+  const calcOn=()=>{try{return localStorage.getItem('fp_calc')!=='0'}catch(e){return true}};
+  const enviaCalc=()=>{const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-calc',on:calcOn()},'*')};
+  $('optCalc').checked=calcOn();
+  $('optCalc').addEventListener('change',e=>{try{localStorage.setItem('fp_calc',e.target.checked?'1':'0')}catch(x){}enviaCalc()});
   $('setOnb').onclick=()=>{$('mSet').hidden=true;FPOnb.abre()};
   // cópia de segurança / apagar — usa a página das Finanças
   const fin=()=>new Promise((ok,ko)=>{let f=document.querySelector('iframe[data-id="financas"]');if(!f){abrir('financas');f=document.querySelector('iframe[data-id="financas"]')}

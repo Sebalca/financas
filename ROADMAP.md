@@ -5,7 +5,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.7t)
+## Já feito (v0.1 → v0.8a)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.
@@ -23,11 +23,11 @@ Ordem sugerida: primeiro garantir que os números estão certos (é a base de tu
 - 🔁 **Mais bancos** — à medida que chegarem extratos de exemplo (um leitor por banco, sem IA, com validação dos saldos). *Preciso de: um extrato de cada banco (CSV/Excel, ou PDF se não houver outro).*
 
 - 🔜 **v0.8 — Validar os números do Início**
-  1. Painel "Como foi calculado" em cada caixa do Início: lista os movimentos que entram, os que ficam de fora e porquê (fora das contas, reembolso, entre contas, dividido).
+  1. ✅ (v0.8a) Painel "Como foi calculado" em cada caixa do Início: lista os movimentos que entram, os que ficam de fora e porquê (fora das contas, reembolso, entre contas, dividido).
   2. Reconciliação por conta e por mês: saldo inicial + entradas − saídas = saldo final do extrato (✓ ou ⚠ com a diferença).
   3. Verificação cruzada: Início = soma das Despesas = soma dos Extratos filtrados; Rendimentos ligados = entradas de Rendimentos.
   4. Alertas de dados em falta: meses sem extrato, recibos por ligar, movimentos por categorizar, saltos de saldo.
-  5. Sessão de validação contigo com um mês real (conferir ao cêntimo) e registar o resultado nas decisões fixas.
+  5. Sessão de validação contigo com um mês real (**junho de 2026**) (conferir ao cêntimo) e registar o resultado nas decisões fixas.
 
 - ⬜ **v0.9 — Melhorar a aba Despesas** *(definir contigo no início: o que falta hoje)*
   - Ideias: comparar com o mês anterior / média, top referências, fixas vs variáveis, previsto por mês (não só mensal × 12), alertas de desvio, gráfico por categoria ao longo do ano.

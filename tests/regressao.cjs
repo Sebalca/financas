@@ -164,6 +164,19 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D64','Início: Rendimentos do extrato por entidade (✓ = com recibo) e caixa Rendimentos por tipo — 4 caixas na linha',y64.ok,y64);
   t('D65','Rendimentos: caixas como no Início e "＋ Adicionar rendimento" no Resumo anual com menu (recibo PDF | manual)',await ev(()=>{const k=document.querySelector('#renKpis .kpi');const b=document.querySelector('#renAno').closest('.card').querySelector('[data-dd="ddRend"]');if(!b||document.querySelector('#renKpis .kpi .s'))return false;b.click();const m=document.querySelector('#ddRend');const ok=!m.hidden&&m.querySelectorAll('button')[0].id==='btRec'&&m.querySelectorAll('button')[1].dataset.radd2==='rec'&&getComputedStyle(k).textAlign==='center';document.body.click();return ok&&m.hidden}));
 
+  console.log('v0.8a');
+  const z66=await ev(()=>{P.m='mes';P.d=new Date(2026,8,1);perLabel();document.querySelector('[data-tab="home"]').click();render();
+    const ic=document.querySelectorAll('#homeKpis .kc').length;document.querySelector('#homeKpis [data-calc="ent"]').click();
+    const aberto=!document.querySelector('#calcPan').hidden,naoNavegou=document.querySelector('#tab-home').classList.contains('on');
+    const ce=CALC.ent(),se=r2(ce.b[0].it.reduce((s,m)=>s+m.valor,0)),cs=CALC.sai(),ss=r2(cs.b[0].it.reduce((s,m)=>s-m.valor,0)-cs.b[1].it.reduce((s,m)=>s+m.valor,0));
+    const temFora=ce.fora.every(x=>x.mot)&&cs.fora.every(x=>x.mot);const txt=document.querySelector('#calcBody').textContent;
+    document.querySelector('#calcX').click();
+    return {ok:ic===4&&aberto&&naoNavegou&&Math.abs(se-ce.tot)<.005&&Math.abs(ss-cs.tot)<.005&&temFora&&/Ficaram de fora|Contam/.test(txt)&&document.querySelector('#calcPan').hidden,ic,se,tot:ce.tot,ss,st:cs.tot}});
+  t('D66','🧮 nas caixas do Início abre o painel lateral "Como foi calculado" (o que conta soma o valor da caixa; o que fica de fora tem o motivo)',z66.ok,z66);
+  t('D67','🧮 também em Despesas e Rendimentos; a opção nas Definições esconde o ícone',await ev(()=>{const d=document.querySelectorAll('#desKpis .kc').length,r=document.querySelectorAll('#renKpis .kc').length;
+    window.postMessage({tipo:'fp-calc',on:false},'*');return new Promise(ok=>setTimeout(()=>{const n=document.querySelectorAll('.kpi .kc').length;window.postMessage({tipo:'fp-calc',on:true},'*');setTimeout(()=>ok(d===3&&r===4&&n===0&&document.querySelectorAll('#homeKpis .kc').length===4),100)},100))}));
+  t('D68a','logo ao lado do título e ícone da página',await ev(()=>!!document.querySelector('.top h1 img.logo')&&!!document.querySelector('link[rel="icon"]')));
+
   console.log('Início');
   await go('home');
   t('D34','Início não conta categorias fora das contas, exceto entradas de Rendimentos',await ev(()=>!contaInicio({valor:-10,cat:'Por tratar',ref:'x'})&&!contaInicio({valor:10,cat:'Por tratar'})&&!contaInicio({valor:10,cat:'Banco',ref:'x'})&&!contaInicio({valor:-10,cat:'Investimentos'})&&contaInicio({valor:-10,cat:'Alimentação'})&&contaInicio({valor:10,cat:'Rendimentos'})&&!contaInicio({valor:-10,cat:'Rendimentos'})&&contaInicio({valor:-10,cat:''})));
@@ -195,6 +208,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D41','separadores externos nunca recebem sessão/tema (data-ext)',await ev(()=>{location.hash='#biblia';return new Promise(r=>setTimeout(()=>r(!!document.querySelector('iframe[data-ext]')&&/:not\(\[data-ext\]\)/.test(document.body.innerHTML)),300))}));
   t('D42','menu (avatar ▾) com Definições, Plano, Onboarding e modo escuro',await ev(()=>!!document.querySelector('#btMenu')&&['[data-set="tema"]','#miPlano','#miOnb','#miTema'].every(q=>document.querySelector(q))));
   t('D44','versão no canto do menu da conta (sem subtítulo nas Finanças)',await ev(()=>{document.querySelector('#btMenu').click();const v=document.querySelector('#mVer').textContent;document.querySelector('#btMenu').click();const f=document.querySelector('iframe[data-id="financas"]').contentDocument;return /^v0\./.test(v)&&!f.querySelector('.top p')}));
+  t('D68','Definições com abas horizontais; "Geral" tem tema, tamanho e a opção do ícone 🧮; página com ícone',await ev(()=>{document.querySelector('[data-set="tema"]').click();const nav=document.querySelector('#setNav'),b=nav.querySelector('button');const ok=getComputedStyle(nav).flexDirection==='row'&&/Geral/.test(b.textContent)&&!document.querySelector('#setSc section[data-s="tema"]').hidden&&!!document.querySelector('section[data-s="tema"] #gTema')&&!!document.querySelector('section[data-s="tema"] #gZoom')&&!!document.querySelector('section[data-s="tema"] #optCalc')&&!!document.querySelector('link[rel="icon"]');document.querySelector('#mSet').hidden=true;return ok}));
   t('D43','onboarding abre e tem vários passos',await ev(()=>{FPOnb.abre();const ok=!document.querySelector('#mOnb').hidden&&document.querySelectorAll('#onbDots i').length>=5;document.querySelector('#mOnb').hidden=true;return ok}));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);

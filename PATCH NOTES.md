@@ -24,6 +24,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 
 - D52 Clicar na data do canto superior direito abre um calendário: ano (‹ ›), "Ano inteiro" e os 12 meses; escolher um mês passa para o modo Mês.
 
+- D66 🧮 "Como foi calculado": ícone pequeno no canto das caixas do Início, Despesas e Rendimentos; abre um **painel lateral à direita** com a fórmula, os movimentos que contam (a soma = valor da caixa) e os que ficaram de fora agrupados pelo motivo; clicar numa linha leva ao movimento/rendimento. (v0.8a)
+- D67 O ícone 🧮 pode ser escondido em Definições › Geral › Opções (guardado no dispositivo).
+- D68 Definições com abas horizontais; a primeira é "Geral" (tema, tamanho e opções que vamos acrescentando). Logo (montanha/reflexo, fundo azul-escuro com cantos arredondados) no separador do browser e ao lado de "Finanças pessoais".
+
 **Extratos**
 - D01 CGD (CSV) e cartão refeição (Excel/CSV genérico, conta "Cartão refeição") lidos sem IA.
 - D02 "Compra" (e prefixos tipo "Pagamento:") sai do início da descrição e vai para Detalhes — em todas as contas.
@@ -95,6 +99,12 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8a — 27/09/2026 (v0.8 — Validar os números do Início, passo 1)
+- 🧮 "Como foi calculado" nas caixas do Início (Entradas, Saídas, Saldo, Taxa de poupança), Despesas (Previsto, Saídas, Diferença) e Rendimentos (Líquido, Ordenado, Prémios, IRS): painel lateral com fórmula, o que conta e o que fica de fora (e porquê).
+- Definições: abas horizontais, "Geral" com tema, tamanho e a opção de mostrar/esconder o 🧮.
+- Logo novo: ícone da página (favicon) e ao lado de "Finanças pessoais" (página principal e Finanças).
+- Mês escolhido para a sessão de validação: **junho de 2026**.
 
 ### v0.7t — 27/09/2026
 - Início: caixa Rendimentos passa a usar as entradas do extrato (✓ = confirmado com recibo; "por confirmar" esbatido); nova caixa Rendimentos por tipo (referência); 4 caixas na mesma linha.

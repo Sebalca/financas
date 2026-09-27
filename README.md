@@ -47,7 +47,7 @@ ROADMAP.md                        plano de versões
   - Link direto: `index.html#financas`, `#simulador`…
   - Os sites externos têm `data-ext` e **nunca recebem a sessão nem o tema**.
 - **Conta**: botão Entrar / avatar ▾ com menu (Definições, Plano, Onboarding, modo escuro, Ajuda, Enviar sugestão, Terminar sessão) e a versão no canto.
-- **Definições**: tema e tamanho do texto (zoom), cópia de segurança (exportar/importar ficheiro), apagar dados, conta, onboarding, idioma, ajuda.
+- **Definições** (abas horizontais): Geral (tema, tamanho do texto/zoom, opção do ícone 🧮), cópia de segurança (exportar/importar ficheiro), apagar dados, conta, onboarding, idioma, ajuda.
 - **Onboarding**: 6 passos; abre sozinho no primeiro login depois de criar conta.
 - Tema e zoom passam para os separadores internos por `postMessage` (`fp-tema`, `fp-zoom`).
 
@@ -126,6 +126,9 @@ No topo: **Mês / Ano / Intervalo**, setas ‹ › e um **calendário** ao clica
 
 ### Outras abas
 Previsões, Faturas e Saúde financeira existem mas ainda estão **em preparação** (ver ROADMAP).
+
+### 🧮 Como foi calculado
+As caixas do Início, Despesas e Rendimentos têm um ícone 🧮 que abre um painel lateral com a fórmula, os movimentos que contam (a soma dá o valor da caixa) e os que ficaram de fora, agrupados pelo motivo (entre contas, fora das contas, reembolso, por categorizar). Clicar numa linha leva ao movimento. O ícone esconde-se em Definições › Geral.
 
 ### Estado da página
 Ao atualizar a página fica tudo igual: aba, período, pesquisa e filtros, posição, secções abertas. Guarda-se no `sessionStorage` (`fp_estado_financas`).
