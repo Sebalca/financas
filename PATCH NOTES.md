@@ -73,6 +73,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D88 Ao sair dos Extratos, a tabela volta às 100 primeiras linhas (não fica com as linhas abertas antes).
 - D84 Só se desenha a aba aberta; as outras desenham-se quando se abrem.
 
+- D90 Millennium BCP (Excel "Saldos e movimentos", detetado sozinho): conta à ordem → "Millennium" (com o n.º da conta, saldos validados e saldo final = saldo contabilístico); conta cartão → "Millennium Cartão" (sem saldo; montantes com o sinal trocado para compras ficarem negativas). Prefixos limpos: "COMPRA 1234 X" → "X" (Detalhes "Compra · cartão 1234"), "CRED" → Crédito, "DD" → Débito direto, "TRF P/ X" / "TRF. P/O X" → "TRF X" (transferência enviada/recebida, mantém Pessoas), "LEV ATM" → Levantamento.
+- D91 Regras base: "PAGAMENTO CARTAO" e "VIS PAGAMENTO" → Banco › Troca entre contas (o pagamento do cartão não conta duas vezes); "LEV ATM" → Banco › Levantamentos. Acrescentadas uma vez a quem já tinha regras.
+- D92 Movimentos iguais (mesma data, descrição e valor) no mesmo ficheiro são todos importados (contas sem saldo): o 2.º, 3.º… ficam com um n.º de repetição na chave; reimportar não os duplica.
+
 **Despesas**
 - D10 Fora das contas (tabela de baixo): **Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças**.
 - D06 Trocas entre contas, levantamentos, depósitos e Poupanças não contam como entrada/saída.
@@ -127,6 +131,11 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8j — 28/09/2026
+- Novo banco: Millennium BCP (Excel) — conta à ordem e conta cartão de crédito.
+- Regras base para o pagamento do cartão (entre contas) e levantamentos ATM.
+- Movimentos iguais no mesmo dia em contas sem saldo já não se perdem.
 
 ### v0.8i — 28/09/2026
 - Sugestões: aba "📥 Recebidas" (só admin) em Enviar sugestão; todas guardadas no Supabase.

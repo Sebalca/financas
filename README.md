@@ -65,7 +65,7 @@ Na barra de cima da página principal (só no separador Finanças): **Mês / Ano
 
 ### Extratos
 - **Importar**: arrastar ficheiros ou escolher (vários de uma vez).
-  - Leitores sem IA, um por banco (`LEITORES`): **CGD** (CSV "Consultar saldos e movimentos") e **cartão refeição** (Excel/CSV com Data mov., Data valor, Descrição, Valor, Saldo). Há também um leitor genérico.
+  - Leitores sem IA, um por banco: **CGD** (CSV "Consultar saldos e movimentos"), **Millennium BCP** (Excel "Saldos e movimentos": conta à ordem e conta cartão, `leMillennium`) e **cartão refeição** (Excel/CSV com Data mov., Data valor, Descrição, Valor, Saldo). Há também um leitor genérico.
   - Os **saldos são validados** linha a linha (e o saldo final).
   - **Duplicados**: cada movimento tem uma *chave* (banco, conta, datas, descrição original, valor, saldo). O que já existe é ignorado.
   - O prefixo "Compra …" sai da descrição e vai para Detalhes; a descrição original fica em `desc0`, para a chave não mudar.

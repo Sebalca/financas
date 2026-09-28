@@ -254,6 +254,19 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await p.reload();await p.waitForTimeout(500);
   t('D45','ao atualizar mantém aba, pesquisa e filtros',await ev(()=>document.querySelector('#tab-ext').classList.contains('on')&&document.querySelector('#fQ').value==='NETFLIX'&&document.querySelector('#fTipo').value==='s'));
 
+  console.log('Millennium');
+  await go('ext');const n90=await ev(()=>DB.mov.length);
+  await p.setInputFiles('#fExt',path.join(FX,'millennium_ordem_teste.xlsx'));await p.waitForTimeout(900);const res90=await ev(()=>document.querySelector('#impRes').textContent);
+  await p.setInputFiles('#fExt',path.join(FX,'millennium_cartao_teste.xlsx'));await p.waitForTimeout(900);
+  const z90=await ev(([n0,r0])=>{const o=DB.mov.filter(m=>m.banco==='Millennium'),c=DB.mov.filter(m=>m.banco==='Millennium Cartão'),res=document.querySelector('#impRes').textContent;
+    const caf=o.find(m=>/CAFE/.test(m.desc)),sup=c.filter(m=>/SUPERMERCADO/.test(m.desc)),loja=c.filter(m=>m.desc==='LOJA ONLINE TESTE');
+    const dbg={pag:DB.mov.filter(m=>/PAGAMENTO CARTAO/.test(m.desc)).map(m=>m.cat+'›'+m.ref),lev:o.find(m=>/LEV ATM/.test(m.desc)).ref,det:caf.det};
+    return {dbg,ok:o.length===5&&c.length===5&&o[0].conta==='11112222333'&&caf.desc==='CAFE DO TESTE PORTO'&&/Compra · cartão 1234/.test(caf.det)&&sup.some(m=>m.valor===-20.1)&&sup.some(m=>m.valor===2.5)&&loja.length===2
+      &&DB.mov.filter(m=>/PAGAMENTO CARTAO/.test(m.desc)).every(m=>m.cat==='Banco'&&m.ref==='Troca entre contas')&&o.find(m=>/LEV ATM/.test(m.desc)).ref==='Levantamentos'&&o.find(m=>/EMPRESA FICTICIA/.test(m.desc)).desc==='TRF EMPRESA FICTICIA LDA'&&/saldo final 1\s000,50\s€ ✓/.test(r0),o:o.map(m=>[m.desc,m.valor]),c:c.map(m=>[m.desc,m.valor]),r0}},[n90,res90]);
+  t('D90','Millennium BCP (Excel): conta à ordem e conta cartão (sinais trocados), prefixos limpos, repetidos no mesmo dia mantidos, pagamento do cartão entre contas',z90.ok,z90);
+  await p.setInputFiles('#fExt',path.join(FX,'millennium_cartao_teste.xlsx'));await p.waitForTimeout(900);
+  t('D91','reimportar o cartão (sem saldo) não duplica nem perde movimentos iguais',await ev(()=>DB.mov.filter(m=>m.banco==='Millennium Cartão').length===5));
+
   console.log('Página principal');
   await p.goto(U+'/index.html');await p.waitForTimeout(300);
   const tabs=await ev(()=>[...document.querySelectorAll('nav a')].map(a=>a.textContent));
