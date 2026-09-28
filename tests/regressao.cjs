@@ -154,7 +154,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D63','filtros Categoria/Referência/Quem é/Banco com multiseleção',x63.ok,x63);
 
   console.log('v0.7t');
-  const y64=await ev(()=>{P.m='mes';P.d=new Date(2026,8,1);perLabel();
+  const y64=await ev(()=>{P.m='mes';P.d=new Date(2026,8,1);perLabel();document.querySelector('[data-tab="home"]').click();
     const m={id:'mR64',k:'r64',man:true,banco:'Dinheiro',conta:'',dm:'2026-09-25',dv:'2026-09-25',desc:'PAGAMENTO XPTO',valor:123,saldo:null,cat:'Rendimentos',ref:'Prémios',catSrc:'manual',det:'',obs:'',quem:'',ord:0};DB.mov.push(m);render();
     const cards=[...document.querySelectorAll('#tab-home .grid4 > .card')].length,li=[...document.querySelectorAll('#homeRend li')].map(x=>x.textContent),lt=[...document.querySelectorAll('#homeRendTipo li')].map(x=>x.textContent);
     const semRec=li.some(t=>/por confirmar/.test(t));
@@ -173,8 +173,8 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     document.querySelector('#calcX').click();
     return {ok:ic===4&&aberto&&naoNavegou&&Math.abs(se-ce.tot)<.005&&Math.abs(ss-cs.tot)<.005&&temFora&&/Ficaram de fora|Contam/.test(txt)&&document.querySelector('#calcPan').hidden,ic,se,tot:ce.tot,ss,st:cs.tot}});
   t('D66','🧮 nas caixas do Início abre o painel lateral "Como foi calculado" (o que conta soma o valor da caixa; o que fica de fora tem o motivo)',z66.ok,z66);
-  t('D67','🧮 também em Despesas e Rendimentos; a opção nas Definições esconde o ícone',await ev(()=>{const d=document.querySelectorAll('#desKpis .kc').length,r=document.querySelectorAll('#renKpis .kc').length;
-    window.postMessage({tipo:'fp-calc',on:false},'*');return new Promise(ok=>setTimeout(()=>{const n=document.querySelectorAll('.kpi .kc').length;window.postMessage({tipo:'fp-calc',on:true},'*');setTimeout(()=>ok(d===3&&r===4&&n===0&&document.querySelectorAll('#homeKpis .kc').length===4),100)},100))}));
+  t('D67','🧮 também em Despesas e Rendimentos; a opção nas Definições esconde o ícone',await ev(()=>{document.querySelector('[data-tab="des"]').click();const d=document.querySelectorAll('#desKpis .kc').length;document.querySelector('[data-tab="ren"]').click();const r=document.querySelectorAll('#renKpis .kc').length;document.querySelector('[data-tab="home"]').click();
+    window.postMessage({tipo:'fp-calc',on:false},'*');return new Promise(ok=>setTimeout(()=>{const n=document.querySelectorAll('#homeKpis .kc').length;window.postMessage({tipo:'fp-calc',on:true},'*');setTimeout(()=>ok(d===3&&r===4&&n===0&&document.querySelectorAll('#homeKpis .kc').length===4),100)},100))}));
   t('D68a','logo ao lado do título e ícone da página',await ev(()=>!!document.querySelector('.top h1 img.logo')&&!!document.querySelector('link[rel="icon"]')));
 
   console.log('v0.8b');
@@ -216,6 +216,15 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D78','reembolso ligado mostra na Descrição o nome da despesa original (e pesquisa por ele)',await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();const m=DB.mov.find(x=>x.id==='mRb');const o=mapaChaves().get(m.reemb);
     const tr=document.querySelector('#extTable tr[data-id="mRb"]');const ok1=!!tr&&tr.querySelector('td.desc').textContent.includes(nomeMov(o))&&/DEVOLUCAO AMIGO/.test(tr.querySelector('td.desc').title);
     document.querySelector('#fQ').value=o.desc.split(' ')[0];render();const ok2=!!document.querySelector('#extTable tr[data-id="mRb"]');limpaFiltros();render();return ok1&&ok2}));
+
+  const z83=await ev(()=>{const n0=DB.mov.length;for(let k=0;k<350;k++)DB.mov.push({id:'big'+k,k:'big'+k,man:true,banco:'Dinheiro',conta:'',dm:'2026-09-'+String(1+k%28).padStart(2,'0'),dv:'2026-09-01',desc:'MOV '+k,valor:-1,saldo:null,cat:'',ref:'',catSrc:'',det:'',obs:'',quem:'',ord:k,c:k});
+    document.querySelector('[data-tab="ext"]').click();limpaFiltros();const t0=performance.now();render();const ms=Math.round(performance.now()-t0);
+    const a=document.querySelectorAll('#extTable tr[data-id]').length,sent=!!document.querySelector('#extMais');extMais();const b=document.querySelectorAll('#extTable tr[data-id]').length;
+    const sa=document.querySelector('#selAll');sa.checked=true;sa.dispatchEvent(new Event('change',{bubbles:true}));const sel=SEL.size;sa.checked=false;sa.dispatchEvent(new Event('change',{bubbles:true}));
+    const alvo=DB.mov.find(x=>x.id==='big5');irMovimento(chave(alvo));const vis=!!document.querySelector('#extTable tr[data-id="big5"]');
+    DB.mov=DB.mov.filter(x=>!String(x.id).startsWith('big'));limpaFiltros();render();return {ok:a===100&&sent&&b===200&&sel>=350&&vis&&DB.mov.length===n0,a,b,sel,ms,vis}});
+  t('D83','Extratos: mostra 100 linhas de cada vez (mais 100 ao descer); selecionar tudo e ir para um movimento funcionam com todas',z83.ok,z83);
+  t('D84','só se desenha a aba aberta; as outras desenham-se ao abrir',await ev(()=>{document.querySelector('[data-tab="ext"]').click();render();const v=RV;const d=DESENHADA.home!==v;document.querySelector('[data-tab="home"]').click();return d&&DESENHADA.home===RV}));
 
   console.log('Início');
   await go('home');
@@ -265,6 +274,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     document.querySelector('#tourBub [data-tv="seg"]').click();setTimeout(()=>{const spot=document.querySelector('#tourSpot');const destaca=!spot.classList.contains('centro')&&spot.offsetWidth>20;
       document.querySelector('#tourBub [data-tv="sair"]').click();FPOnb.abre('ext');setTimeout(()=>{const só=/\/ (\d+)/.exec(document.querySelector('#tourBub .n').textContent)[1]*1===FPOnb.S.filter(x=>x.g==='ext').length;const naAba=document.querySelector('iframe[data-id="financas"]').contentDocument.querySelector('#tab-ext').classList.contains('on');FPOnb.fecha();
       ok({ok:vis&&n>=20&&['home','ext','ren','des','barra'].every(x=>g.has(x))&&destaca&&só&&naAba&&!!document.querySelector('#setOnbG [data-og="ren"]'),vis,n,destaca,só,naAba})},900)},700)},300)}));
+  t('D85','sinais de perguntas/sugestões novas escondidos para quem não é admin; visita guiada sem etiquetas das abas',await ev(()=>['#bdgMenu','#bdgFaq','#bdgSug'].every(q=>document.querySelector(q)&&document.querySelector(q).hidden)&&!FPOnb.S.some(()=>false)&&(()=>{FPOnb.abre();const ok=!document.querySelector('#tourBub .grp2');FPOnb.fecha();return ok})()));
   t('D43','visita guiada nos botões reais, por aba (completa ou só de uma página)',z43.ok,z43);
   t('D80','Novidades: não aparecem na 1.ª visita; aparecem numa versão nova com Novas funcionalidades e Alterações, sem scroll',await ev(()=>{const vis0=document.querySelector('#mNov').hidden;FPNov.mostra('0.8a');const m=document.querySelector('#mNov .box');const ok=!document.querySelector('#mNov').hidden&&document.querySelectorAll('#novN li').length>0&&document.querySelectorAll('#novA li').length>0&&m.scrollHeight<=m.clientHeight+2&&m.getBoundingClientRect().height<=innerHeight;document.querySelector('#novOk').click();return vis0&&ok&&FPNov.cmp('0.8a','0.8g')<0&&FPNov.cmp('0.10a','0.9z')>0}));
   t('D81','Novidades: a versão mais recente das notas = versão da aplicação',await ev(()=>NOVIDADES[0].v===document.querySelector('iframe[data-id="financas"]').contentWindow.FP_VERSAO));

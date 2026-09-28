@@ -150,6 +150,7 @@ tr.ra-d td{background:var(--soft);font-size:12.5px}tr.ra-d td:first-child{paddin
 #homeKpis .kpi.clk{cursor:pointer}#homeKpis .kpi.clk:hover{border-color:var(--ac)}
 #desCats .cat table.t td,#desCats .cat table.t th{padding-top:5px;padding-bottom:5px}
 #desCats .cat table.t{table-layout:fixed;width:100%}#desCats .cat table.t th:first-child{width:30%}#desCats .cat table.t th:last-child{width:44px}
+#extTable tr.mais td{text-align:center;color:var(--mu);font-size:12.5px;padding:10px}
 #extTable tr.fim td{height:8px;padding:0;background:var(--soft);border-top:1px solid var(--bd);border-bottom:0}
 .ms{position:relative;flex:none}.ms .msb{width:100%;height:100%;min-height:34px;text-align:left;border:1px solid var(--bd);border-radius:9px;background:var(--card);color:inherit;font:inherit;font-size:13.5px;padding:6px 26px 6px 10px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
 .ms .msb::after{content:'';position:absolute;right:10px;top:50%;width:6px;height:6px;margin-top:-5px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg)}.ms.on .msb{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 8%,var(--card))}
@@ -480,7 +481,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <script>
 'use strict';
-const APP_VERSAO='0.8g'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.8h'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -863,7 +864,27 @@ const catOpts=sel=>`<option value="">— Por categorizar —</option>`+DB.cats.m
 const refOpts=(cat,sel)=>{const c=DB.cats.find(x=>x.nome===cat);const rs=c?c.refs:[];return `<option value="">—</option>`+rs.map(r=>`<option${r===sel?' selected':''}>${esc(r)}</option>`).join('')+(sel&&!rs.includes(sel)?`<option selected>${esc(sel)}</option>`:'')};
 
 /* ================= render ================= */
+/* Extratos: desenha 100 linhas de cada vez; ao chegar ao fundo junta mais 100 (os totais e filtros contam todas) */
+const EXT_PASSO=100,EXT={rows:[],n:EXT_PASSO,chave:'',ctx:{}};
+function extLinha(m){const {LG,RK,DS}=EXT.ctx;return `<tr data-id="${m.id}" class="${m.man?'man':''}${SEL.has(m.id)?' selr':''}">
+    <td class="ck"><input type="checkbox" class="sel"${SEL.has(m.id)?' checked':''} aria-label="Selecionar"></td>
+    <td>${fmtD(m.dm)}</td><td>${fmtD(m.dv)}</td>${(o=>o?`<td class="desc" title="Reembolso de: ${esc(nomeMov(o))}\nDescrição no extrato: ${esc(m.desc)}">↩ ${esc(nomeMov(o))}</td>`:`<td class="desc">${esc(m.desc)}</td>`)(m.reemb&&RK.get(m.reemb))}<td class="num">${val(m.valor)}</td><td class="num">${m.man?(DS.has(m.id)?E(DS.get(m.id)):'—'):m.saldo==null?'—':E(m.saldo)}</td>
+    ${m.partes&&m.partes.length?`<td colspan="2"><button type="button" class="sptog" data-sptog="${m.id}" title="${SPOPEN.has(m.id)?'Esconder':'Mostrar'} as linhas" aria-expanded="${SPOPEN.has(m.id)}">${SPOPEN.has(m.id)?'▾':'▸'}</button><button class="btn sm${isUnc(m)?' unc':''}" data-split="${m.id}" title="Editar a divisão">✂ Dividido em ${m.partes.length}</button></td>`:`<td><select class="ed${m.cat?'':' unc'}" data-f="cat">${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':m.catSrc==='rend'?'<span class="auto" title="Atribuído pela ligação a um rendimento">🔗</span>':''}</td>
+    <td><select class="ed${m.cat&&!m.ref?' unc':''}" data-f="ref"${m.cat?'':' disabled'}>${refOpts(m.cat,m.ref)}</select></td>`}
+    <td class="muted" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:(m.reemb&&RK.get(m.reemb)?`<span class="lk ok" data-golk="${esc(m.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(m.reemb)))}</span>`:esc(m.det)))(LG.get(chave(m)))}</td>
+    <td><input class="ed obs" data-f="obs" value="${esc(m.obs)}" placeholder="…"></td>
+    <td><input class="ed" data-f="quem" list="dlQuem" value="${esc(m.quem)}" style="width:110px"></td>
+    <td>${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td class="acts"><span class="sl">${m.valor>0&&!LG.get(chave(m))&&!(m.partes&&m.partes.length)?`<button class="btn ic sm" data-reemb="${m.id}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"><button class="btn ic sm" data-split="${m.id}" title="Dividir em várias linhas">✂</button></span><span class="sl">${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button>`:''}</span><span class="sl"><button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></span></td></tr>${m.partes&&m.partes.length&&SPOPEN.has(m.id)?m.partes.map((p,i)=>`<tr class="parte" data-pid="${m.id}#${i}"><td></td><td></td><td></td><td class="desc">↳ ${esc(p.desc||'parte '+(i+1))}</td><td class="num">${val(p.valor)}</td><td></td><td>${p.cat?esc(p.cat):'<span class="tag wait">Por categorizar</span>'}</td><td>${esc(p.ref||'—')}</td><td class="muted" style="white-space:normal;font-size:12px">${p.reemb&&RK.get(p.reemb)?`<span class="lk ok" data-golk="${esc(p.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(p.reemb)))}</span>`:''}</td><td><input class="obs pobs" data-pobs="${m.id}#${i}" value="${esc(p.obs||'')}" placeholder="…" aria-label="Observações da linha"></td><td colspan="2"></td><td class="acts"><span class="sl">${p.valor>0?`<button class="btn ic sm" data-reembp="${m.id}#${i}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"></span><span class="sl"></span><span class="sl"></span></td></tr>`).join(''):''}`}
+const extMaisTr=()=>EXT.rows.length>EXT.n?`<tr class="mais" id="extMais"><td colspan="13">A mostrar ${EXT.n} de ${EXT.rows.length} · <button type="button" class="btn sm" data-extmais>Mostrar mais ${Math.min(EXT_PASSO,EXT.rows.length-EXT.n)}</button></td></tr>`:'';
+function extMais(ate){const tb=$('#extTable tbody');if(!tb)return;const n0=EXT.n;EXT.n=Math.min(EXT.rows.length,Math.max(EXT.n+EXT_PASSO,ate||0));if(EXT.n===n0)return;
+  const x=$('#extMais');if(x)x.remove();const fim=tb.querySelector('tr.fim');fim.insertAdjacentHTML('beforebegin',EXT.rows.slice(n0,EXT.n).map(extLinha).join('')+extMaisTr());ajustaLarg();observaMais()}
+let EXT_IO=null;function observaMais(){if(EXT_IO)EXT_IO.disconnect();const x=$('#extMais');if(!x||!('IntersectionObserver' in window))return;
+  EXT_IO=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting))extMais()},{rootMargin:'600px 0px'});EXT_IO.observe(x)}
+function extMostraId(id){const i=EXT.rows.findIndex(m=>m.id===id);if(i>=EXT.n)extMais(Math.ceil((i+1)/EXT_PASSO)*EXT_PASSO)}
+/* desenha só a aba aberta; as outras ficam marcadas e desenham-se ao abrir (go) */
+let RV=0;const DESENHADA={};const abaAtiva=()=>(($('nav.tabs button.on')||{}).dataset||{}).tab||'home';
 function render(){
+  RV++;const TAB=abaAtiva();DESENHADA[TAB]=RV;
   const [a,b]=range();const all=DB.mov,per=all.filter(m=>m.dm>=a&&m.dm<=b),allX=expande(all),perX=expande(per),perC=perX.filter(contaInicio);
   const reembP=perC.filter(eReemb).reduce((s,m)=>s+m.valor,0),ent=perC.filter(m=>m.valor>0&&!eReemb(m)).reduce((s,m)=>s+m.valor,0),sai=-perC.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0)-reembP;
   const unc=ordena(per.filter(isUnc));
@@ -875,7 +896,8 @@ function render(){
    $('#fRef').setOpts(cc.flatMap(c=>[[c.nome+'›','— '+c.nome,'g x'],...c.refs.map(r=>[c.nome+'›'+r,r,'sub'])]).filter(o=>o[2]!=='g x'||cc.length>1).map(o=>o[2]==='g x'?[o[0],o[1].slice(2),'g x']:o))}
   $('#fQuem').setOpts([['__none','Sem pessoa'],...quems.map(v=>[v,v])]);
 
-  /* ---- Início ---- */
+  const k=mesesPeriodo();
+  if(TAB==='home'){ /* ---- Início ---- */
   {const fora=perX.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0)-ent,nE=perC.filter(m=>m.valor>0&&!eReemb(m)).length,nS=perC.filter(m=>m.valor<0).length;
    $('#homeKpis').innerHTML=kpiH('Entradas',E(ent),`Rendimentos e entradas por categorizar · ${nE} movimentos${fora>.004?`\nNão contam ${E(fora)} (categorias fora das contas e reembolsos)`:''}\nClique para ver nos Extratos`,'pos','data-gotipo="e"','ent')
     +kpiH('Saídas',E(sai),`${nS} movimentos${reembP>.004?` · já descontados ${E(reembP)} de reembolsos`:''}\nClique para ver nos Extratos`,'neg','data-gotipo="s"','sai')
@@ -924,7 +946,7 @@ function render(){
    const r2_=agrupa(m=>m.ref||'(sem referência)').map(([l,x],i)=>({l,v:r2(x.v),u:r2(x.u),c:CORES[(i+3)%CORES.length],a:l==='(sem referência)'?'data-gocat="Rendimentos" title="Ver nos Extratos"':`data-goref="${esc('Rendimentos›'+l)}" title="Ver nos Extratos"`}));
    const vaz='<div class="empty"><b>Sem rendimentos no período</b>Categorize as entradas do extrato em Rendimentos.</div>';
    $('#homeRend').innerHTML=r1.length?donut(r1):vaz;$('#homeRendTipo').innerHTML=r2_.length?donut(r2_):vaz}
-  const k=mesesPeriodo(),resumo=DB.cats.filter(c=>!eFora(c.nome)).map(c=>{const p=c.refs.reduce((s,r)=>s+(+DB.prev[c.nome+'›'+r]||0),0)*k,r=-perX.filter(m=>m.cat===c.nome).reduce((s,m)=>s+m.valor,0);return {c,p,r}}).filter(x=>(x.p||Math.abs(x.r)>.004));
+  const resumo=DB.cats.filter(c=>!eFora(c.nome)).map(c=>{const p=c.refs.reduce((s,r)=>s+(+DB.prev[c.nome+'›'+r]||0),0)*k,r=-perX.filter(m=>m.cat===c.nome).reduce((s,m)=>s+m.valor,0);return {c,p,r}}).filter(x=>(x.p||Math.abs(x.r)>.004));
   $('#homeBudget').innerHTML=resumo.length?`<table class="t"><thead><tr><th>Categoria</th><th class="num">Previsto</th><th class="num">Real</th><th></th></tr></thead><tbody>${resumo.map(({c,p,r})=>{const pc=p>0?Math.min(100,r/p*100):(r>0?100:0);return `<tr><td><i class="dot" style="background:${corCat(c.nome)}"></i>${esc(c.nome)}</td><td class="num">${p?E(p):'—'}</td><td class="num">${E(r)}</td><td style="width:30%"><div class="bar"><i style="width:${Math.max(0,pc)}%;background:${p&&r>p?'var(--c2)':p?'var(--c1)':'var(--c8)'}"></i></div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem valores no período</b></div>';
   const last=ordena(per).slice(0,8);
   $('#homeLast').innerHTML=last.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th></tr></thead><tbody>${last.map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td>${m.cat?`<span class="tag">${esc(m.cat)}${m.ref?' · '+esc(m.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos no período</b></div>';
@@ -934,34 +956,30 @@ function render(){
     $('#homeUnc').innerHTML=`<table class="t"><thead><tr><th>Descrição</th><th class="num">Vezes</th><th class="num">Total</th><th>Última</th><th></th></tr></thead><tbody>${gs.map(x=>`<tr class="clk" data-gouncq="${esc(x.d)}" title="Ver estes movimentos nos Extratos"><td class="desc">${esc(x.d)}</td><td class="num"><b>${x.n}</b></td><td class="num">${val(x.t)}</td><td>${fmtD(x.u)}</td><td><button class="btn ic sm" data-nrg="${esc(x.d)}" title="Criar regra para esta descrição">⚡</button></td></tr>`).join('')}</tbody></table>`}
   else $('#homeUnc').innerHTML=unc.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th></tr></thead><tbody>${unc.slice(0,8).map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td></tr>`).join('')}</tbody></table>${unc.length>8?`<p class="note">+ ${unc.length-8} outros</p>`:''}`:(per.length?'<div class="empty"><b>Tudo categorizado ✓</b></div>':'<div class="empty"><b>Sem movimentos no período</b></div>');
 
+  } // fim Início
   /* ---- Extratos ---- */
+  $$('[data-cnt="ext"]').forEach(x=>x.textContent=unc.length||'');
+  if(TAB==='ext'){
   $('#fTipo').classList.toggle('on',!!$('#fTipo').value);
   const RKq=mapaChaves(),q=norm($('#fQ').value),ft=$('#fTipo').value,frf=$('#fRef').vals,fc=$('#fCat').vals,fq=$('#fQuem').vals,fb=$('#fBanco').vals,qd=dataQ($('#fQ').value);
   const okC=c=>fc.includes(c),okR=(c,r)=>frf.includes(c+'›'+r);
   const rows=(l=>ORDEM==='asc'?l.reverse():l)(ordena(qd?all:per)).filter(m=>(!fb.length||fb.includes(m.banco))&&(!fq.length||(fq.includes('__none')&&!m.quem)||(!!m.quem&&fq.includes(m.quem)))&&(!fc.length||(fc.includes('__unc')&&isUnc(m))||(m.partes&&m.partes.length?m.partes.some(p=>okC(p.cat)):okC(m.cat)))&&(!frf.length||(m.partes&&m.partes.length?m.partes.some(p=>okR(p.cat,p.ref)):okR(m.cat,m.ref)))&&(!ft||(ft==='e'?m.valor>0:m.valor<0))
     &&(qd?(qd(m.dm)||qd(m.dv)):(!q||norm([m.desc,m.ref,m.det,m.cat,m.obs,m.quem,m.reemb&&RKq.get(m.reemb)?nomeMov(RKq.get(m.reemb)):''].join(' ')).includes(q))));
-  $$('[data-cnt="ext"]').forEach(x=>x.textContent=unc.length||'');
   $('#extSub').textContent=all.length?qd?`${rows.length} movimento(s) com a data “${$('#fQ').value.trim()}” (todos os períodos) · ${unc.length} por categorizar · ${all.length} no total`:`${rows.length} de ${per.length} no período · ${unc.length} por categorizar · ${all.length} no total`:'';
   const rc=rows.filter(m=>!isInterna(m)),re=rc.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0),rs=-rc.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0);
   const LG=ligados(),RK=mapaChaves();const ids=new Set(rows.map(m=>m.id));SEL=new Set([...SEL].filter(i=>ids.has(i)));const DS=dinheiro().por;
   $('#extHead').innerHTML=rows.length?`<table class="t tfix">${extCols()}<thead><tr>${EXT_COLS.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead></table>`:'';
-  $('#extTable').innerHTML=rows.length?`<table class="t tfix">${extCols()}<tbody>${rows.map(m=>`<tr data-id="${m.id}" class="${m.man?'man':''}${SEL.has(m.id)?' selr':''}">
-    <td class="ck"><input type="checkbox" class="sel"${SEL.has(m.id)?' checked':''} aria-label="Selecionar"></td>
-    <td>${fmtD(m.dm)}</td><td>${fmtD(m.dv)}</td>${(o=>o?`<td class="desc" title="Reembolso de: ${esc(nomeMov(o))}\nDescrição no extrato: ${esc(m.desc)}">↩ ${esc(nomeMov(o))}</td>`:`<td class="desc">${esc(m.desc)}</td>`)(m.reemb&&RK.get(m.reemb))}<td class="num">${val(m.valor)}</td><td class="num">${m.man?(DS.has(m.id)?E(DS.get(m.id)):'—'):m.saldo==null?'—':E(m.saldo)}</td>
-    ${m.partes&&m.partes.length?`<td colspan="2"><button type="button" class="sptog" data-sptog="${m.id}" title="${SPOPEN.has(m.id)?'Esconder':'Mostrar'} as linhas" aria-expanded="${SPOPEN.has(m.id)}">${SPOPEN.has(m.id)?'▾':'▸'}</button><button class="btn sm${isUnc(m)?' unc':''}" data-split="${m.id}" title="Editar a divisão">✂ Dividido em ${m.partes.length}</button></td>`:`<td><select class="ed${m.cat?'':' unc'}" data-f="cat">${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':m.catSrc==='rend'?'<span class="auto" title="Atribuído pela ligação a um rendimento">🔗</span>':''}</td>
-    <td><select class="ed${m.cat&&!m.ref?' unc':''}" data-f="ref"${m.cat?'':' disabled'}>${refOpts(m.cat,m.ref)}</select></td>`}
-    <td class="muted" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:(m.reemb&&RK.get(m.reemb)?`<span class="lk ok" data-golk="${esc(m.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(m.reemb)))}</span>`:esc(m.det)))(LG.get(chave(m)))}</td>
-    <td><input class="ed obs" data-f="obs" value="${esc(m.obs)}" placeholder="…"></td>
-    <td><input class="ed" data-f="quem" list="dlQuem" value="${esc(m.quem)}" style="width:110px"></td>
-    <td>${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td class="acts"><span class="sl">${m.valor>0&&!LG.get(chave(m))&&!(m.partes&&m.partes.length)?`<button class="btn ic sm" data-reemb="${m.id}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"><button class="btn ic sm" data-split="${m.id}" title="Dividir em várias linhas">✂</button></span><span class="sl">${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button>`:''}</span><span class="sl"><button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></span></td></tr>${m.partes&&m.partes.length&&SPOPEN.has(m.id)?m.partes.map((p,i)=>`<tr class="parte" data-pid="${m.id}#${i}"><td></td><td></td><td></td><td class="desc">↳ ${esc(p.desc||'parte '+(i+1))}</td><td class="num">${val(p.valor)}</td><td></td><td>${p.cat?esc(p.cat):'<span class="tag wait">Por categorizar</span>'}</td><td>${esc(p.ref||'—')}</td><td class="muted" style="white-space:normal;font-size:12px">${p.reemb&&RK.get(p.reemb)?`<span class="lk ok" data-golk="${esc(p.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(p.reemb)))}</span>`:''}</td><td><input class="obs pobs" data-pobs="${m.id}#${i}" value="${esc(p.obs||'')}" placeholder="…" aria-label="Observações da linha"></td><td colspan="2"></td><td class="acts"><span class="sl">${p.valor>0?`<button class="btn ic sm" data-reembp="${m.id}#${i}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"></span><span class="sl"></span><span class="sl"></span></td></tr>`).join(''):''}`).join('')}
+  EXT.rows=rows;EXT.ctx={LG,RK,DS};{const chk=[qd?'d':'p',a,b,$('#fQ').value,ft,fc.join(),frf.join(),fq.join(),fb.join(),ORDEM].join('|');if(chk!==EXT.chave){EXT.chave=chk;EXT.n=EXT_PASSO}}
+  $('#extTable').innerHTML=rows.length?`<table class="t tfix">${extCols()}<tbody>${rows.slice(0,EXT.n).map(extLinha).join('')}${extMaisTr()}
     <tr class="fim"><td colspan="13"></td></tr></tbody></table>`
     :emptyTbl(EXT_COLS,all.length?'Nenhum movimento neste período/filtro':'Ainda não há movimentos',all.length?'Mude o período no topo ou limpe os filtros.':'Importe um extrato acima ou adicione um movimento em dinheiro.');
   const sa=$('#selAll');if(sa){sa.checked=rows.length>0&&SEL.size===rows.length;sa.indeterminate=SEL.size>0&&SEL.size<rows.length}
-  bulkBar();ajustaLarg();requestAnimationFrame(ajustaLarg);
+  bulkBar();ajustaLarg();requestAnimationFrame(ajustaLarg);observaMais();
+  } // fim Extratos
 
-  /* ---- Rendimentos ---- */
-  renderRend(a,b);
-  renderDespesas(perX,k);
+  /* ---- Rendimentos / Despesas ---- */
+  if(TAB==='ren')renderRend(a,b);
+  if(TAB==='des')renderDespesas(perX,k);
   if(CALC_ID&&!$('#calcPan').hidden)calcPinta();
 }
 
@@ -1337,7 +1355,7 @@ function realca(sel){requestAnimationFrame(()=>{const tr=document.querySelector(
 function irMovimento(k){let m=DB.mov.find(x=>chave(x)===k),sel;
   if(!m){const p=mapaChaves().get(k);if(p&&p.parte!=null){m=DB.mov.find(x=>x.id===p.id.split('#')[0]);if(m){SPOPEN.add(m.id);sel=`#extTable tr[data-pid="${m.id}#${p.parte}"]`}}}
   if(!m){toast('Movimento não encontrado');return}
-  limpaFiltros();verMes(m.dm);go('ext',true);render();realca(sel||`#extTable tr[data-id="${m.id}"]`)}
+  limpaFiltros();verMes(m.dm);go('ext',true);render();extMostraId(m.id);realca(sel||`#extTable tr[data-id="${m.id}"]`)}
 function irRendimento(id){const r=DB.rend.find(x=>x.id===id);if(!r){toast('Rendimento não encontrado');return}
   const m=r.tipo==='rec'?r.mes:(r.data||'').slice(0,7);verMes(m+'-01');RA.ent='';RA.open.add(m);go('ren',true);render();realca(`#renAno tr[data-rid="${r.id}"]`)}
 /* ---- janela de rendimento (novo / editar) ---- */
@@ -1422,9 +1440,9 @@ $('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==
 
 /* ================= eventos ================= */
 function limpaFiltros(){['#fQ','#fBanco','#fCat','#fRef','#fQuem','#fTipo'].forEach(i=>$(i).value='')}
-function go(tab,keep){setTimeout(ajustaLarg,0);$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(!keep)window.scrollTo({top:0});fixaCab()}
+function go(tab,keep){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des'].includes(tab))render();if(!keep)window.scrollTo({top:0});fixaCab()}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-gorendx],[data-goref],[data-reemb],[data-rbsel],[data-calc],[data-calcmov],[data-calcrend],[data-sptog],[data-split],[data-spdel],[data-spreemb],[data-reembp],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
+  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-gorendx],[data-goref],[data-reemb],[data-rbsel],[data-extmais],[data-calc],[data-calcmov],[data-calcrend],[data-sptog],[data-split],[data-spdel],[data-spreemb],[data-reembp],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
   const d=t.dataset;
   if(d.edit){abreMov(DB.mov.find(x=>x.id===d.edit));return}
   if(d.cmv){e.preventDefault();const [i,dd]=d.cmv.split('|').map(Number);if(moveArr(DB.cats,i,dd)){save();render()}return}
@@ -1433,6 +1451,7 @@ document.addEventListener('click',e=>{
   if(d.dcat){DES.open.has(d.dcat)?DES.open.delete(d.dcat):DES.open.add(d.dcat);render();return}
   if(d.nrg!=null){const m=DB.mov.find(x=>isUnc(x)&&norm(x.desc)===norm(d.nrg));if(m)abreNovaRegra(m,true);return}
   if(d.gotipo){limpaFiltros();render();$('#fTipo').value=d.gotipo;go('ext');render();return}
+  if('extmais' in d){extMais();return}
   if(d.calc){calcAbre(d.calc);return}
   if(d.calcmov){irMovimento(d.calcmov);return}
   if(d.calcrend){irRendimento(d.calcrend);return}
@@ -1478,7 +1497,7 @@ document.addEventListener('click',e=>{
 // edição na tabela de movimentos
 document.addEventListener('change',e=>{const el=e.target;
   if(el.dataset&&el.dataset.pobs){const [id,i]=el.dataset.pobs.split('#'),m=DB.mov.find(x=>x.id===id),p=m&&m.partes&&m.partes[+i];if(!p)return;p.obs=el.value.trim();m.u=Date.now();save();render();return}
-  if(el.id==='selAll'){const ids=$$('#extTable tr[data-id]').map(r=>r.dataset.id);SEL=el.checked?new Set(ids):new Set();render();return}
+  if(el.id==='selAll'){const ids=EXT.rows.map(m=>m.id);SEL=el.checked?new Set(ids):new Set();render();return}
   if(el.classList.contains('sel')){const id=el.closest('tr').dataset.id;el.checked?SEL.add(id):SEL.delete(id);el.closest('tr').classList.toggle('selr',el.checked);
     const sa=$('#selAll'),n=$$('#extTable tr[data-id]').length;if(sa){sa.checked=SEL.size===n;sa.indeterminate=SEL.size>0&&SEL.size<n}bulkBar();return}
   const tr=el.closest('tr[data-id]');

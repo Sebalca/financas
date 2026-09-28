@@ -38,6 +38,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D43 **Visita guiada** (antes "Onboarding"): destaca os botões reais, mudando de aba sozinha, com um balão por passo (Seguinte/Anterior/Sair, teclas ← → Esc), organizada por aba (Barra e menu, Início, Extratos, Rendimentos, Despesas). A completa mostra tudo seguido; em Definições › Visita guiada escolhe-se a completa ou só uma página. Abre sozinha no primeiro login após criar conta. (atualizada v0.8g)
 - D82 **FAQs** (antes "Ajuda"): pesquisa, filtro por labels, perguntas e respostas; com sessão, o utilizador pergunta e vê "As minhas perguntas" (a aguardar/respondida). Admins do site (tabela `site_admins`) têm a aba "🛠 Gerir": responder e publicar, pôr labels, ignorar, apagar e criar FAQs. Dados em `faq_perguntas` (Supabase, RLS; máx. 10 perguntas/dia por utilizador).
 
+- D86 Sinais para o admin do site (só quem está em `site_admins`): número de perguntas novas (FAQs) e de sugestões por ler, no avatar do canto superior direito e nas opções FAQs / Enviar sugestão. Atualizam ao abrir o site. As sugestões ficam também no Supabase (`sugestoes`, `por_ler = true`); ao abrir "Enviar sugestão" o admin vê as recebidas e passam a lidas (sinal limpa). O sinal das perguntas desaparece quando são respondidas/ignoradas.
+- D79 (atualizada v0.8h) Ao carregar em Enviar, a sugestão aparece logo como enviada (o envio para o Sheet e para o Supabase segue em segundo plano).
+- D43b Visita guiada sem as etiquetas das abas no balão.
+
 **Extratos**
 - D01 CGD (CSV) e cartão refeição (Excel/CSV genérico, conta "Cartão refeição") lidos sem IA.
 - D02 "Compra" (e prefixos tipo "Pagamento:") sai do início da descrição e vai para Detalhes — em todas as contas.
@@ -62,6 +66,9 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D77 Regras especiais criadas por defeito: "Só este movimento" (📌, com as referências já marcadas) e "Transferências" (↪, Por tratar › Transferência / Transferência rec / Transferência pag).
 
 - D79 Sugestões (Definições › Enviar sugestão): tipo (Ideia/Problema/Outro), texto, email só se o utilizador marcar; vão para um Google Sheet através de uma Aplicação Web do Apps Script (`tools/sugestoes-apps-script.gs`). O URL /exec só permite acrescentar linhas (não é credencial); campo-armadilha anti-robôs e limite por minuto.
+
+- D83 Extratos: mostram 100 linhas de cada vez; ao chegar ao fundo juntam mais 100 (também há o botão "Mostrar mais"). Totais, filtros e "selecionar tudo" contam todas as linhas; ir para um movimento mostra as linhas necessárias.
+- D84 Só se desenha a aba aberta; as outras desenham-se quando se abrem.
 
 **Despesas**
 - D10 Fora das contas (tabela de baixo): **Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças**.
@@ -117,6 +124,12 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8h — 28/09/2026
+- Sinais de perguntas novas e sugestões por ler (só admin), no avatar e no menu; sugestões copiadas para o Supabase (`sugestoes`).
+- Sugestão aparece logo como enviada.
+- Visita guiada sem etiquetas das abas.
+- Extratos mais rápidos: 100 linhas de cada vez e só se desenha a aba aberta (5000 movimentos: de ~6 s para ~0,1 s).
 
 ### v0.8g — 28/09/2026
 - Janela de Novidades por versão (novas funcionalidades / alterações).

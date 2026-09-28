@@ -69,7 +69,7 @@ Na barra de cima da página principal (só no separador Finanças): **Mês / Ano
   - Os **saldos são validados** linha a linha (e o saldo final).
   - **Duplicados**: cada movimento tem uma *chave* (banco, conta, datas, descrição original, valor, saldo). O que já existe é ignorado.
   - O prefixo "Compra …" sai da descrição e vai para Detalhes; a descrição original fica em `desc0`, para a chave não mudar.
-- **Tabela** com colunas de largura fixa. Os títulos das colunas ficam na barra fixa, junto à pesquisa e aos filtros.
+- **Tabela** com colunas de largura fixa; mostra 100 linhas de cada vez e junta mais 100 ao descer (só se desenha a aba aberta). Os títulos das colunas ficam na barra fixa, junto à pesquisa e aos filtros.
 - **Pesquisa** por texto, e também por data: `16/09`, `16/09/2026` ou `09/2026` (data mov. ou data valor, em todos os períodos).
 - **Filtros**:
   - Tipo; Categoria (ou "Por categorizar"), Referência, Quem é e Banco com **multiseleção**;
