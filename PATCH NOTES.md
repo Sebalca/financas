@@ -82,7 +82,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D10 Fora das contas (tabela de baixo): **Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças**.
 - D06 Trocas entre contas, levantamentos, depósitos e Poupanças não contam como entrada/saída.
 - D12 Referências com ✓ "Só este movimento" não sugerem regra e as regras não as usam.
-- D13 Despesas numa **grelha única de 12 meses** (igual em Mês e Ano): o ano começa no mês escolhido em Definições › Geral (Janeiro por defeito) e contém o período escolhido, cujo mês fica destacado. Linhas: categoria (cinzenta, soma; abre/fecha, aberta por defeito) e referências; colunas: 12 meses (saídas − reembolsos), Total, Média (total ÷ meses com movimentos) e Previsão (mensal, editável). Por baixo, a mesma grelha para as categorias fora das contas (entradas − saídas, sem Previsão). O modo Editar mantém a lista de categorias para mudar nomes/ordem. (atualizada v0.8l)
+- D13 Despesas numa **grelha única de 12 meses** (igual em Mês e Ano): o ano começa no mês escolhido em Definições › Geral (Janeiro por defeito) e contém o período escolhido, cujo mês fica destacado. Linhas: categoria (cinzenta, soma; abre/fecha, aberta por defeito) e referências; colunas: 12 meses (saídas − reembolsos), Total, Média (total ÷ meses com movimentos) e Previsão (mensal, **só de leitura** — edita-se na aba Previsões). Por baixo, a mesma grelha para as categorias fora das contas (entradas − saídas, coluna Previsão vazia), **alinhada** com a de cima. O modo Editar **não mostra valores**: só nome, ordem, cor e apagar da categoria; referências com ordem, apagar, "📌 Só este movimento" e "↪ Ao mudar a partir desta". (atualizada v0.8m)
 - D75 Linhas divididas: a **Descrição** de cada linha escreve-se na janela Dividir (aparece como ↳ descrição); as **Observações** escrevem-se na tabela, como nas outras linhas. (v0.8c)
 - D18 Dividir movimento (✂): a linha do banco mantém-se e mostra "✂ Dividido em N" com sub-linhas; a soma das partes tem de dar o valor original; todas as contas usam as partes; as regras não mexem em movimentos divididos.
 - D48 Ao dividir, a 1.ª linha tem o valor fechado = valor original − as outras linhas (não se edita nem se apaga). Se as outras linhas passarem o original, a 1.ª fica negativa (vermelho), aparece um aviso e não deixa guardar; fora disso não há texto de soma.
@@ -103,7 +103,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D78 Um reembolso ligado mostra na Descrição "↩ nome da despesa original" (a descrição do extrato fica no tooltip) e a pesquisa encontra-o pelos dois nomes. (v0.8e)
 - D20b Janela do reembolso: mostra em destaque descrição, valor, data e quem; por defeito as saídas (todas as categorias) do próprio dia ou do anterior mais próximo, com valor maior que o reembolso; "Mostrar todas" com pesquisa; despesa sem categoria → escolher categoria/referência na hora (aplica-se às duas).
 - D17 Despesas: **Saídas** (antes "Real") = saídas − reembolsos; nas linhas chama-se **Total** (colunas Entradas e Saídas ao lado). (atualizada v0.7s)
-- D61 Na grelha das Despesas: valor do mês a vermelho quando passa a previsão da referência; clicar num valor abre os Extratos filtrados por esse mês e categoria/referência; "Só com valores" esconde linhas sem movimentos nem previsão; caixas de cima como no Início. (atualizada v0.8l)
+- D61 Na grelha das Despesas: valor do mês a vermelho quando passa a previsão da referência; clicar num valor abre os Extratos filtrados por esse mês e categoria/referência, e clicar no Total abre os Extratos do ano; "Só com valores" esconde linhas sem movimentos nem previsão; caixas de cima como no Início. (atualizada v0.8m)
 - D16 Nos Extratos, entradas têm o botão ↩ para escolher a despesa original (fica com a mesma categoria/referência e ligação ↩).
 - D14 Vista Ano, tabela "Não entram nas contas": uma linha por categoria com o saldo (entradas − saídas) por mês, Total e Média/mês; sem coluna "Entradas ano".
 - Modo "✏ Editar" (nomes, ordem ↑↓, apagar, adicionar); "Abrir todas / Fechar todas".
@@ -127,11 +127,19 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D15 Entrada numa categoria de despesa = **reembolso**: abate à despesa dessa categoria/referência e não conta como entrada. Entradas = Rendimentos + por categorizar.
 - D32 Caixa "Despesas por referência" (entre as despesas por categoria e os rendimentos), clicável → Extratos com categoria e referência.
 - D33 "Entradas e saídas por mês": sempre os 12 meses do ano do período, mais largo que o "Saldo por banco"; opção Detalhado (cores por categoria / entidade).
+- D95 O "ano" começa no primeiro mês escolhido em Definições › Geral e dura 12 meses (ex.: "Set 2026 – Ago 2027"): período Ano, contas e gráficos do Início, grelha das Despesas; "Hoje" vai para o ano que contém hoje; ‹ › andam um ano.
+- D96 Cores das categorias: escolhidas no Editar das Despesas (paleta de cores leves, aplicadas com transparência). Em Definições › Geral: gráficos do Início com as mesmas cores, linhas das Despesas pintadas, Extratos com a caixa da categoria pintada e/ou a linha inteira. Previsões mensais escrevem-se na aba Previsões. Extratos: descrição numa só linha (… e texto completo no tooltip), centrada na vertical.
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
 
 ---
 
 ## Histórico
+
+### v0.8m — 29/09/2026
+- Ano segue o primeiro mês das Definições ("Set 2026 – Ago 2027") no período, contas e gráficos do Início (D95).
+- Cores por categoria (Despesas › Editar) e opções em Definições › Geral: gráficos, linhas das Despesas, caixa/linha nos Extratos (D96).
+- Despesas: previsão só de leitura (edita-se na nova aba Previsões); Total clicável → Extratos do ano; tabela de baixo alinhada; Editar sem valores, com "Só este movimento" e "Ao mudar a partir desta".
+- Extratos: descrição numa linha; corrigida a largura da coluna Descrição (desde a v0.8l ficava estreita).
 
 ### v0.8l — 28/09/2026
 - Extratos: saem as colunas "Data valor" e "Saldo" (ficam no tooltip da data e do valor).

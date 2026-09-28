@@ -182,8 +182,15 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <div class="grp" id="gZoom"><button class="opt" data-v="0.72" type="button">80%</button><button class="opt" data-v="0.81" type="button">90%</button><button class="opt" data-v="" type="button">100% (padrão)</button><button class="opt" data-v="0.99" type="button">110%</button><button class="opt" data-v="1.08" type="button">120%</button></div>
       <h3>Idioma</h3><p>Em breve poderá escolher outros idiomas.</p><select disabled style="max-width:260px"><option>Português (Portugal)</option><option>English</option></select>
       <h3>Opções</h3>
-      <p style="margin:0 0 6px">Primeiro mês do ano nas Despesas</p><select id="optMes1" style="max-width:260px;margin-bottom:12px"></select>
+      <p style="margin:0 0 6px">Primeiro mês do ano (Início e Despesas)</p><select id="optMes1" style="max-width:260px;margin-bottom:12px"></select>
       <p style="margin:0 0 6px">Ordem dos movimentos nos Extratos</p><div class="grp" id="gOrdem" style="margin:0 0 12px"><button class="opt" data-v="" type="button">Mais recentes primeiro</button><button class="opt" data-v="asc" type="button">Mais antigos primeiro</button></div>
+      <p style="margin:12px 0 6px">Cores das categorias <small style="color:var(--mu)">(escolhe-se a cor em Despesas › Editar)</small></p>
+      <div id="optCores" style="display:grid;gap:6px;margin-bottom:12px">
+        <label class="sw2"><input type="checkbox" data-cor="graf"> <span>Gráficos do Início com as mesmas cores</span></label>
+        <label class="sw2"><input type="checkbox" data-cor="des"> <span>Pintar as linhas nas Despesas</span></label>
+        <label class="sw2"><input type="checkbox" data-cor="caixa"> <span>Extratos: pintar a caixa da categoria</span></label>
+        <label class="sw2"><input type="checkbox" data-cor="linha"> <span>Extratos: pintar a linha inteira</span></label>
+      </div>
       <label class="sw2"><input type="checkbox" id="optCalc"> <span>Mostrar o ícone 🧮 <b>Como foi calculado</b> nas caixas (Início, Despesas, Rendimentos)</span></label>
     </section>
     <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div></section>
@@ -323,6 +330,8 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
   const pintaOrd=()=>$$('#gOrdem .opt').forEach(b=>b.classList.toggle('on',b.dataset.v===ordG()));pintaOrd();
   $('gOrdem').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b)return;try{b.dataset.v?localStorage.setItem('fp_ordem',b.dataset.v):localStorage.removeItem('fp_ordem')}catch(x){}pintaOrd();
     const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-ordem',ordem:b.dataset.v},'*')});
+  {const D={graf:1,caixa:1,linha:0,des:1},le=()=>{let o={...D};try{Object.assign(o,JSON.parse(localStorage.getItem('fp_cores')||'{}'))}catch(e){}return o};const o=le();
+    document.querySelectorAll('#optCores [data-cor]').forEach(c=>{c.checked=!!o[c.dataset.cor];c.addEventListener('change',()=>{const n=le();n[c.dataset.cor]=c.checked?1:0;try{localStorage.setItem('fp_cores',JSON.stringify(n))}catch(e){}const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-cores',cores:n},'*')})})}
   $('optCalc').addEventListener('change',e=>{try{localStorage.setItem('fp_calc',e.target.checked?'1':'0')}catch(x){}enviaCalc()});
   $('setOnb').onclick=()=>{$('mSet').hidden=true;FPOnb.abre()};
   // cópia de segurança / apagar — usa a página das Finanças
@@ -451,7 +460,7 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
     $('pHoje').classList.toggle('atual',e.atual);$('pHoje').title=e.atual?'Já está no período atual':(e.m==='ano'?'Ir para o ano atual':e.m==='int'?'Do dia 1 deste mês até hoje':'Ir para o mês atual');
     const y=$('pSync');y.className='sy '+(e.sync.st||'');y.innerHTML=e.sync.html;y.title=e.sync.title||y.textContent;if(!$('pCal').hidden)cal()}
   function cal(){const a=api();if(!a)return;const e=a.estado(),tem=new Set(e.meses),pm=e.m==='mes'&&e.ano===CY?e.mes:-1;
-    $('pCal').innerHTML=`<div class="ch"><button type="button" data-cy="-1" aria-label="Ano anterior">‹</button><b>${CY}</b><button type="button" data-cy="1" aria-label="Ano seguinte">›</button></div><button type="button" class="ca${e.m==='ano'&&e.ano===CY?' on':''}" data-cano>Ano ${CY} inteiro</button><div class="cm">${MS.map((n,i)=>`<button type="button" data-cmes="${i}" class="${i===pm?'on':''}${tem.has(CY+'-'+String(i+1).padStart(2,'0'))?' dt':''}" title="${n} ${CY}">${n.slice(0,3)}</button>`).join('')}</div>`}
+    $('pCal').innerHTML=`<div class="ch"><button type="button" data-cy="-1" aria-label="Ano anterior">‹</button><b>${CY}</b><button type="button" data-cy="1" aria-label="Ano seguinte">›</button></div><button type="button" class="ca${e.m==='ano'&&e.ano===CY?' on':''}" data-cano>${e.mes1?e.anoTxt(CY):'Ano '+CY+' inteiro'}</button><div class="cm">${MS.map((n,i)=>`<button type="button" data-cmes="${i}" class="${i===pm?'on':''}${tem.has(CY+'-'+String(i+1).padStart(2,'0'))?' dt':''}" title="${n} ${CY}">${n.slice(0,3)}</button>`).join('')}</div>`}
   function abreCal(){const a=api();if(!a)return;const p=$('pCal');if(!p.hidden){p.hidden=true;return}CY=a.estado().ano;cal();p.hidden=false;const r=$('pLbl').getBoundingClientRect();p.style.top=(r.bottom+8)+'px';p.style.left=Math.max(8,Math.min(innerWidth-250,r.right-240))+'px'}
   $('pMode').addEventListener('click',e=>{const b=e.target.closest('button'),a=api();if(b&&a)a.modo(b.dataset.m)});
   $('pNav').addEventListener('click',e=>{const b=e.target.closest('button[data-d]'),a=api();if(b&&a)a.nav(b.dataset.d)});
@@ -489,6 +498,7 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
 <script>
 /* ===== Novidades: aparece uma vez por versão nova (não na primeira visita). Atualizar NOVIDADES a cada versão (ver CLAUDE.md). ===== */
 const NOVIDADES=[
+ {v:'0.8m',d:'29/09/2026',n:['Cores por categoria: escolha a cor em Despesas › Editar','Definições › Geral: pintar gráficos, linhas das Despesas e Extratos com essas cores','Aba Previsões: escreva aqui a previsão mensal de cada referência'],a:['O ano segue o primeiro mês escolhido (ex.: Set 2026 – Ago 2027), no Início e nas Despesas','Clicar no Total de uma categoria ou referência abre os Extratos do ano','Previsão bloqueada na grelha das Despesas; tabelas de cima e de baixo alinhadas','Editar das Despesas só com nomes, cor e opções das referências','Extratos: descrição numa linha só']},
  {v:'0.8l',d:'28/09/2026',n:['Despesas numa grelha de 12 meses com Total, Média e Previsão','Escolher o primeiro mês do ano (Definições › Geral)'],a:['Extratos sem as colunas Data valor e Saldo (aparecem ao passar o rato)','Valores acima da previsão a vermelho; clique num valor para ver os movimentos']},
  {v:'0.8k',d:'28/09/2026',n:['Extratos do BPI (Excel do BPI Net)'],a:[]},
  {v:'0.8j',d:'28/09/2026',n:['Extratos do Millennium BCP (Excel): conta à ordem e cartão de crédito'],a:['Pagamento do cartão fica entre contas (não conta duas vezes)','Movimentos iguais no mesmo dia já não se perdem em contas sem saldo']},
