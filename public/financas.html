@@ -481,7 +481,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <script>
 'use strict';
-const APP_VERSAO='0.8h'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.8i'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1440,7 +1440,9 @@ $('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==
 
 /* ================= eventos ================= */
 function limpaFiltros(){['#fQ','#fBanco','#fCat','#fRef','#fQuem','#fTipo'].forEach(i=>$(i).value='')}
-function go(tab,keep){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;$$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des'].includes(tab))render();if(!keep)window.scrollTo({top:0});fixaCab()}
+function go(tab,keep){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;
+  if(muda&&abaAtiva()==='ext'){EXT.n=EXT_PASSO;DESENHADA.ext=-1;if(EXT_IO)EXT_IO.disconnect();const t=$('#extTable');if(t)t.innerHTML=''} /* ao sair dos Extratos volta às 100 primeiras linhas */
+  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des'].includes(tab))render();if(!keep)window.scrollTo({top:0});fixaCab()}
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-gorendx],[data-goref],[data-reemb],[data-rbsel],[data-extmais],[data-calc],[data-calcmov],[data-calcrend],[data-sptog],[data-split],[data-spdel],[data-spreemb],[data-reembp],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
   const d=t.dataset;

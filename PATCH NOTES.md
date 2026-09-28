@@ -39,8 +39,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D82 **FAQs** (antes "Ajuda"): pesquisa, filtro por labels, perguntas e respostas; com sessão, o utilizador pergunta e vê "As minhas perguntas" (a aguardar/respondida). Admins do site (tabela `site_admins`) têm a aba "🛠 Gerir": responder e publicar, pôr labels, ignorar, apagar e criar FAQs. Dados em `faq_perguntas` (Supabase, RLS; máx. 10 perguntas/dia por utilizador).
 
 - D86 Sinais para o admin do site (só quem está em `site_admins`): número de perguntas novas (FAQs) e de sugestões por ler, no avatar do canto superior direito e nas opções FAQs / Enviar sugestão. Atualizam ao abrir o site. As sugestões ficam também no Supabase (`sugestoes`, `por_ler = true`); ao abrir "Enviar sugestão" o admin vê as recebidas e passam a lidas (sinal limpa). O sinal das perguntas desaparece quando são respondidas/ignoradas.
+- D89 Todas as sugestões ficam no Supabase (e também no Google Sheet). Em "Enviar sugestão" há a aba **📥 Recebidas**, que só os admins do site veem: lista (filtro por tipo, mostrar mais, apagar). Ao abrir essa aba, as sugestões passam a lidas e o sinal limpa. (v0.8i)
 - D79 (atualizada v0.8h) Ao carregar em Enviar, a sugestão aparece logo como enviada (o envio para o Sheet e para o Supabase segue em segundo plano).
 - D43b Visita guiada sem as etiquetas das abas no balão.
+- D87 A visita guiada completa começa por escolher o **idioma** (por agora só português) e o **tema** (automático/claro/escuro), e só depois o "Bem-vindo"; o texto dos balões tem mais espaço entre linhas.
 
 **Extratos**
 - D01 CGD (CSV) e cartão refeição (Excel/CSV genérico, conta "Cartão refeição") lidos sem IA.
@@ -68,6 +70,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D79 Sugestões (Definições › Enviar sugestão): tipo (Ideia/Problema/Outro), texto, email só se o utilizador marcar; vão para um Google Sheet através de uma Aplicação Web do Apps Script (`tools/sugestoes-apps-script.gs`). O URL /exec só permite acrescentar linhas (não é credencial); campo-armadilha anti-robôs e limite por minuto.
 
 - D83 Extratos: mostram 100 linhas de cada vez; ao chegar ao fundo juntam mais 100 (também há o botão "Mostrar mais"). Totais, filtros e "selecionar tudo" contam todas as linhas; ir para um movimento mostra as linhas necessárias.
+- D88 Ao sair dos Extratos, a tabela volta às 100 primeiras linhas (não fica com as linhas abertas antes).
 - D84 Só se desenha a aba aberta; as outras desenham-se quando se abrem.
 
 **Despesas**
@@ -124,6 +127,11 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8i — 28/09/2026
+- Sugestões: aba "📥 Recebidas" (só admin) em Enviar sugestão; todas guardadas no Supabase.
+- Extratos: ao sair da aba volta às 100 primeiras linhas.
+- Visita guiada: começa pelo idioma e pelo tema; texto mais espaçado.
 
 ### v0.8h — 28/09/2026
 - Sinais de perguntas novas e sugestões por ler (só admin), no avatar e no menu; sugestões copiadas para o Supabase (`sugestoes`).

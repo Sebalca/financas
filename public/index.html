@@ -59,7 +59,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 #tourSpot.centro{outline:0;width:0!important;height:0!important;left:50%!important;top:40%!important}
 #tourBub{position:fixed;z-index:92;width:min(380px,calc(100vw - 24px));background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.3);padding:14px 16px 12px;font:14px system-ui,sans-serif;transition:top .25s,left .25s}
 #tourBub .grp2{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}#tourBub .grp2 span{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--bg);color:var(--mu)}#tourBub .grp2 span.on{background:var(--ac);color:#fff}
-#tourBub h4{margin:0 0 6px;font-size:16px}#tourBub p{margin:0;color:var(--mu);line-height:1.5;font-size:13.5px}#tourBub p b{color:var(--tx)}
+#tourBub h4{margin:0 0 6px;font-size:16px}#tourBub p{margin:0;color:var(--mu);line-height:1.75;font-size:13.5px}#tourBub .esc{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}#tourBub .esc button.on{background:var(--ac);border-color:var(--ac);color:#fff}#tourBub select{margin-top:10px;width:100%;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);padding:8px;font:14px system-ui,sans-serif}#tourBub p b{color:var(--tx)}
 #tourBub .tb{display:flex;align-items:center;gap:6px;margin-top:12px}#tourBub .tb .n{font-size:12px;color:var(--mu);margin-right:auto}
 /* FAQs */
 .fq-top{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}.fq-top input{flex:1;min-width:160px;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);padding:8px 10px;font:14px system-ui,sans-serif}
@@ -201,13 +201,14 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <div id="fqMinhas" hidden></div>
       <div id="fqAdm" class="adm" hidden></div></section>
     <section data-s="sugestao" hidden><h3>Enviar sugestão</h3>
-      <div id="sgAdm" class="adm" hidden></div><p>Ideias, problemas ou dúvidas — seguem diretamente para quem desenvolve o site.</p>
+      <div class="fq-tabs" id="sgTabs" hidden><button type="button" data-st="env" class="on">✏ Enviar</button><button type="button" data-st="rec">📥 Recebidas<span class="bdg" id="bdgSug3" hidden></span></button></div>
+      <div id="sgAdm" class="adm" hidden></div><div id="sgEnv"><p>Ideias, problemas ou dúvidas — seguem diretamente para quem desenvolve o site.</p>
       <div class="grp" id="sgTipo"><button class="opt on" data-v="Ideia" type="button">💡 Ideia</button><button class="opt" data-v="Problema" type="button">🐞 Problema</button><button class="opt" data-v="Outro" type="button">💬 Outro</button></div>
       <textarea id="sgTxt" rows="6" maxlength="4000" placeholder="Escreva a sua sugestão…" style="margin-top:8px"></textarea>
       <input id="sgSite" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px" placeholder="site">
       <label class="sw2" id="sgMailW" hidden><input type="checkbox" id="sgMail"> <span>Incluir o meu email (<b id="sgMailTxt"></b>) para poderem responder</span></label>
       <p class="note2" style="margin:6px 0">Não escreva dados bancários nem outros dados pessoais. É enviado também o separador aberto e a versão do site.</p>
-      <div class="grp" style="margin-top:8px"><button class="opt" id="sgEnviar" type="button">Enviar</button><span id="sgMsg" class="note2" style="align-self:center"></span></div></section>
+      <div class="grp" style="margin-top:8px"><button class="opt" id="sgEnviar" type="button">Enviar</button><span id="sgMsg" class="note2" style="align-self:center"></span></div></div></section>
   </div></div></div></div>
 
 <div class="mod" id="mPlano" hidden><div class="box big" role="dialog" aria-label="Plano">
@@ -339,6 +340,8 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
   /* passos: g = grupo (aba), a = aba das Finanças a abrir, el = alvo ('f:' dentro das Finanças, 'p:' nesta página), t/x = texto */
   const G=[['intro','Bem-vindo'],['barra','Barra e menu'],['home','Início'],['ext','Extratos'],['ren','Rendimentos'],['des','Despesas'],['fim','Fim']];
   const S=[
+    {g:'intro',id:'idioma',t:'🌐 Idioma',x:'Escolha o idioma do site. Por agora só há português; outros idiomas chegam em breve.',html:'<select id="tourIdioma" aria-label="Idioma"><option>Português (Portugal)</option><option disabled>English (em breve)</option><option disabled>Español (em breve)</option></select>'},
+    {g:'intro',id:'tema',t:'🌙 Tema',x:'Prefere o site claro ou escuro? Pode mudar mais tarde no menu ou em Definições.',html:'<div class="esc" id="tourTema"><button class="bt" type="button" data-tt="">🖥 Automático</button><button class="bt" type="button" data-tt="light">☀️ Claro</button><button class="bt" type="button" data-tt="dark">🌙 Escuro</button></div>'},
     {g:'intro',t:'👋 Bem-vindo às Finanças Pessoais',x:'Junte os <b>extratos dos bancos</b>, os <b>recibos de vencimento</b> e as <b>despesas</b> num só sítio, sem escrever movimentos à mão. Esta visita mostra tudo o que dá para fazer, aba a aba. Use as setas ← → do teclado ou os botões.'},
     {g:'barra',el:'p:#tabs',t:'Separadores',x:'<b>Finanças</b> é a aplicação principal. Ao lado estão o <b>Simulador salarial</b> e sites úteis. Tudo usa a mesma conta.'},
     {g:'barra',el:'p:#fPer',t:'Período',x:'Escolha <b>Mês</b>, <b>Ano</b> ou <b>Intervalo</b>. Clique na data para abrir o <b>calendário</b> e em <b>Hoje</b> para voltar ao período atual. Todas as abas usam este período. À esquerda vê se os dados estão <b>guardados na conta</b>.'},
@@ -375,14 +378,17 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
       if(b.width||b.height){const x=a.off.x+b.left,y=a.off.y+b.top;R={x:Math.max(4,x-6),y:Math.max(4,y-6),w:Math.min(innerWidth-8,b.width+12),h:Math.min(innerHeight-8,b.height+12)}}}
     if(R){spot.classList.remove('centro');Object.assign(spot.style,{left:R.x+'px',top:R.y+'px',width:R.w+'px',height:R.h+'px'})}else spot.classList.add('centro');
     const gi=G.findIndex(g=>g[0]===st.g),gs=[...new Set(L.map(x=>x.g))];
-    bub.innerHTML=`<h4>${st.t}</h4><p>${st.x}</p>
+    bub.innerHTML=`<h4>${st.t}</h4><p>${st.x}</p>${st.html||''}
       <div class="tb"><span class="n">${i+1} / ${L.length}</span><button class="bt" type="button" data-tv="sair">Sair</button>${i?'<button class="bt" type="button" data-tv="ant">‹</button>':''}<button class="bt pri" type="button" data-tv="seg">${i===L.length-1?'Concluir ✓':'Seguinte ›'}</button></div>`;
     const bw=bub.offsetWidth,bh=bub.offsetHeight;let bx,by;
     if(R){by=R.y+R.h+12;if(by+bh>innerHeight-8)by=R.y-bh-12;if(by<8)by=Math.min(innerHeight-bh-8,R.y+12);bx=Math.min(innerWidth-bw-12,Math.max(12,R.x+R.w/2-bw/2))}else{bx=(innerWidth-bw)/2;by=Math.max(20,innerHeight*.3-bh/2)}
-    Object.assign(bub.style,{left:bx+'px',top:by+'px'});bub.querySelector('[data-tv="seg"]').focus()}
+    Object.assign(bub.style,{left:bx+'px',top:by+'px'});
+    const tt=bub.querySelector('#tourTema');if(tt){const g=(()=>{try{return localStorage.getItem('fp_tema')||''}catch(e){return ''}})();[...tt.children].forEach(b=>b.classList.toggle('on',b.dataset.tt===g))}
+    bub.querySelector('[data-tv="seg"]').focus()}
   function fecha(){$('tour').hidden=true;document.removeEventListener('keydown',tecla,true)}
   function tecla(e){if($('tour').hidden)return;if(e.key==='Escape'){e.preventDefault();fecha()}else if(e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();seg()}else if(e.key==='ArrowLeft'){e.preventDefault();if(i>0){i--;mostra()}}}
   function seg(){if(i<L.length-1){i++;mostra()}else fecha()}
+  $('tourBub').addEventListener('click',e=>{const t=e.target.closest('[data-tt]');if(t){FPTema.tema(t.dataset.tt);[...t.parentNode.children].forEach(b=>b.classList.toggle('on',b===t));return}});
   $('tourBub').addEventListener('click',e=>{const b=e.target.closest('[data-tv]');if(!b)return;const v=b.dataset.tv;if(v==='sair')fecha();else if(v==='ant'){if(i>0){i--;mostra()}}else seg()});
   $('tourBlock').addEventListener('click',()=>{});
   addEventListener('resize',()=>{if(!$('tour').hidden)mostra()});
@@ -479,6 +485,7 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
 <script>
 /* ===== Novidades: aparece uma vez por versão nova (não na primeira visita). Atualizar NOVIDADES a cada versão (ver CLAUDE.md). ===== */
 const NOVIDADES=[
+ {v:'0.8i',d:'28/09/2026',n:['Visita guiada começa pela escolha do idioma e do tema'],a:['Sugestões recebidas numa aba própria (só para quem gere o site)','Extratos voltam às 100 primeiras linhas ao sair da aba','Texto da visita guiada mais espaçado']},
  {v:'0.8h',d:'28/09/2026',n:['Sinal de perguntas e sugestões novas (para quem gere o site)'],a:['Extratos mais rápidos: mostram 100 linhas de cada vez e juntam mais ao descer','As abas só se desenham quando as abre','A sugestão aparece como enviada no momento','Visita guiada sem as etiquetas das abas']},
  {v:'0.8g',d:'28/09/2026',n:['Novidades: esta janela aparece quando há uma versão nova','Visita guiada nos botões reais, aba a aba (completa ou só de uma página)','FAQs com pesquisa, etiquetas e perguntas dos utilizadores'],a:['"Ajuda" passa a "FAQs" no menu','Onboarding passa a "Visita guiada"']},
  {v:'0.8f',d:'28/09/2026',n:['Enviar sugestões diretamente do menu'],a:[]},
@@ -571,17 +578,28 @@ const FPFaq=(function(){const $=id=>document.getElementById(id),SITE='financas';
 const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';let ADM=false,NF=0,NS=0;
   const sb=()=>window.plataforma&&window.plataforma.from?window.plataforma:null;
   const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  function pinta(){const set=(ids,n)=>ids.forEach(id=>{const e=$(id);if(e){e.hidden=!ADM||!n;e.textContent=n>99?'99+':n}});set(['bdgFaq','bdgFaq2'],NF);set(['bdgSug','bdgSug2'],NS);
+  function pinta(){const set=(ids,n)=>ids.forEach(id=>{const e=$(id);if(e){e.hidden=!ADM||!n;e.textContent=n>99?'99+':n}});set(['bdgFaq','bdgFaq2'],NF);set(['bdgSug','bdgSug2','bdgSug3'],NS);
     const t=NF+NS,m=$('bdgMenu');m.hidden=!ADM||!t;m.textContent=t>99?'99+':t;m.title=`${NF} pergunta(s) nova(s) · ${NS} sugestão(ões) por ler`}
   async function conta(){const c=sb();if(!c||!ADM)return pinta();
     try{const a=await c.from('faq_perguntas').select('id',{count:'exact',head:true}).eq('site_id',SITE).eq('estado','nova');NF=a.count||0;
       const b=await c.from('sugestoes').select('id',{count:'exact',head:true}).eq('site_id',SITE).eq('por_ler',true);NS=b.count||0}catch(e){}pinta()}
   async function sessao(u){ADM=false;NF=NS=0;const c=sb();if(u&&c){try{const r=await c.rpc('e_admin_site',{s:SITE});ADM=!!r.data}catch(e){}}if(ADM)await conta();else pinta()}
-  async function abreSug(){const c=sb();if(!ADM||!c){$('sgAdm').hidden=true;return}
-    const {data}=await c.from('sugestoes').select('id,tipo,texto,email,separador,versao,por_ler,created_at').eq('site_id',SITE).order('created_at',{ascending:false}).limit(30);
-    const l=data||[];$('sgAdm').hidden=false;
-    $('sgAdm').innerHTML=`<h3 style="margin-top:0">📥 Recebidas <span class="note2">(só tu vês · lista completa no Google Sheet)</span></h3>`+(l.length?l.map(x=>`<div class="it2"><div class="meta">${x.por_ler?'<span class="bdg" style="margin:0 6px 0 0">nova</span>':''}${esc(x.tipo)} · ${new Date(x.created_at).toLocaleString('pt-PT')}${x.separador?' · '+esc(x.separador):''}${x.versao?' · v'+esc(x.versao):''}${x.email?' · '+esc(x.email):''}</div><div style="white-space:pre-wrap;font-size:13.5px">${esc(x.texto)}</div></div>`).join(''):'<p class="note2">Ainda não há sugestões.</p>')+'<h3>Enviar uma sugestão</h3>';
-    if(l.some(x=>x.por_ler)){try{await c.from('sugestoes').update({por_ler:false}).eq('site_id',SITE).eq('por_ler',true)}catch(e){}}NS=0;pinta()}
+  let SG=[],SGN=100,SGF='todas';
+  function sgTab(t){[...$('sgTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.st===t));$('sgEnv').hidden=t!=='env';$('sgAdm').hidden=t!=='rec';if(t==='rec')recebidas()}
+  function abreSug(){$('sgTabs').hidden=!ADM;sgTab('env')}
+  async function recebidas(){const c=sb();if(!ADM||!c)return;$('sgAdm').innerHTML='<p class="note2">A carregar…</p>';
+    const {data,error}=await c.from('sugestoes').select('id,tipo,texto,email,separador,versao,por_ler,created_at').eq('site_id',SITE).order('created_at',{ascending:false}).limit(1000);
+    if(error){$('sgAdm').innerHTML='<p class="note2">Não foi possível carregar.</p>';return}SG=data||[];SGN=100;pintaRec();
+    if(SG.some(x=>x.por_ler)){try{await c.from('sugestoes').update({por_ler:false}).eq('site_id',SITE).eq('por_ler',true)}catch(e){}}NS=0;pinta()}
+  function pintaRec(){const tipos=['todas',...new Set(SG.map(x=>x.tipo))],l=SG.filter(x=>SGF==='todas'||x.tipo===SGF);
+    $('sgAdm').innerHTML=`<div class="fq-lb">${tipos.map(t=>`<button type="button" data-sgf="${esc(t)}" class="${SGF===t?'on':''}">${t==='todas'?'Todas':esc(t)} ${t==='todas'?SG.length:SG.filter(x=>x.tipo===t).length}</button>`).join('')}</div>`
+      +(l.length?l.slice(0,SGN).map(x=>`<div class="it2" data-sid="${x.id}"><div class="meta">${x.por_ler?'<span class="bdg" style="margin:0 6px 0 0">nova</span>':''}<b>${esc(x.tipo)}</b> · ${new Date(x.created_at).toLocaleString('pt-PT')}${x.separador?' · '+esc(x.separador):''}${x.versao?' · v'+esc(x.versao):''}${x.email?' · '+esc(x.email):''}<button class="bt" type="button" data-sgdel style="float:right;padding:2px 8px" title="Apagar">🗑</button></div><div style="white-space:pre-wrap;font-size:13.5px">${esc(x.texto)}</div></div>`).join('')
+        +(l.length>SGN?`<div style="text-align:center"><button class="bt" type="button" data-sgmais>Mostrar mais</button></div>`:''):'<p class="note2">Ainda não há sugestões.</p>')}
+  $('sgTabs').addEventListener('click',e=>{const b=e.target.closest('[data-st]');if(b)sgTab(b.dataset.st)});
+  $('sgAdm').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.sgf!=null){SGF=b.dataset.sgf;pintaRec();return}
+    if('sgmais' in b.dataset){SGN+=100;pintaRec();return}
+    if('sgdel' in b.dataset){const id=b.closest('[data-sid]').dataset.sid;if(!confirm('Apagar esta sugestão?'))return;const {error}=await sb().from('sugestoes').delete().eq('id',id);if(!error){SG=SG.filter(x=>x.id!==id);pintaRec()}}});
   document.querySelectorAll('[data-set="sugestao"],#setNav [data-s="sugestao"]').forEach(b=>b.addEventListener('click',()=>setTimeout(abreSug,0)));
   return {sessao,conta,e:()=>ADM}})();
 </script>
