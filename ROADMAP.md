@@ -5,7 +5,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.8j)
+## Já feito (v0.1 → v0.8k)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.
@@ -20,7 +20,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 Ordem sugerida: primeiro garantir que os números estão certos (é a base de tudo), depois melhorar o que se usa todos os dias, e por fim o onboarding — que só vale a pena escrever quando o resto estiver estável.
 
 - 🔁 **Pequenas alterações e correções** — ao longo de todas as versões (v0.8a, v0.8b…), sempre que aparecerem.
-- 🔁 **Mais bancos** — à medida que chegarem extratos de exemplo (um leitor por banco, sem IA, com validação dos saldos). Já lidos: CGD (CSV), Millennium BCP (Excel, conta e cartão), cartão refeição (Excel/CSV). *Preciso de: um extrato de cada banco (CSV/Excel, ou PDF se não houver outro).*
+- 🔁 **Mais bancos** — à medida que chegarem extratos de exemplo (um leitor por banco, sem IA, com validação dos saldos). Já lidos: CGD (CSV), Millennium BCP (Excel, conta e cartão), BPI (Excel), cartão refeição (Excel/CSV). *Preciso de: um extrato de cada banco (CSV/Excel, ou PDF se não houver outro).*
 
 - 🔜 **v0.8 — Validar os números do Início**
   1. ✅ (v0.8a) Painel "Como foi calculado" em cada caixa do Início: lista os movimentos que entram, os que ficam de fora e porquê (fora das contas, reembolso, entre contas, dividido).

@@ -335,7 +335,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
     <div class="card"><h3>Importar extrato</h3>
       <div class="upl">
         <label class="drop" id="drop"><input type="file" id="fExt" accept=".csv,.txt,.xlsx,.xls" multiple hidden>
-          <span class="ico">📄</span><b>Arraste o extrato ou clique para escolher</b><small>· CSV da CGD · Excel do Millennium (conta e cartão) · Excel/CSV do cartão refeição · vários de uma vez</small></label>
+          <span class="ico">📄</span><b>Arraste o extrato ou clique para escolher</b><small>· CSV da CGD · Excel do Millennium (conta e cartão) · Excel do BPI · Excel/CSV do cartão refeição · vários de uma vez</small></label>
         <select id="bankSel" aria-label="Banco" title="Banco"><option value="">Banco: auto</option><option value="CGD">CGD</option><option value="__cartao">Cartão refeição</option></select>
       </div>
       <div id="impRes"></div>
@@ -481,7 +481,7 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 
 <script>
 'use strict';
-const APP_VERSAO='0.8j'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.8k'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -695,6 +695,21 @@ function leGenerico(linhas,titulo,nomeConta){
   const ds=mv.map(m=>m.dm).sort();
   return {banco:nomeConta,conta:'',titular:'',inicio:ds[0],fim:ds[ds.length-1],mov:mv,saldoFinal:mv[0].saldo,titulo}}
 const CARTAO='Cartão refeição';
+/* BPI (Excel do BPI Net "Extracto movimentos"): conta à ordem com saldo */
+const eBPI=linhas=>linhas.slice(0,4).some(r=>(r||[]).some(c=>/^\s*BPI Net\s*$/i.test(String(c||''))))&&linhas.slice(0,6).some(r=>/extra[c]?to movimentos/i.test(norm(String((r||[])[0]||''))));
+function limpaBPI(d){d=String(d||'').replace(/\s+/g,' ').trim();let m;
+  if((m=d.match(/^(\d\d\/\d\d) COMPRA ELEC (\d+)\/\d+ (.+)$/i)))return {desc:m[3],tipo:'Compra '+m[1]+' · cartão '+m[2]};
+  if((m=d.match(/^(\d\d\/\d\d) LEV\.? ATM ELEC (\d+)\/\d+ ?(.*)$/i)))return {desc:('LEV ATM '+m[3]).trim(),tipo:'Levantamento '+m[1]+' · cartão '+m[2]};
+  if((m=d.match(/^TRF (?:CR )?SEPA\+? (?:INST )?\d+ DE (.+)$/i)))return {desc:'TRF '+m[1],tipo:'Transferência recebida'};
+  if((m=d.match(/^TRF (?:DB )?SEPA\+? (?:INST )?\d+ (?:PARA|P\/) (.+)$/i)))return {desc:'TRF '+m[1],tipo:'Transferência enviada'};
+  if((m=d.match(/^DD (.+)$/i)))return {desc:m[1],tipo:'Débito direto'};
+  return {desc:d,tipo:''}}
+function leBPI(linhas){const lin=q=>linhas.slice(0,14).find(r=>q.test(norm(String((r||[])[0]||'')))),val=r=>r?String(r.slice(1).find(c=>c!=null&&String(c).trim()!=='')||'').trim():'';
+  const conta=(val(lin(/^conta e moeda/)).match(/^[\d.\-]+/)||[''])[0],titular=val(lin(/^nome/));
+  const r=leGenerico(linhas,'','BPI');r.banco='BPI';r.conta=conta;r.titular=titular;
+  r.mov.forEach(m=>{const orig=m.desc0||m.desc,l=limpaBPI(orig);if(l.desc!==orig){m.desc0=orig;m.desc=l.desc}else if(!m.desc0)delete m.desc0;m.catBanco=l.tipo||m.catBanco||''});
+  const sc=val(lin(/^saldo a ordem contabil/));if(sc)r.saldoFinal=r2(num(sc.replace(/[^\d,.\-]/g,'')));
+  return r}
 /* Millennium BCP (Excel "Saldos e movimentos"): conta à ordem (com saldo) e conta cartão (sem saldo; montantes com o sinal trocado) */
 const eMillennium=linhas=>linhas.slice(0,3).some(r=>(r||[]).some(c=>/millenniumbcp/i.test(String(c||''))));
 function limpaMillennium(d){d=String(d||'').replace(/\s+/g,' ').trim();let m;
@@ -725,7 +740,7 @@ async function importar(files){
     try{
       if(!/\.(csv|txt|xlsx|xls)$/i.test(f.name))throw new Error('Formato não suportado — use CSV ou Excel.');
       const buf=await f.arrayBuffer(),forc=$('#bankSel').value;let r;
-      if(/\.xlsx?$/i.test(f.name)){const x=await lerExcel(buf);if(eMillennium(x.linhas))r=leMillennium(x.linhas);else{r=leGenerico(x.linhas,'',null);r.banco=nomeContaGen(r.titulo||x.titulo,f.name)}}
+      if(/\.xlsx?$/i.test(f.name)){const x=await lerExcel(buf);if(eMillennium(x.linhas))r=leMillennium(x.linhas);else if(eBPI(x.linhas))r=leBPI(x.linhas);else{r=leGenerico(x.linhas,'',null);r.banco=nomeContaGen(r.titulo||x.titulo,f.name)}}
       else{const t=decode(buf);const L=forc==='__cartao'?null:LEITORES.find(l=>forc?l.banco===forc:l.detect(t));
         if(L)r=L.parse(t);else{const sep=(t.split('\n').find(l=>/descri/i.test(l))||'').split(';').length>2?';':',';
           const linhas=t.split(/\r?\n/).map(l=>l.split(sep).map(c=>c.replace(/^"|"$/g,'').trim()));r=leGenerico(linhas,'',null);r.banco=nomeContaGen(r.titulo,f.name)}}

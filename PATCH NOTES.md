@@ -76,6 +76,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D90 Millennium BCP (Excel "Saldos e movimentos", detetado sozinho): conta à ordem → "Millennium" (com o n.º da conta, saldos validados e saldo final = saldo contabilístico); conta cartão → "Millennium Cartão" (sem saldo; montantes com o sinal trocado para compras ficarem negativas). Prefixos limpos: "COMPRA 1234 X" → "X" (Detalhes "Compra · cartão 1234"), "CRED" → Crédito, "DD" → Débito direto, "TRF P/ X" / "TRF. P/O X" → "TRF X" (transferência enviada/recebida, mantém Pessoas), "LEV ATM" → Levantamento.
 - D91 Regras base: "PAGAMENTO CARTAO" e "VIS PAGAMENTO" → Banco › Troca entre contas (o pagamento do cartão não conta duas vezes); "LEV ATM" → Banco › Levantamentos. Acrescentadas uma vez a quem já tinha regras.
 - D92 Movimentos iguais (mesma data, descrição e valor) no mesmo ficheiro são todos importados (contas sem saldo): o 2.º, 3.º… ficam com um n.º de repetição na chave; reimportar não os duplica.
+- D93 BPI (Excel do BPI Net "Extracto movimentos", detetado sozinho): conta "BPI" com o n.º da conta, saldos validados e saldo final = saldo contabilístico. Prefixos limpos: "DD/MM COMPRA ELEC 1234567/NN X" → "X" (Detalhes "Compra DD/MM · cartão 1234567"), "LEV. ATM ELEC" → "LEV ATM local" (Levantamento), "TRF (CR) SEPA+ … DE X" → "TRF X" (recebida), "DD X" → Débito direto.
 
 **Despesas**
 - D10 Fora das contas (tabela de baixo): **Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças**.
@@ -131,6 +132,9 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8k — 28/09/2026
+- Novo banco: BPI (Excel do BPI Net).
 
 ### v0.8j — 28/09/2026
 - Novo banco: Millennium BCP (Excel) — conta à ordem e conta cartão de crédito.

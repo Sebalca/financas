@@ -267,6 +267,11 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await p.setInputFiles('#fExt',path.join(FX,'millennium_cartao_teste.xlsx'));await p.waitForTimeout(900);
   t('D91','reimportar o cartão (sem saldo) não duplica nem perde movimentos iguais',await ev(()=>DB.mov.filter(m=>m.banco==='Millennium Cartão').length===5));
 
+  await p.setInputFiles('#fExt',path.join(FX,'bpi_teste.xlsx'));await p.waitForTimeout(900);
+  const z93=await ev(()=>{const b=DB.mov.filter(m=>m.banco==='BPI'),res=document.querySelector('#impRes').textContent;const pd=b.find(m=>/PADARIA/.test(m.desc));
+    return {ok:b.length===4&&b[0].conta==='0-1234567.000.001'&&pd.desc==='PADARIA TESTE PORTO'&&/Compra 17\/09 · cartão 1111111/.test(pd.det)&&b.some(m=>m.desc==='TRF EMPRESA FICTICIA SA'&&m.valor===1000)&&b.find(m=>/^LEV ATM/.test(m.desc)).ref==='Levantamentos'&&b.some(m=>m.desc==='SEGURADORA TESTE SA 123456')&&/saldo final 1\s050,40\s€ ✓/.test(res),b:b.map(m=>[m.desc,m.valor,m.det]),res}});
+  t('D93','BPI (Excel do BPI Net): conta com saldo validado, prefixos limpos (compra/levantamento com data e cartão, transferências, débito direto)',z93.ok,z93);
+
   console.log('Página principal');
   await p.goto(U+'/index.html');await p.waitForTimeout(300);
   const tabs=await ev(()=>[...document.querySelectorAll('nav a')].map(a=>a.textContent));
