@@ -15,7 +15,7 @@ Responder sempre em português de Portugal, de forma concisa.
    - alteração pedida entre versões → letra seguinte (`v0.7h` → `v0.7i`);
    - nova versão do roadmap → `v0.8`, `v0.9`… (e marcar no `ROADMAP.md`).
    Se o pedido criar uma regra nova ("quero sempre…", "nunca…"), acrescentá-la às Decisões fixas e, se possível, um teste.
-6. Atualizar `APP_VERSAO` em `public/financas.html`.
+6. Atualizar `APP_VERSAO` em `public/financas.html` **e** acrescentar a versão no topo de `NOVIDADES` em `public/index.html` (texto para o utilizador, em dois grupos: `n` novas funcionalidades, `a` alterações; frases curtas). O teste D81 exige que as duas versões coincidam.
 7. Commit + push para `main` (`git fetch && git rebase origin/main` antes); verificar o site publicado.
 
 ## Regras

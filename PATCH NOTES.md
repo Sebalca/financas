@@ -34,6 +34,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D71 Janela "Reembolso": "Mostrar todas" lista as saídas até à data do reembolso, da mais recente para a mais antiga; o botão "Posteriores" (à esquerda da pesquisa) mostra as saídas depois dessa data.
 - D72 Janela Dividir: valor da 1.ª linha fixo a cinzento; valores das outras linhas e observações a branco.
 
+- D80 **Novidades**: numa versão nova (e não na primeira visita) aparece uma janela com "✨ Novas funcionalidades" e "🔧 Alterações" de todas as versões desde a última vista, resumida numa página sem scroll (máx. 7 por grupo, "+ N outras"). A última versão vista fica na conta (financas_dados, chave `novidades`) ou, sem sessão, no browser. Reabre-se no menu › Novidades. As notas estão em `NOVIDADES` (index.html) e são atualizadas a cada versão.
+- D43 **Visita guiada** (antes "Onboarding"): destaca os botões reais, mudando de aba sozinha, com um balão por passo (Seguinte/Anterior/Sair, teclas ← → Esc), organizada por aba (Barra e menu, Início, Extratos, Rendimentos, Despesas). A completa mostra tudo seguido; em Definições › Visita guiada escolhe-se a completa ou só uma página. Abre sozinha no primeiro login após criar conta. (atualizada v0.8g)
+- D82 **FAQs** (antes "Ajuda"): pesquisa, filtro por labels, perguntas e respostas; com sessão, o utilizador pergunta e vê "As minhas perguntas" (a aguardar/respondida). Admins do site (tabela `site_admins`) têm a aba "🛠 Gerir": responder e publicar, pôr labels, ignorar, apagar e criar FAQs. Dados em `faq_perguntas` (Supabase, RLS; máx. 10 perguntas/dia por utilizador).
+
 **Extratos**
 - D01 CGD (CSV) e cartão refeição (Excel/CSV genérico, conta "Cartão refeição") lidos sem IA.
 - D02 "Compra" (e prefixos tipo "Pagamento:") sai do início da descrição e vai para Detalhes — em todas as contas.
@@ -113,6 +117,11 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8g — 28/09/2026
+- Janela de Novidades por versão (novas funcionalidades / alterações).
+- Visita guiada nos botões reais, aba a aba; completa ou só de uma página (Definições › Visita guiada).
+- FAQs com pesquisa, labels, perguntas dos utilizadores e aba de gestão para admins (Supabase: `site_admins`, `faq_perguntas`).
 
 ### v0.8f — 28/09/2026
 - Sugestões ativas: o formulário envia para o Google Sheet (URL da Aplicação Web do Apps Script configurado).

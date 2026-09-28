@@ -47,9 +47,11 @@ ROADMAP.md                        plano de versões
 - **Separadores** definidos na lista `SEPARADORES`: Finanças, Simulador Salarial (ficheiros próprios, em `iframe`) e sites externos (Bíblia financeira, Stock casa).
   - Link direto: `index.html#financas`, `#simulador`…
   - Os sites externos têm `data-ext` e **nunca recebem a sessão nem o tema**.
-- **Conta**: botão Entrar / avatar ▾ com menu (Definições, Plano, Onboarding, modo escuro, Ajuda, Enviar sugestão, Terminar sessão) e a versão no canto.
+- **Conta**: botão Entrar / avatar ▾ com menu (Definições, Plano, Visita guiada, Novidades, modo escuro, FAQs, Enviar sugestão, Terminar sessão) e a versão no canto.
 - **Definições** (menu vertical): Geral (tema, tamanho 80–120% com padrão = 90% real, idioma, ordem dos movimentos, opção do ícone 🧮), cópia de segurança (exportar/importar ficheiro), apagar dados, conta, onboarding, ajuda.
-- **Onboarding**: 6 passos; abre sozinho no primeiro login depois de criar conta.
+- **Visita guiada**: destaca os botões reais aba a aba (completa ou só de uma página, em Definições › Visita guiada); abre sozinha no primeiro login depois de criar conta.
+- **Novidades**: janela com as novas funcionalidades e alterações quando há uma versão nova (lista `NOVIDADES` em index.html; última versão vista na conta ou no browser).
+- **FAQs**: pesquisa, labels, perguntas dos utilizadores e gestão para admins (Supabase `faq_perguntas` + `site_admins`, ver `supabase/002_faq_e_admins.sql`).
 - Tema e zoom passam para os separadores internos por `postMessage` (`fp-tema`, `fp-zoom`).
 
 Para acrescentar um separador: criar o HTML em `public/` e juntar `{id:'novo', nome:'Nome', ficheiro:'novo.html'}` (ou `url:` para um site externo) a `SEPARADORES`.

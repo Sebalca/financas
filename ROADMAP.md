@@ -5,7 +5,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.8f)
+## Já feito (v0.1 → v0.8g)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.
@@ -32,7 +32,7 @@ Ordem sugerida: primeiro garantir que os números estão certos (é a base de tu
 - ⬜ **v0.9 — Melhorar a aba Despesas** *(definir contigo no início: o que falta hoje)*
   - Ideias: comparar com o mês anterior / média, top referências, fixas vs variáveis, previsto por mês (não só mensal × 12), alertas de desvio, gráfico por categoria ao longo do ano.
 
-- ⬜ **v0.10 — Onboarding completo**
+- ⬜ **v0.10 — Onboarding completo** *(v0.8g já trouxe a visita guiada por aba, Novidades e FAQs)*
   - Passos com destaque nos botões reais, configuração inicial (banco, primeiro extrato, categorias base, primeiras regras), lista de tarefas com progresso, dicas na primeira visita a cada aba, dados de exemplo para experimentar.
 
 - ⬜ **v1.0 — Lançamento para a família**

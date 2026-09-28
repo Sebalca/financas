@@ -46,6 +46,31 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .pcal .cm button.dt::after{content:'';position:absolute;bottom:3px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#16a34a}.pcal button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 @media (max-width:1150px){.fper .sy{display:none}}@media (max-width:760px){.fper .sg button{padding:5px 7px}.fper .nv .lb{min-width:96px;font-size:12.5px}.fper .hj{padding:5px 8px}}
 .acc{flex:none;display:flex;align-items:center;gap:8px}
+/* novidades */
+.nov{max-width:820px!important;padding:22px 24px 18px!important}.nov h2{font-size:20px!important}.nov .sub{color:var(--mu);font-size:13px;margin:2px 0 14px}
+.nov .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}.nov h3{font-size:14px;margin:0 0 8px;display:flex;gap:6px;align-items:center}
+.nov ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.5}.nov li{margin-bottom:4px}.nov .mais{color:var(--mu);font-size:12.5px;list-style:none;margin-left:-18px}
+@media (max-width:640px){.nov .cols{grid-template-columns:1fr}.nov ul{font-size:13px}}
+/* visita guiada */
+#tourBlock{position:fixed;inset:0;z-index:90}
+#tourSpot{position:fixed;z-index:91;border-radius:12px;box-shadow:0 0 0 9999px rgba(8,12,20,.62);pointer-events:none;transition:all .25s ease;outline:3px solid var(--ac);outline-offset:3px}
+#tourSpot.centro{outline:0;width:0!important;height:0!important;left:50%!important;top:40%!important}
+#tourBub{position:fixed;z-index:92;width:min(380px,calc(100vw - 24px));background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.3);padding:14px 16px 12px;font:14px system-ui,sans-serif;transition:top .25s,left .25s}
+#tourBub .grp2{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}#tourBub .grp2 span{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--bg);color:var(--mu)}#tourBub .grp2 span.on{background:var(--ac);color:#fff}
+#tourBub h4{margin:0 0 6px;font-size:16px}#tourBub p{margin:0;color:var(--mu);line-height:1.5;font-size:13.5px}#tourBub p b{color:var(--tx)}
+#tourBub .tb{display:flex;align-items:center;gap:6px;margin-top:12px}#tourBub .tb .n{font-size:12px;color:var(--mu);margin-right:auto}
+/* FAQs */
+.fq-top{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}.fq-top input{flex:1;min-width:160px;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);padding:8px 10px;font:14px system-ui,sans-serif}
+.fq-lb{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.fq-lb button,.lbl{border:1px solid var(--bd);background:var(--card);color:var(--mu);border-radius:999px;padding:3px 10px;font:600 12px system-ui,sans-serif;cursor:pointer}
+.fq-lb button.on{background:var(--ac);border-color:var(--ac);color:#fff}.lbl{cursor:default;padding:1px 8px;font-size:11px}
+.fq details{border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin-bottom:6px}.fq summary{cursor:pointer;font-weight:600;font-size:14px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.fq summary .ls{display:inline-flex;gap:4px;margin-left:auto}.fq .rs{margin:8px 0 2px;color:var(--tx);font-size:13.5px;line-height:1.55;white-space:pre-wrap}
+.fq-tabs{display:flex;gap:4px;margin-bottom:10px}.fq-tabs button{border:0;background:none;color:var(--mu);font:700 13px system-ui,sans-serif;padding:6px 10px;border-radius:8px;cursor:pointer}.fq-tabs button.on{background:var(--ac2);color:var(--ac)}
+.fq textarea,.adm textarea{width:100%;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);padding:8px 10px;font:14px system-ui,sans-serif;resize:vertical}
+.mq{border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin-bottom:6px;font-size:13px}.mq .st{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--bg);color:var(--mu)}.mq .st.r{background:#dcfce7;color:#166534}
+.adm .it2{border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:10px}.adm .q{font-weight:700;font-size:14px;margin-bottom:4px}.adm .meta{font-size:11.5px;color:var(--mu);margin-bottom:6px}
+.adm .rw{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}.adm input[type=text]{flex:1;min-width:160px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);padding:6px 8px;font:13px system-ui,sans-serif}
+.adm .rw label{font-size:12.5px;color:var(--mu);display:flex;gap:5px;align-items:center;margin:0}
 .acc[hidden],.who[hidden],.bt[hidden]{display:none}
 .bt{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:9px;padding:6px 12px;font:600 13px system-ui,sans-serif;cursor:pointer;white-space:nowrap}
 .bt:hover{border-color:var(--ac)}
@@ -133,10 +158,11 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
   <button class="it" id="miEntrar" type="button"><span class="ic">🔑</span>Entrar / criar conta</button>
   <button class="it" data-set="tema" type="button"><span class="ic">⚙️</span>Definições</button>
   <button class="it" id="miPlano" type="button"><span class="ic">⭐</span>Plano<span class="rt">Grátis</span></button>
-  <button class="it" id="miOnb" type="button"><span class="ic">🧭</span>Onboarding</button>
+  <button class="it" id="miOnb" type="button"><span class="ic">🧭</span>Visita guiada</button>
+  <button class="it" id="miNov" type="button"><span class="ic">🆕</span>Novidades</button>
   <button class="it" id="miTema" type="button"><span class="ic">🌙</span>Modo escuro<span class="rt"><span class="sw" id="swTema"></span></span></button>
   <hr>
-  <button class="it" data-set="ajuda" type="button"><span class="ic">❓</span>Ajuda</button>
+  <button class="it" data-set="ajuda" type="button"><span class="ic">❓</span>FAQs</button>
   <button class="it" data-set="sugestao" type="button"><span class="ic">💬</span>Enviar sugestão</button>
   <button class="it" id="miSair" type="button" hidden><span class="ic">⎋</span>Terminar sessão</button>
 </div>
@@ -146,7 +172,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
   <div class="bb"><nav class="sn" id="setNav">
     <button data-s="tema" type="button">⚙ Geral</button><button data-s="conta" type="button">👤 Conta</button><button data-s="backup" type="button">💾 Cópia de segurança</button>
     <button data-s="apagar" type="button">🗑 Apagar dados</button><button data-s="onb" type="button">🧭 Onboarding</button>
-    <button data-s="ajuda" type="button">❓ Ajuda</button><button data-s="sugestao" type="button">💬 Enviar sugestão</button></nav>
+    <button data-s="ajuda" type="button">❓ FAQs</button><button data-s="sugestao" type="button">💬 Enviar sugestão</button></nav>
   <div class="sc" id="setSc">
     <section data-s="tema"><h3>Tema</h3><p>Aplica-se a todos os separadores e fica guardado neste dispositivo.</p>
       <div class="grp" id="gTema"><button class="opt" data-v="" type="button">Automático</button><button class="opt" data-v="light" type="button">☀️ Claro</button><button class="opt" data-v="dark" type="button">🌙 Escuro</button></div>
@@ -162,11 +188,16 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <div class="grp"><button class="opt" id="bkExp" type="button">⤓ Exportar ficheiro</button><button class="opt" id="bkImpBt" type="button">⤒ Importar ficheiro…</button><input type="file" id="bkImp" accept=".json,application/json" hidden></div><div class="note2" id="bkMsg"></div></section>
     <section data-s="apagar" hidden><h3>Apagar dados</h3><p>Apaga os dados das Finanças. Exporte antes uma cópia de segurança se os quiser guardar.</p>
       <div class="grp"><button class="opt danger" data-apaga="local" type="button">Apagar só neste dispositivo</button><button class="opt danger" data-apaga="conta" type="button">Apagar tudo (também na conta)</button></div><div class="note2" id="apMsg">Com sessão iniciada, "só neste dispositivo" volta a descarregar os dados da conta.</div></section>
-    <section data-s="onb" hidden><h3>Onboarding</h3><p>Visita guiada ao site. Aparece sozinha a primeira vez que entra depois de criar a conta.</p><button class="opt" id="setOnb" type="button">▶ Ver outra vez</button></section>
-        <section data-s="ajuda" hidden><h3>Ajuda</h3><p>Perguntas frequentes (em construção).</p>
-      <p><b>Como importo um extrato?</b><br>Finanças → Extratos → arraste o CSV da CGD (ou o Excel/CSV do cartão refeição) para a caixa de importar.</p>
-      <p><b>Como categorizo mais depressa?</b><br>Ao escolher categoria e referência num movimento, o site propõe criar uma regra para os semelhantes. No Início, em "Por categorizar", use ⚡.</p>
-      <p><b>Os meus dados estão seguros?</b><br>Sem sessão ficam só neste dispositivo; com sessão ficam na sua conta e só você lhes acede.</p></section>
+    <section data-s="onb" hidden><h3>Visita guiada</h3><p>Mostra, nos botões reais, tudo o que dá para fazer. Aparece sozinha a primeira vez que entra depois de criar a conta.</p>
+      <div class="grp"><button class="opt" id="setOnb" type="button">▶ Visita completa</button></div>
+      <h3>Só uma página</h3><p>Escolha a parte que quer rever.</p><div class="grp" id="setOnbG"></div></section>
+        <section data-s="ajuda" hidden><h3>FAQs</h3>
+      <div class="fq-tabs" id="fqTabs"><button type="button" data-ft="faq" class="on">Perguntas frequentes</button><button type="button" data-ft="minhas">As minhas perguntas</button><button type="button" data-ft="adm" hidden>🛠 Gerir <span id="fqNovas"></span></button></div>
+      <div id="fqFaq"><div class="fq-top"><input type="search" id="fqQ" placeholder="🔍 Procurar nas perguntas…"></div><div class="fq-lb" id="fqLb"></div><div class="fq" id="fqList"></div>
+        <h3 style="margin-top:14px">Não encontrou? Faça uma pergunta</h3><div class="fq"><textarea id="fqNova" rows="3" maxlength="2000" placeholder="Escreva a sua pergunta…"></textarea></div>
+        <div class="grp" style="margin-top:6px"><button class="opt" id="fqEnviar" type="button">Enviar pergunta</button><span class="note2" id="fqMsg" style="align-self:center"></span></div></div>
+      <div id="fqMinhas" hidden></div>
+      <div id="fqAdm" class="adm" hidden></div></section>
     <section data-s="sugestao" hidden><h3>Enviar sugestão</h3><p>Ideias, problemas ou dúvidas — seguem diretamente para quem desenvolve o site.</p>
       <div class="grp" id="sgTipo"><button class="opt on" data-v="Ideia" type="button">💡 Ideia</button><button class="opt" data-v="Problema" type="button">🐞 Problema</button><button class="opt" data-v="Outro" type="button">💬 Outro</button></div>
       <textarea id="sgTxt" rows="6" maxlength="4000" placeholder="Escreva a sua sugestão…" style="margin-top:8px"></textarea>
@@ -183,9 +214,10 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <div class="plan"><b>Pro</b><div class="pr">em breve</div><small>ideias em estudo</small><ul><li>Faturas lidas automaticamente</li><li>Saúde financeira e conselhos</li><li>Relatórios</li></ul></div>
       <div class="plan"><b>Família</b><div class="pr">em breve</div><small>ideias em estudo</small><ul><li>Várias pessoas na mesma conta</li><li>Contas partilhadas</li></ul></div></div></div></div></div>
 
-<div class="mod" id="mOnb" hidden><div class="box onb" role="dialog" aria-label="Onboarding"><div id="onbCont"></div><div class="dots" id="onbDots"></div>
-  <div class="row" style="margin-top:0"><button class="bt" id="onbSalta" type="button">Saltar</button><button class="bt" id="onbAnt" type="button">‹ Anterior</button><button class="bt pri" id="onbSeg" type="button">Seguinte ›</button></div></div></div>
-
+<div class="mod" id="mNov" hidden><div class="box nov" role="dialog" aria-labelledby="novTit"><h2 id="novTit">Novidades</h2><div class="sub" id="novSub"></div>
+  <div class="cols"><div><h3>✨ Novas funcionalidades</h3><ul id="novN"></ul></div><div><h3>🔧 Alterações</h3><ul id="novA"></ul></div></div>
+  <div class="row" style="justify-content:flex-end"><button class="bt pri" id="novOk" type="button" style="flex:none">Ok, percebi</button></div></div></div>
+<div id="tour" hidden><div id="tourBlock"></div><div id="tourSpot"></div><div id="tourBub" role="dialog" aria-live="polite"></div></div>
 <div class="mod" id="mod" hidden>
   <form class="box" id="fLogin" autocomplete="on">
     <h2>Entrar ou criar conta</h2>
@@ -300,23 +332,66 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
   return {pinta,sessao}})();
 
 /* ===== onboarding (aparece no 1.º login depois de criar conta; relançável no menu) ===== */
-const FPOnb=(function(){const $=id=>document.getElementById(id);let i=0;
-  const P=[
-    ['👋','Bem-vindo às Finanças Pessoais','Em poucos passos vê como juntar extratos, rendimentos e despesas num só sítio.'],
-    ['📄','1. Importe os extratos','Em <b>Finanças → Extratos</b>, arraste o CSV do banco (CGD) ou o Excel/CSV do cartão refeição. Os movimentos repetidos são ignorados.'],
-    ['🏷️','2. Categorize com regras','Escolha categoria e referência num movimento e o site propõe uma <b>regra</b> para os semelhantes. No Início, "Por categorizar" mostra as descrições mais frequentes.'],
-    ['💶','3. Registe os rendimentos','Em <b>Rendimentos</b>, carregue o recibo de vencimento em PDF: os valores são lidos e ligados (🔗) à transferência do extrato.'],
-    ['📊','4. Controle as despesas','Em <b>Despesas</b>, ponha o previsto por mês e compare com o real. Use a vista Ano para ver os 12 meses.'],
-    ['☁️','5. Tudo guardado na conta','Com sessão iniciada, os dados sincronizam entre dispositivos. No menu (avatar ▾) tem definições, cópia de segurança e este guia.']];
-  const pinta=()=>{const [ic,t,x]=P[i];$('onbCont').innerHTML=`<div class="ico">${ic}</div><h2>${t}</h2><p>${x}</p>`;
-    $('onbDots').innerHTML=P.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('');$('onbAnt').style.visibility=i?'visible':'hidden';$('onbSeg').textContent=i===P.length-1?'Começar ✓':'Seguinte ›'};
-  const fecha=()=>{$('mOnb').hidden=true};
-  const abre=()=>{i=0;pinta();$('mOnb').hidden=false};
-  $('onbSeg').onclick=()=>{if(i<P.length-1){i++;pinta()}else fecha()};$('onbAnt').onclick=()=>{if(i>0){i--;pinta()}};$('onbSalta').onclick=fecha;
+const FPOnb=(function(){const $=id=>document.getElementById(id);
+  /* passos: g = grupo (aba), a = aba das Finanças a abrir, el = alvo ('f:' dentro das Finanças, 'p:' nesta página), t/x = texto */
+  const G=[['intro','Bem-vindo'],['barra','Barra e menu'],['home','Início'],['ext','Extratos'],['ren','Rendimentos'],['des','Despesas'],['fim','Fim']];
+  const S=[
+    {g:'intro',t:'👋 Bem-vindo às Finanças Pessoais',x:'Junte os <b>extratos dos bancos</b>, os <b>recibos de vencimento</b> e as <b>despesas</b> num só sítio, sem escrever movimentos à mão. Esta visita mostra tudo o que dá para fazer, aba a aba. Use as setas ← → do teclado ou os botões.'},
+    {g:'barra',el:'p:#tabs',t:'Separadores',x:'<b>Finanças</b> é a aplicação principal. Ao lado estão o <b>Simulador salarial</b> e sites úteis. Tudo usa a mesma conta.'},
+    {g:'barra',el:'p:#fPer',t:'Período',x:'Escolha <b>Mês</b>, <b>Ano</b> ou <b>Intervalo</b>. Clique na data para abrir o <b>calendário</b> e em <b>Hoje</b> para voltar ao período atual. Todas as abas usam este período. À esquerda vê se os dados estão <b>guardados na conta</b>.'},
+    {g:'barra',el:'p:#btMenu',t:'Menu da conta',x:'Entrar ou criar conta, <b>Definições</b> (tema, tamanho, ordem dos movimentos, ícone 🧮), cópia de segurança, <b>Novidades</b>, <b>FAQs</b>, enviar sugestões e esta visita guiada.'},
+    {g:'home',a:'home',el:'f:#homeKpis',t:'Resumo do período',x:'<b>Entradas</b>, <b>Saídas</b>, <b>Saldo</b> e <b>Taxa de poupança</b>. Clique em Entradas/Saídas para ver os movimentos. O ícone <b>🧮</b> abre um painel com a conta feita: o que entra e o que fica de fora (e porquê).'},
+    {g:'home',a:'home',el:'f:#homeBars',t:'Entradas e saídas por mês',x:'Os 12 meses do ano. Em <b>Detalhado</b> as barras mostram as categorias e as entidades.'},
+    {g:'home',a:'home',el:'f:#homeBanks',t:'Saldo por banco',x:'Saldo de cada conta no fim do período, incluindo o <b>dinheiro</b> e as <b>poupanças</b> (clique para ver os movimentos).'},
+    {g:'home',a:'home',el:'f:.grid4',t:'Despesas e rendimentos',x:'Despesas por <b>categoria</b> e por <b>referência</b>, e rendimentos por <b>entidade</b> e por <b>tipo</b>. Os rendimentos com recibo ligado aparecem com <b>✓</b>. Tudo é clicável.'},
+    {g:'home',a:'home',el:'f:#homeUnc',t:'Por categorizar',x:'As descrições que ainda não têm categoria, das mais frequentes para as menos. Use <b>⚡</b> para criar uma regra de uma vez.'},
+    {g:'ext',a:'ext',el:'f:.drop',t:'Importar extratos',x:'Arraste o <b>CSV da CGD</b> ou o <b>Excel/CSV do cartão refeição</b> (vários de uma vez). Os saldos são verificados e os movimentos repetidos ou apagados não entram outra vez.'},
+    {g:'ext',a:'ext',el:'f:#extBar',t:'Pesquisa e filtros',x:'Procure por texto ou por <b>data</b> (16/09, 09/2026). Filtre por tipo, categorias, referências, pessoas e bancos (<b>várias de uma vez</b>). “Limpar filtros” volta ao início.'},
+    {g:'ext',a:'ext',el:'f:#extTable',t:'Movimentos',x:'Escolha <b>categoria</b> e <b>referência</b> em cada linha — o site propõe uma <b>regra</b> para os semelhantes. Escreva observações e “quem é”. Selecione várias linhas para editar em massa.'},
+    {g:'ext',a:'ext',el:'f:#extTable td.acts',t:'Ações da linha',x:'<b>↩</b> marca uma entrada como reembolso de uma despesa (abate às saídas). <b>✂</b> divide um movimento por várias categorias. <b>✏</b> edita o dinheiro. <b>🗑</b> apaga (pode repor depois).'},
+    {g:'ext',a:'ext',el:'f:#btMov',t:'Movimentos em dinheiro',x:'Registe gastos em dinheiro. Na aba <b>Movimentos eliminados</b> pode repor os últimos 50 apagados.'},
+    {g:'ext',a:'ext',el:'f:#btRegras',t:'Regras e pessoas',x:'<b>Regras</b> de categorização automática, <b>Pessoas</b> (quem fez a transferência) e <b>Regras especiais</b> (quando não perguntar para criar regra).'},
+    {g:'ext',a:'ext',el:'f:#btIE',t:'Importar / Exportar',x:'Exporte os movimentos do período em CSV ou veja (e desfaça) as importações feitas.'},
+    {g:'ren',a:'ren',el:'f:#renKpis',t:'Rendimentos',x:'Líquido do período, ordenado, prémios e IRS do ano — a <b>visão fiscal</b>, para comparar com a declaração de IRS.'},
+    {g:'ren',a:'ren',el:'f:[data-dd="ddRend"]',t:'Adicionar rendimento',x:'<b>Carregue o recibo em PDF</b> (lido no browser, só ficam os valores) ou adicione à mão prémios, rendas, vendas… Cada rendimento liga-se sozinho (🔗) à entrada no extrato.'},
+    {g:'ren',a:'ren',el:'f:#renAno',t:'Resumo anual',x:'Mês a mês: ordenado, subsídios, prémios, descontos e líquido. Abra um mês para ver, editar ou apagar cada recibo.'},
+    {g:'des',a:'des',el:'f:#desKpis',t:'Despesas do período',x:'<b>Previsto</b> (o seu orçamento), <b>Saídas</b> (saídas − reembolsos) e a <b>Diferença</b>.'},
+    {g:'des',a:'des',el:'f:#desCats',t:'Categorias e referências',x:'Escreva o <b>previsto por mês</b> e compare com as entradas, saídas, total e a <b>média mensal</b> dos últimos 12 meses. Na vista <b>Ano</b> vê a grelha dos 12 meses.'},
+    {g:'des',a:'des',el:'f:#btDesEdit',t:'Editar categorias',x:'Mude nomes, ordem (↑↓), acrescente ou apague categorias e referências, e marque as “📌 só este movimento”.'},
+    {g:'fim',t:'✅ Está pronto!',x:'Comece por importar um extrato. Pode rever esta visita (completa ou só de uma página) em <b>Definições › Visita guiada</b>. Dúvidas? Veja as <b>FAQs</b> ou envie uma pergunta.'}];
+  let L=[],i=0;const fin=()=>document.querySelector('iframe[data-id="financas"]');
+  const fw=()=>{try{return fin().contentWindow}catch(e){return null}};
+  const pronto=()=>new Promise(ok=>{let n=0;const t=setInterval(()=>{const w=fw();if((w&&w.fpPer&&w.go)||++n>60){clearInterval(t);ok()}},100)});
+  function alvo(st){if(!st.el)return null;const [onde,q]=[st.el.slice(0,2),st.el.slice(2)];
+    if(onde==='p:')return {el:document.querySelector(q),off:{x:0,y:0}};
+    const w=fw();if(!w)return null;const el=w.document.querySelector(q);if(!el)return null;const r=fin().getBoundingClientRect();return {el,off:{x:r.left,y:r.top},w}}
+  async function mostra(){const st=L[i];if(!st){fecha();return}
+    if(st.el&&st.el.startsWith('f:')){if(typeof abrir==='function'&&!(fin()&&fin().classList.contains('on')))abrir('financas');await pronto();const w=fw();if(w&&st.a&&w.go){w.go(st.a,true)}}
+    const a=alvo(st),spot=$('tourSpot'),bub=$('tourBub');let R=null;
+    if(a&&a.el){a.el.scrollIntoView({block:'center',inline:'nearest'});await new Promise(r=>setTimeout(r,260));const b=a.el.getBoundingClientRect();
+      if(b.width||b.height){const x=a.off.x+b.left,y=a.off.y+b.top;R={x:Math.max(4,x-6),y:Math.max(4,y-6),w:Math.min(innerWidth-8,b.width+12),h:Math.min(innerHeight-8,b.height+12)}}}
+    if(R){spot.classList.remove('centro');Object.assign(spot.style,{left:R.x+'px',top:R.y+'px',width:R.w+'px',height:R.h+'px'})}else spot.classList.add('centro');
+    const gi=G.findIndex(g=>g[0]===st.g),gs=[...new Set(L.map(x=>x.g))];
+    bub.innerHTML=`<div class="grp2">${gs.filter(g=>g!=='intro'&&g!=='fim').map(g=>`<span class="${g===st.g?'on':''}">${G.find(x=>x[0]===g)[1]}</span>`).join('')}</div><h4>${st.t}</h4><p>${st.x}</p>
+      <div class="tb"><span class="n">${i+1} / ${L.length}</span><button class="bt" type="button" data-tv="sair">Sair</button>${i?'<button class="bt" type="button" data-tv="ant">‹</button>':''}<button class="bt pri" type="button" data-tv="seg">${i===L.length-1?'Concluir ✓':'Seguinte ›'}</button></div>`;
+    const bw=bub.offsetWidth,bh=bub.offsetHeight;let bx,by;
+    if(R){by=R.y+R.h+12;if(by+bh>innerHeight-8)by=R.y-bh-12;if(by<8)by=Math.min(innerHeight-bh-8,R.y+12);bx=Math.min(innerWidth-bw-12,Math.max(12,R.x+R.w/2-bw/2))}else{bx=(innerWidth-bw)/2;by=Math.max(20,innerHeight*.3-bh/2)}
+    Object.assign(bub.style,{left:bx+'px',top:by+'px'});bub.querySelector('[data-tv="seg"]').focus()}
+  function fecha(){$('tour').hidden=true;document.removeEventListener('keydown',tecla,true)}
+  function tecla(e){if($('tour').hidden)return;if(e.key==='Escape'){e.preventDefault();fecha()}else if(e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();seg()}else if(e.key==='ArrowLeft'){e.preventDefault();if(i>0){i--;mostra()}}}
+  function seg(){if(i<L.length-1){i++;mostra()}else fecha()}
+  $('tourBub').addEventListener('click',e=>{const b=e.target.closest('[data-tv]');if(!b)return;const v=b.dataset.tv;if(v==='sair')fecha();else if(v==='ant'){if(i>0){i--;mostra()}}else seg()});
+  $('tourBlock').addEventListener('click',()=>{});
+  addEventListener('resize',()=>{if(!$('tour').hidden)mostra()});
+  function abre(g){L=g?S.filter(x=>x.g===g):S.slice();i=0;$('mSet').hidden=true;$('tour').hidden=false;document.addEventListener('keydown',tecla,true);mostra()}
   const talvez=u=>{try{const k='fp_onb_'+u.id;if(localStorage.getItem(k))return;
       const novo=(localStorage.getItem('fp_onb_novo')||'')===(u.email||'').toLowerCase()||(u.created_at&&Date.now()-new Date(u.created_at)<864e5&&!u.last_sign_in_at)||(u.created_at&&u.last_sign_in_at&&Math.abs(new Date(u.last_sign_in_at)-new Date(u.created_at))<6e5);
-      if(!novo)return;localStorage.setItem(k,'1');localStorage.removeItem('fp_onb_novo');setTimeout(abre,400)}catch(e){}};
-  return {abre,talvez}})();
+      if(!novo)return;localStorage.setItem(k,'1');localStorage.removeItem('fp_onb_novo');setTimeout(()=>abre(),600)}catch(e){}};
+  const grupos=()=>G.filter(g=>g[0]!=='intro'&&g[0]!=='fim');
+  document.getElementById('setOnbG').innerHTML=grupos().map(g=>`<button class="opt" type="button" data-og="${g[0]}">▶ ${g[1]}</button>`).join('');
+  document.getElementById('setOnbG').addEventListener('click',e=>{const b=e.target.closest('[data-og]');if(b)abre(b.dataset.og)});
+  return {abre,talvez,grupos,S,fecha}})();
+
 
 /* ===== login partilhado ===== */
 (function(){
@@ -331,7 +406,7 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);let i=0;
     if(/Password should/i.test(m))return 'A palavra-passe tem de ter pelo menos 6 caracteres.';
     return m||'Não foi possível concluir. Tente novamente.';};
   function mostrar(user){
-    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);
+    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);try{FPFaq.sessao(user)}catch(e){}try{FPNov.verifica(user||null)}catch(e){}
     window.financasUser=user||null; // disponível para os separadores (window.parent.financasUser)
     document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'financas-sessao',user:user?{id:user.id,email:user.email}:null},'*')}catch(e){}});
   }
@@ -398,6 +473,95 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
     catch(e){try{await fetch(SUG_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)});$('sgTxt').value='';$('sgMsg').textContent='✓ Enviada.'}catch(x){$('sgMsg').textContent='Não foi possível enviar. Tente mais tarde.'}}
     finally{$('sgEnviar').disabled=false}});
   pinta()})();
+</script>
+<script>
+/* ===== Novidades: aparece uma vez por versão nova (não na primeira visita). Atualizar NOVIDADES a cada versão (ver CLAUDE.md). ===== */
+const NOVIDADES=[
+ {v:'0.8g',d:'28/09/2026',n:['Novidades: esta janela aparece quando há uma versão nova','Visita guiada nos botões reais, aba a aba (completa ou só de uma página)','FAQs com pesquisa, etiquetas e perguntas dos utilizadores'],a:['"Ajuda" passa a "FAQs" no menu','Onboarding passa a "Visita guiada"']},
+ {v:'0.8f',d:'28/09/2026',n:['Enviar sugestões diretamente do menu'],a:[]},
+ {v:'0.8e',d:'27/09/2026',n:[],a:['Reembolsos mostram o nome da despesa original']},
+ {v:'0.8d',d:'27/09/2026',n:['Regras especiais com nome (ex.: "Transferências" não pede regra)'],a:[]},
+ {v:'0.8c',d:'27/09/2026',n:['Botão "Hoje" e período na barra de cima','Aba "Regras especiais"'],a:['Descrição e observações separadas nas linhas divididas','Filtro Entradas/Saídas destacado quando ativo']},
+ {v:'0.8b',d:'27/09/2026',n:['Ordem dos movimentos (mais recentes/antigos primeiro)','Botão "Posteriores" no Reembolso'],a:['Novo tamanho padrão (mais legível)','Definições com menu vertical e tamanho fixo']},
+ {v:'0.8a',d:'27/09/2026',n:['🧮 "Como foi calculado" nas caixas do Início, Despesas e Rendimentos','Logo novo'],a:['Definições com a secção "Geral"']},
+ {v:'0.7t',d:'27/09/2026',n:['Rendimentos do extrato no Início (✓ com recibo) e por tipo'],a:['Botão "Adicionar rendimento" no Resumo anual']}
+];
+window.NOVIDADES=NOVIDADES;
+const FPNov=(function(){const $=id=>document.getElementById(id),K='fp_ver_visto',cur=NOVIDADES[0].v;let feito=false,U=null;
+  const pv=v=>{const m=/^(\d+)\.(\d+)([a-z]*)$/.exec(v||'');return m?[+m[1],+m[2],m[3]]:[0,0,'']};
+  const cmp=(a,b)=>{a=pv(a);b=pv(b);return a[0]-b[0]||a[1]-b[1]||(a[2].length-b[2].length)||(a[2]<b[2]?-1:a[2]>b[2]?1:0)};
+  const lget=()=>{try{return localStorage.getItem(K)||''}catch(e){return ''}},lset=v=>{try{localStorage.setItem(K,v)}catch(e){}};
+  const sb=()=>window.plataforma&&window.plataforma.from?window.plataforma:null;
+  async function cget(){const c=sb();if(!c||!U)return '';try{const {data}=await c.from('financas_dados').select('dados').eq('user_id',U.id).eq('ferramenta','financas').eq('chave','novidades').maybeSingle();return (data&&data.dados&&data.dados.v)||''}catch(e){return ''}}
+  async function cset(v){const c=sb();if(!c||!U)return;try{await c.from('financas_dados').upsert({user_id:U.id,ferramenta:'financas',chave:'novidades',dados:{v}},{onConflict:'user_id,ferramenta,chave'})}catch(e){}}
+  function mostra(desde){const vs=NOVIDADES.filter(x=>!desde||cmp(x.v,desde)>0);if(!vs.length)return;
+    const junta=k=>[...new Set(vs.flatMap(x=>x[k]))],N=junta('n'),A=junta('a'),MAX=7;
+    const li=(l)=>l.slice(0,MAX).map(t=>`<li>${t}</li>`).join('')+(l.length>MAX?`<li class="mais">+ ${l.length-MAX} outras</li>`:'')||'<li class="mais">—</li>';
+    $('novTit').textContent=`Novidades — versão ${cur}`;$('novSub').textContent=desde&&vs.length>1?`O que mudou desde a versão ${desde} · ${vs[0].d}`:`${vs[0].d}`;
+    $('novN').innerHTML=li(N);$('novA').innerHTML=li(A);$('mNov').hidden=false;$('novOk').focus()}
+  async function verifica(u){if(u)U=u;if(feito)return;
+    let visto=lget();if(U){const c=await cget();if(c&&(!visto||cmp(c,visto)>0))visto=c}
+    if(feito)return;feito=true;
+    if(!visto){lset(cur);cset(cur);return} // primeira vez: não mostra
+    if(cmp(visto,cur)<0)mostra(visto);
+    lset(cur);cset(cur)}
+  $('novOk').onclick=()=>{$('mNov').hidden=true};
+  {let ini=null;const m=$('mNov');m.addEventListener('pointerdown',e=>{ini=e.target});m.addEventListener('click',e=>{if(e.target===m&&ini===m)m.hidden=true;ini=null})}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')$('mNov').hidden=true});
+  $('miNov').onclick=()=>{$('menu').hidden=true;mostra(NOVIDADES[Math.min(2,NOVIDADES.length-1)].v)}; // últimas duas versões
+  setTimeout(()=>verifica(window.financasUser||null),1800);
+  return {verifica,mostra,cmp,cur}})();
+
+/* ===== FAQs (Supabase: faq_perguntas + site_admins) ===== */
+const FPFaq=(function(){const $=id=>document.getElementById(id),SITE='financas';let U=null,ADM=false,L=[],MINHAS=[],ADML=[],FL='',AF='nova',tab='faq';
+  const sb=()=>window.plataforma&&window.plataforma.from?window.plataforma:null;
+  const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const norm=t=>String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+  async function carrega(){const c=sb();if(!c){$('fqList').innerHTML='<p class="note2">Sem ligação ao servidor — as FAQs não estão disponíveis.</p>';return}
+    const {data,error}=await c.from('faq_perguntas').select('id,pergunta,resposta,labels,ordem').eq('site_id',SITE).eq('publica',true).order('ordem').order('created_at');
+    if(error){$('fqList').innerHTML='<p class="note2">Não foi possível carregar as FAQs.</p>';return}L=data||[];pinta();
+    if(U){const r=await c.from('faq_perguntas').select('id,pergunta,resposta,estado,created_at').eq('site_id',SITE).eq('user_id',U.id).order('created_at',{ascending:false});MINHAS=r.data||[];
+      const a=await c.rpc('e_admin_site',{s:SITE});ADM=!!a.data;$('fqTabs').querySelector('[data-ft="adm"]').hidden=!ADM;if(ADM)await carregaAdm()}
+    else{MINHAS=[];ADM=false;$('fqTabs').querySelector('[data-ft="adm"]').hidden=true}
+    pintaMinhas()}
+  function pinta(){const q=norm($('fqQ').value),lbs=[...new Set(L.flatMap(x=>x.labels||[]))].sort();
+    $('fqLb').innerHTML=lbs.length?`<button type="button" data-fl="" class="${FL?'':'on'}">Todas</button>`+lbs.map(l=>`<button type="button" data-fl="${esc(l)}" class="${FL===l?'on':''}">${esc(l)}</button>`).join(''):'';
+    const v=L.filter(x=>(!FL||(x.labels||[]).includes(FL))&&(!q||norm(x.pergunta+' '+x.resposta+' '+(x.labels||[]).join(' ')).includes(q)));
+    $('fqList').innerHTML=v.length?v.map(x=>`<details><summary>${esc(x.pergunta)}<span class="ls">${(x.labels||[]).map(l=>`<span class="lbl">${esc(l)}</span>`).join('')}</span></summary><div class="rs">${esc(x.resposta)}</div></details>`).join(''):'<p class="note2">Nenhuma pergunta encontrada. Pode fazer a sua abaixo.</p>'}
+  function pintaMinhas(){$('fqMinhas').innerHTML=!U?'<p class="note2">Entre na conta para ver as suas perguntas.</p>':MINHAS.length?MINHAS.map(x=>`<div class="mq"><div style="display:flex;gap:8px;align-items:baseline"><b style="flex:1">${esc(x.pergunta)}</b><span class="st ${x.estado==='respondida'?'r':''}">${x.estado==='respondida'?'Respondida':x.estado==='ignorada'?'Arquivada':'A aguardar resposta'}</span></div>${x.resposta?`<div class="rs" style="margin-top:6px">${esc(x.resposta)}</div>`:''}<div class="note2" style="margin-top:4px">${new Date(x.created_at).toLocaleDateString('pt-PT')}</div></div>`).join(''):'<p class="note2">Ainda não fez perguntas.</p>'}
+  async function carregaAdm(){const c=sb();const {data}=await c.from('faq_perguntas').select('*').eq('site_id',SITE).order('created_at',{ascending:false});ADML=data||[];
+    const n=ADML.filter(x=>x.estado==='nova').length;$('fqNovas').textContent=n?`(${n})`:'';pintaAdm()}
+  function pintaAdm(){const l=ADML.filter(x=>AF==='todas'||x.estado===AF);
+    $('fqAdm').innerHTML=`<div class="fq-lb">${[['nova','Novas'],['respondida','Respondidas'],['ignorada','Ignoradas'],['todas','Todas']].map(([k,t])=>`<button type="button" data-af="${k}" class="${AF===k?'on':''}">${t} ${k==='todas'?ADML.length:ADML.filter(x=>x.estado===k).length}</button>`).join('')}<button type="button" data-anova style="margin-left:auto">＋ Nova FAQ</button></div>`
+      +(l.length?l.map(x=>`<div class="it2" data-aid="${x.id}"><div class="q"><textarea rows="2" data-k="pergunta">${esc(x.pergunta)}</textarea></div><div class="meta">${x.user_id?'Pergunta de um utilizador':'FAQ criada pelo admin'} · ${new Date(x.created_at).toLocaleString('pt-PT')} · ${x.estado}${x.publica?' · pública':''}</div>
+        <textarea rows="3" data-k="resposta" placeholder="Resposta…">${esc(x.resposta||'')}</textarea>
+        <div class="rw"><input type="text" data-k="labels" value="${esc((x.labels||[]).join(', '))}" placeholder="Labels, separadas por vírgulas (ex.: Extratos, Regras)" list="fqLabels"><label><input type="checkbox" data-k="publica"${x.publica?' checked':''}> Pública (FAQ)</label></div>
+        <div class="rw"><button class="bt pri" type="button" data-aa="responder">💾 Responder e publicar</button><button class="bt" type="button" data-aa="guardar">Guardar</button><button class="bt" type="button" data-aa="ignorar">🙈 Ignorar</button><button class="bt" type="button" data-aa="apagar">🗑 Apagar</button><span class="note2" data-msg></span></div></div>`).join(''):'<p class="note2">Nada aqui.</p>')
+      +`<datalist id="fqLabels">${[...new Set(ADML.flatMap(x=>x.labels||[]))].map(l=>`<option value="${esc(l)}">`).join('')}</datalist>`}
+  async function acao(card,a){const c=sb(),id=card.dataset.aid,g=k=>card.querySelector(`[data-k="${k}"]`),msg=card.querySelector('[data-msg]');
+    if(a==='apagar'){if(!confirm('Apagar esta pergunta de vez?'))return;const {error}=await c.from('faq_perguntas').delete().eq('id',id);if(error){msg.textContent=error.message;return}await carregaAdm();await carrega();return}
+    const up={pergunta:g('pergunta').value.trim(),resposta:g('resposta').value.trim()||null,labels:g('labels').value.split(',').map(t=>t.trim()).filter(Boolean),publica:g('publica').checked};
+    if(a==='responder'){if(!up.resposta){msg.textContent='Escreva a resposta.';return}up.estado='respondida';up.publica=true}
+    if(a==='ignorar'){up.estado='ignorada';up.publica=false}
+    if(a==='guardar'&&up.resposta){up.estado='respondida'}
+    msg.textContent='A guardar…';const {error}=await c.from('faq_perguntas').update(up).eq('id',id);if(error){msg.textContent=error.message;return}await carregaAdm();await carrega()}
+  function mudaTab(t){tab=t;[...$('fqTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.ft===t));$('fqFaq').hidden=t!=='faq';$('fqMinhas').hidden=t!=='minhas';$('fqAdm').hidden=t!=='adm'}
+  $('fqTabs').addEventListener('click',e=>{const b=e.target.closest('[data-ft]');if(b)mudaTab(b.dataset.ft)});
+  $('fqQ').addEventListener('input',pinta);
+  $('fqLb').addEventListener('click',e=>{const b=e.target.closest('[data-fl]');if(!b)return;FL=b.dataset.fl;pinta()});
+  $('fqEnviar').addEventListener('click',async()=>{const t=$('fqNova').value.trim(),c=sb();if(t.length<3){$('fqMsg').textContent='Escreva a pergunta primeiro.';return}
+    if(!U||!c){$('fqMsg').innerHTML='Entre na conta para fazer perguntas.';return}
+    $('fqEnviar').disabled=true;$('fqMsg').textContent='A enviar…';
+    const {error}=await c.from('faq_perguntas').insert({site_id:SITE,user_id:U.id,pergunta:t});$('fqEnviar').disabled=false;
+    if(error){$('fqMsg').textContent=/Limite/.test(error.message)?'Atingiu o limite de perguntas de hoje.':'Não foi possível enviar.';return}
+    $('fqNova').value='';$('fqMsg').textContent='✓ Pergunta enviada. A resposta aparece em "As minhas perguntas".';await carrega()});
+  $('fqAdm').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.af){AF=b.dataset.af;pintaAdm();return}
+    if('anova' in b.dataset){const c=sb();const {error}=await c.from('faq_perguntas').insert({site_id:SITE,user_id:null,pergunta:'Nova pergunta',estado:'nova',publica:false});if(!error){AF='nova';await carregaAdm()}return}
+    if(b.dataset.aa)acao(b.closest('[data-aid]'),b.dataset.aa)});
+  document.querySelectorAll('[data-set="ajuda"],#setNav [data-s="ajuda"]').forEach(b=>b.addEventListener('click',()=>{mudaTab('faq');carrega()}));
+  U=window.financasUser||null;
+  return {sessao:u=>{U=u||null},carrega,mudaTab}})();
 </script>
 </body>
 </html>
