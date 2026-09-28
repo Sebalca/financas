@@ -52,7 +52,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D07 Barra de pesquisa/filtros e títulos da tabela sempre visíveis; filtro de Referência que segue a Categoria.
 - D08 Dropdowns dos filtros (Categoria, Referência…) com largura fixa.
 - D09 Botão "✕ Limpar filtros".
-- D08b Tabela de movimentos com larguras de coluna fixas.
+- D08b Tabela de movimentos com larguras de coluna fixas. Colunas: Data (mov.) · Descrição · Valor · Categoria · Referência · Detalhes · Observações · Quem é · Banco · ações; sem "Data valor" nem "Saldo" (aparecem ao passar o rato na data e no valor). (atualizada v0.8l)
 - D08c Títulos das colunas dentro da barra fixa (junto à pesquisa e filtros), sempre alinhados com as colunas; a barra de scroll vertical fica sempre reservada para a largura não mudar ao filtrar.
 - D46 Valores com milhares sempre separados por espaço (1 234,56 €), em todo o site.
 - D45 Ao atualizar a página mantém-se a aba, período, filtros, pesquisa, vistas e posição (só enquanto o separador do browser está aberto).
@@ -82,7 +82,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D10 Fora das contas (tabela de baixo): **Banco, Por tratar, Investimentos, Empresas, Rendimentos, Poupanças**.
 - D06 Trocas entre contas, levantamentos, depósitos e Poupanças não contam como entrada/saída.
 - D12 Referências com ✓ "Só este movimento" não sugerem regra e as regras não as usam.
-- D13 Vista Mês (previsto vs real) e vista Ano (grelha 12 meses + Total + Média/mês + Previsto ano), em duas tabelas com títulos.
+- D13 Despesas numa **grelha única de 12 meses** (igual em Mês e Ano): o ano começa no mês escolhido em Definições › Geral (Janeiro por defeito) e contém o período escolhido, cujo mês fica destacado. Linhas: categoria (cinzenta, soma; abre/fecha, aberta por defeito) e referências; colunas: 12 meses (saídas − reembolsos), Total, Média (total ÷ meses com movimentos) e Previsão (mensal, editável). Por baixo, a mesma grelha para as categorias fora das contas (entradas − saídas, sem Previsão). O modo Editar mantém a lista de categorias para mudar nomes/ordem. (atualizada v0.8l)
 - D75 Linhas divididas: a **Descrição** de cada linha escreve-se na janela Dividir (aparece como ↳ descrição); as **Observações** escrevem-se na tabela, como nas outras linhas. (v0.8c)
 - D18 Dividir movimento (✂): a linha do banco mantém-se e mostra "✂ Dividido em N" com sub-linhas; a soma das partes tem de dar o valor original; todas as contas usam as partes; as regras não mexem em movimentos divididos.
 - D48 Ao dividir, a 1.ª linha tem o valor fechado = valor original − as outras linhas (não se edita nem se apaga). Se as outras linhas passarem o original, a 1.ª fica negativa (vermelho), aparece um aviso e não deixa guardar; fora disso não há texto de soma.
@@ -103,7 +103,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D78 Um reembolso ligado mostra na Descrição "↩ nome da despesa original" (a descrição do extrato fica no tooltip) e a pesquisa encontra-o pelos dois nomes. (v0.8e)
 - D20b Janela do reembolso: mostra em destaque descrição, valor, data e quem; por defeito as saídas (todas as categorias) do próprio dia ou do anterior mais próximo, com valor maior que o reembolso; "Mostrar todas" com pesquisa; despesa sem categoria → escolher categoria/referência na hora (aplica-se às duas).
 - D17 Despesas: **Saídas** (antes "Real") = saídas − reembolsos; nas linhas chama-se **Total** (colunas Entradas e Saídas ao lado). (atualizada v0.7s)
-- D61 Despesas, vista Mês: categorias abertas por defeito (lembra as que se fecham); colunas Referência | Previsto/mês | Média mensal (total dos últimos 12 meses ÷ meses com movimentos) | Entradas | Saídas | Total | Diferença; caixas como no Início (explicação só ao passar o rato); linhas mais baixas.
+- D61 Na grelha das Despesas: valor do mês a vermelho quando passa a previsão da referência; clicar num valor abre os Extratos filtrados por esse mês e categoria/referência; "Só com valores" esconde linhas sem movimentos nem previsão; caixas de cima como no Início. (atualizada v0.8l)
 - D16 Nos Extratos, entradas têm o botão ↩ para escolher a despesa original (fica com a mesma categoria/referência e ligação ↩).
 - D14 Vista Ano, tabela "Não entram nas contas": uma linha por categoria com o saldo (entradas − saídas) por mês, Total e Média/mês; sem coluna "Entradas ano".
 - Modo "✏ Editar" (nomes, ordem ↑↓, apagar, adicionar); "Abrir todas / Fechar todas".
@@ -132,6 +132,11 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 ---
 
 ## Histórico
+
+### v0.8l — 28/09/2026
+- Extratos: saem as colunas "Data valor" e "Saldo" (ficam no tooltip da data e do valor).
+- Despesas: grelha de 12 meses (substitui as vistas Mês/Ano) com Total, Média e Previsão; categorias abrem/fecham; acima da previsão a vermelho; clique → Extratos.
+- Definições › Geral: primeiro mês do ano nas Despesas.
 
 ### v0.8k — 28/09/2026
 - Novo banco: BPI (Excel do BPI Net).

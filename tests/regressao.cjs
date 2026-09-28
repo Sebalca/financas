@@ -41,7 +41,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await ev(()=>{espSo().refs.push('Lazer›Jogos');aplicaRegras();render()});
   t('D12','referência "Só este movimento" não é usada pelas regras',await ev(()=>!DB.mov.some(m=>m.ref==='Jogos'&&m.catSrc==='regra')));
   await go('des');await p.click('#perMode [data-m="ano"]');await p.waitForTimeout(200);
-  t('D13','vista Ano tem Média/mês e duas tabelas',await ev(()=>document.querySelectorAll('#desCats table.des-ano').length===2&&/Média\/mês/.test(document.querySelector('#desCats').innerText)));
+  t('D13','Despesas: grelha de 12 meses (Mês e Ano iguais), com Total, Média e Previsão, e tabela das categorias fora das contas',await ev(()=>{const t=document.querySelectorAll('#desCats table.dgrid');if(t.length!==2)return false;const h=[...t[0].querySelectorAll('thead th')].map(x=>x.textContent.trim());const h2=[...t[1].querySelectorAll('thead th')].map(x=>x.textContent.trim());return h.length===16&&h[13]==='Total'&&h[14]==='Média'&&h[15]==='Previsão'&&h2.length===15&&!h2.includes('Previsão')}));
   t('D14','vista Ano: fora das contas numa linha por categoria (entradas − saídas), sem coluna "Entradas ano"',await ev(()=>!/Entradas ano/.test(document.querySelector('#desCats').innerText)&&/entradas − saídas/.test(document.querySelector('#desCats').innerText)));
   await p.click('#perMode [data-m="mes"]');
 
@@ -65,7 +65,8 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D16','atalho ↩ dá ao reembolso a categoria/referência da despesa original',rb[0]==='Alimentação'&&rb[1]==='Supermercado'&&rb[2],rb);
   t('D15','entrada em categoria de despesa = reembolso: abate às saídas e não conta como entrada',await ev(()=>eReemb(DB.mov.find(x=>x.id==='mRb'))&&!eReemb({valor:50,cat:'Rendimentos'})&&!eReemb({valor:50,cat:''})));
   await go('des');
-  const d17=await ev(()=>{const [a,b]=range(),sa=-DB.mov.filter(m=>m.dm>=a&&m.dm<=b&&m.cat==='Alimentação'&&m.valor<0).reduce((s,m)=>s+m.valor,0),esp=E(sa-20),txt=document.querySelector('#desCats details[data-c="Alimentação"] summary').textContent;return {ok:txt.includes('Saídas '+esp)&&/reemb/.test(txt),esp,txt}});
+  const d17=await ev(()=>{document.querySelector('[data-tab="des"]').click();const [a,b]=range(),sa=-DB.mov.filter(m=>m.dm>=a&&m.dm<=b&&m.cat==='Alimentação'&&m.valor<0).reduce((s,m)=>s+m.valor,0),esp=E(sa-20),k=a.slice(0,7);
+    const ms=mesesGrelha(),i=ms.indexOf(k),tr=document.querySelector('#desCats tr.gc[data-dtog="Alimentação"]'),txt=tr?tr.children[i+1].textContent:'';return {ok:txt===esp,esp,txt}});
   t('D17','Despesas: saídas (total) = saídas − reembolsos',d17.ok,d17);
 
   console.log('Dividir');
@@ -87,7 +88,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await p.fill('#fQ','DEVOLVE INTERNET');await p.waitForTimeout(150);
   await p.click('#extTable [data-reemb="mRb2"]');await p.waitForTimeout(150);await p.click('#rbTodas');await p.waitForTimeout(100);
   await p.click(`#rbList [data-rbsel="${nid}#1"]`);await p.waitForTimeout(150);
-  const rp=await ev(n=>{const m=DB.mov.find(x=>x.id==='mRb2'),o=DB.mov.find(x=>x.id===n);return {ok:m.reemb===chaveParte(o,1)&&m.cat==='Casa'&&m.ref==='Internet'&&/Reembolso de NETFLIX/.test(document.querySelector('#extTable tr[data-id="mRb2"]').children[8].textContent),cat:m.cat,r:m.reemb}},nid);
+  const rp=await ev(n=>{const m=DB.mov.find(x=>x.id==='mRb2'),o=DB.mov.find(x=>x.id===n);return {ok:m.reemb===chaveParte(o,1)&&m.cat==='Casa'&&m.ref==='Internet'&&/Reembolso de NETFLIX/.test(document.querySelector('#extTable tr[data-id="mRb2"]').children[6].textContent),cat:m.cat,r:m.reemb}},nid);
   t('D50','reembolso pode ligar a uma linha de um movimento dividido',rp.ok,rp);
   await ev(()=>{DB.mov.push({id:'mRb3',k:'rbteste3',man:true,banco:'Dinheiro',conta:'',dm:'2026-09-23',dv:'2026-09-23',desc:'TRF RECEBIDA GRUPO',valor:30,saldo:null,cat:'',ref:'',catSrc:'',det:'',obs:'',quem:'',ord:0});render()});
   await p.fill('#fQ','TRF RECEBIDA GRUPO');await p.waitForTimeout(150);
@@ -107,7 +108,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   const d55=await ev(()=>{const rs=[...document.querySelectorAll('#extTable tbody tr[data-id]')];const all=[...DB.mov];document.querySelector('#fQ').value='';render();const rows=[...document.querySelectorAll('#extTable tbody tr[data-id]')];const pos=rows.map(tr=>[...tr.querySelectorAll('td.acts .sl')].map(s=>Math.round(s.getBoundingClientRect().left-tr.getBoundingClientRect().left)).join(','));return {ok:rows.length>1&&new Set(pos).size===1&&pos[0].split(',').length===4,pos:[...new Set(pos)]}});
   t('D55','botões do fim da linha em posições fixas (4 lugares)',d55.ok,d55);
   await p.fill('#fQ','');
-  t('D19','reembolso mostra só a ligação nos Detalhes',await ev(()=>{render();const tr=document.querySelector('#extTable tr[data-id="mRb"]');return !tr||(/Reembolso de/.test(tr.children[8].textContent)&&!/Diversos|COMPRAS/.test(tr.children[8].textContent))}));
+  t('D19','reembolso mostra só a ligação nos Detalhes',await ev(()=>{render();const tr=document.querySelector('#extTable tr[data-id="mRb"]');return !tr||(/Reembolso de/.test(tr.children[6].textContent)&&!/Diversos|COMPRAS/.test(tr.children[6].textContent))}));
 
   console.log('Pesquisa por data / calendário / pessoas');
   const dq=await ev(()=>{const m=DB.mov.find(x=>!x.man),d=m.dm.split('-');const q1=`${d[2]}/${d[1]}/${d[0]}`,q2=`${d[1]}/${d[0]}`;
@@ -141,9 +142,16 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
 
   console.log('v0.7s');
   const x61=await ev(()=>{P.m='mes';P.d=new Date(2026,8,1);perLabel();document.querySelector('[data-tab="des"]').click();render();
-    const ds=[...document.querySelectorAll('#desCats details.cat')],th=[...document.querySelector('#desCats details.cat table thead').querySelectorAll('th')].map(x=>x.textContent.trim()),k=[...document.querySelectorAll('#desKpis .kpi .l')].map(x=>x.textContent);
-    return {ok:ds.length>0&&ds.every(d=>d.open)&&th.join('|')==='Referência|Previsto/mês|Média mensal|Entradas|Saídas|Total|Diferença|'&&k.includes('Saídas')&&!k.includes('Real')&&getComputedStyle(document.querySelector('#desKpis .kpi')).textAlign==='center'&&!document.querySelector('#desKpis .kpi .s'),th,k}});
-  t('D61','Despesas (mês): categorias abertas, colunas Previsto/Média/Entradas/Saídas/Total/Diferença e caixas como no Início',x61.ok,x61);
+    const cats=[...document.querySelectorAll('#desCats table.dgrid')[0].querySelectorAll('tr.gc')],abertas=cats.every(tr=>tr.classList.contains('open')),msel=document.querySelectorAll('#desCats table.dgrid')[0].querySelectorAll('thead th.msel').length===1&&/SET\/26/.test(document.querySelector('#desCats thead th.msel').textContent);
+    const k=[...document.querySelectorAll('#desKpis .kpi .l')].map(x=>x.textContent);
+    const g=document.querySelector('#desCats tr.gc');g.click();const fechou=!document.querySelector('#desCats tr.gc').classList.contains('open');document.querySelector('#desCats tr.gc').click();
+    const pv=document.querySelector('#desCats tr.gr input.pv');const ok0=!!pv;
+    const cc=[...document.querySelectorAll('#desCats table.dgrid')[0].querySelectorAll('tr.gr td.clk')].find(td=>!/^-/.test(td.textContent));const kk=cc.dataset.dgo.split('|');const kp=kk[1]+'›'+kk[2];DB.prev[kp]=0.01;render();const over=!!document.querySelector('#desCats td.over');delete DB.prev[kp];render();
+    const c=document.querySelector('#desCats td.clk[data-dgo]');const dg=c.dataset.dgo;c.click();const foiExt=document.querySelector('#tab-ext').classList.contains('on')&&$('#fCat').vals.includes(dg.split('|')[1]);limpaFiltros();document.querySelector('[data-tab="des"]').click();
+    return {ok:cats.length>0&&abertas&&msel&&k.includes('Saídas')&&getComputedStyle(document.querySelector('#desKpis .kpi')).textAlign==='center'&&fechou&&ok0&&over&&foiExt,abertas,msel,fechou,ok0,over,foiExt,dg}});
+  t('D94','primeiro mês do ano das Despesas escolhido nas Definições; Extratos sem colunas Data valor e Saldo',await ev(()=>new Promise(ok=>{window.postMessage({tipo:'fp-mes1',mes:8},'*');setTimeout(()=>{const h=document.querySelector('#desCats table.dgrid thead th:nth-child(2)').textContent;window.postMessage({tipo:'fp-mes1',mes:0},'*');
+    setTimeout(()=>{const h2=document.querySelector('#desCats table.dgrid thead th:nth-child(2)').textContent;const cols=EXT_COLS.map(c=>c[0]);ok(h==='SET/26'&&h2==='JAN/26'&&!cols.includes('Data valor')&&!cols.includes('Saldo'))},80)},80)})));
+  t('D61','Despesas: categorias abertas por defeito (abrem/fecham), mês escolhido destacado, previsão editável, valor acima da previsão a vermelho, clique abre os Extratos filtrados',x61.ok,x61);
   const x62=await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();const m=DB.mov.find(x=>x.partes&&x.partes.length);SPOPEN.add(m.id);render();
     const inp=document.querySelector(`#extTable [data-pobs="${m.id}#0"]`);inp.value='Nota X';inp.dispatchEvent(new Event('change',{bubbles:true}));
     const tx=document.querySelector('#tab-ext').textContent;return {ok:m.partes[0].obs==='Nota X'&&!/Suportados:/.test(tx)&&!/Total \(filtrado\)/.test(tx)&&!!document.querySelector('#extTable tr.fim')&&!document.querySelector('#spRows [data-spo][placeholder*="ex."]')&&!/ex\.: Eletricidade/.test(document.body.innerHTML)}});

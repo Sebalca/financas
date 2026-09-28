@@ -182,6 +182,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <div class="grp" id="gZoom"><button class="opt" data-v="0.72" type="button">80%</button><button class="opt" data-v="0.81" type="button">90%</button><button class="opt" data-v="" type="button">100% (padrão)</button><button class="opt" data-v="0.99" type="button">110%</button><button class="opt" data-v="1.08" type="button">120%</button></div>
       <h3>Idioma</h3><p>Em breve poderá escolher outros idiomas.</p><select disabled style="max-width:260px"><option>Português (Portugal)</option><option>English</option></select>
       <h3>Opções</h3>
+      <p style="margin:0 0 6px">Primeiro mês do ano nas Despesas</p><select id="optMes1" style="max-width:260px;margin-bottom:12px"></select>
       <p style="margin:0 0 6px">Ordem dos movimentos nos Extratos</p><div class="grp" id="gOrdem" style="margin:0 0 12px"><button class="opt" data-v="" type="button">Mais recentes primeiro</button><button class="opt" data-v="asc" type="button">Mais antigos primeiro</button></div>
       <label class="sw2"><input type="checkbox" id="optCalc"> <span>Mostrar o ícone 🧮 <b>Como foi calculado</b> nas caixas (Início, Despesas, Rendimentos)</span></label>
     </section>
@@ -315,6 +316,9 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
   const calcOn=()=>{try{return localStorage.getItem('fp_calc')!=='0'}catch(e){return true}};
   const enviaCalc=()=>{const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-calc',on:calcOn()},'*')};
   $('optCalc').checked=calcOn();
+  {const MS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],sel=$('optMes1');let v='0';try{v=localStorage.getItem('fp_mes1')||'0'}catch(e){}
+    sel.innerHTML=MS.map((n,i)=>`<option value="${i}"${String(i)===v?' selected':''}>${n}</option>`).join('');
+    sel.addEventListener('change',()=>{try{localStorage.setItem('fp_mes1',sel.value)}catch(e){}const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-mes1',mes:+sel.value},'*')})}
   const ordG=()=>{try{return localStorage.getItem('fp_ordem')||''}catch(e){return ''}};
   const pintaOrd=()=>$$('#gOrdem .opt').forEach(b=>b.classList.toggle('on',b.dataset.v===ordG()));pintaOrd();
   $('gOrdem').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b)return;try{b.dataset.v?localStorage.setItem('fp_ordem',b.dataset.v):localStorage.removeItem('fp_ordem')}catch(x){}pintaOrd();
@@ -485,6 +489,7 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
 <script>
 /* ===== Novidades: aparece uma vez por versão nova (não na primeira visita). Atualizar NOVIDADES a cada versão (ver CLAUDE.md). ===== */
 const NOVIDADES=[
+ {v:'0.8l',d:'28/09/2026',n:['Despesas numa grelha de 12 meses com Total, Média e Previsão','Escolher o primeiro mês do ano (Definições › Geral)'],a:['Extratos sem as colunas Data valor e Saldo (aparecem ao passar o rato)','Valores acima da previsão a vermelho; clique num valor para ver os movimentos']},
  {v:'0.8k',d:'28/09/2026',n:['Extratos do BPI (Excel do BPI Net)'],a:[]},
  {v:'0.8j',d:'28/09/2026',n:['Extratos do Millennium BCP (Excel): conta à ordem e cartão de crédito'],a:['Pagamento do cartão fica entre contas (não conta duas vezes)','Movimentos iguais no mesmo dia já não se perdem em contas sem saldo']},
  {v:'0.8i',d:'28/09/2026',n:['Visita guiada começa pela escolha do idioma e do tema'],a:['Sugestões recebidas numa aba própria (só para quem gere o site)','Extratos voltam às 100 primeiras linhas ao sair da aba','Texto da visita guiada mais espaçado']},

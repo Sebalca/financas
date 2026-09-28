@@ -123,10 +123,10 @@ Na barra de cima da página principal (só no separador Finanças): **Mês / Ano
 - Os Extratos são a fonte do **dinheiro** que entra; os Rendimentos são a visão **fiscal** (bruto, IRS, SS).
 
 ### Despesas
-- **Vista Mês** (categorias abertas por defeito): por referência, Previsto/mês, Média mensal (últimos 12 meses), Entradas, Saídas, **Total** (saídas − reembolsos) e Diferença face ao previsto. As caixas de cima mostram Previsto, Saídas, Diferença e Categorias.
-- **Vista Ano**: grelha de 12 meses com Média/mês.
-- Tabela separada para as **categorias fora das contas** (entradas − saídas por categoria).
-- **Modo Editar**: ordenar (↑↓), acrescentar ou apagar categorias e referências, valores previstos.
+- **Grelha de 12 meses** (a mesma em Mês e Ano): o ano começa no mês escolhido em Definições › Geral e o mês do período fica destacado.
+- Linhas: categorias (abrem/fecham) e referências; colunas: meses (saídas − reembolsos), **Total**, **Média** (total ÷ meses com movimentos) e **Previsão** (mensal, editável). Acima da previsão fica a vermelho; clicar num valor abre os Extratos filtrados.
+- Por baixo, a mesma grelha para as **categorias fora das contas** (entradas − saídas).
+- **Modo Editar**: ordenar (↑↓), acrescentar ou apagar categorias e referências.
 
 ### Outras abas
 Previsões, Faturas e Saúde financeira existem mas ainda estão **em preparação** (ver ROADMAP).
