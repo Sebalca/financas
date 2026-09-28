@@ -383,7 +383,7 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
 </script>
 <script>
 /* sugestões → Google Sheet (Apps Script, ver tools/sugestoes-apps-script.gs). O URL só permite acrescentar linhas; não é uma credencial. */
-(function(){const SUG_URL='';const $=id=>document.getElementById(id);let tipo='Ideia';
+(function(){const SUG_URL='https://script.google.com/macros/s/AKfycbxICv8XNkO7qmFNHEwx4tjsOZxagiZJoIJvmJ3c7UjEldrOUn7Q3-qMi-_iuxaxQLcHvA/exec';const $=id=>document.getElementById(id);let tipo='Ideia';
   const pinta=()=>{let u=null;try{u=window.financasUser||null}catch(e){}const em=u&&u.email;$('sgMailW').hidden=!em;if(em)$('sgMailTxt').textContent=em;
     if(!SUG_URL){$('sgEnviar').disabled=true;$('sgMsg').textContent='Envio ainda não configurado.'}};
   $('sgTipo').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b)return;tipo=b.dataset.v;[...$('sgTipo').children].forEach(x=>x.classList.toggle('on',x===b))});

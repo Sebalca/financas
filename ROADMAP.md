@@ -5,7 +5,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.8e)
+## Já feito (v0.1 → v0.8f)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.

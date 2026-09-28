@@ -114,6 +114,9 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 
 ## Histórico
 
+### v0.8f — 28/09/2026
+- Sugestões ativas: o formulário envia para o Google Sheet (URL da Aplicação Web do Apps Script configurado).
+
 ### v0.8e — 27/09/2026
 - Extratos: reembolsos ligados mostram o nome da despesa original na Descrição.
 - Sugestões: formulário ativo em Definições › Enviar sugestão, pronto para enviar para um Google Sheet (falta o URL do Apps Script).
