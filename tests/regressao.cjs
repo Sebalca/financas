@@ -378,6 +378,19 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     window.alert=al;window.plataforma=velho;await FPAgr.sessao(null);document.querySelector('#mSet').hidden=true;
     ok({ok:pop&&aceite&&membro&&semConta&&dono,pop,aceite,membro,semConta,dono})}));
   t('D101','Agregado: convite por email (conta tem de existir, senão alerta), mensagem para aceitar ao entrar, membro pode sair, dono gere/convida/apaga',z101.ok,z101);
+  const z102=await ev(()=>new Promise(async ok=>{location.hash='#financas';await new Promise(r=>setTimeout(r,300));const f=document.querySelector('iframe[data-id="financas"]'),w=f.contentWindow;
+    FPAgr._set({id:'u2'},[],[]);FPPer.pinta();const escondido=document.querySelector('#fCtx').hidden;
+    const nP=w.fpCtx.db().mov.length;w.fpCtx.db().cats[0].refs.push('RefTeste102');w.saveLocal();
+    FPAgr._set({id:'u2'},[{id:'g9',nome:'Família Teste',dono:true,apagar_em:null,membros:[],convites:[]}],[]);FPPer.pinta();
+    const el=document.querySelector('#fCtx'),vis=!el.hidden&&/Pessoal/.test(el.textContent)&&/Família Teste/.test(el.textContent);
+    const bar=[...document.querySelector('.bar').children],meio=bar.indexOf(el)>bar.indexOf(document.querySelector('#tabs'))&&bar.indexOf(el)<bar.indexOf(document.querySelector('#fPer'));
+    el.querySelector('[data-cx="g9"]').click();await new Promise(r=>setTimeout(r,300));
+    const agr=w.fpCtx.atual().t==='a'&&w.fpCtx.db().mov.length===0&&localStorage.getItem('fp_ctx')==='g9'&&el.querySelector('.on').dataset.cx==='g9';
+    const base=w.basePessoal();const copia=Array.isArray(base.cats)&&base.cats[0].refs.includes('RefTeste102')&&Array.isArray(base.regras)&&!('mov' in base);
+    el.querySelector('[data-cx=""]').click();await new Promise(r=>setTimeout(r,300));const volta=w.fpCtx.atual().t==='p'&&w.fpCtx.db().mov.length===nP&&!localStorage.getItem('fp_ctx');
+    FPAgr._set({id:'u2'},[],[]);FPPer.pinta();const some=document.querySelector('#fCtx').hidden;w.fpCtx.db().cats[0].refs=w.fpCtx.db().cats[0].refs.filter(r=>r!=='RefTeste102');w.saveLocal();FPAgr._set(null,[],[]);
+    ok({ok:escondido&&vis&&meio&&agr&&copia&&volta&&some,escondido,vis,meio,agr,copia,volta,some,nP})}));
+  t('D102','seletor Pessoal / Agregado no meio da barra, só com agregado; dados separados por contexto; agregado novo começa com categorias e regras da conta pessoal',z102.ok,z102);
   t('D82','FAQs: pesquisa, filtro por labels, perguntar e aba de gestão (só admin)',await ev(()=>['#fqQ','#fqLb','#fqList','#fqNova','#fqEnviar','#fqTabs [data-ft="minhas"]'].every(q=>document.querySelector(q))&&document.querySelector('#fqTabs [data-ft="adm"]').hidden&&/FAQs/.test(document.querySelector('#setNav [data-s="ajuda"]').textContent)));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);

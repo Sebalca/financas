@@ -133,11 +133,17 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D98 Privacidade com agregado (v0.9c+): a conta pessoal continua só do próprio; um agregado é uma conta separada, só dos membros que aceitaram o convite; nada passa da pessoal para o agregado, exceto a cópia de categorias e regras ao criá-lo.
 - D100 **Previsões por ano** (`prevAno[ano inicial]['cat›ref']` = média mensal; o ano começa no mês das Definições). A aba mostra, por referência, total e média/mês dos 3 anos até ao ano escolhido (anos anteriores ÷ 12; ano atual ÷ meses já passados) e a previsão como Média/mês ⇄ Total ano. Um ano sem previsão própria usa a do último ano anterior e fica copiada ao editar. Despesas e Início usam a previsão do ano do período.
 - D101 **Agregado** (Supabase, `supabase/004_agregados.sql`; tabelas de plataforma com `site_id`): o dono cria o agregado (nome à escolha; 1 por dono e site) e convida **pelo email** — se não existir conta com esse email aparece um alerta (no futuro: enviar email); se existir, a pessoa vê ao entrar uma mensagem para aceitar/recusar. Papéis dono/editor. O dono muda o nome, cancela convites, remove membros e apaga o agregado; um membro pode sair. **Apagar guarda 30 dias** (só o dono vê e pode restaurar) e depois apaga de vez com os dados. Tudo por funções `security definer`; RLS só para membros; máx. 20 convites/dia.
+- D102 **Seletor 👤 Pessoal / 👪 Agregado** no meio da barra de cima, só no separador Finanças e só para quem tem ou está num agregado. Cada contexto tem dados totalmente separados (pessoal em `financas_dados`, agregado em `agregado_dados`; cópia local por contexto). Um agregado novo começa com as categorias, tipos, cores e regras da conta pessoal (sem movimentos nem pessoas). A escolha fica guardada no browser; se deixar de ser membro volta a Pessoal. No agregado, as alterações dos outros aparecem a cada 30 s ou ao voltar à página; gravações simultâneas juntam-se.
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
 
 ---
 
 ## Histórico
+
+### v0.9d — 29/09/2026 (fecha a v0.9)
+- Seletor Pessoal / Agregado na barra (D102); troca grava antes o que falta enviar, carrega a cópia local do outro contexto e sincroniza.
+- Agregado novo: cópia de categorias, tipos, cores e regras da conta pessoal.
+- Com o seletor visível, o estado "Guardado na conta" da barra esconde-se em ecrãs < 1750 px (falta espaço).
 
 ### v0.9c — 29/09/2026
 - Supabase: `agregados`, `agregado_membros`, `agregado_convites`, `agregado_dados` + funções (criar, renomear, convidar, cancelar convite, responder, sair, remover, apagar/restaurar, meus_agregados, meus_convites); RLS testada com dois utilizadores (sem acesso antes de aceitar, sem acesso aos dados pessoais, dono/membro).

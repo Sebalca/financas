@@ -35,6 +35,8 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .fper{display:flex;align-items:center;gap:8px;flex:none}.fper[hidden],.fper [hidden]{display:none!important}
 .fper .sy{border:1px solid var(--bd);background:var(--card);border-radius:999px;padding:4px 10px;font:12px system-ui,sans-serif;color:var(--mu);cursor:pointer;white-space:nowrap;max-width:230px;overflow:hidden;text-overflow:ellipsis}
 .fper .sy.ok{color:#15803d}.fper .sy.erro{color:#c2410c}.fper .sy.busy{color:var(--ac)}
+@media (max-width:1750px){body.comctx .fper .sy{display:none}}
+.ctxsel{display:inline-flex;border:1px solid var(--bd);border-radius:9px;overflow:hidden;flex:none}.ctxsel[hidden]{display:none!important}.ctxsel button{border:0;background:var(--card);padding:5px 12px;font:600 12.5px system-ui,sans-serif;color:var(--mu);cursor:pointer;white-space:nowrap;max-width:170px;overflow:hidden;text-overflow:ellipsis}.ctxsel button+button{border-left:1px solid var(--bd)}.ctxsel button.on{background:#7b1fa2;color:#fff}.ctxsel button.on[data-cx=""]{background:var(--ac)}
 .fper .sg{display:inline-flex;border:1px solid var(--bd);border-radius:9px;overflow:hidden}.fper .sg button{border:0;background:var(--card);padding:5px 10px;font:600 12.5px system-ui,sans-serif;color:var(--mu);cursor:pointer}.fper .sg button.on{background:var(--ac);color:#fff}
 .fper .nv{display:inline-flex;align-items:center;border:1px solid var(--bd);border-radius:9px;background:var(--card)}.fper .nv button{border:0;background:none;width:28px;height:30px;cursor:pointer;color:var(--mu);font-size:15px}
 .fper .nv .lb{min-width:124px;text-align:center;font:700 13.5px system-ui,sans-serif;cursor:pointer;border-radius:6px;padding:4px 2px;color:var(--tx)}.fper .nv .lb:hover{background:var(--ac2)}
@@ -151,6 +153,8 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 <div class="bar">
   <div class="brand"><img class="logo" src="img/logo-64.png" width="24" height="24" alt="">Finanças <span>Pessoais</span></div>
   <nav id="tabs" role="tablist"></nav>
+  <div class="sp"></div>
+  <div class="ctxsel" id="fCtx" hidden role="group" aria-label="Dados: pessoal ou agregado"></div>
   <div class="sp"></div>
   <div class="fper" id="fPer" hidden aria-label="Período das Finanças">
     <button type="button" class="sy" id="pSync"></button>
@@ -467,11 +471,11 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
 window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const api=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.classList.contains('on')&&f.contentWindow.fpPer||null}catch(e){return null}};
   let CY=0;
-  function pinta(){const a=api();$('fPer').hidden=!a;if(!a){$('pCal').hidden=true;return}const e=a.estado();
+  function pinta(){const a=api();$('fPer').hidden=!a;if(!a){$('pCal').hidden=true;try{FPCtx.pinta()}catch(x){}return}const e=a.estado();
     [...$('pMode').children].forEach(b=>b.classList.toggle('on',b.dataset.m===e.m));$('pNav').hidden=e.m==='int';$('pRng').hidden=e.m!=='int';
     $('pLbl').textContent=e.lbl;$('pIni').value=e.ini||'';$('pFim').value=e.fim||'';
     $('pHoje').classList.toggle('atual',e.atual);$('pHoje').title=e.atual?'Já está no período atual':(e.m==='ano'?'Ir para o ano atual':e.m==='int'?'Do dia 1 deste mês até hoje':'Ir para o mês atual');
-    const y=$('pSync');y.className='sy '+(e.sync.st||'');y.innerHTML=e.sync.html;y.title=e.sync.title||y.textContent;if(!$('pCal').hidden)cal()}
+    const y=$('pSync');y.className='sy '+(e.sync.st||'');y.innerHTML=e.sync.html;y.title=e.sync.title||y.textContent;if(!$('pCal').hidden)cal();try{FPCtx.pinta()}catch(x){}}
   function cal(){const a=api();if(!a)return;const e=a.estado(),tem=new Set(e.meses),pm=e.m==='mes'&&e.ano===CY?e.mes:-1;
     $('pCal').innerHTML=`<div class="ch"><button type="button" data-cy="-1" aria-label="Ano anterior">‹</button><b>${CY}</b><button type="button" data-cy="1" aria-label="Ano seguinte">›</button></div><button type="button" class="ca${e.m==='ano'&&e.ano===CY?' on':''}" data-cano>${e.mes1?e.anoTxt(CY):'Ano '+CY+' inteiro'}</button><div class="cm">${MS.map((n,i)=>`<button type="button" data-cmes="${i}" class="${i===pm?'on':''}${tem.has(CY+'-'+String(i+1).padStart(2,'0'))?' dt':''}" title="${n} ${CY}">${n.slice(0,3)}</button>`).join('')}</div>`}
   function abreCal(){const a=api();if(!a)return;const p=$('pCal');if(!p.hidden){p.hidden=true;return}CY=a.estado().ano;cal();p.hidden=false;const r=$('pLbl').getBoundingClientRect();p.style.top=(r.bottom+8)+'px';p.style.left=Math.max(8,Math.min(innerWidth-250,r.right-240))+'px'}
@@ -510,14 +514,14 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
 </script>
 <script>
 /* ===== Novidades: aparece uma vez por versão nova (não na primeira visita). Atualizar NOVIDADES a cada versão (ver CLAUDE.md). ===== */
-const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=null,L=[],C=[],ocupado=false,MSG='';
+const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=null,L=[],C=[],ocupado=false,MSG='',OK=false;
   const sb=()=>window.plataforma&&window.plataforma.rpc?window.plataforma:null;
   const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const dt=d=>new Date(d).toLocaleDateString('pt-PT');
   const rpc=async(f,a)=>{const c=sb();if(!c)throw new Error('sem ligação');const {data,error}=await c.rpc(f,a||{});if(error)throw error;return data};
   const msg=(t,err)=>{MSG=t||'';const m=$('agrMsg');if(m){m.textContent=MSG;m.style.color=err?'var(--c2,#c62828)':''}};
-  async function carrega(){if(!U||!sb()){L=[];C=[];pinta();return}
-    try{const [a,b]=await Promise.all([rpc('meus_agregados',{p_site:SITE}),rpc('meus_convites',{p_site:SITE})]);L=a||[];C=b||[]}catch(e){msg('Não foi possível carregar o agregado.',1)}pinta()}
+  async function carrega(){if(!U||!sb()){L=[];C=[];OK=!U;pinta();try{FPCtx.valida()}catch(e){}return}
+    try{const [a,b]=await Promise.all([rpc('meus_agregados',{p_site:SITE}),rpc('meus_convites',{p_site:SITE})]);L=a||[];C=b||[];OK=true}catch(e){msg('Não foi possível carregar o agregado.',1)}pinta();try{FPCtx.valida()}catch(e){}}
   function badge(){const b=$('bdgAgr');if(b){b.hidden=!C.length;b.textContent=C.length}}
   function pinta(){badge();const box=$('agrBox');if(!box)return;
     if(!U){box.innerHTML='<p class="note2">Entre na sua conta para criar um agregado ou aceitar um convite.</p>';return}
@@ -561,7 +565,20 @@ const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=
     $('convTxt').innerHTML=`<p><b>${esc(c.de_nome)}</b> (${esc(c.de_email)}) convidou-o para o agregado <b>${esc(c.agregado)}</b>.</p><p>Ao aceitar, passa a ver e a editar as Finanças partilhadas desse agregado. A sua conta pessoal continua privada.</p>`;$('mConv').hidden=false}
   async function sessao(u){U=u||null;MSG='';await carrega();if(U)popup()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
-  return {sessao,carrega,_set:(u,l,c)=>{U=u;L=l;C=c;pinta()},popup}})();
+  return {sessao,carrega,_set:(u,l,c)=>{U=u;L=l;C=c;OK=true;pinta();try{FPCtx.valida()}catch(e){}},popup,ativos:()=>L.filter(g=>!g.apagar_em),pronto:()=>OK}})();
+/* v0.9d: seletor Pessoal / Agregado no meio da barra — só para quem tem ou está num agregado, e só no separador Finanças */
+const FPCtx=(()=>{const $=id=>document.getElementById(id);let pend=true;
+  const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const win=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.contentWindow&&f.contentWindow.fpCtx?f:null}catch(e){return null}};
+  function pinta(){const f=win(),el=$('fCtx');if(pend)valida(true);const L=FPAgr.ativos();const mostra=!!f&&f.classList.contains('on')&&L.length>0;document.body.classList.toggle('comctx',mostra);if(!mostra){el.hidden=true;return}
+    const c=f.contentWindow.fpCtx.atual();el.hidden=false;
+    el.innerHTML=`<button type="button" data-cx="" class="${c.t==='p'?'on':''}" title="Os seus dados pessoais (privados)">👤 Pessoal</button>`+L.map(g=>`<button type="button" data-cx="${esc(g.id)}" class="${c.t==='a'&&c.id===g.id?'on':''}" title="Dados partilhados do agregado ${esc(g.nome)}">👪 ${esc(g.nome)}</button>`).join('')}
+  function valida(dePinta){const f=win();if(!f||!FPAgr.pronto()){pend=true;return}pend=false;const w=f.contentWindow.fpCtx,c=w.atual(),L=FPAgr.ativos();
+    if(c.t==='a'){const g=L.find(x=>x.id===c.id);if(!g)w.muda({t:'p'}).then(pinta);else if(c.nome!==g.nome)w.muda({t:'a',id:g.id,nome:g.nome})}
+    if(!dePinta)pinta()}
+  $('fCtx').addEventListener('click',e=>{const b=e.target.closest('button[data-cx]'),f=win();if(!b||!f)return;const id=b.dataset.cx,g=FPAgr.ativos().find(x=>x.id===id);
+    f.contentWindow.fpCtx.muda(id&&g?{t:'a',id,nome:g.nome}:{t:'p'}).then(pinta);pinta()});
+  return {pinta,valida}})();
 const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementById(id),esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const api=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.contentWindow&&f.contentWindow.fpTipos}catch(e){return null}};
   const grava=remap=>{const a=api();if(!a)return;a.grava(L,remap||{});carrega()};
@@ -580,6 +597,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.9d',d:'29/09/2026',n:['Seletor 👤 Pessoal / 👪 Agregado no meio da barra de cima (aparece só a quem tem ou está num agregado)','O agregado começa com as suas categorias, tipos e regras','As alterações dos outros membros aparecem sozinhas (a cada 30 s ou ao voltar à página)'],a:['A conta pessoal e o agregado têm dados totalmente separados','Se duas pessoas gravarem ao mesmo tempo, as alterações juntam-se']},
  {v:'0.9c',d:'29/09/2026',n:['Agregado familiar (Definições › 👪): criar um agregado, dar-lhe nome e convidar pessoas pelo email','Quem é convidado vê uma mensagem para aceitar ou recusar ao entrar','O dono pode remover membros e cancelar convites; os membros podem sair'],a:['Apagar um agregado guarda-o 30 dias (pode restaurar) antes de o apagar de vez','A conta pessoal continua privada: o agregado é uma conta à parte']},
  {v:'0.9b',d:'29/09/2026',n:['Previsões: total e média por mês dos últimos 3 anos em cada referência','Escreva a previsão como média por mês ou total do ano (um calcula o outro)','Previsão guardada por ano, com ‹ › para mudar de ano; um ano novo começa com a previsão do anterior','Botões ↺ para usar a média do ano anterior (numa referência ou em todas)'],a:['Totais previstos por tipo de despesa no topo das Previsões','Despesas e Início usam a previsão do ano do período escolhido']},
  {v:'0.9a',d:'29/09/2026',n:['Tipos de despesa (Fixas essenciais, Fixas não essenciais, Variáveis essenciais, Variáveis não essenciais, Extras) em cada referência','Definições › Tipos de despesa: criar, mudar nome, cor e ordem, apagar','Despesas: agrupar a grelha por Categoria ou por Tipo','Início: nova caixa Despesas por tipo'],a:['Em Despesas › Editar, nova coluna Tipo de despesa com "Aplicar a todas" por categoria','As referências base já vêm com um tipo sugerido (pode mudar)']},

@@ -5,7 +5,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.9c)
+## Já feito (v0.1 → v0.9d)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.
@@ -29,11 +29,11 @@ Ordem sugerida: primeiro garantir que os números estão certos (é a base de tu
   4. Alertas de dados em falta: meses sem extrato, recibos por ligar, movimentos por categorizar, saltos de saldo.
   5. Sessão de validação contigo com um mês real (**junho de 2026**) (conferir ao cêntimo) e registar o resultado nas decisões fixas.
 
-- 🔜 **v0.9 — Tipos de despesa, Previsões e Agregado familiar**
+- ✅ **v0.9 — Tipos de despesa, Previsões e Agregado familiar**
   1. ✅ (v0.9a) Tipos de despesa por referência (Fixas/Variáveis essenciais/não essenciais, Extras), editáveis nas Definições; agrupar Despesas por tipo; caixa no Início.
   2. ✅ (v0.9b) Previsões: últimos 3 anos (a partir do mês de início) com total e média/mês (ano atual ÷ meses passados); previsão guardada por ano, escrita como média/mês ou total do ano; ano novo copia a previsão anterior; totais por tipo.
   3. ✅ (v0.9c) Agregado no Supabase: `agregados`, `agregado_membros` (dono/editor), `agregado_convites` (por email; conta tem de existir), `agregado_dados`; RLS só para membros; apagar guarda 30 dias; reutilizável por outros sites.
-  4. (v0.9d) Seletor "Pessoal / Família" na barra de cima; ao criar copia categorias e regras; gravação com número de versão + junção quando duas pessoas gravam.
+  4. ✅ (v0.9d) Seletor "Pessoal / Família" na barra de cima; ao criar copia categorias e regras; gravação com número de versão + junção quando duas pessoas gravam.
 
 - ⬜ **v0.10 — Onboarding completo** *(v0.8g já trouxe a visita guiada por aba, Novidades e FAQs)*
   - Passos com destaque nos botões reais, configuração inicial (banco, primeiro extrato, categorias base, primeiras regras), lista de tarefas com progresso, dicas na primeira visita a cada aba, dados de exemplo para experimentar.

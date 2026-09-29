@@ -501,7 +501,7 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 
 <script>
 'use strict';
-const APP_VERSAO='0.9c'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.9d'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -584,6 +584,9 @@ const DIN='Dinheiro';
 
 /* ================= armazenamento: browser + conta (Supabase) ================= */
 const KEY='financas_v1';
+/* v0.9d: contexto dos dados — Pessoal (financas_dados) ou um Agregado (agregado_dados); cada um com a sua cópia neste browser */
+let CTX={t:'p'};try{const c=localStorage.getItem('fp_ctx');if(c)CTX={t:'a',id:c}}catch(e){}
+const KEYC=()=>CTX.t==='a'?KEY+'_agr_'+CTX.id:KEY;
 function fresh(){return {refSo:{},esp:null,ver:2,mov:[],imports:[],rend:[],seq:0,cats:null,regras:null,pessoas:[],prev:{},del:[],delM:[],rep:{},updatedAt:0,syncedAt:0,remoteAt:'',owner:''}}
 function normaliza(d){d={...fresh(),...d};
   if(!Array.isArray(d.mov))d.mov=[];if(!Array.isArray(d.imports))d.imports=[];if(!Array.isArray(d.del))d.del=[];if(!Array.isArray(d.delM))d.delM=[];if(!Array.isArray(d.delImp))d.delImp=[];if(!d.rep||typeof d.rep!=='object')d.rep={};
@@ -606,9 +609,9 @@ function normaliza(d){d={...fresh(),...d};
   d.seq=Math.max(d.seq||0,...d.mov.map(m=>+String(m.id).replace(/\D/g,'')||0));
   return d}
 let DB=fresh();
-try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&Array.isArray(j.mov))DB=j}catch(e){}
+try{const j=JSON.parse(localStorage.getItem(KEYC())||'null');if(j&&Array.isArray(j.mov))DB=j}catch(e){}
 DB=normaliza(DB);
-function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('Não foi possível guardar no browser')}}
+function saveLocal(){try{localStorage.setItem(KEYC(),JSON.stringify(DB))}catch(e){toast('Não foi possível guardar no browser')}}
 function save(){DB.updatedAt=Date.now();saveLocal();agendaEnvio()}
 /* eliminados: a chave fica para sempre (não voltam a entrar ao reimportar); os dados completos só dos últimos 50 (para repor).
    DB.rep[k] = +hora reposto / −hora eliminado de novo (ganha o mais recente ao juntar dispositivos) */
@@ -820,7 +823,7 @@ function perAtual(){const h=new Date(),hj=hoje();if(P.m==='mes')return P.d.getFu
 function perHoje(){const h=new Date();if(P.m==='int'){const hj=hoje();P.ini=hj.slice(0,8)+'01';P.fim=hj;$('#rIni').value=P.ini;$('#rFim').value=P.fim}else P.d=P.m==='ano'?anoIni(h):new Date(h.getFullYear(),h.getMonth(),1);$('#calPop').hidden=true;perLabel();render()}
 window.fpPer={
   estado:()=>({m:P.m,lbl:$('#perLbl').textContent,ano:P.m==='ano'?anoIni(P.d).getFullYear():P.d.getFullYear(),mes1:MES1,anoTxt:y=>anoTxt(new Date(y,MES1,1)),mes:P.d.getMonth(),ini:P.ini,fim:P.fim,atual:perAtual(),meses:[...new Set(DB.mov.map(m=>m.dm.slice(0,7)))],
-    sync:{st:SY.st,html:$('#syncSt').innerHTML,title:$('#syncSt').title}}),
+    sync:{st:SY.st,html:$('#syncSt').innerHTML,title:$('#syncSt').title},ctx:{...CTX}}),
   modo:m=>{const b=$(`#perMode button[data-m="${m}"]`);if(b)b.click()},
   nav:d=>{const b=$(`#perNav button[data-d="${d}"]`);if(b)b.click()},
   hoje:perHoje,
@@ -1314,7 +1317,7 @@ window.FP_VERSAO=APP_VERSAO;
 window.fpBackup=()=>({app:'financas',versao:APP_VERSAO,exportado:new Date().toISOString(),dados:payload()});
 window.fpRestaurar=o=>{const d=o&&o.dados;if(!d||!Array.isArray(d.mov))throw new Error('Ficheiro inválido');const keep={owner:DB.owner,remoteAt:DB.remoteAt,syncedAt:0};DB={...normaliza(d),...keep};save();render();return DB.mov.length};
 window.fpApagar=async onde=>{const keep=onde==='conta'?{owner:DB.owner,remoteAt:DB.remoteAt}:{};DB={...normaliza(fresh()),...keep};
-  if(onde==='conta'){save();if(SY.user)await enviar()}else{try{localStorage.removeItem(KEY)}catch(e){}if(SY.user){DB.owner='';aoEntrar(SY.user)}}render()};
+  if(onde==='conta'){save();if(SY.user)await enviar()}else{try{localStorage.removeItem(KEYC())}catch(e){}if(SY.user){DB.owner='';carregaConta(SY.user)}}render()};
 addEventListener('scroll',fixaCab,{passive:true});addEventListener('resize',()=>{stkH();fixaCab()});
 
 /* ================= dividir um movimento em várias linhas (total = valor original) ================= */
@@ -1773,8 +1776,12 @@ function junta(novo,velho){ // fica a versão mais recente; movimentos que só e
   novo.del=[...new Set([...(novo.del||[]),...(velho.del||[])])];novo.delImp=[...new Set([...(novo.delImp||[]),...(velho.delImp||[])])].filter(k=>!(rep[k]>0));novo.mov=novo.mov.filter(m=>!del.has(chave(m)));
   const vistos=new Set();novo.mov.forEach(m=>{if(vistos.has(m.id))m.id='m'+(++novo.seq);vistos.add(m.id)});
   return {d:novo,n}}
-async function lerRemoto(){const {data,error}=await SY.sb.from(TAB).select('dados,updated_at').eq('user_id',SY.user.id).eq('ferramenta',FERR).eq('chave',CH).maybeSingle();if(error)throw error;return data}
-function aplicaRemoto(r){const keep={owner:SY.user.id,syncedAt:0,remoteAt:r.updated_at};DB=normaliza({...r.dados,...keep});DB.syncedAt=DB.updatedAt;saveLocal();render()}
+const dono=()=>CTX.t==='a'?'agr:'+CTX.id:SY.user.id;
+async function lerRemoto(){const q=CTX.t==='a'?SY.sb.from('agregado_dados').select('dados,updated_at').eq('agregado_id',CTX.id):SY.sb.from(TAB).select('dados,updated_at').eq('user_id',SY.user.id);
+  const {data,error}=await q.eq('ferramenta',FERR).eq('chave',CH).maybeSingle();if(error)throw error;return data}
+const gravaRemoto=()=>CTX.t==='a'?SY.sb.from('agregado_dados').upsert({agregado_id:CTX.id,ferramenta:FERR,chave:CH,dados:payload()},{onConflict:'agregado_id,ferramenta,chave'}).select('updated_at').single()
+  :SY.sb.from(TAB).upsert({user_id:SY.user.id,ferramenta:FERR,chave:CH,dados:payload()},{onConflict:'user_id,ferramenta,chave'}).select('updated_at').single();
+function aplicaRemoto(r){const keep={owner:dono(),syncedAt:0,remoteAt:r.updated_at};DB=normaliza({...r.dados,...keep});DB.syncedAt=DB.updatedAt;saveLocal();render()}
 async function enviar(){
   if(!SY.user||!SY.sb)return;if(SY.busy){SY.again=true;return}
   SY.busy=true;setSt('busy');
@@ -1782,10 +1789,10 @@ async function enviar(){
     const r=await lerRemoto();
     if(r&&r.updated_at!==DB.remoteAt&&DB.remoteAt!==''){ // outro dispositivo gravou entretanto
       const rem=normaliza(r.dados);const loc=DB.updatedAt>=(rem.updatedAt||0);
-      const {d}=loc?junta(DB,rem):junta(rem,DB);DB={...normaliza(d),owner:SY.user.id,remoteAt:DB.remoteAt,syncedAt:DB.syncedAt,updatedAt:Math.max(DB.updatedAt,rem.updatedAt||0)};aplicaRegras();aplicaPessoas();render()}
-    const {data,error}=await SY.sb.from(TAB).upsert({user_id:SY.user.id,ferramenta:FERR,chave:CH,dados:payload()},{onConflict:'user_id,ferramenta,chave'}).select('updated_at').single();
+      const {d}=loc?junta(DB,rem):junta(rem,DB);DB={...normaliza(d),owner:dono(),remoteAt:DB.remoteAt,syncedAt:DB.syncedAt,updatedAt:Math.max(DB.updatedAt,rem.updatedAt||0)};aplicaRegras();aplicaPessoas();render()}
+    const ctx0=CTX.t+(CTX.id||'');const {data,error}=await gravaRemoto();if(CTX.t+(CTX.id||'')!==ctx0)return;
     if(error)throw error;
-    DB.remoteAt=data.updated_at;DB.syncedAt=DB.updatedAt;DB.owner=SY.user.id;saveLocal();
+    DB.remoteAt=data.updated_at;DB.syncedAt=DB.updatedAt;DB.owner=dono();saveLocal();
     SY.hora=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});setSt('ok');
   }catch(e){console.warn('sync',e);setSt('erro')}
   finally{SY.busy=false;if(SY.again){SY.again=false;agendaEnvio(300)}}
@@ -1793,26 +1800,43 @@ async function enviar(){
 function agendaEnvio(ms){if(!SY.user)return;clearTimeout(SY.t);SY.t=setTimeout(enviar,ms??1200)}
 async function aoEntrar(u){
   if(SY.user&&u&&SY.user.id===u.id)return; // p.ex. renovação de sessão
-  if(!u){const tinha=!!DB.owner;SY.user=null;
+  if(!u){if(CTX.t==='a')await trocaCtx({t:'p'},true);const tinha=!!DB.owner;SY.user=null;
     if(tinha){DB=normaliza(fresh());saveLocal();render();toast('Sessão terminada — os dados continuam guardados na conta')}
     setSt('local');return}
-  SY.user=u;setSt('busy');
+  SY.user=u;await carregaConta(u)}
+async function carregaConta(u){setSt('busy');
   try{
-    if(DB.owner&&DB.owner!==u.id){DB=normaliza(fresh())} // cache de outra conta neste browser
+    if(DB.owner&&DB.owner!==dono()){DB=normaliza(fresh())} // cache de outra conta/agregado neste browser
     const r=await lerRemoto();
     const temLocal=DB.mov.length>0||DB.pessoas.length>0||Object.keys(DB.prev).length>0||Object.keys(DB.prevAno||{}).length>0;
+    if(!r&&CTX.t==='a'){ // agregado novo: começa com as categorias e regras da conta pessoal
+      if(!DB.mov.length){const b=basePessoal();DB=normaliza({...fresh(),...b});aplicaRegras()}DB.owner=dono();DB.updatedAt=Date.now();saveLocal();render();await enviar();return}
     if(!r){ // primeira vez nesta conta: os dados do browser passam para a conta
       DB.owner=u.id;DB.updatedAt=Date.now();saveLocal();await enviar();
       if(temLocal)toast(`Dados deste browser guardados na conta (${DB.mov.length} movimentos)`);return}
     const rem=normaliza(r.dados);
     if(!DB.owner&&temLocal){ // dados locais nunca sincronizados + conta com dados → juntar
-      const {d,n}=junta(rem,DB);DB={...normaliza(d),owner:u.id,remoteAt:r.updated_at,syncedAt:0,updatedAt:Date.now()};aplicaRegras();aplicaPessoas();saveLocal();render();await enviar();
+      const {d,n}=junta(rem,DB);DB={...normaliza(d),owner:dono(),remoteAt:r.updated_at,syncedAt:0,updatedAt:Date.now()};aplicaRegras();aplicaPessoas();saveLocal();render();await enviar();
       toast(n?`${n} movimento(s) deste browser juntados à conta`:'Dados da conta carregados');return}
-    if(DB.owner===u.id&&DB.updatedAt>(DB.syncedAt||0)){ // há alterações locais por enviar
+    if(DB.owner===dono()&&DB.updatedAt>(DB.syncedAt||0)){ // há alterações locais por enviar
       DB.remoteAt=DB.remoteAt||'__';await enviar();return}
     aplicaRemoto(r);SY.hora=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});setSt('ok');
   }catch(e){console.warn('sync',e);setSt('erro')}
 }
+const CFG_K=['cats','regras','esp','tiposDesp','refTipo','corCat','refSo','poupCat','rendCat','rendSNF','rbMil','ver'];
+function basePessoal(){let p=null;try{p=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}if(!p)return {};p=normaliza(p);
+  const o={};CFG_K.forEach(k=>{if(p[k]!==undefined)o[k]=JSON.parse(JSON.stringify(p[k]))});return o}
+let TROCA=Promise.resolve();
+function trocaCtx(novo,semConta){const id=novo&&novo.t==='a'?String(novo.id):'';const n={t:id?'a':'p',...(id?{id,nome:novo.nome||''}:{})};
+  if(n.t===CTX.t&&(n.id||'')===(CTX.id||'')){if(n.nome)CTX.nome=n.nome;return TROCA}
+  TROCA=TROCA.then(async()=>{clearTimeout(SY.t);
+    if(SY.user&&!semConta&&DB.updatedAt>(DB.syncedAt||0)){try{while(SY.busy)await new Promise(r=>setTimeout(r,100));await enviar()}catch(e){}}
+    saveLocal();CTX=n;try{if(n.t==='a')localStorage.setItem('fp_ctx',n.id);else localStorage.removeItem('fp_ctx')}catch(e){}
+    let j=null;try{j=JSON.parse(localStorage.getItem(KEYC())||'null')}catch(e){}DB=normaliza(j&&Array.isArray(j.mov)?j:fresh());
+    SEL.clear();try{limpaFiltros()}catch(e){}RV++;render();avisaPer();
+    if(SY.user&&!semConta)await carregaConta(SY.user);toast(n.t==='a'?`👪 ${n.nome||'Agregado'}`:'👤 Pessoal')});return TROCA}
+window.fpCtx={atual:()=>({...CTX}),muda:(c)=>trocaCtx(c),db:()=>DB};
+setInterval(()=>{if(CTX.t==='a'&&!document.hidden)verificaRemoto()},30000); // agregado: vê as alterações dos outros membros
 async function verificaRemoto(){ // ao voltar à página: há novidades de outro dispositivo?
   if(!SY.user||SY.busy)return;
   try{const r=await lerRemoto();if(!r||r.updated_at===DB.remoteAt)return;
