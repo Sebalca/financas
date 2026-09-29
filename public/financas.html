@@ -501,7 +501,7 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 
 <script>
 'use strict';
-const APP_VERSAO='0.9b'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.9c'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1773,7 +1773,7 @@ function junta(novo,velho){ // fica a versão mais recente; movimentos que só e
   novo.del=[...new Set([...(novo.del||[]),...(velho.del||[])])];novo.delImp=[...new Set([...(novo.delImp||[]),...(velho.delImp||[])])].filter(k=>!(rep[k]>0));novo.mov=novo.mov.filter(m=>!del.has(chave(m)));
   const vistos=new Set();novo.mov.forEach(m=>{if(vistos.has(m.id))m.id='m'+(++novo.seq);vistos.add(m.id)});
   return {d:novo,n}}
-async function lerRemoto(){const {data,error}=await SY.sb.from(TAB).select('dados,updated_at').eq('ferramenta',FERR).eq('chave',CH).maybeSingle();if(error)throw error;return data}
+async function lerRemoto(){const {data,error}=await SY.sb.from(TAB).select('dados,updated_at').eq('user_id',SY.user.id).eq('ferramenta',FERR).eq('chave',CH).maybeSingle();if(error)throw error;return data}
 function aplicaRemoto(r){const keep={owner:SY.user.id,syncedAt:0,remoteAt:r.updated_at};DB=normaliza({...r.dados,...keep});DB.syncedAt=DB.updatedAt;saveLocal();render()}
 async function enviar(){
   if(!SY.user||!SY.sb)return;if(SY.busy){SY.again=true;return}

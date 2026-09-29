@@ -132,11 +132,17 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D97 **Tipos de despesa** (5 base: Fixas essenciais, Fixas não essenciais, Variáveis essenciais, Variáveis não essenciais, Extras) guardados nos dados (`tiposDesp`, sincronizam). Cada referência das categorias que entram nas contas tem um tipo (`refTipo['cat›ref']`), escolhido em Despesas › Editar (com "Aplicar a todas" por categoria); as referências base vêm com tipo sugerido. Os tipos gerem-se em Definições › Tipos de despesa (criar, nome, cor, ordem, apagar — ao apagar um tipo em uso pergunta para que tipo passam as referências). Grelha das Despesas agrupa por Categoria ou Tipo; Início tem "Despesas por tipo".
 - D98 Privacidade com agregado (v0.9c+): a conta pessoal continua só do próprio; um agregado é uma conta separada, só dos membros que aceitaram o convite; nada passa da pessoal para o agregado, exceto a cópia de categorias e regras ao criá-lo.
 - D100 **Previsões por ano** (`prevAno[ano inicial]['cat›ref']` = média mensal; o ano começa no mês das Definições). A aba mostra, por referência, total e média/mês dos 3 anos até ao ano escolhido (anos anteriores ÷ 12; ano atual ÷ meses já passados) e a previsão como Média/mês ⇄ Total ano. Um ano sem previsão própria usa a do último ano anterior e fica copiada ao editar. Despesas e Início usam a previsão do ano do período.
+- D101 **Agregado** (Supabase, `supabase/004_agregados.sql`; tabelas de plataforma com `site_id`): o dono cria o agregado (nome à escolha; 1 por dono e site) e convida **pelo email** — se não existir conta com esse email aparece um alerta (no futuro: enviar email); se existir, a pessoa vê ao entrar uma mensagem para aceitar/recusar. Papéis dono/editor. O dono muda o nome, cancela convites, remove membros e apaga o agregado; um membro pode sair. **Apagar guarda 30 dias** (só o dono vê e pode restaurar) e depois apaga de vez com os dados. Tudo por funções `security definer`; RLS só para membros; máx. 20 convites/dia.
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
 
 ---
 
 ## Histórico
+
+### v0.9c — 29/09/2026
+- Supabase: `agregados`, `agregado_membros`, `agregado_convites`, `agregado_dados` + funções (criar, renomear, convidar, cancelar convite, responder, sair, remover, apagar/restaurar, meus_agregados, meus_convites); RLS testada com dois utilizadores (sem acesso antes de aceitar, sem acesso aos dados pessoais, dono/membro).
+- Definições › 👪 Agregado familiar e janela de convite ao entrar (D101).
+- A leitura dos dados pessoais filtra também por `user_id` (defesa extra).
 
 ### v0.9b — 29/09/2026
 - Aba Previsões (D100): 3 anos de histórico por referência (total e média/mês), previsão por ano como média/mês ou total do ano, ‹ › por ano, ↺ média do ano anterior (linha ou todas), limpar ano, "Só com valores", totais por tipo.

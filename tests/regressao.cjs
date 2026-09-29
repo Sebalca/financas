@@ -362,6 +362,22 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   const n98=await ev(()=>document.querySelectorAll('#tiposL .tprow').length);await ev(()=>document.querySelector('#tipoAdd').click());await p.waitForTimeout(150);
   const z98=await ev(n=>{const w=document.querySelector('iframe[data-id="financas"]').contentWindow;const n2=w.fpTipos.lista().length,r=document.querySelectorAll('#tiposL .tprow').length;w.fpTipos.grava(w.fpTipos.lista().slice(0,n),{});document.querySelector('#mSet').hidden=true;return {ok:n>=5&&n2===n+1&&r===n+1,n,n2,r}},n98);
   t('D98','Definições › Tipos de despesa: lista os tipos das Finanças e permite criar um novo',z98.ok,z98);
+  const z101=await ev(()=>new Promise(async ok=>{const chamadas=[];const velho=window.plataforma;
+    let G=[],CV=[{id:'c1',agregado:'Família Teste',de_email:'a@exemplo.pt',de_nome:'Ana',created_at:new Date().toISOString()}];
+    window.plataforma={rpc:async(f,a)=>{chamadas.push(f);if(f==='meus_agregados')return {data:G};if(f==='meus_convites')return {data:CV};
+      if(f==='agregado_convidar')return {data:a.p_email==='nao@existe.pt'?'sem_conta':'ok'};if(f==='agregado_responder'){CV=[];G=[{id:'g1',nome:'Família Teste',dono:false,apagar_em:null,membros:[{user_id:'u1',papel:'dono',email:'a@exemplo.pt',nome:'Ana',eu:false},{user_id:'u2',papel:'editor',email:'b@exemplo.pt',nome:'Bruno',eu:true}],convites:[]}]}return {data:null}}};
+    const alertas=[];const al=window.alert;window.alert=t=>alertas.push(t);
+    await FPAgr.sessao({id:'u2',email:'b@exemplo.pt'});const pop=!document.querySelector('#mConv').hidden&&/Família Teste/.test(document.querySelector('#convTxt').textContent);
+    document.querySelector('#convSim').click();await new Promise(r=>setTimeout(r,50));const aceite=document.querySelector('#mConv').hidden&&chamadas.includes('agregado_responder');
+    document.querySelector('[data-set="tema"]').click();document.querySelector('#setNav [data-s="agr"]').click();await new Promise(r=>setTimeout(r,50));
+    const membro=/Bruno/.test(document.querySelector('#agrBox').textContent)&&!!document.querySelector('#agrBox [data-asair]')&&!document.querySelector('#agrBox [data-aconv]')&&!!document.querySelector('#agrNovo');
+    G=[{id:'g2',nome:'Casa',dono:true,apagar_em:null,membros:[{user_id:'u2',papel:'dono',email:'b@exemplo.pt',nome:'Bruno',eu:true}],convites:[]}];await FPAgr.carrega();
+    const f=document.querySelector('#agrBox [data-aconv]');f.querySelector('input').value='nao@existe.pt';f.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));await new Promise(r=>setTimeout(r,50));
+    const semConta=alertas.length===1&&/Não existe nenhuma conta/.test(alertas[0])&&!document.querySelector('#agrNovo');
+    const dono=!!document.querySelector('#agrBox [data-aapag]')&&!!document.querySelector('#agrBox [data-anome]');
+    window.alert=al;window.plataforma=velho;await FPAgr.sessao(null);document.querySelector('#mSet').hidden=true;
+    ok({ok:pop&&aceite&&membro&&semConta&&dono,pop,aceite,membro,semConta,dono})}));
+  t('D101','Agregado: convite por email (conta tem de existir, senão alerta), mensagem para aceitar ao entrar, membro pode sair, dono gere/convida/apaga',z101.ok,z101);
   t('D82','FAQs: pesquisa, filtro por labels, perguntar e aba de gestão (só admin)',await ev(()=>['#fqQ','#fqLb','#fqList','#fqNova','#fqEnviar','#fqTabs [data-ft="minhas"]'].every(q=>document.querySelector(q))&&document.querySelector('#fqTabs [data-ft="adm"]').hidden&&/FAQs/.test(document.querySelector('#setNav [data-s="ajuda"]').textContent)));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);
