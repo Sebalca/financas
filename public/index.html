@@ -195,12 +195,10 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <h3>Opções</h3>
       <p style="margin:0 0 6px">Primeiro mês do ano (Início e Despesas)</p><select id="optMes1" style="max-width:260px;margin-bottom:12px"></select>
       <p style="margin:0 0 6px">Ordem dos movimentos nos Extratos</p><div class="grp" id="gOrdem" style="margin:0 0 12px"><button class="opt" data-v="" type="button">Mais recentes primeiro</button><button class="opt" data-v="asc" type="button">Mais antigos primeiro</button></div>
-      <p style="margin:12px 0 6px">Cores das categorias <small style="color:var(--mu)">(escolhe-se a cor em Despesas › Editar)</small></p>
+      <p style="margin:12px 0 6px">Cores das categorias e referências <small style="color:var(--mu)">(escolhem-se em Despesas › Editar; os gráficos usam sempre essas cores)</small></p>
       <div id="optCores" style="display:grid;gap:6px;margin-bottom:12px">
-        <label class="sw2"><input type="checkbox" data-cor="graf"> <span>Gráficos do Início com as mesmas cores</span></label>
         <label class="sw2"><input type="checkbox" data-cor="des"> <span>Pintar as linhas nas Despesas</span></label>
-        <label class="sw2"><input type="checkbox" data-cor="caixa"> <span>Extratos: pintar a caixa da categoria</span></label>
-        <label class="sw2"><input type="checkbox" data-cor="linha"> <span>Extratos: pintar a linha inteira</span></label>
+        <label class="sw2" style="cursor:default"><span style="flex:none">Extratos: pintar a</span><select id="optPint" style="max-width:220px"><option value="caixa">caixa da categoria</option><option value="linha">linha inteira</option><option value="">(não pintar)</option></select></label>
       </div>
       <label class="sw2"><input type="checkbox" id="optCalc"> <span>Mostrar o ícone 🧮 <b>Como foi calculado</b> nas caixas (Início, Despesas, Rendimentos)</span></label>
     </section>
@@ -347,8 +345,10 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
   const pintaOrd=()=>$$('#gOrdem .opt').forEach(b=>b.classList.toggle('on',b.dataset.v===ordG()));pintaOrd();
   $('gOrdem').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b)return;try{b.dataset.v?localStorage.setItem('fp_ordem',b.dataset.v):localStorage.removeItem('fp_ordem')}catch(x){}pintaOrd();
     const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-ordem',ordem:b.dataset.v},'*')});
-  {const D={graf:1,caixa:1,linha:0,des:1},le=()=>{let o={...D};try{Object.assign(o,JSON.parse(localStorage.getItem('fp_cores')||'{}'))}catch(e){}return o};const o=le();
-    document.querySelectorAll('#optCores [data-cor]').forEach(c=>{c.checked=!!o[c.dataset.cor];c.addEventListener('change',()=>{const n=le();n[c.dataset.cor]=c.checked?1:0;try{localStorage.setItem('fp_cores',JSON.stringify(n))}catch(e){}const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-cores',cores:n},'*')})})}
+  {const le=()=>{let o={des:1};try{Object.assign(o,JSON.parse(localStorage.getItem('fp_cores')||'{}'))}catch(e){}if(o.pint===undefined)o.pint=o.linha?'linha':(o.caixa===0?'':'caixa');return o};const o=le();
+    const envia=n=>{try{localStorage.setItem('fp_cores',JSON.stringify(n))}catch(e){}const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-cores',cores:n},'*')};
+    document.querySelectorAll('#optCores [data-cor]').forEach(c=>{c.checked=!!o[c.dataset.cor];c.addEventListener('change',()=>{const n=le();n[c.dataset.cor]=c.checked?1:0;envia(n)})});
+    $('optPint').value=o.pint;$('optPint').addEventListener('change',()=>{const n=le();n.pint=$('optPint').value;envia(n)})}
   $('optCalc').addEventListener('change',e=>{try{localStorage.setItem('fp_calc',e.target.checked?'1':'0')}catch(x){}enviaCalc()});
   $('setOnb').onclick=()=>{$('mSet').hidden=true;FPOnb.abre()};
   // cópia de segurança / apagar — usa a página das Finanças
@@ -599,6 +599,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.9f',d:'29/09/2026',n:['Cor por referência (Despesas › Editar), com a opção "Pintar só nos Extratos"','Aba Objetivos (em desenvolvimento)','Início: cada gráfico circular mostra valores (€) ou percentagens (%)'],a:['Previsto vs real: barra que enche até à linha do previsto e fica vermelha quando passa','Definições: "Extratos: pintar a" caixa da categoria ou linha inteira (só uma); os gráficos usam sempre as cores escolhidas','Ao passar de Ano para Mês abre o mês atual (se for desse ano) ou o último mês escolhido','No Editar das Despesas, o botão Concluir acompanha a página']},
  {v:'0.9e',d:'29/09/2026',n:[],a:['Corrigido: com sessão iniciada, Definições › Agregado familiar pedia para entrar e não deixava criar o agregado']},
  {v:'0.9d',d:'29/09/2026',n:['Seletor 👤 Pessoal / 👪 Agregado no meio da barra de cima (aparece só a quem tem ou está num agregado)','O agregado começa com as suas categorias, tipos e regras','As alterações dos outros membros aparecem sozinhas (a cada 30 s ou ao voltar à página)'],a:['A conta pessoal e o agregado têm dados totalmente separados','Se duas pessoas gravarem ao mesmo tempo, as alterações juntam-se']},
  {v:'0.9c',d:'29/09/2026',n:['Agregado familiar (Definições › 👪): criar um agregado, dar-lhe nome e convidar pessoas pelo email','Quem é convidado vê uma mensagem para aceitar ou recusar ao entrar','O dono pode remover membros e cancelar convites; os membros podem sair'],a:['Apagar um agregado guarda-o 30 dias (pode restaurar) antes de o apagar de vez','A conta pessoal continua privada: o agregado é uma conta à parte']},

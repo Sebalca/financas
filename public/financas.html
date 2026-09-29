@@ -133,6 +133,8 @@ tr.ra-d td{background:var(--soft);font-size:12.5px}tr.ra-d td:first-child{paddin
 .cb{margin-bottom:16px}.cb>summary,.cb h4{display:flex;gap:8px;align-items:baseline;margin:0 0 6px;font-size:14px;cursor:pointer;list-style:none}.cb>summary::-webkit-details-marker{display:none}
 .cb h4 .n,.cb>summary .n{margin-left:auto;font-variant-numeric:tabular-nums}.cb small{color:var(--mu);font-weight:400}
 .cb table.t td{padding:5px 6px;font-size:12.5px}.cb tr.clk{cursor:pointer}.cb tr.clk:hover td{background:var(--soft)}.cb .mot{color:var(--mu);font-size:11.5px;white-space:normal}
+.corq.sm{width:20px;height:20px;font-size:10px;margin-right:6px}td.rnm{white-space:nowrap}td.rnm input.nm{width:calc(100% - 90px)}
+.corpop label{grid-column:span 6;display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu);padding:2px 0}
 .corq{width:24px;height:24px;border-radius:7px;border:1px dashed var(--bd);background:transparent;cursor:pointer;font-size:12px;padding:0;flex:none}
 .corpop{position:fixed;z-index:80;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:10px;display:grid;grid-template-columns:repeat(6,26px);gap:6px}.corpop[hidden]{display:none}
 .corpop button{width:26px;height:26px;border-radius:7px;border:2px solid transparent;cursor:pointer;padding:0}.corpop button.on{border-color:var(--tx)}.corpop .sem{grid-column:span 6;width:auto;height:auto;font-size:12px;background:none;color:var(--mu);border:1px solid var(--bd);padding:4px}
@@ -140,6 +142,7 @@ tr.ra-d td{background:var(--soft);font-size:12.5px}tr.ra-d td:first-child{paddin
 .pvsum{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.pvsum .ch{border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font-size:12.5px;display:flex;gap:8px;align-items:center}.pvsum .ch b{font-size:13.5px}.pvsum .ch.tot{background:var(--soft)}
 table.prevt{font-size:12.5px;table-layout:fixed;min-width:1150px}table.prevt th.yr{text-align:center;border-left:1px solid var(--bd)}table.prevt td.bl,table.prevt th.bl{border-left:1px solid var(--bd)}
 table.prevt tr.gc td{background:var(--soft)}table.prevt input.pv{width:100%;max-width:110px;text-align:right}table.prevt .pvx td{color:var(--mu)}table.prevt td.tpn{font-size:12px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card.desedit>h3{position:sticky;top:var(--stkH,0px);z-index:6;background:var(--card);margin:-4px -4px 8px;padding:10px 4px;border-bottom:1px solid var(--bd)}
 .gtp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:16px}@media (max-width:1000px){.gtp{grid-template-columns:1fr}}
 table.t th.tpc select{margin-left:6px;font-weight:400;max-width:160px}table.t td.tpc select{max-width:220px}
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}@media (max-width:1300px){.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:760px){.grid4{grid-template-columns:1fr}}
@@ -233,6 +236,7 @@ table.t tbody tr:hover td{background:color-mix(in srgb,var(--ac2) 40%,transparen
 .cat>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg);margin-left:4px;transition:.15s}
 .cat[open]>summary::after{transform:rotate(-135deg)}
 .cat .tw{border-top:1px solid var(--bd)}
+.pvbar{position:relative;height:10px;border-radius:5px;background:var(--soft);min-width:90px}.pvbar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px}.pvbar b{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--tx);border-radius:1px}
 .bar{height:6px;border-radius:4px;background:var(--soft);overflow:hidden;min-width:70px}
 .bar i{display:block;height:100%;border-radius:4px}
 .addrow td{color:var(--ac);cursor:pointer;font-weight:600}
@@ -319,6 +323,7 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
     <button type="button" data-tab="ren">Rendimentos</button>
     <button type="button" data-tab="des">Despesas</button>
     <button type="button" data-tab="prev">Previsões</button>
+    <button type="button" data-tab="obj">Objetivos</button>
     <button type="button" data-tab="fat">Faturas</button>
     <button type="button" data-tab="saude">Saúde financeira</button>
   </nav>
@@ -333,13 +338,13 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
       <div class="card"><h3>Saldo por banco</h3><ul class="banks" id="homeBanks"></ul></div>
     </div>
     <div class="grid4">
-      <div class="card"><h3>Despesas por categoria <small>no período</small></h3><div id="homeDonut"></div></div>
-      <div class="card"><h3>Despesas por referência <small>no período</small></h3><div id="homeDonutRef"></div></div>
-      <div class="card"><h3>Rendimentos <small>do extrato · ✓ com recibo</small><span class="r"><button class="btn sm" data-go="ren">Ver →</button></span></h3><div id="homeRend"></div></div>
-      <div class="card"><h3>Rendimentos por tipo <small>do extrato</small></h3><div id="homeRendTipo"></div></div>
+      <div class="card"><h3>Despesas por categoria <small>no período</small><span class="r"><span class="seg mini" data-dpct="homeDonut"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeDonut"></div></div>
+      <div class="card"><h3>Despesas por referência <small>no período</small><span class="r"><span class="seg mini" data-dpct="homeDonutRef"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeDonutRef"></div></div>
+      <div class="card"><h3>Rendimentos <small>do extrato · ✓ com recibo</small><span class="r"><span class="seg mini" data-dpct="homeRend"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span><button class="btn sm" data-go="ren">Ver →</button></span></h3><div id="homeRend"></div></div>
+      <div class="card"><h3>Rendimentos por tipo <small>do extrato</small><span class="r"><span class="seg mini" data-dpct="homeRendTipo"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeRendTipo"></div></div>
     </div>
     <div class="gtp">
-      <div class="card"><h3>Despesas por tipo <small>no período</small></h3><div id="homeDonutTipo"></div></div>
+      <div class="card"><h3>Despesas por tipo <small>no período</small><span class="r"><span class="seg mini" data-dpct="homeDonutTipo"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeDonutTipo"></div></div>
       <div class="card"><h3>Previsto vs real <small>despesas</small><span class="r"><button class="btn sm" data-go="des">Ver despesas →</button></span></h3><div class="tw" id="homeBudget"></div></div>
     </div>
     <div class="grid2">
@@ -402,6 +407,9 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
         <li><b>Evolução:</b> uma pontuação mensal para acompanhar se a situação está a melhorar.</li></ul></div>
   </div></section>
 
+  <section class="panel" id="tab-obj">
+    <div class="card"><h3>Objetivos <small>em desenvolvimento</small></h3><div class="empty"><b>🎯 Em breve</b>Aqui vai poder definir objetivos financeiros — por exemplo fundo de emergência, férias, entrada para casa ou pagar um crédito — com valor e prazo, ligá-los a uma categoria/referência (ex.: Poupanças › Férias) e acompanhar automaticamente quanto já juntou, quanto falta e quanto precisa de pôr de parte por mês.</div></div>
+  </section>
   <section class="panel" id="tab-prev">
     <div class="card"><h3>Despesas previstas <small>por referência · escreva a média por mês ou o total do ano · usada nas Despesas e no Início</small><span class="r"><span class="nav pvnav" id="pvNav"><button type="button" data-pvy="-1" aria-label="Ano anterior">‹</button><b id="pvAno"></b><button type="button" data-pvy="1" aria-label="Ano seguinte">›</button></span><button class="btn sm" type="button" id="pvOnly">Só com valores</button><button class="btn sm" type="button" id="pvUsar" title="Previsão = média mensal do ano anterior, em todas as referências">↺ Média do ano anterior em todas</button><button class="btn sm" type="button" id="pvLimpa">Limpar ano</button></span></h3>
       <div class="pvsum" id="prevTot"></div><div id="prevDes"></div><p class="note" id="prevNota"></p></div>
@@ -501,7 +509,7 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 
 <script>
 'use strict';
-const APP_VERSAO='0.9e'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.9f'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -593,7 +601,7 @@ function normaliza(d){d={...fresh(),...d};
   if(!d.cats)d.cats=CATS_BASE.map(([n,r])=>({id:uid('c'),nome:n,refs:r.slice()}));
   if(!d.regras)d.regras=REGRAS_BASE.map(novaRegraBase);
   if(!d.rbMil){d.rbMil=1;[['PAGAMENTO CARTAO','contem','','Banco','Troca entre contas'],['VIS PAGAMENTO','inicio','','Banco','Troca entre contas'],['LEV ATM','inicio','s','Banco','Levantamentos']].forEach((r,i)=>{if(!d.regras.some(x=>String(x.txt||'').toUpperCase().trim()===r[0]))d.regras.splice(1+i,0,{...novaRegraBase(r,'m'+i)})})} // v0.8j: regras do Millennium
-  if(!d.pessoas)d.pessoas=[];if(!d.prev)d.prev={};if(!Array.isArray(d.rend))d.rend=[];if(!d.refSo||typeof d.refSo!=='object')d.refSo={};if(!d.corCat||typeof d.corCat!=='object')d.corCat={};
+  if(!d.pessoas)d.pessoas=[];if(!d.prev)d.prev={};if(!Array.isArray(d.rend))d.rend=[];if(!d.refSo||typeof d.refSo!=='object')d.refSo={};if(!d.corCat||typeof d.corCat!=='object')d.corCat={};if(!d.corRef||typeof d.corRef!=='object')d.corRef={};
   if(!Array.isArray(d.tiposDesp))d.tiposDesp=TIPOS_BASE.map(([id,nome,cor])=>({id,nome,cor}));
   if(!d.refTipo||typeof d.refTipo!=='object'){d.refTipo={};const fora=['Banco','Por tratar','Investimentos','Empresas','Rendimentos','Poupanças'];
     d.cats.filter(c=>!fora.includes(c.nome)).forEach(c=>c.refs.forEach(r=>{const id=Object.keys(TIPO_SUG).find(t=>TIPO_SUG[t].includes(r));if(id&&d.tiposDesp.some(t=>t.id===id))d.refTipo[c.nome+'›'+r]=id}))}
@@ -830,9 +838,10 @@ window.fpPer={
   escolhe:(m,y,mo)=>calEscolhe(m,new Date(y,m==='ano'?MES1:mo,1)),
   intervalo:(a,b)=>{P.ini=a||'';P.fim=b||'';$('#rIni').value=P.ini;$('#rFim').value=P.fim;render();avisaPer()},
   sync:()=>$('#syncSt').click()};
-function perLabel(){if(P.m==='ano')P.d=anoIni(P.d);$('#perLbl').textContent=P.m==='ano'?anoTxt(P.d):`${MESES[P.d.getMonth()]} ${P.d.getFullYear()}`;
+let LASTM=new Date().getMonth();
+function perLabel(){if(P.m==='ano')P.d=anoIni(P.d);else if(P.m==='mes')LASTM=P.d.getMonth();$('#perLbl').textContent=P.m==='ano'?anoTxt(P.d):`${MESES[P.d.getMonth()]} ${P.d.getFullYear()}`;
   $('#perNav').style.display=P.m==='int'?'none':'';if(P.m==='int')$('#calPop').hidden=true;avisaPer();$('#perRng').classList.toggle('on',P.m==='int')}
-$('#perMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;P.m=b.dataset.m;$$('#perMode button').forEach(x=>x.classList.toggle('on',x===b));perLabel();render()});
+$('#perMode').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.m==='mes'&&P.m==='ano'){const a=anoIni(P.d),h=new Date(),f=new Date(a.getFullYear(),a.getMonth()+12,1);P.d=h>=a&&h<f?new Date(h.getFullYear(),h.getMonth(),1):new Date(a.getFullYear(),a.getMonth()+((LASTM-a.getMonth()+12)%12),1)}P.m=b.dataset.m;$$('#perMode button').forEach(x=>x.classList.toggle('on',x===b));perLabel();render()});
 let CALY=null;
 function calRender(){const y=CALY,pm=P.m==='mes'&&P.d.getFullYear()===y?P.d.getMonth():-1,tem=new Set(DB.mov.map(m=>m.dm.slice(0,7)));
   $('#calPop').innerHTML=`<div class="ch"><button type="button" data-cy="-1" aria-label="Ano anterior">‹</button><b>${y}</b><button type="button" data-cy="1" aria-label="Ano seguinte">›</button></div>
@@ -901,6 +910,7 @@ function calcFecha(){$('#calcPan').hidden=true;CALC_ID=null}
 $('#calcX').addEventListener('click',calcFecha);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#calcPan').hidden)calcFecha()});
 document.addEventListener('click',e=>{const p=$('#corPop');if(!p.hidden&&!e.target.closest('#corPop,[data-corq]'))p.hidden=true});
+$('#corPop').addEventListener('change',e=>{if(e.target.id!=='corExt')return;const n=$('#corPop').dataset.n;if(!n.startsWith('r:'))return;const o=(DB.corRef||{})[n.slice(2)];if(o){if(e.target.checked)o.ext=1;else delete o.ext;save();render()}});
 const kpiH=(l,v,tip,cls,attr,calc)=>`<div class="kpi ${cls||''}${attr?' clk':''}" title="${esc(tip||'')}" ${attr||''}>${calc&&CALC_ON?`<button type="button" class="kc" data-calc="${calc}" title="Como foi calculado" aria-label="Como foi calculado: ${esc(l)}">🧮</button>`:''}<div class="l">${l}</div><div class="v">${v}</div></div>`;
 const kpi=(l,v,s,cls)=>`<div class="kpi ${cls||''}"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`;
 const emptyTbl=(cols,msg,sub)=>`<table class="t"><thead><tr>${cols.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody><tr><td colspan="${cols.length}"><div class="empty"><b>${msg}</b>${sub||''}</div></td></tr></tbody></table>`;
@@ -918,19 +928,25 @@ let SEL=new Set();
 const CORES=['var(--c4)','var(--c1)','var(--c3)','var(--c2)','var(--c5)','var(--c6)','var(--c7)','#b08900','#5b8def','#c05fa0','#2f9e6e'];
 /* cores das categorias: escolhidas no modo Editar das Despesas (DB.corCat); opções em Definições › Geral (COR) */
 const PALETA=['#e57373','#f06292','#ba68c8','#9575cd','#7986cb','#64b5f6','#4fc3f7','#4dd0e1','#4db6ac','#81c784','#aed581','#dce775','#ffd54f','#ffb74d','#ff8a65','#a1887f','#90a4ae'];
-let COR={graf:1,caixa:1,linha:0,des:1};try{Object.assign(COR,JSON.parse(localStorage.getItem('fp_cores')||'{}'))}catch(e){}
+let COR={des:1};try{Object.assign(COR,JSON.parse(localStorage.getItem('fp_cores')||'{}'))}catch(e){}
+const corNorm=()=>{if(COR.pint===undefined)COR.pint=COR.linha?'linha':(COR.caixa===0?'':'caixa')};corNorm();
 const corEsc=n=>(DB.corCat||{})[n]||'';
-const corCat=n=>{const e=COR.graf&&corEsc(n);if(e)return e;const i=DB.cats.findIndex(c=>c.nome===n);return i<0?'var(--c8)':CORES[i%CORES.length]};
+const corCat=n=>{const e=corEsc(n);if(e)return e;const i=DB.cats.findIndex(c=>c.nome===n);return i<0?'var(--c8)':CORES[i%CORES.length]};
 const tipoDe=(c,r)=>{const id=(DB.refTipo||{})[c+'›'+r];return id?(DB.tiposDesp||[]).find(t=>t.id===id)||null:null};
 const tipoOpts=(sel,vazio)=>`<option value="">${vazio}</option>`+(DB.tiposDesp||[]).map(t=>`<option value="${esc(t.id)}"${t.id===sel?' selected':''}>${esc(t.nome)}</option>`).join('');
+/* v0.9f: cor por referência (DB.corRef['cat›ref']={c,ext}); ext=1 → pinta só nos Extratos (e gráficos), não nas Despesas */
+const corRefO=k=>(DB.corRef||{})[k]||null;
+const corMovC=(c,r)=>{const o=r&&corRefO(c+'›'+r);return o?o.c:corEsc(c)};
+const corRefG=(c,r)=>{const o=r&&corRefO(c+'›'+r);return o?o.c:corCat(c)};
+const tintaC=(c,p)=>c?`color-mix(in srgb,${c} ${p}%,transparent)`:'';
 const tinta=(n,p)=>{const c=corEsc(n);return c?`color-mix(in srgb,${c} ${p}%,transparent)`:''};
 const BCOR={CGD:'#1d4f91',Dinheiro:'#b7791f','Cartão refeição':'#2f9e6e'};const BICO={'Cartão refeição':'🍽'};
-function donut(segs){const tot=segs.reduce((a,s)=>a+s.v,0)||1,R0=58,C=2*Math.PI*R0;let off=0;
+function donut(segs,pct){const tot=segs.reduce((a,s)=>a+s.v,0)||1,R0=58,C=2*Math.PI*R0;let off=0;
   const arc=(v,c,op)=>{const L=v/tot*C;const a=`<circle r="${R0}" cx="75" cy="75" fill="none" stroke="${c}" stroke-width="24"${op?` stroke-opacity="${op}"`:''} stroke-dasharray="${L} ${C-L}" stroke-dashoffset="${-off}" transform="rotate(-90 75 75)"/>`;off+=L;return a};
   const arcs=segs.map(s=>s.u!=null?arc(s.v-s.u,s.c)+arc(s.u,s.c,.3):arc(s.v,s.c)).join('');
   return `<div class="donut"><svg width="150" height="150" viewBox="0 0 150 150">${arcs}<text x="75" y="72" text-anchor="middle" font-size="11" fill="var(--mu)">total</text><text x="75" y="90" text-anchor="middle" font-size="14" font-weight="700" fill="var(--tx)">${E(tot)}</text></svg>
   <ul class="lg">${segs.map(s=>{const pend=s.u!=null&&s.u>.004,cls=[s.a?'clk':'',pend?'pend':''].filter(Boolean).join(' ');
-    return `<li${cls?` class="${cls}"`:''}${s.a?' '+s.a:''}><i class="dot" style="background:${s.c}${pend&&s.u>=s.v-.004?';opacity:.35':''}"></i><span>${esc(s.l)}${s.u!=null?(pend?`<small class="pc">${s.u>=s.v-.004?'por confirmar':E(s.u)+' por confirmar'}</small>`:' <span class="ok" title="Confirmado com recibo">✓</span>'):''}</span><b>${E(s.v)}</b></li>`}).join('')}</ul></div>`}
+    return `<li${cls?` class="${cls}"`:''}${s.a?' '+s.a:''}><i class="dot" style="background:${s.c}${pend&&s.u>=s.v-.004?';opacity:.35':''}"></i><span>${esc(s.l)}${s.u!=null?(pend?`<small class="pc">${s.u>=s.v-.004?'por confirmar':E(s.u)+' por confirmar'}</small>`:' <span class="ok" title="Confirmado com recibo">✓</span>'):''}</span><b>${pct?(s.v/tot*100).toLocaleString('pt-PT',{maximumFractionDigits:1})+' %':E(s.v)}</b></li>`}).join('')}</ul></div>`}
 function bars(data,det){const W=1000,H=170,pl=44,pb=20,pt=6,tot=d=>det?[d.e.reduce((s,x)=>s+x.v,0),d.s.reduce((s,x)=>s+x.v,0)]:[d[1],d[2]];
   const mx=Math.max(1,...data.flatMap(tot))*1.1,bw=(W-pl)/data.length,Y=v=>H-pb-v/mx*(H-pb-pt),h=v=>v/mx*(H-pb-pt);
   let g='';for(let i=0;i<=4;i++){const v=mx/4*i;g+=`<line x1="${pl}" x2="${W}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--bd)"/><text x="${pl-6}" y="${Y(v)+3}" text-anchor="end" font-size="9" fill="var(--mu)">${milhar(Math.round(v).toLocaleString('pt-PT',{useGrouping:'always'}))}</text>`}
@@ -955,7 +971,7 @@ const refOpts=(cat,sel)=>{const c=DB.cats.find(x=>x.nome===cat);const rs=c?c.ref
 /* ================= render ================= */
 /* Extratos: desenha 100 linhas de cada vez; ao chegar ao fundo junta mais 100 (os totais e filtros contam todas) */
 const EXT_PASSO=100,EXT={rows:[],n:EXT_PASSO,chave:'',ctx:{}};
-function extLinha(m){const {LG,RK,DS}=EXT.ctx,tl=COR.linha&&m.cat?tinta(m.cat,12):'',tc=COR.caixa&&m.cat?tinta(m.cat,30):'';return `<tr data-id="${m.id}" class="${m.man?'man':''}${SEL.has(m.id)?' selr':''}"${tl?` style="--tl:${tl}"`:''}>
+function extLinha(m){const {LG,RK,DS}=EXT.ctx,cm=m.cat?corMovC(m.cat,m.ref):'',tl=COR.pint==='linha'?tintaC(cm,12):'',tc=COR.pint==='caixa'?tintaC(cm,30):'';return `<tr data-id="${m.id}" class="${m.man?'man':''}${SEL.has(m.id)?' selr':''}"${tl?` style="--tl:${tl}"`:''}>
     <td class="ck"><input type="checkbox" class="sel"${SEL.has(m.id)?' checked':''} aria-label="Selecionar"></td>
     <td title="${m.dv&&m.dv!==m.dm?'Data valor: '+fmtD(m.dv):''}">${fmtD(m.dm)}</td>${(o=>o?`<td class="desc" title="Reembolso de: ${esc(nomeMov(o))}\nDescrição no extrato: ${esc(m.desc)}">↩ ${esc(nomeMov(o))}</td>`:`<td class="desc" title="${esc(m.desc)}">${esc(m.desc)}</td>`)(m.reemb&&RK.get(m.reemb))}<td class="num" title="${m.man?(DS.has(m.id)?'Saldo: '+E(DS.get(m.id)):''):m.saldo==null?'':'Saldo: '+E(m.saldo)}">${val(m.valor)}</td>
     ${m.partes&&m.partes.length?`<td colspan="2"><button type="button" class="sptog" data-sptog="${m.id}" title="${SPOPEN.has(m.id)?'Esconder':'Mostrar'} as linhas" aria-expanded="${SPOPEN.has(m.id)}">${SPOPEN.has(m.id)?'▾':'▸'}</button><button class="btn sm${isUnc(m)?' unc':''}" data-split="${m.id}" title="Editar a divisão">✂ Dividido em ${m.partes.length}</button></td>`:`<td><select class="ed${m.cat?'':' unc'}" data-f="cat"${tc?` style="background:${tc}"`:''}>${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':m.catSrc==='rend'?'<span class="auto" title="Atribuído pela ligação a um rendimento">🔗</span>':''}</td>
@@ -1023,12 +1039,12 @@ function render(){
   const segs=Object.entries(porCat).sort((x,y)=>y[1]-x[1]).map(([l,v])=>({l,v,c:l==='Por categorizar'?'var(--c8)':corCat(l),a:`data-gocat="${esc(l==='Por categorizar'?'__unc':l)}" title="Ver estes movimentos nos Extratos"`}));
   {const pt={};perC.filter(m=>(m.valor<0||eReemb(m))&&m.cat&&!eFora(m.cat)).forEach(m=>{const t=m.ref?tipoDe(m.cat,m.ref):null,k=t?t.id:'';pt[k]=(pt[k]||0)-m.valor});
    const st=[...DB.tiposDesp.map(t=>({l:t.nome,v:pt[t.id]||0,c:t.cor})),{l:'Sem tipo',v:pt['']||0,c:'var(--c8)'}].filter(x=>x.v>.004);
-   $('#homeDonutTipo').innerHTML=st.length?donut(st):'<div class="empty"><b>Sem despesas no período</b>O tipo escolhe-se em Despesas › Editar.</div>'}
-  $('#homeDonut').innerHTML=segs.length?donut(segs):'<div class="empty"><b>Sem despesas no período</b></div>';
+   $('#homeDonutTipo').innerHTML=st.length?donut(st,DPCT.has('homeDonutTipo')):'<div class="empty"><b>Sem despesas no período</b>O tipo escolhe-se em Despesas › Editar.</div>'}
+  $('#homeDonut').innerHTML=segs.length?donut(segs,DPCT.has('homeDonut')):'<div class="empty"><b>Sem despesas no período</b></div>';
   {const pr={};perC.filter(m=>(m.valor<0||eReemb(m))&&m.cat&&m.ref).forEach(m=>{const k=m.cat+'›'+m.ref;pr[k]=(pr[k]||0)-m.valor});Object.keys(pr).forEach(k=>{if(pr[k]<.005)delete pr[k]});
-   let rs=Object.entries(pr).sort((x,y)=>y[1]-x[1]);const out=rs.slice(0,9).map(([k,v])=>{const [c,r]=k.split('›');return {l:r,v,c:corCat(c),a:`data-goref="${esc(k)}" title="${esc(c)} › ${esc(r)} — ver nos Extratos"`}});
+   let rs=Object.entries(pr).sort((x,y)=>y[1]-x[1]);const out=rs.slice(0,9).map(([k,v])=>{const [c,r]=k.split('›');return {l:r,v,c:corRefG(c,r),a:`data-goref="${esc(k)}" title="${esc(c)} › ${esc(r)} — ver nos Extratos"`}});
    const resto=rs.slice(9).reduce((s,x)=>s+x[1],0);if(resto>.004)out.push({l:'Outras referências',v:resto,c:'var(--c8)'});
-   $('#homeDonutRef').innerHTML=out.length?donut(out):'<div class="empty"><b>Sem despesas com referência no período</b></div>'}
+   $('#homeDonutRef').innerHTML=out.length?donut(out,DPCT.has('homeDonutRef')):'<div class="empty"><b>Sem despesas com referência no período</b></div>'}
   {/* rendimentos: entradas da categoria Rendimentos no extrato; ✓ = ligadas a um recibo/rendimento */
    const LGr=ligados(),ent=perX.filter(m=>m.valor>0&&m.cat==='Rendimentos');
    const agrupa=kf=>{const g=new Map();ent.forEach(m=>{const k=kf(m),x=g.get(k)||{v:0,u:0};x.v+=m.valor;if(!LGr.get(chave(m.parte!=null?DB.mov.find(y=>y.id===m.id.split('#')[0])||m:m)))x.u+=m.valor;g.set(k,x)});
@@ -1037,9 +1053,11 @@ function render(){
    const r1=agrupa(entid).map(([l,x],i)=>({l,v:r2(x.v),u:r2(x.u),c:CORES[(i+1)%CORES.length],a:`data-gorendx="${esc(l)}" title="Ver estas entradas nos Extratos"`}));
    const r2_=agrupa(m=>m.ref||'(sem referência)').map(([l,x],i)=>({l,v:r2(x.v),u:r2(x.u),c:CORES[(i+3)%CORES.length],a:l==='(sem referência)'?'data-gocat="Rendimentos" title="Ver nos Extratos"':`data-goref="${esc('Rendimentos›'+l)}" title="Ver nos Extratos"`}));
    const vaz='<div class="empty"><b>Sem rendimentos no período</b>Categorize as entradas do extrato em Rendimentos.</div>';
-   $('#homeRend').innerHTML=r1.length?donut(r1):vaz;$('#homeRendTipo').innerHTML=r2_.length?donut(r2_):vaz}
+   $('#homeRend').innerHTML=r1.length?donut(r1,DPCT.has('homeRend')):vaz;$('#homeRendTipo').innerHTML=r2_.length?donut(r2_,DPCT.has('homeRendTipo')):vaz}
   const resumo=DB.cats.filter(c=>!eFora(c.nome)).map(c=>{const yH=anoIni(P.d).getFullYear(),p=c.refs.reduce((s,r)=>s+pvK(yH,c.nome+'›'+r),0)*k,r=-perX.filter(m=>m.cat===c.nome).reduce((s,m)=>s+m.valor,0);return {c,p,r}}).filter(x=>(x.p||Math.abs(x.r)>.004));
-  $('#homeBudget').innerHTML=resumo.length?`<table class="t"><thead><tr><th>Categoria</th><th class="num">Previsto</th><th class="num">Real</th><th></th></tr></thead><tbody>${resumo.map(({c,p,r})=>{const pc=p>0?Math.min(100,r/p*100):(r>0?100:0);return `<tr><td><i class="dot" style="background:${corCat(c.nome)}"></i>${esc(c.nome)}</td><td class="num">${p?E(p):'—'}</td><td class="num">${E(r)}</td><td style="width:30%"><div class="bar"><i style="width:${Math.max(0,pc)}%;background:${p&&r>p?'var(--c2)':p?'var(--c1)':'var(--c8)'}"></i></div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem valores no período</b></div>';
+  $$('[data-dpct]').forEach(sg=>[...sg.children].forEach(b=>b.classList.toggle('on',!!b.dataset.v===DPCT.has(sg.dataset.dpct))));
+  $('#homeBudget').innerHTML=resumo.length?`<table class="t pvr"><thead><tr><th>Categoria</th><th class="num">Real / previsto</th><th style="width:55%"></th></tr></thead><tbody>${resumo.map(({c,p,r})=>{const mx=Math.max(p,r)||1,over=p>0&&r>p+.004,cor=over?'var(--c2)':p?corCat(c.nome):'var(--c8)';
+    return `<tr><td><i class="dot" style="background:${corCat(c.nome)}"></i>${esc(c.nome)}</td><td class="num${over?' neg':''}">${E(r)} <span class="muted">/ ${p?E(p):'—'}</span></td><td><div class="pvbar" title="${over?`Acima do previsto em ${E(r-p)}`:p?`Faltam ${E(p-r)} para o previsto`:'Sem previsão'}"><i style="width:${Math.max(0,r/mx*100)}%;background:${cor}"></i>${p?`<b style="left:${p/mx*100}%"></b>`:''}</div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem valores no período</b></div>';
   const last=ordena(per).slice(0,8);
   $('#homeLast').innerHTML=last.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th></tr></thead><tbody>${last.map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td>${m.cat?`<span class="tag">${esc(m.cat)}${m.ref?' · '+esc(m.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos no período</b></div>';
   $('#homeUncCnt').textContent=unc.length;
@@ -1078,6 +1096,7 @@ function render(){
 
 /* ---- Despesas: mês (previsto vs real) ou ano (grelha 12 meses); modo Editar para estrutura ---- */
 let soValores=false;
+let DPCT=new Set();try{DPCT=new Set(JSON.parse(localStorage.getItem('fp_dpct')||'[]'))}catch(e){}
 const DES={edit:false,open:new Set(),fech:new Set(),grp:'cat'};try{DES.grp=localStorage.getItem('fp_desgrp')==='tipo'?'tipo':'cat'}catch(e){}let UNCV='freq',BARSV='s',RENDV='ent';
 const FORA=['Banco','Por tratar','Investimentos','Empresas','Rendimentos','Poupanças'];
 const eFora=n=>FORA.includes(n);
@@ -1167,15 +1186,15 @@ window.fpTipos={lista:()=>JSON.parse(JSON.stringify(DB.tiposDesp)),
   grava:(tipos,remap)=>{DB.tiposDesp=tipos.filter(t=>t&&t.id&&String(t.nome||'').trim()).map(t=>({id:String(t.id),nome:String(t.nome).trim(),cor:t.cor||'#90a4ae'}));
     Object.entries(remap||{}).forEach(([de,para])=>Object.keys(DB.refTipo).forEach(k=>{if(DB.refTipo[k]===de){if(para)DB.refTipo[k]=para;else delete DB.refTipo[k]}}));
     const ids=new Set(DB.tiposDesp.map(t=>t.id));Object.keys(DB.refTipo).forEach(k=>{if(!ids.has(DB.refTipo[k]))delete DB.refTipo[k]});save();render()}};
-function renderDesEdit(norm_,fora){const deR=espL().find(e=>e.tipo==='de');
+function renderDesEdit(norm_,fora){$('#desCats').closest('.card').classList.add('desedit');const deR=espL().find(e=>e.tipo==='de');
   const bloco=({c,ci},isF)=>{const cor=corEsc(c.nome);
     return `<details class="cat" data-c="${esc(c.nome)}" open><summary>${desSetas('cmv',ci)}<button type="button" class="corq" data-corq="${esc(c.nome)}" title="Cor da categoria" style="${cor?`background:color-mix(in srgb,${cor} 45%,transparent);border-color:${cor}`:''}">${cor?'':'🎨'}</button><input class="nm" data-cn="${ci}" value="${esc(c.nome)}" style="font-weight:700" onclick="event.preventDefault()"> <button class="btn ic sm" data-cdel="${ci}" title="Apagar categoria">🗑</button><span class="sp"></span></summary>
     <div class="tw"><table class="t"><thead><tr><th>Referência</th>${isF?'':`<th class="tpc">Tipo de despesa <select class="ed sm" data-ctipo="${ci}" title="Aplicar um tipo a todas as referências desta categoria">${tipoOpts('','Aplicar a todas…')}<option value="-">(sem tipo em todas)</option></select></th>`}<th title="Ao escolher esta referência não pede para criar regra e as regras não a usam">📌 Só este movimento</th><th title="Ao mudar uma linha que tinha esta referência não pede para criar regra">↪ Ao mudar a partir desta</th><th></th></tr></thead><tbody>
-    ${c.refs.map((r,ri)=>{const k=c.nome+'›'+r;return `<tr><td>${desSetas('rmv',ci+'|'+ri)}${desNome(r,`data-rn="${ci}|${ri}"`)}</td>${isF?'':`<td class="tpc"><select class="ed" data-rtipo="${esc(k)}">${tipoOpts(DB.refTipo[k]||'','— sem tipo —')}</select></td>`}<td><input type="checkbox" data-rso="${esc(k)}"${soMov(c.nome,r)?' checked':''}></td><td><input type="checkbox" data-rde="${esc(k)}"${deR&&deR.refs.includes(k)?' checked':''}></td><td><button class="btn ic sm" data-rdel="${ci}|${ri}" title="Apagar referência">🗑</button></td></tr>`}).join('')}
+    ${c.refs.map((r,ri)=>{const k=c.nome+'›'+r,ro=corRefO(k);return `<tr><td class="rnm">${desSetas('rmv',ci+'|'+ri)}<button type="button" class="corq sm" data-corq="${esc('r:'+k)}" title="Cor da referência${ro&&ro.ext?' (só nos Extratos)':''}" style="${ro?`background:color-mix(in srgb,${ro.c} 45%,transparent);border-color:${ro.c}${ro.ext?';border-style:dotted':''}`:''}">${ro?'':'🎨'}</button>${desNome(r,`data-rn="${ci}|${ri}"`)}</td>${isF?'':`<td class="tpc"><select class="ed" data-rtipo="${esc(k)}">${tipoOpts(DB.refTipo[k]||'','— sem tipo —')}</select></td>`}<td><input type="checkbox" data-rso="${esc(k)}"${soMov(c.nome,r)?' checked':''}></td><td><input type="checkbox" data-rde="${esc(k)}"${deR&&deR.refs.includes(k)?' checked':''}></td><td><button class="btn ic sm" data-rdel="${ci}|${ri}" title="Apagar referência">🗑</button></td></tr>`}).join('')}
     <tr class="addrow"><td colspan="${isF?4:5}" data-radd="${ci}">＋ Adicionar referência</td></tr></tbody></table></div></details>`};
   $('#desCats').innerHTML='<h4 class="des-t">Despesas <small>entram nas contas</small></h4>'+norm_.map(x=>bloco(x,false)).join('')+`<div class="addcat"><button class="btn sm" data-cadd="n">＋ Adicionar categoria</button></div>`
     +(fora.length?`<h4 class="des-t fora">Não entram nas contas</h4>`+fora.map(x=>bloco(x,true)).join(''):'')}
-function renderDesGrelha(norm_,fora,saiP,entP,prv,prvC){
+function renderDesGrelha(norm_,fora,saiP,entP,prv,prvC){$('#desCats').closest('.card').classList.remove('desedit');
   const ms=mesesGrelha(),X=expande(DB.mov).filter(m=>{const k=m.dm.slice(0,7);return k>=ms[0]&&k<=ms[11]}),porMes=ms.map(p=>X.filter(m=>m.dm.startsWith(p)));
   const nMes=Math.max(1,porMes.filter(l=>l.length).length),sel=P.m==='mes'?`${P.d.getFullYear()}-${pad(P.d.getMonth()+1)}`:'';
   const vM=(l,c,r,isF)=>isF?entP(l,c,r)-saiP(l,c,r):saiP(l,c,r)-entP(l,c,r);
@@ -1189,7 +1208,8 @@ function renderDesGrelha(norm_,fora,saiP,entP,prv,prvC){
     const linhas=aberta?refs.map(r=>{const v=porMes.map(l=>vM(l,c.nome,r,isF)),tt=v.reduce((s,x)=>s+x,0),pv=isF?0:(r?prv(c.nome,r):0);
       if(soValores&&!pv&&!v.some(x=>Math.abs(x)>.004))return '';
       const tq=Math.abs(tt)>.004,ta=`data-dgo="ANO|${esc(c.nome)}|${esc(r)}" title="Ver os movimentos de ${esc(c.nome)} › ${esc(r||'(sem referência)')} neste ano"`;
-      return `<tr class="gr"${tint?` style="--tl:${tinta(c.nome,7)}"`:''}><td class="nm">${r?esc(r):'<span class="muted">(sem referência)</span>'}</td>${v.map((x,i)=>cel(x,ms[i],c.nome,r,pv,isF)).join('')}<td class="num tt${tq?' clk':''}" ${tq?ta:''}>${tq?(isF?val(tt):E(tt)):'0,00 €'}</td><td class="num tt">${tq?(isF?val(tt/nMes):E(tt/nMes)):'0,00 €'}</td><td class="num pvc">${isF||!r?'':`<span class="pvro" title="A previsão edita-se na aba Previsões">${pv?E(pv):'—'}</span>`}</td></tr>`}).join(''):'';
+      const ro=r&&corRefO(c.nome+'›'+r),tr_=COR.des&&ro&&!ro.ext?tintaC(ro.c,12):(tint?tinta(c.nome,7):'');
+      return `<tr class="gr"${tr_?` style="--tl:${tr_}"`:''}><td class="nm">${ro?`<i class="dot" style="background:${ro.c}"></i>`:''}${r?esc(r):'<span class="muted">(sem referência)</span>'}</td>${v.map((x,i)=>cel(x,ms[i],c.nome,r,pv,isF)).join('')}<td class="num tt${tq?' clk':''}" ${tq?ta:''}>${tq?(isF?val(tt):E(tt)):'0,00 €'}</td><td class="num tt">${tq?(isF?val(tt/nMes):E(tt/nMes)):'0,00 €'}</td><td class="num pvc">${isF||!r?'':`<span class="pvro" title="A previsão edita-se na aba Previsões">${pv?E(pv):'—'}</span>`}</td></tr>`}).join(''):'';
     return `<tr class="gc${aberta?' open':''}" data-dtog="${esc(c.nome)}" title="${aberta?'Fechar':'Abrir'} ${esc(c.nome)}"${tint?` style="--tl:${tinta(c.nome,16)}"`:''}><td class="nm"><i class="dot" style="background:${corCat(c.nome)}"></i><b>${esc(c.nome)}</b></td>${vs.map((x,i)=>Math.abs(x)>.004?`<td class="num clk${ms[i]===sel?' msel':''}" data-dgo="${ms[i]}|${esc(c.nome)}|*" title="${esc(c.nome)} · ${lab(ms[i])} — ver movimentos">${isF?val(x):E(x)}</td>`:`<td class="num dim${ms[i]===sel?' msel':''}">–</td>`).join('')}<td class="num${Math.abs(t)>.004?' clk':''}" ${Math.abs(t)>.004?`data-dgo="ANO|${esc(c.nome)}|*" title="Ver os movimentos de ${esc(c.nome)} neste ano"`:''}><b>${isF?val(t):E(t)}</b></td><td class="num"><b>${isF?val(t/nMes):E(t/nMes)}</b></td><td class="num pvc">${isF?'':`<b>${E(pc)}</b>`}</td></tr>`+linhas};
   const blocoTipo=t=>{const id=t?t.id:'',key='tipo:'+(id||'-'),aberta=!DES.fech.has(key),cor=t?t.cor:'var(--c8)';
     const refs=[];norm_.forEach(({c})=>{const rs=[...c.refs,...(porMes.some(l=>l.some(m=>m.cat===c.nome&&!m.ref))?['']:[])];rs.forEach(r=>{const tp=r?(DB.refTipo[c.nome+'›'+r]||''):'';if((DB.tiposDesp.some(x=>x.id===tp)?tp:'')===id)refs.push([c.nome,r])})});
@@ -1237,10 +1257,10 @@ function renderDesAno(norm_,fora,saiP,entP,prv,prvC){
 function moveArr(a,i,d){const j=i+d;if(j<0||j>=a.length)return false;[a[i],a[j]]=[a[j],a[i]];return true}
 function renomeiaCat(ci,novo){const c=DB.cats[ci];novo=novo.trim();if(!novo||novo===c.nome)return;if(DB.cats.some(x=>x.nome===novo)){toast('Já existe uma categoria com esse nome');return}
   const v=c.nome;DB.mov.forEach(m=>{if(m.cat===v)m.cat=novo});DB.regras.forEach(r=>{if(r.cat===v)r.cat=novo});
-  [...prevObjs(),DB.refSo,DB.refTipo].forEach(o=>Object.keys(o).forEach(k=>{if(k.startsWith(v+'›')){o[novo+k.slice(v.length)]=o[k];delete o[k]}}));if(DB.corCat[v]){DB.corCat[novo]=DB.corCat[v];delete DB.corCat[v]}espL().forEach(e=>{e.refs=e.refs.map(k=>k.startsWith(v+'›')?novo+k.slice(v.length):k)});c.nome=novo}
+  [...prevObjs(),DB.refSo,DB.refTipo,DB.corRef].forEach(o=>Object.keys(o).forEach(k=>{if(k.startsWith(v+'›')){o[novo+k.slice(v.length)]=o[k];delete o[k]}}));if(DB.corCat[v]){DB.corCat[novo]=DB.corCat[v];delete DB.corCat[v]}espL().forEach(e=>{e.refs=e.refs.map(k=>k.startsWith(v+'›')?novo+k.slice(v.length):k)});c.nome=novo}
 function renomeiaRef(ci,ri,novo){const c=DB.cats[ci],v=c.refs[ri];novo=novo.trim();if(!novo||novo===v)return;if(c.refs.includes(novo)){toast('Já existe essa referência');return}
   DB.mov.forEach(m=>{if(m.cat===c.nome&&m.ref===v)m.ref=novo});DB.regras.forEach(r=>{if(r.cat===c.nome&&r.ref===v)r.ref=novo});
-  const k0=c.nome+'›'+v;[...prevObjs(),DB.refSo,DB.refTipo].forEach(o=>{if(k0 in o){o[c.nome+'›'+novo]=o[k0];delete o[k0]}});espL().forEach(e=>{e.refs=e.refs.map(k=>k===k0?c.nome+'›'+novo:k)});c.refs[ri]=novo}
+  const k0=c.nome+'›'+v;[...prevObjs(),DB.refSo,DB.refTipo,DB.corRef].forEach(o=>{if(k0 in o){o[c.nome+'›'+novo]=o[k0];delete o[k0]}});espL().forEach(e=>{e.refs=e.refs.map(k=>k===k0?c.nome+'›'+novo:k)});c.refs[ri]=novo}
 
 /* ================= regras: editor ================= */
 function renderRegras(){
@@ -1620,8 +1640,8 @@ document.addEventListener('click',e=>{
   if(d.rmv){const [ci,ri,dd]=d.rmv.split('|').map(Number);if(moveArr(DB.cats[ci].refs,ri,dd)){save();render()}return}
   if(d.cadd){const n=prompt('Nome da nova categoria:');if(!n||!n.trim())return;if(DB.cats.some(c=>c.nome===n.trim()))return toast('Já existe');const i=DB.cats.findIndex(c=>eFora(c.nome));DB.cats.splice(i<0?DB.cats.length:i,0,{id:uid('c'),nome:n.trim(),refs:[]});save();render();return}
   if(d.pvusa){const Y=prevAno(),k=d.pvusa;let t=0;expande(DB.mov).forEach(m=>{if(m.cat+'›'+m.ref===k&&anoDe(m.dm)===Y-1)t-=m.valor});const o=PVW(Y);if(t/12>.004)o[k]=Math.round(t/12*100)/100;else delete o[k];save();render();return}
-  if(d.corq!=null){e.preventDefault();const p=$('#corPop'),n=d.corq,cur=corEsc(n);p.innerHTML=PALETA.map(c=>`<button type="button" data-corset="${c}" class="${c===cur?'on':''}" style="background:color-mix(in srgb,${c} 45%,transparent)" title="${c}"></button>`).join('')+`<button type="button" class="sem" data-corset="">Sem cor</button>`;p.dataset.n=n;const r=t.getBoundingClientRect();p.style.left=Math.min(innerWidth-220,r.left)+'px';p.style.top=(r.bottom+6)+'px';p.hidden=false;return}
-  if(d.corset!=null){const n=$('#corPop').dataset.n;DB.corCat=DB.corCat||{};if(d.corset)DB.corCat[n]=d.corset;else delete DB.corCat[n];$('#corPop').hidden=true;save();render();return}
+  if(d.corq!=null){e.preventDefault();const p=$('#corPop'),n=d.corq,eR=n.startsWith('r:'),ro=eR?corRefO(n.slice(2)):null,cur=eR?(ro?ro.c:''):corEsc(n);p.innerHTML=PALETA.map(c=>`<button type="button" data-corset="${c}" class="${c===cur?'on':''}" style="background:color-mix(in srgb,${c} 45%,transparent)" title="${c}"></button>`).join('')+(eR?`<label><input type="checkbox" id="corExt"${ro&&ro.ext?' checked':''}> Pintar só nos Extratos (não pinta as Despesas)</label>`:'')+`<button type="button" class="sem" data-corset="">Sem cor${eR?' (usa a da categoria)':''}</button>`;p.dataset.n=n;const r=t.getBoundingClientRect();p.style.left=Math.min(innerWidth-220,r.left)+'px';p.style.top=(r.bottom+6)+'px';p.hidden=false;return}
+  if(d.corset!=null){const n=$('#corPop').dataset.n;if(n.startsWith('r:')){const k=n.slice(2);DB.corRef=DB.corRef||{};if(d.corset)DB.corRef[k]={c:d.corset,...($('#corExt')&&$('#corExt').checked?{ext:1}:{})};else delete DB.corRef[k]}else{DB.corCat=DB.corCat||{};if(d.corset)DB.corCat[n]=d.corset;else delete DB.corCat[n]}$('#corPop').hidden=true;save();render();return}
   if(d.dtog!=null){DES.fech.has(d.dtog)?DES.fech.delete(d.dtog):DES.fech.add(d.dtog);render();return}
   if(d.dgo){const [k,c,r]=d.dgo.split('|');const g0=mesesGrelha()[0];limpaFiltros();if(k==='ANO'){P.m='ano';P.d=new Date(+g0.slice(0,4),+g0.slice(5,7)-1,1)}else{P.m='mes';P.d=new Date(+k.slice(0,4),+k.slice(5,7)-1,1)}$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m===P.m));perLabel();go('ext');render();
     if(r==='*')$('#fCat').value=c;else if(r===''){$('#fCat').value=c;}else{$('#fCat').value=c;render();$('#fRef').value=c+'›'+r}render();return}
@@ -1725,6 +1745,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-repor]');i
 
 $('#pesNovo').addEventListener('click',()=>{const m=prompt('Texto que aparece na descrição (ex.: JOANA MORAIS ou 916XXX581):');if(!m||!m.trim())return;const p=prompt('Quem é?');if(!p||!p.trim())return;DB.pessoas.push({id:uid('p'),match:m.trim(),pessoa:p.trim()});pessoasMudaram()});
 $('#btLimpaF').addEventListener('click',()=>{limpaFiltros();render()});
+$$('[data-dpct]').forEach(sg=>sg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;b.dataset.v?DPCT.add(sg.dataset.dpct):DPCT.delete(sg.dataset.dpct);try{localStorage.setItem('fp_dpct',JSON.stringify([...DPCT]))}catch(x){}render()}));
 $('#barsVista').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;BARSV=b.dataset.v;$$('#barsVista button').forEach(x=>x.classList.toggle('on',x===b));render()});
 $('#btDesEdit').addEventListener('click',()=>{DES.edit=!DES.edit;render()});
 $('#desAbrir').addEventListener('click',()=>{DES.fech.clear();$$('#desCats details').forEach(d=>d.open=true);render()});
@@ -1879,7 +1900,7 @@ if(EST){try{render();Object.entries(EST.f||{}).forEach(([i,v])=>{$('#'+i).value=
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-tema')ap(e.data.tema)});
   const zm=v=>{if(['0.75','0.85','1','1.1'].includes(v))v='';document.documentElement.style.zoom=v||''};try{zm(localStorage.getItem('fp_zoom'))}catch(e){}
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-ordem'){ORDEM=e.data.ordem||'';render()}});
-  addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-cores'){Object.assign(COR,e.data.cores||{});render()}});
+  addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-cores'){Object.assign(COR,e.data.cores||{});corNorm();RV++;render()}});
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-mes1'){MES1=+e.data.mes||0;perLabel();render()}});
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-calc'){CALC_ON=!!e.data.on;if(!CALC_ON)calcFecha();render()}});
   addEventListener('storage',e=>{if(e.key==='fp_calc'){CALC_ON=e.newValue!=='0';if(!CALC_ON)calcFecha();render()}});

@@ -161,9 +161,9 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const tt=document.querySelector('#desCats table.dgrid tr.gc td.clk[data-dgo^="ANO|"]');const c=tt&&tt.dataset.dgo.split('|')[1];tt.click();const foi=document.querySelector('#tab-ext').classList.contains('on')&&P.m==='ano'&&$('#fCat').vals.includes(c);limpaFiltros();P.m='mes';P.d=new Date(2026,8,1);perLabel();
     document.querySelector('[data-tab="des"]').click();DES.edit=true;render();const ed=document.querySelector('#desCats');const semVal=!ed.querySelector('.dgrid')&&!/€/.test(ed.textContent)&&!!ed.querySelector('[data-rso]')&&!!ed.querySelector('[data-rde]')&&!!ed.querySelector('[data-corq]');
     const n=DB.cats[0].nome;ed.querySelector('[data-corq]').click();const pop=!document.querySelector('#corPop').hidden;document.querySelector('#corPop [data-corset]').click();const cor=!!(DB.corCat||{})[n];DES.edit=false;
-    COR.linha=1;COR.caixa=1;render();go('ext');render();const m=DB.mov.find(x=>x.cat===n&&!x.parts);const tr=m&&document.querySelector(`#extTable tr[data-id="${m.id}"]`);const pint=!!tr&&/--tl/.test(tr.getAttribute('style')||'')&&/color-mix/.test(tr.querySelector('select[data-f="cat"]').getAttribute('style')||'');
+    COR.pint='linha';render();go('ext');render();const m=DB.mov.find(x=>x.cat===n&&!x.parts);let tr=m&&document.querySelector(`#extTable tr[data-id="${m.id}"]`);const pl=!!tr&&/--tl/.test(tr.getAttribute('style')||'')&&!/color-mix/.test(tr.querySelector('select[data-f="cat"]').getAttribute('style')||'');COR.pint='caixa';RV++;render();tr=document.querySelector(`#extTable tr[data-id="${m.id}"]`);const pint=pl&&!/--tl/.test(tr.getAttribute('style')||'')&&/color-mix/.test(tr.querySelector('select[data-f="cat"]').getAttribute('style')||'');
     const dsc=tr&&tr.querySelector('td.desc');const cs=dsc&&getComputedStyle(dsc);const linha=!!cs&&cs.whiteSpace==='nowrap'&&cs.textOverflow==='ellipsis'&&cs.verticalAlign==='middle'&&!!dsc.title;
-    delete DB.corCat[n];COR.linha=0;go('prev');render();const pv=!!document.querySelector('#prevDes input.pv[data-pvm]');go('des');render();
+    delete DB.corCat[n];go('prev');render();const pv=!!document.querySelector('#prevDes input.pv[data-pvm]');go('des');render();
     return {ok:foi&&semVal&&pop&&cor&&pint&&linha&&pv,foi,semVal,pop,cor,pint,linha,pv}});
   t('D96','Despesas: total abre os Extratos do ano; Editar sem valores (cor, 📌 Só este movimento, ↪ Ao mudar a partir desta); cores leves nos Extratos; descrição numa linha; previsões na aba Previsões',x96.ok,x96);
   console.log('v0.9a');
@@ -394,6 +394,21 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D103','Agregado: com sessão já iniciada antes de o módulo carregar, a secção mostra "Criar agregado" (não pede para entrar)',await ev(()=>new Promise(async ok=>{const velho=window.plataforma,vu=window.financasUser;
     window.plataforma={rpc:async()=>({data:[]})};FPAgr._set(null,[],[]);window.financasUser={id:'u5',email:'c@exemplo.pt'};await FPAgr.carrega();
     const r=!!document.querySelector('#agrNovo')&&!/Entre na sua conta/.test(document.querySelector('#agrBox').textContent);window.plataforma=velho;window.financasUser=vu;FPAgr._set(null,[],[]);ok(r)})));
+  await p.goto(U+'/financas.html');await p.waitForTimeout(300);
+  const x104=await ev(()=>{const m=DB.mov.find(x=>x.valor<0&&x.cat&&x.ref&&!eFora(x.cat));const k=m.cat+'›'+m.ref;P.m='mes';P.d=new Date(+m.dm.slice(0,4),+m.dm.slice(5,7)-1,1);perLabel();
+    document.querySelector('[data-tab="des"]').click();DES.edit=true;render();const q=document.querySelector(`#desCats [data-corq="r:${k}"]`);q.click();const pop=!document.querySelector('#corPop').hidden&&!!document.querySelector('#corExt');
+    document.querySelector('#corExt').checked=true;document.querySelector('#corPop [data-corset]').click();const guard=DB.corRef[k]&&DB.corRef[k].ext===1;
+    const sticky=getComputedStyle(document.querySelector('#tab-des .card.desedit>h3')).position==='sticky';DES.edit=false;COR.des=1;render();
+    const row=[...document.querySelectorAll('#desCats tr.gr')].find(tr=>tr.querySelector(`[data-dgo$="|${m.ref}"]`)||tr.textContent.includes(m.ref));const naoPintaDes=!row||!/--tl/.test(row.getAttribute('style')||'')||!(row.getAttribute('style')||'').includes(DB.corRef[k].c);
+    COR.pint='caixa';go('ext');RV++;render();const tr=document.querySelector(`#extTable tr[data-id="${m.id}"]`);const ext=/color-mix/.test(tr.querySelector('select[data-f="cat"]').getAttribute('style')||'')&&(tr.querySelector('select[data-f="cat"]').getAttribute('style')||'').includes(DB.corRef[k].c);
+    go('home');render();const dRef=document.querySelector('#homeDonutRef').innerHTML.includes(DB.corRef[k].c);
+    DPCT.add('homeDonut');render();const pct=/%/.test(document.querySelector('#homeDonut .lg').textContent);DPCT.delete('homeDonut');render();
+    const pv=!!document.querySelector('#homeBudget .pvbar');
+    delete DB.corRef[k];P.m='ano';perLabel();document.querySelector('#perMode [data-m="mes"]').click();const h=new Date(),a=anoIni(P.d);const mes=P.m==='mes'&&(P.d.getMonth()===h.getMonth()||P.d.getMonth()===LASTM);
+    go('obj');render();const obj=/em desenvolvimento/.test(document.querySelector('#tab-obj').textContent);go('home');
+    return {ok:pop&&guard&&sticky&&naoPintaDes&&ext&&dRef&&pct&&pv&&mes&&obj,pop,guard,sticky,naoPintaDes,ext,dRef,pct,pv,mes,obj}});
+  t('D104','cor por referência (com "Pintar só nos Extratos"), Concluir fixo no Editar, donuts € / %, Previsto vs real com linha do previsto, Ano → Mês abre o mês atual/último, aba Objetivos',x104.ok,x104);
+  await p.goto(U+'/index.html');await p.waitForTimeout(300);
   t('D82','FAQs: pesquisa, filtro por labels, perguntar e aba de gestão (só admin)',await ev(()=>['#fqQ','#fqLb','#fqList','#fqNova','#fqEnviar','#fqTabs [data-ft="minhas"]'].every(q=>document.querySelector(q))&&document.querySelector('#fqTabs [data-ft="adm"]').hidden&&/FAQs/.test(document.querySelector('#setNav [data-s="ajuda"]').textContent)));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);

@@ -5,7 +5,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.9d)
+## Já feito (v0.1 → v0.9f)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.
@@ -60,5 +60,6 @@ Ordem sugerida: do mais fácil (reaproveita o que já existe) para o mais comple
 - ⬜ **v1.6 — Acabamentos** — desempenho com muitos anos de dados, acessibilidade, idioma, ajuda completa, enviar sugestão, polimento geral.
 
 ## Ideias em espera
+- Objetivos (aba criada na v0.9f): metas com valor e prazo ligadas a uma categoria/referência, progresso automático e quanto pôr de parte por mês.
 - Faturas: ler faturas (PDF/foto), extrair loja, NIF, linhas e preços, e ligar ao movimento do extrato (aba já criada).
 - Importar o extrato mensal da CGD em PDF (meses antigos sem CSV).
