@@ -166,6 +166,19 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     delete DB.corCat[n];COR.linha=0;go('prev');render();const pv=!!document.querySelector('#prevDes input.pv[data-pv]');go('des');render();
     return {ok:foi&&semVal&&pop&&cor&&pint&&linha&&pv,foi,semVal,pop,cor,pint,linha,pv}});
   t('D96','Despesas: total abre os Extratos do ano; Editar sem valores (cor, 📌 Só este movimento, ↪ Ao mudar a partir desta); cores leves nos Extratos; descrição numa linha; previsões na aba Previsões',x96.ok,x96);
+  console.log('v0.9a');
+  const x97=await ev(()=>{const base=DB.tiposDesp.map(t=>t.nome).join('|')==='Fixas essenciais|Fixas não essenciais|Variáveis essenciais|Variáveis não essenciais|Extras'&&DB.refTipo['Casa›Renda']==='fe';
+    document.querySelector('[data-tab="des"]').click();DES.edit=true;render();const sel=document.querySelector('#desCats select[data-rtipo]');const ct=document.querySelector('#desCats select[data-ctipo]');
+    const ci=+ct.dataset.ctipo,c=DB.cats[ci];ct.value='ex';ct.dispatchEvent(new Event('change',{bubbles:true}));const todas=c.refs.every(r=>DB.refTipo[c.nome+'›'+r]==='ex');
+    const foraSem=[...document.querySelectorAll('#desCats details.cat')].filter(d=>eFora(d.dataset.c)).every(d=>!d.querySelector('[data-rtipo]'));
+    const m=DB.mov.find(x=>x.valor<0&&x.cat&&x.ref&&!eFora(x.cat));const k0=m.cat+'›'+m.ref;DB.refTipo[k0]='vn';DES.edit=false;DES.grp='tipo';render();
+    const gs=[...document.querySelectorAll('#desCats table.dgrid')[0].querySelectorAll('tr.gc')].map(x=>x.textContent);const grp=gs.some(x=>/Variáveis não essenciais/.test(x));
+    DES.grp='cat';document.querySelector('[data-tab="home"]').click();render();const dn=/Extras/.test(document.querySelector('#homeDonutTipo').textContent);
+    fpTipos.grava(fpTipos.lista().filter(t=>t.id!=='vn'),{vn:'ve'});const remap=DB.refTipo[k0]==='ve'&&!DB.tiposDesp.some(t=>t.id==='vn');
+    const cn=DB.cats[0].nome;renomeiaCat(0,'CasaX');const ren=DB.refTipo['CasaX›Renda']!=null||!DB.cats[0].refs.includes('Renda');renomeiaCat(0,cn);
+    DB.tiposDesp=TIPOS_BASE.map(([id,nome,cor])=>({id,nome,cor}));render();
+    return {ok:base&&!!sel&&todas&&foraSem&&grp&&dn&&remap&&ren,base,sel:!!sel,todas,foraSem,grp,dn,remap,ren}});
+  t('D97','tipos de despesa por referência (5 base, sugeridos nas referências base), "aplicar a todas" no Editar, agrupar a grelha por tipo, caixa no Início, apagar passa as referências para outro tipo',x97.ok,x97);
   const x62=await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();const m=DB.mov.find(x=>x.partes&&x.partes.length);SPOPEN.add(m.id);render();
     const inp=document.querySelector(`#extTable [data-pobs="${m.id}#0"]`);inp.value='Nota X';inp.dispatchEvent(new Event('change',{bubbles:true}));
     const tx=document.querySelector('#tab-ext').textContent;return {ok:m.partes[0].obs==='Nota X'&&!/Suportados:/.test(tx)&&!/Total \(filtrado\)/.test(tx)&&!!document.querySelector('#extTable tr.fim')&&!document.querySelector('#spRows [data-spo][placeholder*="ex."]')&&!/ex\.: Eletricidade/.test(document.body.innerHTML)}});
@@ -328,6 +341,10 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D43','visita guiada nos botões reais, por aba (completa ou só de uma página)',z43.ok,z43);
   t('D80','Novidades: não aparecem na 1.ª visita; aparecem numa versão nova com Novas funcionalidades e Alterações, sem scroll',await ev(()=>{const vis0=document.querySelector('#mNov').hidden;FPNov.mostra('0.8a');const m=document.querySelector('#mNov .box');const ok=!document.querySelector('#mNov').hidden&&document.querySelectorAll('#novN li').length>0&&document.querySelectorAll('#novA li').length>0&&m.scrollHeight<=m.clientHeight+2&&m.getBoundingClientRect().height<=innerHeight;document.querySelector('#novOk').click();return vis0&&ok&&FPNov.cmp('0.8a','0.8g')<0&&FPNov.cmp('0.10a','0.9z')>0}));
   t('D81','Novidades: a versão mais recente das notas = versão da aplicação',await ev(()=>NOVIDADES[0].v===document.querySelector('iframe[data-id="financas"]').contentWindow.FP_VERSAO));
+  await ev(()=>{document.querySelector('[data-set="tema"]').click();document.querySelector('#setNav [data-s="tipos"]').click()});await p.waitForTimeout(150);
+  const n98=await ev(()=>document.querySelectorAll('#tiposL .tprow').length);await ev(()=>document.querySelector('#tipoAdd').click());await p.waitForTimeout(150);
+  const z98=await ev(n=>{const w=document.querySelector('iframe[data-id="financas"]').contentWindow;const n2=w.fpTipos.lista().length,r=document.querySelectorAll('#tiposL .tprow').length;w.fpTipos.grava(w.fpTipos.lista().slice(0,n),{});document.querySelector('#mSet').hidden=true;return {ok:n>=5&&n2===n+1&&r===n+1,n,n2,r}},n98);
+  t('D98','Definições › Tipos de despesa: lista os tipos das Finanças e permite criar um novo',z98.ok,z98);
   t('D82','FAQs: pesquisa, filtro por labels, perguntar e aba de gestão (só admin)',await ev(()=>['#fqQ','#fqLb','#fqList','#fqNova','#fqEnviar','#fqTabs [data-ft="minhas"]'].every(q=>document.querySelector(q))&&document.querySelector('#fqTabs [data-ft="adm"]').hidden&&/FAQs/.test(document.querySelector('#setNav [data-s="ajuda"]').textContent)));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);

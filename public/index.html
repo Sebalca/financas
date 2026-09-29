@@ -125,6 +125,9 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .big .danger{border-color:#d1495b;color:#d1495b}
 .big textarea,.big select,.big .sc input{width:100%;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;padding:9px;font:14px system-ui,sans-serif}
 .big .sc label{display:block;font-size:12.5px;color:var(--mu);margin:8px 0 4px}
+.tprow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);flex-wrap:wrap}.tprow input[type=color]{width:32px;height:28px;padding:0;border:1px solid var(--bd);border-radius:6px;background:none;flex:none}
+.tprow input.tpn{flex:1;min-width:160px;max-width:300px}.tprow small{color:var(--mu);min-width:90px}.tprow .ib{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:6px;width:28px;height:28px;cursor:pointer}
+.tprow .tpdel{flex-basis:100%;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;padding:4px 0 2px 40px}.tprow .tpdel select{max-width:240px}
 .big .note2{font-size:12px;color:var(--mu);margin-top:6px}
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.plan{border:1px solid var(--bd);border-radius:12px;padding:12px}.plan.cur{border-color:var(--ac);background:var(--ac2)}
 .plan b{display:block;font-size:15px}.plan .pr{font-size:20px;font-weight:800;margin:6px 0}.plan ul{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:var(--mu)}
@@ -172,7 +175,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 <div class="mod" id="mSet" hidden><div class="box big" role="dialog" aria-label="Definições">
   <div class="bh"><h2>Definições</h2><button class="bx" data-fecha="mSet" type="button" aria-label="Fechar">✕</button></div>
   <div class="bb"><nav class="sn" id="setNav">
-    <button data-s="tema" type="button">⚙ Geral</button><button data-s="conta" type="button">👤 Conta</button><button data-s="backup" type="button">💾 Cópia de segurança</button>
+    <button data-s="tema" type="button">⚙ Geral</button><button data-s="tipos" type="button">🏷 Tipos de despesa</button><button data-s="conta" type="button">👤 Conta</button><button data-s="backup" type="button">💾 Cópia de segurança</button>
     <button data-s="apagar" type="button">🗑 Apagar dados</button><button data-s="onb" type="button">🧭 Onboarding</button>
     <button data-s="ajuda" type="button">❓ FAQs<span class="bdg" id="bdgFaq2" hidden></span></button><button data-s="sugestao" type="button">💬 Enviar sugestão<span class="bdg" id="bdgSug2" hidden></span></button></nav>
   <div class="sc" id="setSc">
@@ -193,6 +196,8 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       </div>
       <label class="sw2"><input type="checkbox" id="optCalc"> <span>Mostrar o ícone 🧮 <b>Como foi calculado</b> nas caixas (Início, Despesas, Rendimentos)</span></label>
     </section>
+    <section data-s="tipos" hidden><h3>Tipos de despesa</h3><p>Cada referência das Despesas tem um tipo, que se escolhe em Despesas › Editar. Aqui pode criar tipos, mudar o nome, a cor e a ordem, ou apagá-los. Ficam guardados com os seus dados (na conta, se tiver sessão).</p>
+      <div id="tiposL"></div><div class="grp"><button class="opt" id="tipoAdd" type="button">＋ Novo tipo</button></div><div class="note2" id="tiposMsg"></div></section>
     <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div></section>
     <section data-s="backup" hidden><h3>Cópia de segurança</h3><p>Exporta tudo das Finanças (movimentos, categorias, regras, pessoas, rendimentos, previstos) para um ficheiro .json, que pode importar noutro dispositivo ou mais tarde.</p>
       <div class="grp"><button class="opt" id="bkExp" type="button">⤓ Exportar ficheiro</button><button class="opt" id="bkImpBt" type="button">⤒ Importar ficheiro…</button><input type="file" id="bkImp" accept=".json,application/json" hidden></div><div class="note2" id="bkMsg"></div></section>
@@ -497,7 +502,25 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
 </script>
 <script>
 /* ===== Novidades: aparece uma vez por versão nova (não na primeira visita). Atualizar NOVIDADES a cada versão (ver CLAUDE.md). ===== */
+const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementById(id),esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const api=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.contentWindow&&f.contentWindow.fpTipos}catch(e){return null}};
+  const grava=remap=>{const a=api();if(!a)return;a.grava(L,remap||{});carrega()};
+  function carrega(){const a=api();if(!a){$('tiposL').innerHTML='';$('tiposMsg').textContent='Abra primeiro o separador Finanças para editar os tipos.';return}L=a.lista();U=a.uso();$('tiposMsg').textContent='';pinta()}
+  function pinta(){$('tiposL').innerHTML=L.map((t,i)=>`<div class="tprow" data-i="${i}"><input type="color" value="${esc(t.cor)}" data-tc="${i}" title="Cor"><input class="tpn" value="${esc(t.nome)}" data-tn="${i}" aria-label="Nome do tipo"><small>${U[t.id]||0} referência${(U[t.id]||0)===1?'':'s'}</small>
+      <button class="ib" type="button" data-tm="${i}|-1" title="Subir">↑</button><button class="ib" type="button" data-tm="${i}|1" title="Descer">↓</button><button class="ib" type="button" data-td="${i}" title="Apagar">🗑</button>
+      ${apagar===i?`<div class="tpdel"><span style="white-space:nowrap">Passar as ${U[t.id]} referências para</span><select id="tpPara"><option value="">— sem tipo —</option>${L.filter((_,j)=>j!==i).map(x=>`<option value="${esc(x.id)}">${esc(x.nome)}</option>`).join('')}</select><button class="opt danger" type="button" data-tdok="${i}">Apagar</button><button class="opt" type="button" data-tdno>Cancelar</button></div>`:''}</div>`).join('')}
+  const liga=()=>{$('tiposL').addEventListener('change',e=>{const d=e.target.dataset;if(d.tc!=null){L[+d.tc].cor=e.target.value;grava()}else if(d.tn!=null){const v=e.target.value.trim();if(!v){e.target.value=L[+d.tn].nome;return}if(L.some((x,j)=>j!==+d.tn&&x.nome.toLowerCase()===v.toLowerCase())){$('tiposMsg').textContent='Já existe um tipo com esse nome.';e.target.value=L[+d.tn].nome;return}L[+d.tn].nome=v;grava()}});
+    $('tiposL').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+      if(d.tm){const [i,k]=d.tm.split('|').map(Number),j=i+k;if(j<0||j>=L.length)return;[L[i],L[j]]=[L[j],L[i]];apagar=null;grava()}
+      else if(d.td!=null){const i=+d.td;if(U[L[i].id]){apagar=i;pinta()}else{L.splice(i,1);apagar=null;grava()}}
+      else if(d.tdok!=null){const i=+d.tdok,id=L[i].id,para=$('tpPara').value;L.splice(i,1);apagar=null;grava({[id]:para})}
+      else if('tdno' in d){apagar=null;pinta()}});
+    $('tipoAdd').addEventListener('click',()=>{let n='Novo tipo',k=2;while(L.some(x=>x.nome===n))n='Novo tipo '+(k++);L.push({id:'t'+Date.now().toString(36),nome:n,cor:'#90a4ae'});grava();setTimeout(()=>{const x=document.querySelector('#tiposL .tprow:last-child .tpn');if(x){x.focus();x.select()}},0)});
+    document.querySelectorAll('#setNav [data-s="tipos"]').forEach(b=>b.addEventListener('click',()=>{apagar=null;carrega()}))};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
+  return {carrega}})();
 const NOVIDADES=[
+ {v:'0.9a',d:'29/09/2026',n:['Tipos de despesa (Fixas essenciais, Fixas não essenciais, Variáveis essenciais, Variáveis não essenciais, Extras) em cada referência','Definições › Tipos de despesa: criar, mudar nome, cor e ordem, apagar','Despesas: agrupar a grelha por Categoria ou por Tipo','Início: nova caixa Despesas por tipo'],a:['Em Despesas › Editar, nova coluna Tipo de despesa com "Aplicar a todas" por categoria','As referências base já vêm com um tipo sugerido (pode mudar)']},
  {v:'0.8m',d:'29/09/2026',n:['Cores por categoria: escolha a cor em Despesas › Editar','Definições › Geral: pintar gráficos, linhas das Despesas e Extratos com essas cores','Aba Previsões: escreva aqui a previsão mensal de cada referência'],a:['O ano segue o primeiro mês escolhido (ex.: Set 2026 – Ago 2027), no Início e nas Despesas','Clicar no Total de uma categoria ou referência abre os Extratos do ano','Previsão bloqueada na grelha das Despesas; tabelas de cima e de baixo alinhadas','Editar das Despesas só com nomes, cor e opções das referências','Extratos: descrição numa linha só']},
  {v:'0.8l',d:'28/09/2026',n:['Despesas numa grelha de 12 meses com Total, Média e Previsão','Escolher o primeiro mês do ano (Definições › Geral)'],a:['Extratos sem as colunas Data valor e Saldo (aparecem ao passar o rato)','Valores acima da previsão a vermelho; clique num valor para ver os movimentos']},
  {v:'0.8k',d:'28/09/2026',n:['Extratos do BPI (Excel do BPI Net)'],a:[]},

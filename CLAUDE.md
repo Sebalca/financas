@@ -21,4 +21,4 @@ Responder sempre em português de Portugal, de forma concisa.
 ## Regras
 - Nunca pôr no repositório extratos, recibos ou outros dados reais — os testes usam só `tests/fixtures` (fictícios).
 - Nunca credenciais privadas no código (só a chave pública do Supabase, via `plataforma-core`).
-- Dados do utilizador só dele (RLS em `financas_dados`); sites externos nunca recebem sessão.
+- Dados do utilizador só dele (RLS em `financas_dados`); dados de um agregado só dos membros que aceitaram o convite (D98); sites externos nunca recebem sessão.

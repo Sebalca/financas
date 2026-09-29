@@ -129,11 +129,18 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D33 "Entradas e saídas por mês": sempre os 12 meses do ano do período, mais largo que o "Saldo por banco"; opção Detalhado (cores por categoria / entidade).
 - D95 O "ano" começa no primeiro mês escolhido em Definições › Geral e dura 12 meses (ex.: "Set 2026 – Ago 2027"): período Ano, contas e gráficos do Início, grelha das Despesas; "Hoje" vai para o ano que contém hoje; ‹ › andam um ano.
 - D96 Cores das categorias: escolhidas no Editar das Despesas (paleta de cores leves, aplicadas com transparência). Em Definições › Geral: gráficos do Início com as mesmas cores, linhas das Despesas pintadas, Extratos com a caixa da categoria pintada e/ou a linha inteira. Previsões mensais escrevem-se na aba Previsões. Extratos: descrição numa só linha (… e texto completo no tooltip), centrada na vertical.
+- D97 **Tipos de despesa** (5 base: Fixas essenciais, Fixas não essenciais, Variáveis essenciais, Variáveis não essenciais, Extras) guardados nos dados (`tiposDesp`, sincronizam). Cada referência das categorias que entram nas contas tem um tipo (`refTipo['cat›ref']`), escolhido em Despesas › Editar (com "Aplicar a todas" por categoria); as referências base vêm com tipo sugerido. Os tipos gerem-se em Definições › Tipos de despesa (criar, nome, cor, ordem, apagar — ao apagar um tipo em uso pergunta para que tipo passam as referências). Grelha das Despesas agrupa por Categoria ou Tipo; Início tem "Despesas por tipo".
+- D98 Privacidade com agregado (v0.9c+): a conta pessoal continua só do próprio; um agregado é uma conta separada, só dos membros que aceitaram o convite; nada passa da pessoal para o agregado, exceto a cópia de categorias e regras ao criá-lo.
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
 
 ---
 
 ## Histórico
+
+### v0.9a — 29/09/2026 (v0.9 — Tipos de despesa, Previsões e Agregado familiar, passo 1)
+- Tipos de despesa por referência (D97): coluna no Despesas › Editar com "Aplicar a todas", Definições › Tipos de despesa, grelha agrupável por Tipo, caixa "Despesas por tipo" no Início.
+- Mudar o nome de uma categoria mantém a cor e os tipos (a cor perdia-se desde a v0.8m).
+- Plano da v0.9 combinado: 0.9a tipos · 0.9b Previsões (3 anos, previsão por ano, média ⇄ total) · 0.9c agregado no Supabase · 0.9d seletor Pessoal/Família. Regra de privacidade do agregado registada (D98).
 
 ### v0.8m — 29/09/2026
 - Ano segue o primeiro mês das Definições ("Set 2026 – Ago 2027") no período, contas e gráficos do Início (D95).

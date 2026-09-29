@@ -129,7 +129,7 @@ Na barra de cima da página principal (só no separador Finanças): **Mês / Ano
 - **Modo Editar**: ordenar (↑↓), acrescentar ou apagar categorias e referências.
 
 ### Outras abas
-Previsões tem as **despesas previstas** (valor mensal por referência, usado nas Despesas). Faturas e Saúde financeira existem mas ainda estão **em preparação** (ver ROADMAP). As cores das categorias escolhem-se em Despesas › Editar e as opções de pintura em Definições › Geral.
+Previsões tem as **despesas previstas** (valor mensal por referência, usado nas Despesas). Faturas e Saúde financeira existem mas ainda estão **em preparação** (ver ROADMAP). As cores das categorias escolhem-se em Despesas › Editar e as opções de pintura em Definições › Geral. Cada referência tem um **tipo de despesa** (Despesas › Editar); os tipos gerem-se em Definições › Tipos de despesa.
 
 ### 🧮 Como foi calculado
 As caixas do Início, Despesas e Rendimentos têm um ícone 🧮 que abre um painel lateral com a fórmula, os movimentos que contam (a soma dá o valor da caixa) e os que ficaram de fora, agrupados pelo motivo (entre contas, fora das contas, reembolso, por categorizar). Clicar numa linha leva ao movimento. O ícone esconde-se em Definições › Geral.

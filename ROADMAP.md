@@ -5,7 +5,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.8m)
+## Já feito (v0.1 → v0.9a)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.
@@ -29,15 +29,18 @@ Ordem sugerida: primeiro garantir que os números estão certos (é a base de tu
   4. Alertas de dados em falta: meses sem extrato, recibos por ligar, movimentos por categorizar, saltos de saldo.
   5. Sessão de validação contigo com um mês real (**junho de 2026**) (conferir ao cêntimo) e registar o resultado nas decisões fixas.
 
-- ⬜ **v0.9 — Melhorar a aba Despesas** *(definir contigo no início: o que falta hoje)*
-  - Ideias: comparar com o mês anterior / média, top referências, fixas vs variáveis, previsto por mês (não só mensal × 12), alertas de desvio, gráfico por categoria ao longo do ano.
+- 🔜 **v0.9 — Tipos de despesa, Previsões e Agregado familiar**
+  1. ✅ (v0.9a) Tipos de despesa por referência (Fixas/Variáveis essenciais/não essenciais, Extras), editáveis nas Definições; agrupar Despesas por tipo; caixa no Início.
+  2. (v0.9b) Previsões: últimos 3 anos (a partir do mês de início) com total e média/mês (ano atual ÷ meses passados); previsão guardada por ano, escrita como média/mês ou total do ano; ano novo copia a previsão anterior; totais por tipo.
+  3. (v0.9c) Agregado no Supabase: `agregados`, `agregado_membros` (dono/editor), `convites` (link com validade), RLS só para membros; reutilizável por outros sites.
+  4. (v0.9d) Seletor "Pessoal / Família" na barra de cima; ao criar copia categorias e regras; gravação com número de versão + junção quando duas pessoas gravam.
 
 - ⬜ **v0.10 — Onboarding completo** *(v0.8g já trouxe a visita guiada por aba, Novidades e FAQs)*
   - Passos com destaque nos botões reais, configuração inicial (banco, primeiro extrato, categorias base, primeiras regras), lista de tarefas com progresso, dicas na primeira visita a cada aba, dados de exemplo para experimentar.
 
 - ⬜ **v1.0 — Lançamento para a família**
   - Revisão de segurança do Supabase (RLS, avisos antigos de outros sites) e da privacidade dos dados.
-  - Contas separadas por pessoa (cada um vê só os seus dados); convite simples.
+  - Contas separadas por pessoa (cada um vê só os seus dados); agregado familiar já na v0.9.
   - Teste no telemóvel, cópia de segurança verificada, lista de problemas conhecidos.
 
 ---
@@ -46,7 +49,7 @@ Ordem sugerida: primeiro garantir que os números estão certos (é a base de tu
 
 Ordem sugerida: do mais fácil (reaproveita o que já existe) para o mais complexo (precisa de mudanças no Supabase).
 
-- ⬜ **v1.1 — Previsões** — despesas e rendimentos previstos (valor, data ou periodicidade), saldo previsto no fim do mês/ano, avisos antes de pagamentos grandes. Reaproveita o "previsto" das Despesas.
+- ⬜ **v1.1 — Previsões (parte 2)** — rendimentos previstos, datas/periodicidade, saldo previsto no fim do mês/ano, avisos antes de pagamentos grandes (a parte das despesas previstas vem na v0.9b).
 - ⬜ **v1.2 — Análise (Saúde financeira)** — taxa de poupança, fixas vs variáveis, fundo de emergência, evolução do saldo, comparação com o ano anterior, conselhos e relatório mensal/anual.
 - ⬜ **v1.3 — Ligação ao Simulador** — usar os rendimentos reais no Simulador (Pessoas/Unipessoal) e guardar os dados do Simulador na conta.
 - ⬜ **v1.4 — Aba Empresas** — contas e movimentos de empresa separados dos pessoais (mesmos extratos/regras), resultados da empresa e ligação ao que passa para a conta pessoal (salário, dividendos).
