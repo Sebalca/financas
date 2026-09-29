@@ -140,6 +140,9 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 
 ## Histórico
 
+### v0.9e — 29/09/2026
+- Corrigido: Definições › Agregado familiar mostrava "Entre na sua conta" com sessão iniciada — a sessão chegava antes de o módulo do agregado existir. Agora o módulo apanha a sessão já existente (ao iniciar e ao abrir a secção).
+
 ### v0.9d — 29/09/2026 (fecha a v0.9)
 - Seletor Pessoal / Agregado na barra (D102); troca grava antes o que falta enviar, carrega a cópia local do outro contexto e sincroniza.
 - Agregado novo: cópia de categorias, tipos, cores e regras da conta pessoal.

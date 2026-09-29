@@ -391,6 +391,9 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     FPAgr._set({id:'u2'},[],[]);FPPer.pinta();const some=document.querySelector('#fCtx').hidden;w.fpCtx.db().cats[0].refs=w.fpCtx.db().cats[0].refs.filter(r=>r!=='RefTeste102');w.saveLocal();FPAgr._set(null,[],[]);
     ok({ok:escondido&&vis&&meio&&agr&&copia&&volta&&some,escondido,vis,meio,agr,copia,volta,some,nP})}));
   t('D102','seletor Pessoal / Agregado no meio da barra, só com agregado; dados separados por contexto; agregado novo começa com categorias e regras da conta pessoal',z102.ok,z102);
+  t('D103','Agregado: com sessão já iniciada antes de o módulo carregar, a secção mostra "Criar agregado" (não pede para entrar)',await ev(()=>new Promise(async ok=>{const velho=window.plataforma,vu=window.financasUser;
+    window.plataforma={rpc:async()=>({data:[]})};FPAgr._set(null,[],[]);window.financasUser={id:'u5',email:'c@exemplo.pt'};await FPAgr.carrega();
+    const r=!!document.querySelector('#agrNovo')&&!/Entre na sua conta/.test(document.querySelector('#agrBox').textContent);window.plataforma=velho;window.financasUser=vu;FPAgr._set(null,[],[]);ok(r)})));
   t('D82','FAQs: pesquisa, filtro por labels, perguntar e aba de gestão (só admin)',await ev(()=>['#fqQ','#fqLb','#fqList','#fqNova','#fqEnviar','#fqTabs [data-ft="minhas"]'].every(q=>document.querySelector(q))&&document.querySelector('#fqTabs [data-ft="adm"]').hidden&&/FAQs/.test(document.querySelector('#setNav [data-s="ajuda"]').textContent)));
 
   t('D99','sem erros de JavaScript',erros.length===0,erros);

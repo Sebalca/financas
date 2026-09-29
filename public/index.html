@@ -520,7 +520,7 @@ const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=
   const dt=d=>new Date(d).toLocaleDateString('pt-PT');
   const rpc=async(f,a)=>{const c=sb();if(!c)throw new Error('sem ligação');const {data,error}=await c.rpc(f,a||{});if(error)throw error;return data};
   const msg=(t,err)=>{MSG=t||'';const m=$('agrMsg');if(m){m.textContent=MSG;m.style.color=err?'var(--c2,#c62828)':''}};
-  async function carrega(){if(!U||!sb()){L=[];C=[];OK=!U;pinta();try{FPCtx.valida()}catch(e){}return}
+  async function carrega(){if(!U){try{U=window.financasUser||null}catch(e){}}if(!U||!sb()){L=[];C=[];OK=!U;pinta();try{FPCtx.valida()}catch(e){}return}
     try{const [a,b]=await Promise.all([rpc('meus_agregados',{p_site:SITE}),rpc('meus_convites',{p_site:SITE})]);L=a||[];C=b||[];OK=true}catch(e){msg('Não foi possível carregar o agregado.',1)}pinta();try{FPCtx.valida()}catch(e){}}
   function badge(){const b=$('bdgAgr');if(b){b.hidden=!C.length;b.textContent=C.length}}
   function pinta(){badge();const box=$('agrBox');if(!box)return;
@@ -565,6 +565,8 @@ const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=
     $('convTxt').innerHTML=`<p><b>${esc(c.de_nome)}</b> (${esc(c.de_email)}) convidou-o para o agregado <b>${esc(c.agregado)}</b>.</p><p>Ao aceitar, passa a ver e a editar as Finanças partilhadas desse agregado. A sua conta pessoal continua privada.</p>`;$('mConv').hidden=false}
   async function sessao(u){U=u||null;MSG='';await carrega();if(U)popup()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
+  /* a sessão pode chegar antes de este script correr (FPAgr ainda não existia): apanha-a aqui */
+  [0,1500,4000].forEach(t=>setTimeout(()=>{let u=null;try{u=window.financasUser||null}catch(e){}if(u&&(!U||U.id!==u.id))sessao(u)},t));
   return {sessao,carrega,_set:(u,l,c)=>{U=u;L=l;C=c;OK=true;pinta();try{FPCtx.valida()}catch(e){}},popup,ativos:()=>L.filter(g=>!g.apagar_em),pronto:()=>OK}})();
 /* v0.9d: seletor Pessoal / Agregado no meio da barra — só para quem tem ou está num agregado, e só no separador Finanças */
 const FPCtx=(()=>{const $=id=>document.getElementById(id);let pend=true;
@@ -597,6 +599,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.9e',d:'29/09/2026',n:[],a:['Corrigido: com sessão iniciada, Definições › Agregado familiar pedia para entrar e não deixava criar o agregado']},
  {v:'0.9d',d:'29/09/2026',n:['Seletor 👤 Pessoal / 👪 Agregado no meio da barra de cima (aparece só a quem tem ou está num agregado)','O agregado começa com as suas categorias, tipos e regras','As alterações dos outros membros aparecem sozinhas (a cada 30 s ou ao voltar à página)'],a:['A conta pessoal e o agregado têm dados totalmente separados','Se duas pessoas gravarem ao mesmo tempo, as alterações juntam-se']},
  {v:'0.9c',d:'29/09/2026',n:['Agregado familiar (Definições › 👪): criar um agregado, dar-lhe nome e convidar pessoas pelo email','Quem é convidado vê uma mensagem para aceitar ou recusar ao entrar','O dono pode remover membros e cancelar convites; os membros podem sair'],a:['Apagar um agregado guarda-o 30 dias (pode restaurar) antes de o apagar de vez','A conta pessoal continua privada: o agregado é uma conta à parte']},
  {v:'0.9b',d:'29/09/2026',n:['Previsões: total e média por mês dos últimos 3 anos em cada referência','Escreva a previsão como média por mês ou total do ano (um calcula o outro)','Previsão guardada por ano, com ‹ › para mudar de ano; um ano novo começa com a previsão do anterior','Botões ↺ para usar a média do ano anterior (numa referência ou em todas)'],a:['Totais previstos por tipo de despesa no topo das Previsões','Despesas e Início usam a previsão do ano do período escolhido']},
