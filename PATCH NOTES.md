@@ -131,11 +131,16 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D96 Cores das categorias: escolhidas no Editar das Despesas (paleta de cores leves, aplicadas com transparência). Em Definições › Geral: gráficos do Início com as mesmas cores, linhas das Despesas pintadas, Extratos com a caixa da categoria pintada e/ou a linha inteira. Previsões mensais escrevem-se na aba Previsões. Extratos: descrição numa só linha (… e texto completo no tooltip), centrada na vertical.
 - D97 **Tipos de despesa** (5 base: Fixas essenciais, Fixas não essenciais, Variáveis essenciais, Variáveis não essenciais, Extras) guardados nos dados (`tiposDesp`, sincronizam). Cada referência das categorias que entram nas contas tem um tipo (`refTipo['cat›ref']`), escolhido em Despesas › Editar (com "Aplicar a todas" por categoria); as referências base vêm com tipo sugerido. Os tipos gerem-se em Definições › Tipos de despesa (criar, nome, cor, ordem, apagar — ao apagar um tipo em uso pergunta para que tipo passam as referências). Grelha das Despesas agrupa por Categoria ou Tipo; Início tem "Despesas por tipo".
 - D98 Privacidade com agregado (v0.9c+): a conta pessoal continua só do próprio; um agregado é uma conta separada, só dos membros que aceitaram o convite; nada passa da pessoal para o agregado, exceto a cópia de categorias e regras ao criá-lo.
+- D100 **Previsões por ano** (`prevAno[ano inicial]['cat›ref']` = média mensal; o ano começa no mês das Definições). A aba mostra, por referência, total e média/mês dos 3 anos até ao ano escolhido (anos anteriores ÷ 12; ano atual ÷ meses já passados) e a previsão como Média/mês ⇄ Total ano. Um ano sem previsão própria usa a do último ano anterior e fica copiada ao editar. Despesas e Início usam a previsão do ano do período.
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
 
 ---
 
 ## Histórico
+
+### v0.9b — 29/09/2026
+- Aba Previsões (D100): 3 anos de histórico por referência (total e média/mês), previsão por ano como média/mês ou total do ano, ‹ › por ano, ↺ média do ano anterior (linha ou todas), limpar ano, "Só com valores", totais por tipo.
+- As previsões antigas (mensais, sem ano) passam para o ano atual.
 
 ### v0.9a — 29/09/2026 (v0.9 — Tipos de despesa, Previsões e Agregado familiar, passo 1)
 - Tipos de despesa por referência (D97): coluna no Despesas › Editar com "Aplicar a todas", Definições › Tipos de despesa, grelha agrupável por Tipo, caixa "Despesas por tipo" no Início.

@@ -136,6 +136,10 @@ tr.ra-d td{background:var(--soft);font-size:12.5px}tr.ra-d td:first-child{paddin
 .corq{width:24px;height:24px;border-radius:7px;border:1px dashed var(--bd);background:transparent;cursor:pointer;font-size:12px;padding:0;flex:none}
 .corpop{position:fixed;z-index:80;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:10px;display:grid;grid-template-columns:repeat(6,26px);gap:6px}.corpop[hidden]{display:none}
 .corpop button{width:26px;height:26px;border-radius:7px;border:2px solid transparent;cursor:pointer;padding:0}.corpop button.on{border-color:var(--tx)}.corpop .sem{grid-column:span 6;width:auto;height:auto;font-size:12px;background:none;color:var(--mu);border:1px solid var(--bd);padding:4px}
+.pvnav{display:inline-flex;align-items:center;gap:6px;margin-right:6px}.pvnav button{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:6px;width:26px;height:26px;cursor:pointer}.pvnav b{min-width:150px;text-align:center}
+.pvsum{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.pvsum .ch{border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font-size:12.5px;display:flex;gap:8px;align-items:center}.pvsum .ch b{font-size:13.5px}.pvsum .ch.tot{background:var(--soft)}
+table.prevt{font-size:12.5px;table-layout:fixed;min-width:1150px}table.prevt th.yr{text-align:center;border-left:1px solid var(--bd)}table.prevt td.bl,table.prevt th.bl{border-left:1px solid var(--bd)}
+table.prevt tr.gc td{background:var(--soft)}table.prevt input.pv{width:100%;max-width:110px;text-align:right}table.prevt .pvx td{color:var(--mu)}table.prevt td.tpn{font-size:12px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gtp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:16px}@media (max-width:1000px){.gtp{grid-template-columns:1fr}}
 table.t th.tpc select{margin-left:6px;font-weight:400;max-width:160px}table.t td.tpc select{max-width:220px}
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}@media (max-width:1300px){.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:760px){.grid4{grid-template-columns:1fr}}
@@ -278,7 +282,6 @@ label.so{font-size:11.5px;color:var(--mu);margin-left:8px;white-space:nowrap;cur
 .dev{display:grid;gap:14px}.dev .card p{margin:0 0 8px;line-height:1.55}.dev ul{margin:4px 0 0;padding-left:20px;line-height:1.6}
 tr.fora-r td{background:var(--soft);font-weight:700;color:var(--mu);padding-top:14px}
 table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px}
-table.prevt tr.gc td{background:var(--soft)}table.prevt input.pv{width:110px}
 table.dgrid{font-size:12.5px;min-width:1100px;table-layout:fixed;width:100%}table.dgrid tr[style*="--tl"]>td{background:var(--tl)}table.dgrid .pvro{color:var(--mu)}table.dgrid th{text-transform:uppercase;font-size:11px;letter-spacing:.03em;color:var(--mu);white-space:nowrap}
 table.dgrid td,table.dgrid th{padding:7px 8px}table.dgrid .nm{min-width:170px;position:sticky;left:0;background:var(--card);z-index:1}
 table.dgrid tr.gc td{background:var(--soft);cursor:pointer;border-top:1px solid var(--bd)}table.dgrid tr.gc td.nm{background:var(--soft)}table.dgrid tr.gc td.nm b::after{content:' ▸';color:var(--mu);font-weight:400}table.dgrid tr.gc.open td.nm b::after{content:' ▾'}
@@ -400,7 +403,8 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
   </div></section>
 
   <section class="panel" id="tab-prev">
-    <div class="card"><h3>Despesas previstas <small>valor mensal por referência · usado nas Despesas (coluna Previsão, vermelho quando passa) e nas caixas Previsto/Diferença</small><span class="r"><span class="note" id="prevTot"></span></span></h3><div id="prevDes"></div></div>
+    <div class="card"><h3>Despesas previstas <small>por referência · escreva a média por mês ou o total do ano · usada nas Despesas e no Início</small><span class="r"><span class="nav pvnav" id="pvNav"><button type="button" data-pvy="-1" aria-label="Ano anterior">‹</button><b id="pvAno"></b><button type="button" data-pvy="1" aria-label="Ano seguinte">›</button></span><button class="btn sm" type="button" id="pvOnly">Só com valores</button><button class="btn sm" type="button" id="pvUsar" title="Previsão = média mensal do ano anterior, em todas as referências">↺ Média do ano anterior em todas</button><button class="btn sm" type="button" id="pvLimpa">Limpar ano</button></span></h3>
+      <div class="pvsum" id="prevTot"></div><div id="prevDes"></div><p class="note" id="prevNota"></p></div>
     <div class="card"><h3>Rendimentos previstos <small>em preparação</small></h3><div class="empty"><b>Em breve</b>Aqui vai poder registar os rendimentos que espera receber (salários, subsídios, prémios, rendas…).</div></div>
   </section>
 
@@ -497,7 +501,7 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 
 <script>
 'use strict';
-const APP_VERSAO='0.9a'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.9b'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -794,6 +798,14 @@ const pad=n=>String(n).padStart(2,'0');
 /* ano = 12 meses a começar no mês escolhido em Definições › Geral (MES1; Janeiro = ano civil) */
 let MES1=0;try{MES1=+(localStorage.getItem('fp_mes1')||0)||0}catch(e){}
 const anoIni=d=>new Date(d.getMonth()>=MES1?d.getFullYear():d.getFullYear()-1,MES1,1);
+/* v0.9b: previsões por ano (DB.prevAno[anoInicial]={'cat›ref':mensal}); um ano sem previsão própria usa a do último ano anterior (cópia ao editar) */
+const PA=()=>{if(!DB.prevAno||typeof DB.prevAno!=='object'){DB.prevAno={};if(Object.keys(DB.prev||{}).length)DB.prevAno[anoIni(new Date()).getFullYear()]={...DB.prev}}return DB.prevAno};
+const PVde=y=>{const A=PA();if(A[y])return y;const ks=Object.keys(A).map(Number).filter(x=>x<y).sort((a,b)=>b-a);return ks.length?ks[0]:null};
+const PVA=y=>{const o=PVde(y);return o==null?{}:PA()[o]};
+const PVW=y=>{const A=PA();if(!A[y])A[y]={...PVA(y)};return A[y]};
+const pvK=(y,k)=>+PVA(y)[k]||0;
+const prevObjs=()=>[DB.prev,...Object.values(PA())];
+const anoDe=dm=>{const y=+dm.slice(0,4),mo=+dm.slice(5,7)-1;return mo>=MES1?y:y-1};
 const anoTxt=d=>{const a=anoIni(d);if(!MES1)return String(a.getFullYear());const f=new Date(a.getFullYear(),a.getMonth()+11,1);return `${MES3[a.getMonth()]} ${a.getFullYear()} – ${MES3[f.getMonth()]} ${f.getFullYear()}`};
 function range(){
   if(P.m==='ano'){const a=anoIni(P.d),f=new Date(a.getFullYear(),a.getMonth()+12,0);return [`${a.getFullYear()}-${pad(a.getMonth()+1)}-01`,`${f.getFullYear()}-${pad(f.getMonth()+1)}-${pad(f.getDate())}`]}
@@ -1023,7 +1035,7 @@ function render(){
    const r2_=agrupa(m=>m.ref||'(sem referência)').map(([l,x],i)=>({l,v:r2(x.v),u:r2(x.u),c:CORES[(i+3)%CORES.length],a:l==='(sem referência)'?'data-gocat="Rendimentos" title="Ver nos Extratos"':`data-goref="${esc('Rendimentos›'+l)}" title="Ver nos Extratos"`}));
    const vaz='<div class="empty"><b>Sem rendimentos no período</b>Categorize as entradas do extrato em Rendimentos.</div>';
    $('#homeRend').innerHTML=r1.length?donut(r1):vaz;$('#homeRendTipo').innerHTML=r2_.length?donut(r2_):vaz}
-  const resumo=DB.cats.filter(c=>!eFora(c.nome)).map(c=>{const p=c.refs.reduce((s,r)=>s+(+DB.prev[c.nome+'›'+r]||0),0)*k,r=-perX.filter(m=>m.cat===c.nome).reduce((s,m)=>s+m.valor,0);return {c,p,r}}).filter(x=>(x.p||Math.abs(x.r)>.004));
+  const resumo=DB.cats.filter(c=>!eFora(c.nome)).map(c=>{const yH=anoIni(P.d).getFullYear(),p=c.refs.reduce((s,r)=>s+pvK(yH,c.nome+'›'+r),0)*k,r=-perX.filter(m=>m.cat===c.nome).reduce((s,m)=>s+m.valor,0);return {c,p,r}}).filter(x=>(x.p||Math.abs(x.r)>.004));
   $('#homeBudget').innerHTML=resumo.length?`<table class="t"><thead><tr><th>Categoria</th><th class="num">Previsto</th><th class="num">Real</th><th></th></tr></thead><tbody>${resumo.map(({c,p,r})=>{const pc=p>0?Math.min(100,r/p*100):(r>0?100:0);return `<tr><td><i class="dot" style="background:${corCat(c.nome)}"></i>${esc(c.nome)}</td><td class="num">${p?E(p):'—'}</td><td class="num">${E(r)}</td><td style="width:30%"><div class="bar"><i style="width:${Math.max(0,pc)}%;background:${p&&r>p?'var(--c2)':p?'var(--c1)':'var(--c8)'}"></i></div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem valores no período</b></div>';
   const last=ordena(per).slice(0,8);
   $('#homeLast').innerHTML=last.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th></tr></thead><tbody>${last.map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td>${m.cat?`<span class="tag">${esc(m.cat)}${m.ref?' · '+esc(m.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos no período</b></div>';
@@ -1073,7 +1085,7 @@ function renderDespesas(per,k){
   const liqP=(l,c,r)=>saiP(l,c,r)-entP(l,c,r);
   const saiP=(l,c,r)=>-l.filter(m=>m.valor<0&&m.cat===c&&(r==null||m.ref===r)).reduce((s,m)=>s+m.valor,0);
   const entP=(l,c,r)=>l.filter(m=>m.valor>0&&m.cat===c&&(r==null||m.ref===r)).reduce((s,m)=>s+m.valor,0);
-  const prv=(c,r)=>+DB.prev[c+'›'+r]||0,prvC=c=>c.refs.reduce((s,r)=>s+prv(c.nome,r),0);
+  const yPv=+mesesGrelha()[0].slice(0,4),prv=(c,r)=>pvK(yPv,c+'›'+r),prvC=c=>c.refs.reduce((s,r)=>s+prv(c.nome,r),0);
   const norm_=DB.cats.map((c,ci)=>({c,ci})).filter(x=>!eFora(x.c.nome)),fora=DB.cats.map((c,ci)=>({c,ci})).filter(x=>eFora(x.c.nome));
   const tp=norm_.reduce((s,x)=>s+prvC(x.c),0)*k,tr=norm_.reduce((s,x)=>s+liqP(per,x.c.nome),0);
   const tsB=norm_.reduce((s,x)=>s+saiP(per,x.c.nome),0),teB=norm_.reduce((s,x)=>s+entP(per,x.c.nome),0);
@@ -1122,10 +1134,31 @@ function renderDespesas(per,k){
 }
 /* Despesas: grelha de 12 meses (ano a começar no mês escolhido em Definições › Geral), categorias com referências, Total, Média e Previsão */
 function mesesGrelha(){const [,b]=range(),y=+b.slice(0,4),m=+b.slice(5,7)-1,y0=m>=MES1?y:y-1;return Array.from({length:12},(_,i)=>{const d=new Date(y0,MES1+i,1);return `${d.getFullYear()}-${pad(d.getMonth()+1)}`})}
-function renderPrev(){const cats=DB.cats.filter(c=>!eFora(c.nome)),pv=(c,r)=>+DB.prev[c+'›'+r]||0,tot=cats.reduce((s,c)=>s+c.refs.reduce((a,r)=>a+pv(c.nome,r),0),0);
-  $('#prevTot').innerHTML=`Total mensal <b>${E(tot)}</b> · anual ${E(tot*12)}`;
-  $('#prevDes').innerHTML=`<div class="tw"><table class="t prevt"><thead><tr><th>Categoria / referência</th><th class="num">Previsão mensal</th><th class="num">Anual</th></tr></thead><tbody>${cats.map(c=>{const s=c.refs.reduce((a,r)=>a+pv(c.nome,r),0);
-    return `<tr class="gc"><td><i class="dot" style="background:${corCat(c.nome)}"></i><b>${esc(c.nome)}</b></td><td class="num"><b>${E(s)}</b></td><td class="num">${E(s*12)}</td></tr>`+c.refs.map(r=>`<tr><td style="padding-left:24px">${esc(r)}</td><td class="num"><input class="pv" data-pv="${esc(c.nome+'›'+r)}" value="${pv(c.nome,r)?String(pv(c.nome,r)).replace('.',','):''}" placeholder="0,00" inputmode="decimal"></td><td class="num muted">${pv(c.nome,r)?E(pv(c.nome,r)*12):'—'}</td></tr>`).join('')}).join('')}</tbody></table></div>`}
+let PREVY=null,PVONLY=false;
+const prevAno=()=>PREVY!=null?PREVY:anoIni(P.d).getFullYear();
+function renderPrev(){const Y=prevAno(),anos=[Y-2,Y-1,Y],cats=DB.cats.filter(c=>!eFora(c.nome)),pv=k=>pvK(Y,k),dono=PVde(Y);
+  $('#pvAno').textContent=anoTxt(new Date(Y,MES1,1));$('#pvOnly').textContent=PVONLY?'Mostrar todas':'Só com valores';$('#pvOnly').classList.toggle('on',PVONLY);
+  const hj=new Date(),yh=anoIni(hj).getFullYear(),div=y=>y<yh?12:y>yh?0:Math.max(1,(hj.getFullYear()-y)*12+hj.getMonth()-MES1+1);
+  const T={};expande(DB.mov).forEach(m=>{if(!m.cat||eFora(m.cat)||!m.ref)return;const y=anoDe(m.dm);if(!anos.includes(y))return;const k=m.cat+'›'+m.ref;(T[k]||(T[k]={}))[y]=((T[k]||{})[y]||0)-m.valor});
+  const tv=(k,y)=>(T[k]&&T[k][y])||0,md=(v,y)=>div(y)?v/div(y):0;
+  const cy=y=>`<td class="num bl">${Math.abs(y.t)>.004?E(y.t):'<span class="muted">—</span>'}</td><td class="num">${Math.abs(y.t)>.004&&div(y.y)?E(y.m):'<span class="muted">—</span>'}</td>`;
+  const linhas=[],porTipo={};let tot=0;
+  cats.forEach(c=>{const rs=c.refs.map(r=>{const k=c.nome+'›'+r,ys=anos.map(y=>({y,t:tv(k,y),m:md(tv(k,y),y)})),p=pv(k);return {r,k,ys,p}}).filter(x=>!PVONLY||x.p||x.ys.some(y=>Math.abs(y.t)>.004));
+    if(!rs.length)return;const sp=rs.reduce((s,x)=>s+x.p,0);tot+=sp;rs.forEach(x=>{const t=tipoDe(c.nome,x.r),id=t?t.id:'';porTipo[id]=(porTipo[id]||0)+x.p});
+    const sy=anos.map((y,i)=>{const t=rs.reduce((s,x)=>s+x.ys[i].t,0);return {y,t,m:md(t,y)}});
+    linhas.push(`<tr class="gc"><td><i class="dot" style="background:${corCat(c.nome)}"></i><b>${esc(c.nome)}</b></td><td></td>${sy.map(cy).join('')}<td class="num bl"><b>${E(sp)}</b></td><td class="num"><b>${E(sp*12)}</b></td><td></td></tr>`);
+    rs.forEach(({r,k,ys,p})=>{const t=tipoDe(c.nome,r),ant=ys[1];
+      linhas.push(`<tr><td style="padding-left:24px" title="${esc(c.nome)} › ${esc(r)}">${esc(r)}</td><td class="tpn">${t?`<i class="dot" style="background:${t.cor}"></i>${esc(t.nome)}`:'—'}</td>${ys.map(cy).join('')}
+        <td class="num bl"><input class="pv" data-pvm="${esc(k)}" value="${p?fmtN(p):''}" placeholder="0,00" inputmode="decimal" aria-label="Previsão média por mês"></td><td class="num"><input class="pv" data-pva="${esc(k)}" value="${p?fmtN(p*12):''}" placeholder="0,00" inputmode="decimal" aria-label="Previsão total do ano"></td>
+        <td>${Math.abs(ant.t)>.004?`<button class="btn ic sm" type="button" data-pvusa="${esc(k)}" title="Usar a média mensal de ${anoTxt(new Date(Y-1,MES1,1))} (${E(ant.t/12)})">↺</button>`:''}</td></tr>`)})});
+  const tn=DB.tiposDesp.map(t=>({l:t.nome,c:t.cor,v:porTipo[t.id]||0})).concat([{l:'Sem tipo',c:'var(--c8)',v:porTipo['']||0}]).filter(x=>x.v>.004);
+  $('#prevTot').innerHTML=`<span class="ch tot">Total previsto <b>${E(tot)}</b>/mês · <b>${E(tot*12)}</b>/ano</span>`+tn.map(x=>`<span class="ch"><i class="dot" style="background:${x.c}"></i>${esc(x.l)} <b>${E(x.v)}</b>/mês · ${E(x.v*12)}/ano</span>`).join('');
+  const hy=y=>`<th class="yr" colspan="2">${anoTxt(new Date(y,MES1,1))}${y===yh?' <small>(até agora)</small>':''}</th>`;
+  $('#prevDes').innerHTML=`<div class="tw"><table class="t prevt"><colgroup><col style="width:220px"><col style="width:150px">${anos.map(()=>'<col style="width:95px"><col style="width:85px">').join('')}<col style="width:120px"><col style="width:120px"><col style="width:40px"></colgroup>
+    <thead><tr><th rowspan="2">Categoria / referência</th><th rowspan="2">Tipo</th>${anos.map(hy).join('')}<th class="yr" colspan="3">Previsão ${anoTxt(new Date(Y,MES1,1))}</th></tr>
+    <tr>${anos.map(()=>'<th class="num bl">Total</th><th class="num">Média/mês</th>').join('')}<th class="num bl">Média/mês</th><th class="num">Total ano</th><th></th></tr></thead>
+    <tbody>${linhas.join('')||'<tr><td colspan="11"><div class="empty"><b>Sem referências com valores</b></div></td></tr>'}</tbody></table></div>`;
+  $('#prevNota').innerHTML=(dono!=null&&dono!==Y?`Este ano ainda não tem previsão própria: está a usar a de <b>${anoTxt(new Date(dono,MES1,1))}</b> (fica copiada ao alterar um valor). `:'')+`A média do ano atual divide pelos meses já passados (${div(yh)}); a dos anos anteriores divide por 12. A previsão guarda-se por ano.`}
 window.fpTipos={lista:()=>JSON.parse(JSON.stringify(DB.tiposDesp)),
   uso:()=>{const u={};Object.values(DB.refTipo).forEach(id=>u[id]=(u[id]||0)+1);return u},
   grava:(tipos,remap)=>{DB.tiposDesp=tipos.filter(t=>t&&t.id&&String(t.nome||'').trim()).map(t=>({id:String(t.id),nome:String(t.nome).trim(),cor:t.cor||'#90a4ae'}));
@@ -1201,10 +1234,10 @@ function renderDesAno(norm_,fora,saiP,entP,prv,prvC){
 function moveArr(a,i,d){const j=i+d;if(j<0||j>=a.length)return false;[a[i],a[j]]=[a[j],a[i]];return true}
 function renomeiaCat(ci,novo){const c=DB.cats[ci];novo=novo.trim();if(!novo||novo===c.nome)return;if(DB.cats.some(x=>x.nome===novo)){toast('Já existe uma categoria com esse nome');return}
   const v=c.nome;DB.mov.forEach(m=>{if(m.cat===v)m.cat=novo});DB.regras.forEach(r=>{if(r.cat===v)r.cat=novo});
-  [DB.prev,DB.refSo,DB.refTipo].forEach(o=>Object.keys(o).forEach(k=>{if(k.startsWith(v+'›')){o[novo+k.slice(v.length)]=o[k];delete o[k]}}));if(DB.corCat[v]){DB.corCat[novo]=DB.corCat[v];delete DB.corCat[v]}espL().forEach(e=>{e.refs=e.refs.map(k=>k.startsWith(v+'›')?novo+k.slice(v.length):k)});c.nome=novo}
+  [...prevObjs(),DB.refSo,DB.refTipo].forEach(o=>Object.keys(o).forEach(k=>{if(k.startsWith(v+'›')){o[novo+k.slice(v.length)]=o[k];delete o[k]}}));if(DB.corCat[v]){DB.corCat[novo]=DB.corCat[v];delete DB.corCat[v]}espL().forEach(e=>{e.refs=e.refs.map(k=>k.startsWith(v+'›')?novo+k.slice(v.length):k)});c.nome=novo}
 function renomeiaRef(ci,ri,novo){const c=DB.cats[ci],v=c.refs[ri];novo=novo.trim();if(!novo||novo===v)return;if(c.refs.includes(novo)){toast('Já existe essa referência');return}
   DB.mov.forEach(m=>{if(m.cat===c.nome&&m.ref===v)m.ref=novo});DB.regras.forEach(r=>{if(r.cat===c.nome&&r.ref===v)r.ref=novo});
-  const k0=c.nome+'›'+v;[DB.prev,DB.refSo,DB.refTipo].forEach(o=>{if(k0 in o){o[c.nome+'›'+novo]=o[k0];delete o[k0]}});espL().forEach(e=>{e.refs=e.refs.map(k=>k===k0?c.nome+'›'+novo:k)});c.refs[ri]=novo}
+  const k0=c.nome+'›'+v;[...prevObjs(),DB.refSo,DB.refTipo].forEach(o=>{if(k0 in o){o[c.nome+'›'+novo]=o[k0];delete o[k0]}});espL().forEach(e=>{e.refs=e.refs.map(k=>k===k0?c.nome+'›'+novo:k)});c.refs[ri]=novo}
 
 /* ================= regras: editor ================= */
 function renderRegras(){
@@ -1577,12 +1610,13 @@ function go(tab,keep){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;
   if(muda&&abaAtiva()==='ext'){EXT.n=EXT_PASSO;DESENHADA.ext=-1;if(EXT_IO)EXT_IO.disconnect();const t=$('#extTable');if(t)t.innerHTML=''} /* ao sair dos Extratos volta às 100 primeiras linhas */
   $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des','prev'].includes(tab))render();if(!keep)window.scrollTo({top:0});fixaCab()}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-dtog],[data-dgo],[data-corq],[data-corset],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-gorendx],[data-goref],[data-reemb],[data-rbsel],[data-extmais],[data-calc],[data-calcmov],[data-calcrend],[data-sptog],[data-split],[data-spdel],[data-spreemb],[data-reembp],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
+  const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-dtog],[data-dgo],[data-corq],[data-pvusa],[data-corset],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-gorendx],[data-goref],[data-reemb],[data-rbsel],[data-extmais],[data-calc],[data-calcmov],[data-calcrend],[data-sptog],[data-split],[data-spdel],[data-spreemb],[data-reembp],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
   const d=t.dataset;
   if(d.edit){abreMov(DB.mov.find(x=>x.id===d.edit));return}
   if(d.cmv){e.preventDefault();const [i,dd]=d.cmv.split('|').map(Number);if(moveArr(DB.cats,i,dd)){save();render()}return}
   if(d.rmv){const [ci,ri,dd]=d.rmv.split('|').map(Number);if(moveArr(DB.cats[ci].refs,ri,dd)){save();render()}return}
   if(d.cadd){const n=prompt('Nome da nova categoria:');if(!n||!n.trim())return;if(DB.cats.some(c=>c.nome===n.trim()))return toast('Já existe');const i=DB.cats.findIndex(c=>eFora(c.nome));DB.cats.splice(i<0?DB.cats.length:i,0,{id:uid('c'),nome:n.trim(),refs:[]});save();render();return}
+  if(d.pvusa){const Y=prevAno(),k=d.pvusa;let t=0;expande(DB.mov).forEach(m=>{if(m.cat+'›'+m.ref===k&&anoDe(m.dm)===Y-1)t-=m.valor});const o=PVW(Y);if(t/12>.004)o[k]=Math.round(t/12*100)/100;else delete o[k];save();render();return}
   if(d.corq!=null){e.preventDefault();const p=$('#corPop'),n=d.corq,cur=corEsc(n);p.innerHTML=PALETA.map(c=>`<button type="button" data-corset="${c}" class="${c===cur?'on':''}" style="background:color-mix(in srgb,${c} 45%,transparent)" title="${c}"></button>`).join('')+`<button type="button" class="sem" data-corset="">Sem cor</button>`;p.dataset.n=n;const r=t.getBoundingClientRect();p.style.left=Math.min(innerWidth-220,r.left)+'px';p.style.top=(r.bottom+6)+'px';p.hidden=false;return}
   if(d.corset!=null){const n=$('#corPop').dataset.n;DB.corCat=DB.corCat||{};if(d.corset)DB.corCat[n]=d.corset;else delete DB.corCat[n];$('#corPop').hidden=true;save();render();return}
   if(d.dtog!=null){DES.fech.has(d.dtog)?DES.fech.delete(d.dtog):DES.fech.add(d.dtog);render();return}
@@ -1629,9 +1663,9 @@ document.addEventListener('click',e=>{
   if(d.pdel){DB.pessoas.splice(+d.pdel,1);pessoasMudaram();return}
   if(d.radd){if(!DES.edit&&!e.target.closest('#desCats'))return;const ci=+d.radd,n=prompt('Nome da nova referência:');if(n&&n.trim()){if(DB.cats[ci].refs.includes(n.trim()))return toast('Já existe');DB.cats[ci].refs.push(n.trim());save();render()}return}
   if(d.rdel){const [ci,ri]=d.rdel.split('|').map(Number),c=DB.cats[ci],r=c.refs[ri],n=DB.mov.filter(m=>m.cat===c.nome&&m.ref===r).length;
-    if(confirm(`Apagar a referência "${r}"?${n?` ${n} movimento(s) ficam sem referência.`:''}`)){c.refs.splice(ri,1);DB.mov.forEach(m=>{if(m.cat===c.nome&&m.ref===r)m.ref=''});delete DB.prev[c.nome+'›'+r];delete DB.refSo[c.nome+'›'+r];save();render()}return}
+    if(confirm(`Apagar a referência "${r}"?${n?` ${n} movimento(s) ficam sem referência.`:''}`)){c.refs.splice(ri,1);DB.mov.forEach(m=>{if(m.cat===c.nome&&m.ref===r)m.ref=''});prevObjs().forEach(o=>delete o[c.nome+'›'+r]);delete DB.refSo[c.nome+'›'+r];save();render()}return}
   if(d.cdel){const c=DB.cats[+d.cdel],n=DB.mov.filter(m=>m.cat===c.nome).length;
-    if(confirm(`Apagar a categoria "${c.nome}" e as suas referências?${n?` ${n} movimento(s) ficam por categorizar.`:''}`)){DB.cats.splice(+d.cdel,1);DB.mov.forEach(m=>{if(m.cat===c.nome){m.cat='';m.ref='';m.catSrc=''}});Object.keys(DB.prev).forEach(k=>{if(k.startsWith(c.nome+'›'))delete DB.prev[k]});aplicaRegras();save();render()}return}
+    if(confirm(`Apagar a categoria "${c.nome}" e as suas referências?${n?` ${n} movimento(s) ficam por categorizar.`:''}`)){DB.cats.splice(+d.cdel,1);DB.mov.forEach(m=>{if(m.cat===c.nome){m.cat='';m.ref='';m.catSrc=''}});prevObjs().forEach(o=>Object.keys(o).forEach(k=>{if(k.startsWith(c.nome+'›'))delete o[k]}));aplicaRegras();save();render()}return}
   if(d.todo){e.preventDefault();toast(`“${d.todo}” — disponível numa próxima etapa`)}
 });
 // edição na tabela de movimentos
@@ -1661,7 +1695,7 @@ document.addEventListener('change',e=>{const el=e.target;
   if(el.dataset.ctipo!=null){const c=DB.cats[+el.dataset.ctipo],v=el.value;if(v){c.refs.forEach(r=>{const k=c.nome+'›'+r;if(v==='-')delete DB.refTipo[k];else DB.refTipo[k]=v});save();render()}return}
   if(el.dataset.rde){const k=el.dataset.rde;let x=espL().find(e=>e.tipo==='de');if(!x){x={id:uid('e'),nome:'Ao mudar a partir de',tipo:'de',refs:[]};DB.esp=[...espL(),x]}if(el.checked){if(!x.refs.includes(k))x.refs.push(k)}else espL().forEach(e=>{if(e.tipo==='de')e.refs=e.refs.filter(y=>y!==k)});save();return}
   if(el.dataset.rso){const k=el.dataset.rso;if(el.checked){const x=espSo();if(!x.refs.includes(k))x.refs.push(k)}else espL().forEach(e=>{if(e.tipo==='para')e.refs=e.refs.filter(y=>y!==k)});aplicaRegras();save();render();return}
-  if(el.dataset.pv){const v=num(el.value);if(v)DB.prev[el.dataset.pv]=v;else delete DB.prev[el.dataset.pv];save();render();return}
+  if(el.dataset.pvm||el.dataset.pva){const k=el.dataset.pvm||el.dataset.pva,v=num(el.value),m=el.dataset.pva?v/12:v,o=PVW(prevAno());if(m)o[k]=m;else delete o[k];save();render();return}
 });
 $('#rgQ').addEventListener('input',renderRegras);
 $('#rgNova').addEventListener('click',()=>{DB.regras.unshift({id:uid('r'),txt:'',modo:'contem',tipo:'',cat:'',ref:'',ativo:true,predef:false});save();$('#rgQ').value='';renderRegras();const i=$('#rgList input[data-rg="txt"]');if(i)i.focus()});
@@ -1694,6 +1728,12 @@ $('#desAbrir').addEventListener('click',()=>{DES.fech.clear();$$('#desCats detai
 $('#desFechar').addEventListener('click',()=>{DB.cats.forEach(c=>DES.fech.add(c.nome));DB.tiposDesp.forEach(t=>DES.fech.add('tipo:'+t.id));DES.fech.add('tipo:-');$$('#desCats details').forEach(d=>d.open=false);render()});
 /* vista Mês: categorias abertas por defeito; lembra as que o utilizador fechou */
 $('#desCats').addEventListener('toggle',e=>{const d=e.target;if(!d.matches||!d.matches('details.cat')||DES.edit)return;d.open?DES.fech.delete(d.dataset.c):DES.fech.add(d.dataset.c)},true);
+$('#pvNav').addEventListener('click',e=>{const b=e.target.closest('[data-pvy]');if(!b)return;PREVY=prevAno()+(+b.dataset.pvy);render()});
+$('#pvOnly').addEventListener('click',()=>{PVONLY=!PVONLY;render()});
+$('#pvUsar').addEventListener('click',()=>{const Y=prevAno();if(!confirm(`Substituir a previsão de ${anoTxt(new Date(Y,MES1,1))} pela média mensal de ${anoTxt(new Date(Y-1,MES1,1))} em todas as referências?`))return;
+  const T={};expande(DB.mov).forEach(m=>{if(!m.cat||eFora(m.cat)||!m.ref||anoDe(m.dm)!==Y-1)return;const k=m.cat+'›'+m.ref;T[k]=(T[k]||0)-m.valor});
+  const o=PVW(Y);DB.cats.filter(c=>!eFora(c.nome)).forEach(c=>c.refs.forEach(r=>{const k=c.nome+'›'+r,v=(T[k]||0)/12;if(v>.004)o[k]=Math.round(v*100)/100;else delete o[k]}));save();render()});
+$('#pvLimpa').addEventListener('click',()=>{const Y=prevAno();if(!confirm(`Apagar a previsão de ${anoTxt(new Date(Y,MES1,1))}?`))return;PA()[Y]={};save();render()});
 $('#desGrp').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;DES.grp=b.dataset.g;try{localStorage.setItem('fp_desgrp',DES.grp)}catch(x){}render()});
 $('#btPrevOnly').addEventListener('click',()=>{soValores=!soValores;render()});
 ['#fQ','#fBanco','#fCat','#fRef','#fQuem','#fTipo'].forEach(id=>$(id).addEventListener(id==='#fQ'?'input':'change',render));
@@ -1760,7 +1800,7 @@ async function aoEntrar(u){
   try{
     if(DB.owner&&DB.owner!==u.id){DB=normaliza(fresh())} // cache de outra conta neste browser
     const r=await lerRemoto();
-    const temLocal=DB.mov.length>0||DB.pessoas.length>0||Object.keys(DB.prev).length>0;
+    const temLocal=DB.mov.length>0||DB.pessoas.length>0||Object.keys(DB.prev).length>0||Object.keys(DB.prevAno||{}).length>0;
     if(!r){ // primeira vez nesta conta: os dados do browser passam para a conta
       DB.owner=u.id;DB.updatedAt=Date.now();saveLocal();await enviar();
       if(temLocal)toast(`Dados deste browser guardados na conta (${DB.mov.length} movimentos)`);return}

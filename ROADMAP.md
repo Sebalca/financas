@@ -5,7 +5,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.9a)
+## Já feito (v0.1 → v0.9b)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.
@@ -31,7 +31,7 @@ Ordem sugerida: primeiro garantir que os números estão certos (é a base de tu
 
 - 🔜 **v0.9 — Tipos de despesa, Previsões e Agregado familiar**
   1. ✅ (v0.9a) Tipos de despesa por referência (Fixas/Variáveis essenciais/não essenciais, Extras), editáveis nas Definições; agrupar Despesas por tipo; caixa no Início.
-  2. (v0.9b) Previsões: últimos 3 anos (a partir do mês de início) com total e média/mês (ano atual ÷ meses passados); previsão guardada por ano, escrita como média/mês ou total do ano; ano novo copia a previsão anterior; totais por tipo.
+  2. ✅ (v0.9b) Previsões: últimos 3 anos (a partir do mês de início) com total e média/mês (ano atual ÷ meses passados); previsão guardada por ano, escrita como média/mês ou total do ano; ano novo copia a previsão anterior; totais por tipo.
   3. (v0.9c) Agregado no Supabase: `agregados`, `agregado_membros` (dono/editor), `convites` (link com validade), RLS só para membros; reutilizável por outros sites.
   4. (v0.9d) Seletor "Pessoal / Família" na barra de cima; ao criar copia categorias e regras; gravação com número de versão + junção quando duas pessoas gravam.
 
