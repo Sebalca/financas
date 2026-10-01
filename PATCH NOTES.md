@@ -135,11 +135,16 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D101 **Agregado** (Supabase, `supabase/004_agregados.sql`; tabelas de plataforma com `site_id`): o dono cria o agregado (nome à escolha; 1 por dono e site) e convida **pelo email** — se não existir conta com esse email aparece um alerta (no futuro: enviar email); se existir, a pessoa vê ao entrar uma mensagem para aceitar/recusar. Papéis dono/editor. O dono muda o nome, cancela convites, remove membros e apaga o agregado; um membro pode sair. **Apagar guarda 30 dias** (só o dono vê e pode restaurar) e depois apaga de vez com os dados. Tudo por funções `security definer`; RLS só para membros; máx. 20 convites/dia.
 - D102 **Seletor 👤 Pessoal / 👪 Agregado** no meio da barra de cima, só no separador Finanças e só para quem tem ou está num agregado. Cada contexto tem dados totalmente separados (pessoal em `financas_dados`, agregado em `agregado_dados`; cópia local por contexto). Um agregado novo começa com as categorias, tipos, cores e regras da conta pessoal (sem movimentos nem pessoas). A escolha fica guardada no browser; se deixar de ser membro volta a Pessoal. No agregado, as alterações dos outros aparecem a cada 30 s ou ao voltar à página; gravações simultâneas juntam-se.
 - D104 Início: cada gráfico circular tem o seu botão € / %. "Previsto vs real": barra que enche com o real e uma linha no previsto; vermelha quando passa. Ao passar de Ano para Mês abre o mês atual se estiver nesse ano, senão o último mês escolhido. No Editar das Despesas o cabeçalho com Concluir fica fixo. Aba Objetivos existe (em desenvolvimento).
+- D105 **Estatísticas de uso**: só com sessão iniciada, guardadas em `site_eventos` (plataforma, por site) com o utilizador — sessão, ping a cada minuto com a página visível (tempo no site), separador e abas, importar (banco, linhas) e importação/exportação falhada (extensão e motivo), categorizar, regras, dividir, previsões, agregado, exportar, cópias, sugestões, perguntas e erros de JavaScript. **Nunca** valores, descrições de movimentos nem nomes de ficheiros. Ninguém lê a tabela diretamente; a página `admin.html` (menu da conta › Estatísticas, só admins) mostra os totais via `admin_stats`, com emails. Apagam-se ao fim de 12 meses. Visitantes anónimos: Umami (sem cookies; `UMAMI_ID` em index.html). Definições › Conta explica o que é recolhido.
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
 
 ---
 
 ## Histórico
+
+### v0.9g — 01/10/2026
+- Estatísticas de uso (D105): tabela `site_eventos` + funções de admin no Supabase; registo de eventos na página principal (FPTrack) e nas Finanças; página `admin.html` com caixas, gráficos (ativos/tempo por dia, contas novas), percurso, abas, funcionalidades, utilizadores (email), falhas de importação e erros.
+- Umami preparado (falta o Website ID). Item "📊 Estatísticas (admin)" no menu da conta para admins.
 
 ### v0.9f — 29/09/2026
 - Cor por referência com "Pintar só nos Extratos" (D96 atualizada); Definições: "Extratos: pintar a" (combo) e sai a opção dos gráficos.

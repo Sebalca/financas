@@ -170,6 +170,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
   <div class="hd"><div class="av" id="mAv">?</div><div style="min-width:0;flex:1"><b id="mMail">Sem sessão</b><small id="mSub">Os dados ficam só neste dispositivo</small></div><span class="ver" id="mVer" title="Versão da aplicação"></span></div>
   <button class="it" id="miEntrar" type="button"><span class="ic">🔑</span>Entrar / criar conta</button>
   <button class="it" data-set="tema" type="button"><span class="ic">⚙️</span>Definições</button>
+  <a class="it" id="miAdm" href="admin.html" target="_blank" rel="noopener" hidden><span class="ic">📊</span>Estatísticas (admin)</a>
   <button class="it" id="miPlano" type="button"><span class="ic">⭐</span>Plano<span class="rt">Grátis</span></button>
   <button class="it" id="miOnb" type="button"><span class="ic">🧭</span>Visita guiada</button>
   <button class="it" id="miNov" type="button"><span class="ic">🆕</span>Novidades</button>
@@ -206,7 +207,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <div id="tiposL"></div><div class="grp"><button class="opt" id="tipoAdd" type="button">＋ Novo tipo</button></div><div class="note2" id="tiposMsg"></div></section>
     <section data-s="agr" hidden><h3>Agregado familiar</h3><p>Um agregado é uma conta de Finanças <b>partilhada</b> com outras pessoas (por exemplo, a família). A sua conta pessoal continua privada — só entra no agregado o que for lá registado.</p>
       <div id="agrBox"></div><div class="note2" id="agrMsg"></div></section>
-    <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div></section>
+    <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div><h3 style="margin-top:18px">Dados de uso</h3><p>Com sessão iniciada, guardamos estatísticas de uso associadas à conta: sessões e tempo no site, abas abertas, ações (importar extrato e falhas na importação, categorizar, criar regras, dividir, previsões, agregado, exportar, sugestões) e erros técnicos. <b>Nunca</b> são guardados valores, descrições de movimentos nem nomes de ficheiros. Servem só para melhorar o site e apagam-se ao fim de 12 meses. As visitas anónimas são contadas sem cookies.</p></section>
     <section data-s="backup" hidden><h3>Cópia de segurança</h3><p>Exporta tudo das Finanças (movimentos, categorias, regras, pessoas, rendimentos, previstos) para um ficheiro .json, que pode importar noutro dispositivo ou mais tarde.</p>
       <div class="grp"><button class="opt" id="bkExp" type="button">⤓ Exportar ficheiro</button><button class="opt" id="bkImpBt" type="button">⤒ Importar ficheiro…</button><input type="file" id="bkImp" accept=".json,application/json" hidden></div><div class="note2" id="bkMsg"></div></section>
     <section data-s="apagar" hidden><h3>Apagar dados</h3><p>Apaga os dados das Finanças. Exporte antes uma cópia de segurança se os quiser guardar.</p>
@@ -279,6 +280,7 @@ function abrir(id){
   frames.querySelectorAll('iframe').forEach(x=>x.classList.toggle('on',x===f));
   tabs.querySelectorAll('a').forEach(a=>{const on=a.dataset.id===s.id;a.classList.toggle('on',on);a.setAttribute('aria-selected',on)});
   if(window.FPPer)FPPer.pinta();
+  try{FPTrack.log('site',{site:s.id});window.umami&&umami.track(p=>({...p,url:'/'+s.id,title:s.nome}))}catch(e){}
   document.title=s.nome+' · Finanças Pessoais';
 }
 window.addEventListener('hashchange',()=>abrir(location.hash.slice(1)));
@@ -288,6 +290,28 @@ abrir(location.hash.slice(1));
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/gh/sebalca/plataforma-core@main/auth.js"></script>
 <script>
+/* ===== v0.9g: estatísticas de uso =====
+   Umami (visitantes anónimos, sem cookies): pôr o Website ID em UMAMI_ID.
+   FPTrack (utilizadores com sessão → Supabase site_eventos): sessões, tempo (ping a cada minuto com a página visível), abas e ações.
+   Nunca enviar valores, descrições de movimentos ou nomes de ficheiros. */
+const UMAMI_ID='';
+if(UMAMI_ID){const u=document.createElement('script');u.defer=true;u.src='https://cloud.umami.is/script.js';u.dataset.websiteId=UMAMI_ID;u.dataset.autoTrack='false';
+  u.onload=()=>{try{umami.track(p=>({...p,url:'/'+(location.hash.slice(1)||'financas')}))}catch(e){}};document.head.appendChild(u)}
+const FPTrack=(()=>{const SITE='financas',S=(Date.now().toString(36)+Math.random().toString(36).slice(2,10));let U=null,fila=[],t=null,ping=null;
+  const sb=()=>window.plataforma&&window.plataforma.from?window.plataforma:null;
+  async function envia(){clearTimeout(t);t=null;const c=sb();if(!U||!c||!fila.length)return;const l=fila.splice(0,50).map(e=>({site_id:SITE,user_id:U.id,sessao:S,tipo:e.t,dados:e.d}));
+    try{const {error}=await c.from('site_eventos').insert(l);if(error)console.warn('estatísticas',error.message)}catch(e){}if(fila.length)t=setTimeout(envia,1000)}
+  function log(tipo,dados){
+    if(tipo==='aba'&&dados&&dados.aba){try{window.umami&&umami.track(p=>({...p,url:'/financas/'+dados.aba,title:'Finanças · '+dados.aba}))}catch(e){}}
+    if(!U)return;fila.push({t:String(tipo).slice(0,40),d:dados||{}});if(!t)t=setTimeout(envia,tipo==='sessao'?0:4000)}
+  function sessao(u){const novo=u&&(!U||U.id!==u.id);U=u||null;clearInterval(ping);ping=null;if(!U){fila=[];return}
+    if(novo)log('sessao',{site:(location.hash.slice(1)||'financas'),movel:matchMedia('(max-width:760px)').matches,largura:innerWidth});
+    ping=setInterval(()=>{if(document.visibilityState==='visible')log('ping')},60000)}
+  addEventListener('pagehide',()=>{if(fila.length)envia()});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&fila.length)envia()});
+  {let n=0;addEventListener('error',e=>{if(++n<=20)log('erro_js',{msg:String(e.message||'').slice(0,200),src:String(e.filename||'').split('/').pop()+':'+(e.lineno||0),onde:'principal'})})}
+  return {log,sessao,_fila:()=>fila}})();
+window.FPTrack=FPTrack;
 
 
 /* ===== tema e tamanho (partilhados com os separadores) ===== */
@@ -354,10 +378,10 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
   // cópia de segurança / apagar — usa a página das Finanças
   const fin=()=>new Promise((ok,ko)=>{let f=document.querySelector('iframe[data-id="financas"]');if(!f){abrir('financas');f=document.querySelector('iframe[data-id="financas"]')}
     let n=0;const t=setInterval(()=>{try{if(f.contentWindow.fpBackup){clearInterval(t);ok(f.contentWindow)}}catch(e){}if(++n>100){clearInterval(t);ko(new Error('As Finanças não carregaram'))}},100)});
-  $('bkExp').onclick=async()=>{try{const w=await fin(),o=w.fpBackup(),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:'application/json'}));
+  $('bkExp').onclick=async()=>{FPTrack.log('copia_exportada');try{const w=await fin(),o=w.fpBackup(),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:'application/json'}));
     a.download=`financas-copia-${new Date().toISOString().slice(0,10)}.json`;a.click();$('bkMsg').textContent=`✓ Exportados ${o.dados.mov.length} movimentos.`}catch(e){$('bkMsg').textContent=e.message}};
   $('bkImpBt').onclick=()=>$('bkImp').click();
-  $('bkImp').onchange=async()=>{const f=$('bkImp').files[0];$('bkImp').value='';if(!f)return;try{const o=JSON.parse(await f.text());
+  $('bkImp').onchange=async()=>{const f=$('bkImp').files[0];$('bkImp').value='';if(!f)return;FPTrack.log('copia_importada');try{const o=JSON.parse(await f.text());
     if(!confirm('Substituir os dados atuais pelos do ficheiro?'))return;const w=await fin(),n=w.fpRestaurar(o);$('bkMsg').textContent=`✓ Importados ${n} movimentos.`}catch(e){$('bkMsg').textContent='Ficheiro inválido: '+e.message}};
   $$('[data-apaga]').forEach(b=>b.onclick=async()=>{const c=b.dataset.apaga==='conta';
     if(!confirm(c?'Apagar TODOS os dados das Finanças, também na conta (em todos os dispositivos)? Não se pode desfazer.':'Apagar os dados das Finanças guardados neste dispositivo?'))return;
@@ -445,7 +469,7 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
     if(/Password should/i.test(m))return 'A palavra-passe tem de ter pelo menos 6 caracteres.';
     return m||'Não foi possível concluir. Tente novamente.';};
   function mostrar(user){
-    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);try{FPFaq.sessao(user)}catch(e){}try{FPAdm.sessao(user||null)}catch(e){}try{FPNov.verifica(user||null)}catch(e){}try{FPAgr.sessao(user||null)}catch(e){}
+    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);try{FPFaq.sessao(user)}catch(e){}try{FPAdm.sessao(user||null)}catch(e){}try{FPNov.verifica(user||null)}catch(e){}try{FPAgr.sessao(user||null)}catch(e){}try{FPTrack.sessao(user||null)}catch(e){}
     window.financasUser=user||null; // disponível para os separadores (window.parent.financasUser)
     document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'financas-sessao',user:user?{id:user.id,email:user.email}:null},'*')}catch(e){}});
   }
@@ -509,7 +533,7 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
     // mostra logo "enviada" e envia em segundo plano: Google Sheet + cópia no Supabase (para o sinal de "por ler" do admin)
     $('sgTxt').value='';$('sgMail').checked=false;$('sgMsg').textContent='✓ Obrigado! Sugestão enviada.';setTimeout(()=>{if(/Obrigado/.test($('sgMsg').textContent))$('sgMsg').textContent=''},6000);
     fetch(SUG_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).catch(()=>{});
-    try{const c=window.plataforma;if(c&&c.from&&!d.site)c.from('sugestoes').insert({site_id:'financas',user_id:u?u.id:null,tipo:d.tipo,texto:t,email:d.email||null,separador:(d.separador||'').slice(0,60),versao:(d.versao||'').slice(0,20)}).then(()=>{},()=>{})}catch(e){}});
+    try{FPTrack.log('sugestao',{tipo:d.tipo});const c=window.plataforma;if(c&&c.from&&!d.site)c.from('sugestoes').insert({site_id:'financas',user_id:u?u.id:null,tipo:d.tipo,texto:t,email:d.email||null,separador:(d.separador||'').slice(0,60),versao:(d.versao||'').slice(0,20)}).then(()=>{},()=>{})}catch(e){}});
   pinta()})();
 </script>
 <script>
@@ -518,7 +542,8 @@ const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=
   const sb=()=>window.plataforma&&window.plataforma.rpc?window.plataforma:null;
   const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const dt=d=>new Date(d).toLocaleDateString('pt-PT');
-  const rpc=async(f,a)=>{const c=sb();if(!c)throw new Error('sem ligação');const {data,error}=await c.rpc(f,a||{});if(error)throw error;return data};
+  const rpc=async(f,a)=>{const c=sb();if(!c)throw new Error('sem ligação');const {data,error}=await c.rpc(f,a||{});if(error)throw error;
+    if(/^agregado_(criar|convidar|responder|sair|remover|apagar|restaurar)$/.test(f))FPTrack.log(f,f==='agregado_convidar'?{resultado:data}:f==='agregado_responder'?{aceitou:!!a.p_aceitar}:{});return data};
   const msg=(t,err)=>{MSG=t||'';const m=$('agrMsg');if(m){m.textContent=MSG;m.style.color=err?'var(--c2,#c62828)':''}};
   async function carrega(){if(!U){try{U=window.financasUser||null}catch(e){}}if(!U||!sb()){L=[];C=[];OK=!U;pinta();try{FPCtx.valida()}catch(e){}return}
     try{const [a,b]=await Promise.all([rpc('meus_agregados',{p_site:SITE}),rpc('meus_convites',{p_site:SITE})]);L=a||[];C=b||[];OK=true}catch(e){msg('Não foi possível carregar o agregado.',1)}pinta();try{FPCtx.valida()}catch(e){}}
@@ -599,6 +624,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.9g',d:'01/10/2026',n:['Estatísticas de uso (só para o administrador): visitas, tempo no site e funcionalidades mais usadas'],a:['Definições › Conta explica que dados de uso são recolhidos (nunca valores nem descrições dos movimentos)']},
  {v:'0.9f',d:'29/09/2026',n:['Cor por referência (Despesas › Editar), com a opção "Pintar só nos Extratos"','Aba Objetivos (em desenvolvimento)','Início: cada gráfico circular mostra valores (€) ou percentagens (%)'],a:['Previsto vs real: barra que enche até à linha do previsto e fica vermelha quando passa','Definições: "Extratos: pintar a" caixa da categoria ou linha inteira (só uma); os gráficos usam sempre as cores escolhidas','Ao passar de Ano para Mês abre o mês atual (se for desse ano) ou o último mês escolhido','No Editar das Despesas, o botão Concluir acompanha a página']},
  {v:'0.9e',d:'29/09/2026',n:[],a:['Corrigido: com sessão iniciada, Definições › Agregado familiar pedia para entrar e não deixava criar o agregado']},
  {v:'0.9d',d:'29/09/2026',n:['Seletor 👤 Pessoal / 👪 Agregado no meio da barra de cima (aparece só a quem tem ou está num agregado)','O agregado começa com as suas categorias, tipos e regras','As alterações dos outros membros aparecem sozinhas (a cada 30 s ou ao voltar à página)'],a:['A conta pessoal e o agregado têm dados totalmente separados','Se duas pessoas gravarem ao mesmo tempo, as alterações juntam-se']},
@@ -686,7 +712,7 @@ const FPFaq=(function(){const $=id=>document.getElementById(id),SITE='financas';
   $('fqEnviar').addEventListener('click',async()=>{const t=$('fqNova').value.trim(),c=sb();if(t.length<3){$('fqMsg').textContent='Escreva a pergunta primeiro.';return}
     if(!U||!c){$('fqMsg').innerHTML='Entre na conta para fazer perguntas.';return}
     $('fqEnviar').disabled=true;$('fqMsg').textContent='A enviar…';
-    const {error}=await c.from('faq_perguntas').insert({site_id:SITE,user_id:U.id,pergunta:t});$('fqEnviar').disabled=false;
+    const {error}=await c.from('faq_perguntas').insert({site_id:SITE,user_id:U.id,pergunta:t});FPTrack.log('pergunta');$('fqEnviar').disabled=false;
     if(error){$('fqMsg').textContent=/Limite/.test(error.message)?'Atingiu o limite de perguntas de hoje.':'Não foi possível enviar.';return}
     $('fqNova').value='';$('fqMsg').textContent='✓ Pergunta enviada. A resposta aparece em "As minhas perguntas".';await carrega()});
   $('fqAdm').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
@@ -707,7 +733,7 @@ const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';
   async function conta(){const c=sb();if(!c||!ADM)return pinta();
     try{const a=await c.from('faq_perguntas').select('id',{count:'exact',head:true}).eq('site_id',SITE).eq('estado','nova');NF=a.count||0;
       const b=await c.from('sugestoes').select('id',{count:'exact',head:true}).eq('site_id',SITE).eq('por_ler',true);NS=b.count||0}catch(e){}pinta()}
-  async function sessao(u){ADM=false;NF=NS=0;const c=sb();if(u&&c){try{const r=await c.rpc('e_admin_site',{s:SITE});ADM=!!r.data}catch(e){}}if(ADM)await conta();else pinta()}
+  async function sessao(u){ADM=false;NF=NS=0;const c=sb();if(u&&c){try{const r=await c.rpc('e_admin_site',{s:SITE});ADM=!!r.data}catch(e){}}try{$('miAdm').hidden=!ADM}catch(e){}if(ADM)await conta();else pinta()}
   let SG=[],SGN=100,SGF='todas';
   function sgTab(t){[...$('sgTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.st===t));$('sgEnv').hidden=t!=='env';$('sgAdm').hidden=t!=='rec';if(t==='rec')recebidas()}
   function abreSug(){$('sgTabs').hidden=!ADM;sgTab('env')}

@@ -509,7 +509,7 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 
 <script>
 'use strict';
-const APP_VERSAO='0.9f'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.9g'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -592,6 +592,9 @@ const DIN='Dinheiro';
 
 /* ================= armazenamento: browser + conta (Supabase) ================= */
 const KEY='financas_v1';
+/* v0.9g: estatísticas de uso (só com sessão; nunca valores nem descrições) — vão para a página principal (FPTrack) */
+const trk=(t,d)=>{try{if(window.parent!==window&&window.parent.FPTrack)window.parent.FPTrack.log(t,d||{})}catch(e){}};
+{let nErr=0;addEventListener('error',e=>{if(++nErr<=20)trk('erro_js',{msg:String(e.message||'').slice(0,200),src:String(e.filename||'').split('/').pop()+':'+(e.lineno||0),onde:'financas'})})}
 /* v0.9d: contexto dos dados — Pessoal (financas_dados) ou um Agregado (agregado_dados); cada um com a sua cópia neste browser */
 let CTX={t:'p'};try{const c=localStorage.getItem('fp_ctx');if(c)CTX={t:'a',id:c}}catch(e){}
 const KEYC=()=>CTX.t==='a'?KEY+'_agr_'+CTX.id:KEY;
@@ -796,6 +799,7 @@ async function importar(files){
     }catch(e){res.push({ok:false,f:f.name,msg:e.message})}
   }
   save();
+  res.forEach(x=>trk(x.ok?'import':'import_falhou',x.ok?{banco:x.r.banco,linhas:x.r.mov.length,novos:x.novos,dup:x.dup}:{ext:(String(x.f).split('.').pop()||'').toLowerCase().slice(0,6),banco:$('#bankSel').value||'auto',motivo:String(x.msg).slice(0,150)}));
   $('#impRes').innerHTML=res.map(x=>x.ok?`<div class="imp ok">✓ <b>${esc(x.f)}</b> — ${esc(x.r.banco)}${x.r.conta?` · conta ${esc(x.r.conta)}`:''} · ${fmtD(x.r.inicio)} a ${fmtD(x.r.fim)}<br><b>${x.novos}</b> movimentos novos${x.novos?` (${x.auto} categorizados pelas regras)`:''}${x.dup?` · ${x.dup} já existiam (ignorados)`:''}${x.elim?` · ${x.elim} tinham sido eliminados (não entraram)`:''} · ${x.r.mov.every(m=>m.saldo==null)?'sem saldos no ficheiro':x.v.erros===0?'✓ saldos consistentes':`⚠ ${x.v.erros} saldos não batem certo`}${x.v.fin===true?` · saldo final ${E(x.r.saldoFinal)} ✓`:x.v.fin===false?' · ⚠ saldo final diferente':''}</div>`
     :`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}</div>`).join('');
   const ok=res.filter(x=>x.ok);
@@ -1321,7 +1325,7 @@ function abreNovaRegra(m,esc_){NR=m;NR_ESC=!!esc_;$('#nrEsc').hidden=!NR_ESC;$('
 $('#nrNao').addEventListener('click',()=>{$('#mNovaRegra').hidden=true;NR=null});
 $('#nrSim').addEventListener('click',()=>{if(!NR)return;const txt=$('#nrTxt').value.trim();if(!txt){toast('Escreva o texto da regra');return}
   const cat=NR_ESC?$('#nrCatSel').value:NR.cat,ref=NR_ESC?$('#nrRefSel').value:NR.ref;if(!cat||!ref){toast('Escolha a categoria e a referência');return}
-  DB.regras.unshift({id:uid('r'),txt,modo:$('#nrModo').value,tipo:$('#nrTipo').value,cat,ref,ativo:true,predef:false});
+  trk('regra',{origem:'movimento'});DB.regras.unshift({id:uid('r'),txt,modo:$('#nrModo').value,tipo:$('#nrTipo').value,cat,ref,ativo:true,predef:false});
   const n=aplicaRegras();save();render();$('#mNovaRegra').hidden=true;NR=null;toast(`Regra criada · ${n} movimento(s) atualizados`)});
 
 /* ================= títulos da tabela de movimentos sempre visíveis ================= */
@@ -1360,7 +1364,7 @@ $('#spAdd').addEventListener('click',()=>{$('#spRows').insertAdjacentHTML('befor
 $('#spRows').addEventListener('input',e=>{if(e.target.matches('[data-spv]'))spSoma()});
 $('#spRows').addEventListener('change',e=>{if(e.target.matches('[data-spc]')){const tr=e.target.closest('tr');tr.querySelector('[data-spr]').innerHTML=refOpts(e.target.value,'');spTiraReemb(tr)}});
 function spTiraReemb(tr){if(!tr.dataset.reemb)return;tr.dataset.reemb='';tr.querySelector('.sprb').textContent='';const b=tr.querySelector('[data-spreemb]');if(b)b.classList.remove('on')}
-$('#spOk').addEventListener('click',()=>{if(!SP||Math.abs(spSoma())>=.005)return;const sg=SP.valor<0?-1:1;
+$('#spOk').addEventListener('click',()=>{if(!SP||Math.abs(spSoma())>=.005)return;trk('dividir',{partes:(SP.partes||[]).length});const sg=SP.valor<0?-1:1;
   const ps=$$('#spRows tr').map(tr=>{const p={valor:r2(sg*spVal(tr.querySelector('[data-spv]').value)),cat:tr.querySelector('[data-spc]').value,ref:tr.querySelector('[data-spr]').value,desc:tr.querySelector('[data-spo]').value.trim(),obs:tr.dataset.obs||''};if(tr.dataset.reemb&&sg>0)p.reemb=tr.dataset.reemb;return p}).filter(p=>p.valor);
   if(ps.length<2){toast('Precisa de pelo menos 2 linhas com valor');return}
   SP.partes=ps;SP.cat='';SP.ref='';SP.catSrc='manual';SP.u=Date.now();$('#mSplit').hidden=true;SP=null;save();render();toast(`Movimento dividido em ${ps.length} linhas`)});
@@ -1629,7 +1633,7 @@ $('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==
 
 /* ================= eventos ================= */
 function limpaFiltros(){['#fQ','#fBanco','#fCat','#fRef','#fQuem','#fTipo'].forEach(i=>$(i).value='')}
-function go(tab,keep){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;
+function go(tab,keep){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;if(muda)trk('aba',{aba:tab});
   if(muda&&abaAtiva()==='ext'){EXT.n=EXT_PASSO;DESENHADA.ext=-1;if(EXT_IO)EXT_IO.disconnect();const t=$('#extTable');if(t)t.innerHTML=''} /* ao sair dos Extratos volta às 100 primeiras linhas */
   $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des','prev'].includes(tab))render();if(!keep)window.scrollTo({top:0});fixaCab()}
 document.addEventListener('click',e=>{
@@ -1699,7 +1703,7 @@ document.addEventListener('change',e=>{const el=e.target;
     const sa=$('#selAll'),n=$$('#extTable tr[data-id]').length;if(sa){sa.checked=SEL.size===n;sa.indeterminate=SEL.size>0&&SEL.size<n}bulkBar();return}
   const tr=el.closest('tr[data-id]');
   if(tr&&el.classList.contains('ed')){const m=DB.mov.find(x=>x.id===tr.dataset.id);if(!m)return;const f=el.dataset.f,v=el.value.trim();m.u=Date.now();
-    if(f==='cat'){const deAntes=deEsp(m.cat,m.ref)||ESP_DE.has(m.id);if(deAntes)ESP_DE.set(m.id,1);else ESP_DE.delete(m.id);m.cat=v;m.ref='';if(v){m.catSrc='manual'}else{m.catSrc='';aplicaRegras([m])}save();render();
+    if(f==='cat'){trk('categorizar',{campo:'cat'});const deAntes=deEsp(m.cat,m.ref)||ESP_DE.has(m.id);if(deAntes)ESP_DE.set(m.id,1);else ESP_DE.delete(m.id);m.cat=v;m.ref='';if(v){m.catSrc='manual'}else{m.catSrc='';aplicaRegras([m])}save();render();
       const c=DB.cats.find(x=>x.nome===v);if(v&&c&&!c.refs.length&&!deAntes)abreNovaRegra(m);return}
     if(f==='ref'){const deAntes=deEsp(m.cat,m.ref)||ESP_DE.has(m.id);ESP_DE.delete(m.id);m.ref=v;m.catSrc='manual';save();render();if(m.cat&&v&&!soMov(m.cat,v)&&!deAntes)abreNovaRegra(m);return}
     if(f==='quem'){m.quem=v;m.quemMan=!!v;if(!v)aplicaPessoas([m])}
@@ -1718,10 +1722,10 @@ document.addEventListener('change',e=>{const el=e.target;
   if(el.dataset.ctipo!=null){const c=DB.cats[+el.dataset.ctipo],v=el.value;if(v){c.refs.forEach(r=>{const k=c.nome+'›'+r;if(v==='-')delete DB.refTipo[k];else DB.refTipo[k]=v});save();render()}return}
   if(el.dataset.rde){const k=el.dataset.rde;let x=espL().find(e=>e.tipo==='de');if(!x){x={id:uid('e'),nome:'Ao mudar a partir de',tipo:'de',refs:[]};DB.esp=[...espL(),x]}if(el.checked){if(!x.refs.includes(k))x.refs.push(k)}else espL().forEach(e=>{if(e.tipo==='de')e.refs=e.refs.filter(y=>y!==k)});save();return}
   if(el.dataset.rso){const k=el.dataset.rso;if(el.checked){const x=espSo();if(!x.refs.includes(k))x.refs.push(k)}else espL().forEach(e=>{if(e.tipo==='para')e.refs=e.refs.filter(y=>y!==k)});aplicaRegras();save();render();return}
-  if(el.dataset.pvm||el.dataset.pva){const k=el.dataset.pvm||el.dataset.pva,v=num(el.value),m=el.dataset.pva?v/12:v,o=PVW(prevAno());if(m)o[k]=m;else delete o[k];save();render();return}
+  if(el.dataset.pvm||el.dataset.pva){trk('previsao',{});const k=el.dataset.pvm||el.dataset.pva,v=num(el.value),m=el.dataset.pva?v/12:v,o=PVW(prevAno());if(m)o[k]=m;else delete o[k];save();render();return}
 });
 $('#rgQ').addEventListener('input',renderRegras);
-$('#rgNova').addEventListener('click',()=>{DB.regras.unshift({id:uid('r'),txt:'',modo:'contem',tipo:'',cat:'',ref:'',ativo:true,predef:false});save();$('#rgQ').value='';renderRegras();const i=$('#rgList input[data-rg="txt"]');if(i)i.focus()});
+$('#rgNova').addEventListener('click',()=>{trk('regra',{origem:'lista'});DB.regras.unshift({id:uid('r'),txt:'',modo:'contem',tipo:'',cat:'',ref:'',ativo:true,predef:false});save();$('#rgQ').value='';renderRegras();const i=$('#rgList input[data-rg="txt"]');if(i)i.focus()});
 $('#btRegras').addEventListener('click',()=>{$('#rgQ').value='';renderRegras();$('#mRegras').hidden=false});
 /* abas dentro das janelas (Regras|Pessoas, Novo movimento|Eliminados): troca uma janela pela outra */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-mtab]');if(!b)return;const de=b.closest('.modal'),para=b.dataset.mtab;
@@ -1771,7 +1775,7 @@ function showImps(){$('#impsList').innerHTML=DB.imports.length?`<div class="tw">
 $$('.modal').forEach(m=>{let ini=null;m.addEventListener('pointerdown',e=>{ini=e.target});m.addEventListener('click',e=>{if(e.target===m&&ini===m)m.hidden=true;ini=null})});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.modal').forEach(m=>m.hidden=true)});
 $('#btClearAll').addEventListener('click',()=>{if(confirm('Apagar TODOS os movimentos e importações? (categorias, regras e pessoas mantêm-se)')){apaga(DB.mov,true);DB.imports=[];save();render();$('#mImps').hidden=true}});
-function exporta(){(()=>{const [a,b]=range();const rows=ordena(DB.mov.filter(m=>m.dm>=a&&m.dm<=b));if(!rows.length){toast('Sem movimentos no período');return}
+function exporta(){(()=>{const [a,b]=range();const rows=ordena(DB.mov.filter(m=>m.dm>=a&&m.dm<=b));if(!rows.length){trk('export_falhou',{motivo:'sem movimentos no período'});toast('Sem movimentos no período');return}trk('exportar',{linhas:rows.length});
   const c=v=>{v=String(v??'');return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v},n=v=>v==null?'':v.toFixed(2).replace('.',',');
   const s='Data mov.;Data valor;Descrição;Valor;Saldo;Categoria;Referência;Detalhes;Observações;Quem é;Banco;Conta\n'+rows.map(m=>[fmtD(m.dm),fmtD(m.dv),m.desc,n(m.valor),n(m.saldo),m.cat,m.ref,m.det,m.obs,m.quem,m.banco,m.conta].map(c).join(';')).join('\n');
   const bl=new Blob(['﻿'+s],{type:'text/csv;charset=utf-8'}),aL=document.createElement('a');aL.href=URL.createObjectURL(bl);aL.download=`movimentos_${a}_${b}.csv`;document.body.appendChild(aL);aL.click();setTimeout(()=>{URL.revokeObjectURL(aL.href);aL.remove()},300)})()}

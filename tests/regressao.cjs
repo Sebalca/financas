@@ -394,6 +394,15 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D103','Agregado: com sessão já iniciada antes de o módulo carregar, a secção mostra "Criar agregado" (não pede para entrar)',await ev(()=>new Promise(async ok=>{const velho=window.plataforma,vu=window.financasUser;
     window.plataforma={rpc:async()=>({data:[]})};FPAgr._set(null,[],[]);window.financasUser={id:'u5',email:'c@exemplo.pt'};await FPAgr.carrega();
     const r=!!document.querySelector('#agrNovo')&&!/Entre na sua conta/.test(document.querySelector('#agrBox').textContent);window.plataforma=velho;window.financasUser=vu;FPAgr._set(null,[],[]);ok(r)})));
+  const z105=await ev(()=>new Promise(async ok=>{const velho=window.plataforma;const ins=[];window.plataforma={auth:{onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})},from:t=>({insert:async l=>{ins.push(...l.map(x=>({...x,_t:t})));return {error:null}}}),rpc:async()=>({data:[]})};
+    FPTrack.log('aba',{aba:'x'});const semSessao=FPTrack._fila().length===0;
+    FPTrack.sessao({id:'u9',email:'t@exemplo.pt'});location.hash='#financas';await new Promise(r=>setTimeout(r,300));
+    const w=document.querySelector('iframe[data-id="financas"]').contentWindow;w.document.querySelector('[data-tab="des"]').click();
+    await w.importar([new File(['x'],'extrato_secreto_joao.pdf')]);await new Promise(r=>setTimeout(r,4500));
+    const tipos=ins.map(x=>x.tipo),fal=ins.find(x=>x.tipo==='import_falhou');
+    const ok1=semSessao&&tipos.includes('sessao')&&tipos.includes('aba')&&!!fal&&fal.dados.ext==='pdf'&&!JSON.stringify(ins).includes('secreto')&&ins.every(x=>x._t==='site_eventos'&&x.user_id==='u9'&&x.site_id==='financas'&&x.sessao);
+    FPTrack.sessao(null);window.plataforma=velho;w.document.querySelector('[data-tab="home"]').click();ok({ok:ok1,tipos,semSessao})}));
+  t('D105','estatísticas de uso: só com sessão, eventos (sessão, abas, importação falhada com extensão e sem nome do ficheiro) gravados em site_eventos com o utilizador',z105.ok,z105);
   await p.goto(U+'/financas.html');await p.waitForTimeout(300);
   const x104=await ev(()=>{const m=DB.mov.find(x=>x.valor<0&&x.cat&&x.ref&&!eFora(x.cat));const k=m.cat+'›'+m.ref;P.m='mes';P.d=new Date(+m.dm.slice(0,4),+m.dm.slice(5,7)-1,1);perLabel();
     document.querySelector('[data-tab="des"]').click();DES.edit=true;render();const q=document.querySelector(`#desCats [data-corq="r:${k}"]`);q.click();const pop=!document.querySelector('#corPop').hidden&&!!document.querySelector('#corExt');

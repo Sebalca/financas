@@ -197,3 +197,7 @@ A tabela foi criada no projeto **Sites** (`aehitgqsfcpzuunyzpsh`) com `supabase/
 ### Bibliotecas
 - `public/lib/`: pdf.js 3.11 (Mozilla, Apache-2.0) e SheetJS 0.18.5 (Apache-2.0), carregados só quando se lê um PDF ou um Excel.
 - Nenhuma outra dependência no browser além do `auth.js` da plataforma.
+
+
+## Estatísticas (admin)
+`admin.html` mostra, só a administradores, os totais de uso de todos os sites (tabela `site_eventos`, função `admin_stats`). Os visitantes anónimos contam-se na Umami: pôr o Website ID em `UMAMI_ID` (index.html) e o link de partilha em `UMAMI_SHARE` (admin.html).

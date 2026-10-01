@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Estatísticas · Admin</title>
+<link rel="icon" href="img/logo-64.png">
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--tx:#18202b;--mu:#667085;--bd:#e2e5ea;--ac:#2451d6;--ac2:#e9eefc;--ok:#1a7f4b;--neg:#c62828;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--ac:#7d9bff;--ac2:#1c2740;--ok:#4cc38a;--neg:#ff7a7a;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--ac:#7d9bff;--ac2:#1c2740;--ok:#4cc38a;--neg:#ff7a7a;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--bd);display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 16px}
+header h1{font-size:16px;margin:0 auto 0 0;display:flex;gap:8px;align-items:center}header h1 img{width:22px;height:22px;border-radius:6px}
+select,input,button{font:inherit;color:var(--tx)}select,input{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px 8px}
+.bt{border:1px solid var(--bd);background:var(--card);border-radius:8px;padding:6px 12px;font-weight:600;cursor:pointer;text-decoration:none;color:var(--tx);white-space:nowrap}.bt.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+main{max-width:1400px;margin:0 auto;padding:16px}
+.grid{display:grid;gap:12px}.k{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.g2{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;min-width:0}.card h2{font-size:14px;margin:0 0 10px;display:flex;gap:8px;align-items:baseline}.card h2 small{color:var(--mu);font-weight:400}
+.kpi .l{font-size:12px;color:var(--mu)}.kpi .v{font-size:24px;font-weight:700;margin-top:2px}.kpi .s{font-size:11.5px;color:var(--mu)}
+.tw{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}th{font-size:11.5px;color:var(--mu);font-weight:600;cursor:pointer;position:sticky;top:0;background:var(--card)}td.n,th.n{text-align:right}
+.bar{height:8px;border-radius:4px;background:var(--ac2);min-width:60px}.bar i{display:block;height:100%;border-radius:4px;background:var(--ac)}
+.muted{color:var(--mu)}.msg{padding:40px 16px;text-align:center;color:var(--mu)}.err{color:var(--neg)}
+svg text{fill:var(--mu);font-size:10px}
+.login{max-width:340px;margin:60px auto;display:grid;gap:8px}.login h2{margin:0 0 6px}
+.fun .row{display:grid;grid-template-columns:200px 1fr 90px;gap:10px;align-items:center;margin:6px 0}.fun .row .bar{height:14px}
+</style>
+<script>(function(){let t='';try{t=localStorage.getItem('fp_tema')||''}catch(e){}if(t)document.documentElement.dataset.theme=t})();</script>
+</head>
+<body>
+<header>
+  <h1><img src="img/logo-64.png" alt="">Estatísticas <span class="muted" style="font-weight:400">· admin da plataforma</span></h1>
+  <select id="fSite" aria-label="Site"><option value="">Todos os sites</option></select>
+  <select id="fDias" aria-label="Período"><option value="7">7 dias</option><option value="30" selected>30 dias</option><option value="90">90 dias</option><option value="365">12 meses</option></select>
+  <a class="bt" id="umami" href="https://cloud.umami.is" target="_blank" rel="noopener" title="Visitantes anónimos (Umami)">Visitantes ↗</a>
+  <button class="bt" id="btAtual" type="button">↻ Atualizar</button>
+  <a class="bt" href="index.html">← Site</a>
+</header>
+<main id="app"><div class="msg">A carregar…</div></main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/gh/sebalca/plataforma-core@main/auth.js"></script>
+<script>
+/* Página de admin (v0.9g): números agregados de todos os sites da plataforma.
+   Dados: função admin_stats no Supabase (só admins; nunca valores financeiros). Visitantes anónimos: Umami (link acima). */
+const UMAMI_SHARE={'':'',financas:''}; // link de partilha do painel Umami por site (Umami › Website › Share URL)
+const $=id=>document.getElementById(id),esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const NOMES={sessao:'Sessões iniciadas',site:'Separador aberto',aba:'Aba aberta',import:'Extrato importado',import_falhou:'Importação falhada',export_falhou:'Exportação falhada',exportar:'Exportar CSV',
+  categorizar:'Categorizar',regra:'Regra criada',dividir:'Dividir movimento',previsao:'Previsão alterada',agregado_criar:'Agregado criado',agregado_convidar:'Convite enviado',agregado_responder:'Convite respondido',
+  agregado_sair:'Saiu do agregado',agregado_remover:'Membro removido',agregado_apagar:'Agregado apagado',agregado_restaurar:'Agregado restaurado',copia_exportada:'Cópia de segurança exportada',copia_importada:'Cópia importada',
+  sugestao:'Sugestão enviada',pergunta:'Pergunta (FAQ)',erro_js:'Erro técnico'};
+const ABAS={home:'Início',ext:'Extratos',ren:'Rendimentos',des:'Despesas',prev:'Previsões',obj:'Objetivos',fat:'Faturas',saude:'Saúde financeira'};
+const dt=d=>d?new Date(d).toLocaleDateString('pt-PT'):'—',dth=d=>d?new Date(d).toLocaleString('pt-PT',{dateStyle:'short',timeStyle:'short'}):'—';
+const min=m=>{m=+m||0;return m<60?`${Math.round(m)} min`:`${Math.floor(m/60)} h ${String(Math.round(m%60)).padStart(2,'0')}`};
+let D=null,SORT={k:'ultimo',d:-1},Q='';
+
+function barras(lista,campo,lbl,alt){const W=Math.max(320,lista.length*14),H=alt||150,pb=18,pt=8,mx=Math.max(1,...lista.map(x=>+x[campo]||0)),bw=W/lista.length;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" role="img" aria-label="${esc(lbl)}">`
+    +lista.map((x,i)=>{const v=+x[campo]||0,h=(H-pb-pt)*v/mx;return `<rect x="${i*bw+bw*.15}" y="${H-pb-h}" width="${bw*.7}" height="${h}" rx="2" fill="var(--ac)"><title>${esc(x._l)}: ${v}</title></rect>`}).join('')
+    +lista.map((x,i)=>i%Math.ceil(lista.length/8)===0?`<text x="${i*bw+bw/2}" y="${H-4}" text-anchor="middle">${esc(x._c)}</text>`:'').join('')
+    +`<text x="2" y="10">${mx}</text></svg>`}
+
+function pinta(){const k=D.kpis,f=D.funil,app=$('app');
+  const kp=(l,v,s)=>`<div class="card kpi"><div class="l">${l}</div><div class="v">${v}</div>${s?`<div class="s">${s}</div>`:''}</div>`;
+  const dias=(D.dias||[]).map(x=>({...x,_l:dt(x.d),_c:x.d.slice(8)+'/'+x.d.slice(5,7)})),sem=(D.semanas||[]).map(x=>({...x,_l:'Semana de '+dt(x.s),_c:x.s.slice(8)+'/'+x.s.slice(5,7)}));
+  const fl=[['Contas criadas',f.contas],['Abriram o site com sessão',f.abriu],['Importaram extratos',f.importou],['Categorizaram à mão',f.categorizou],['Voltaram depois de 7 dias',f.voltou]];
+  const mxA=Math.max(1,...D.abas.map(a=>a.n));
+  let us=D.utilizadores.filter(u=>!Q||String(u.email).toLowerCase().includes(Q));
+  us.sort((a,b)=>{const x=a[SORT.k],y=b[SORT.k];return (x==null?-1e15:typeof x==='string'?(isNaN(Date.parse(x))?x:Date.parse(x)):x)>(y==null?-1e15:typeof y==='string'?(isNaN(Date.parse(y))?y:Date.parse(y)):y)?SORT.d:-SORT.d});
+  const th=(k,l,n)=>`<th class="${n?'n':''}" data-s="${k}">${l}${SORT.k===k?(SORT.d>0?' ▲':' ▼'):''}</th>`;
+  app.innerHTML=`<div class="grid k">${kp('Contas',k.contas,`+${k.novas7} em 7 dias · +${k.novas30} em 30`)}${kp('Ativos hoje',k.ativosHoje)}${kp('Ativos 7 dias',k.ativos7)}${kp('Ativos no período',k.ativosPeriodo)}
+      ${kp('Sessões',k.sessoes)}${kp('Sessão média',min(k.sessaoMedia))}${kp('Tempo total',min((+k.horas||0)*60))}${kp('Falhas de importação',D.falhas.length,'no período')}</div>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="card"><h2>Utilizadores ativos por dia <small>com sessão iniciada</small></h2>${barras(dias,'ativos','Ativos por dia')}</div>
+      <div class="card"><h2>Tempo no site por dia <small>minutos (todas as sessões)</small></h2>${barras(dias,'minutos','Minutos por dia')}</div>
+      <div class="card"><h2>Contas novas por semana <small>últimas 12 semanas</small></h2>${barras(sem,'novas','Contas novas por semana')}</div>
+      <div class="card fun"><h2>Percurso <small>de quem cria conta</small></h2>${fl.map(([l,v])=>`<div class="row"><span>${l}</span><div class="bar"><i style="width:${f.contas?v/f.contas*100:0}%"></i></div><span class="n">${v} · ${f.contas?Math.round(v/f.contas*100):0}%</span></div>`).join('')}
+        <p class="muted" style="font-size:12px;margin:8px 0 0">"Importaram" e "Categorizaram" contam com os dados guardados; os restantes com as estatísticas (a partir de hoje).</p></div>
+      <div class="card"><h2>Abas mais abertas <small>Finanças</small></h2><div class="tw"><table><tr><th>Aba</th><th class="n">Vezes</th><th class="n">Pessoas</th><th></th></tr>${D.abas.map(a=>`<tr><td>${esc(ABAS[a.aba]||a.aba)}</td><td class="n">${a.n}</td><td class="n">${a.u}</td><td style="width:40%"><div class="bar"><i style="width:${a.n/mxA*100}%"></i></div></td></tr>`).join('')||'<tr><td colspan="4" class="muted">Ainda sem dados</td></tr>'}</table></div></div>
+      <div class="card"><h2>Funcionalidades usadas</h2><div class="tw"><table><tr><th>Ação</th><th class="n">Vezes</th><th class="n">Pessoas</th></tr>${D.eventos.map(e=>`<tr><td>${esc(NOMES[e.tipo]||e.tipo)}</td><td class="n">${e.n}</td><td class="n">${e.u}</td></tr>`).join('')||'<tr><td colspan="3" class="muted">Ainda sem dados</td></tr>'}</table></div></div>
+    </div>
+    <div class="card" style="margin-top:12px"><h2>Utilizadores <small>${us.length} de ${D.utilizadores.length} · período: dias ativos, sessões, tempo e ações</small><input id="fQ" placeholder="Pesquisar email" value="${esc(Q)}" style="margin-left:auto;max-width:240px"></h2>
+      <div class="tw" style="max-height:520px"><table id="tU"><tr>${th('email','Email')}${th('criado','Conta criada')}${th('login','Último login')}${th('ultimo','Última atividade')}${th('dias','Dias ativos',1)}${th('sessoes','Sessões',1)}${th('minutos','Tempo',1)}${th('eventos','Ações',1)}${th('mov','Movimentos',1)}${th('agregados','Agregado')}</tr>
+      ${us.map(u=>`<tr><td>${esc(u.email)}</td><td>${dt(u.criado)}</td><td>${dth(u.login)}</td><td>${dth(u.ultimo)}</td><td class="n">${u.dias}</td><td class="n">${u.sessoes}</td><td class="n">${min(u.minutos)}</td><td class="n">${u.eventos}</td><td class="n">${u.mov==null?'—':u.mov}</td><td>${esc(u.agregados)||'<span class="muted">—</span>'}</td></tr>`).join('')}</table></div></div>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="card"><h2>Falhas de importação/exportação <small>no período</small></h2><div class="tw" style="max-height:360px"><table><tr><th>Quando</th><th>Email</th><th>Tipo</th><th>Banco</th><th>Ficheiro</th><th>Motivo</th></tr>${D.falhas.map(x=>`<tr><td>${dth(x.quando)}</td><td>${esc(x.email)}</td><td>${esc(NOMES[x.tipo]||x.tipo)}</td><td>${esc(x.dados.banco||'')}</td><td>${esc(x.dados.ext||'')}</td><td style="white-space:normal">${esc(x.dados.motivo||'')}</td></tr>`).join('')||'<tr><td colspan="6" class="muted">Sem falhas 🎉</td></tr>'}</table></div></div>
+      <div class="card"><h2>Erros técnicos <small>JavaScript, no período</small></h2><div class="tw" style="max-height:360px"><table><tr><th>Mensagem</th><th class="n">Vezes</th><th class="n">Pessoas</th><th>Último</th></tr>${D.erros.map(x=>`<tr><td style="white-space:normal">${esc(x.msg)}</td><td class="n">${x.n}</td><td class="n">${x.u}</td><td>${dth(x.ultimo)}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">Sem erros 🎉</td></tr>'}</table></div></div>
+    </div>
+    <p class="muted" style="font-size:12px">Estatísticas recolhidas desde a v0.9g (01/10/2026) só para quem tem sessão iniciada; apagam-se ao fim de 12 meses. Visitantes sem conta: botão "Visitantes ↗" (Umami).</p>`;
+  $('tU').addEventListener('click',e=>{const t=e.target.closest('[data-s]');if(!t)return;SORT=SORT.k===t.dataset.s?{k:SORT.k,d:-SORT.d}:{k:t.dataset.s,d:-1};pinta()});
+  $('fQ').addEventListener('input',e=>{Q=e.target.value.trim().toLowerCase();const p=e.target.selectionStart;pinta();const n=$('fQ');n.focus();n.setSelectionRange(p,p)})}
+
+async function carrega(){const c=window.plataforma;if(!c||!c.rpc){$('app').innerHTML='<div class="msg err">Sem ligação ao servidor.</div>';return}
+  $('app').innerHTML='<div class="msg">A carregar…</div>';
+  const site=$('fSite').value||null,{data,error}=await c.rpc('admin_stats',{p_site:site,p_dias:+$('fDias').value});
+  if(error){$('app').innerHTML=`<div class="msg err">${/admin/.test(error.message)?'Esta página é só para administradores.':'Erro: '+esc(error.message)}</div>`;return}
+  D=data;const sel=$('fSite');if(sel.options.length===1)(D.sites||[]).forEach(s=>sel.add(new Option(s,s)));
+  const u=UMAMI_SHARE[$('fSite').value||'']||UMAMI_SHARE.financas;$('umami').href=u||'https://cloud.umami.is';pinta()}
+
+function login(){$('app').innerHTML=`<form class="card login" id="fl"><h2>Entrar</h2><p class="muted" style="margin:0">Página só para administradores.</p><input type="email" id="le" placeholder="Email" required autocomplete="email"><input type="password" id="lp" placeholder="Palavra-passe" required autocomplete="current-password"><button class="bt pri" type="submit">Entrar</button><div id="lm" class="err"></div></form>`;
+  $('fl').addEventListener('submit',async e=>{e.preventDefault();$('lm').textContent='';const {error}=await Auth.signIn($('le').value.trim(),$('lp').value);if(error)$('lm').textContent='Email ou palavra-passe incorretos.'})}
+
+$('fSite').addEventListener('change',carrega);$('fDias').addEventListener('change',carrega);$('btAtual').addEventListener('click',carrega);
+if(!window.Auth){$('app').innerHTML='<div class="msg err">Não foi possível carregar o sistema de contas.</div>'}
+else{let ultimo=null;const vê=u=>{const id=u?u.id:null;if(id===ultimo)return;ultimo=id;u?carrega():login()};Auth.onChange((ev,s)=>vê(s&&s.user));Auth.getSession().then(s=>vê(s&&s.user))}
+</script>
+</body>
+</html>
