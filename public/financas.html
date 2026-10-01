@@ -306,6 +306,19 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 .inf{border:0;background:none;color:var(--mu);font-size:13px;cursor:help;padding:0 4px;line-height:1;vertical-align:1px}.inf:hover{color:var(--ac)}
 th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400}
 .infpop{position:fixed;z-index:85;max-width:min(320px,calc(100vw - 20px));background:var(--tx);color:var(--card);border-radius:9px;padding:8px 11px;font-size:12.5px;line-height:1.5;box-shadow:0 8px 22px rgba(0,0,0,.25)}.infpop[hidden]{display:none}
+/* v0.10c telemóvel: movimentos dos Extratos em cartões; faixa do exemplo compacta */
+.drop .mb{display:none}
+@media (max-width:640px){.drop .dk{display:none}.drop .mb{display:inline}
+  #extHead{display:none}#extTable{overflow-x:visible}#extTable table.tfix{width:100%!important;min-width:0!important;table-layout:auto;display:block}#extTable table.tfix colgroup{display:none}#extTable table.tfix tbody{display:block}
+  #extTable tr[data-id]{display:grid;grid-template-columns:26px minmax(0,1fr) minmax(0,1fr) auto;gap:6px 8px;padding:10px 2px;border-bottom:1px solid var(--bd);align-items:center}
+  #extTable tr[data-id]>td{display:block;padding:0;border:0;overflow:visible;min-width:0!important;white-space:normal}
+  #extTable td.ck{grid-column:1;grid-row:1/span 2;align-self:start}#extTable td.c-dt{grid-column:2/4;grid-row:1;font-size:12px;color:var(--mu)}
+  #extTable td.num{grid-column:4;grid-row:1/span 2;align-self:start;font-weight:700;font-size:15px}#extTable td.desc{grid-column:2/4;grid-row:2;font-weight:600}
+  #extTable td.c-cat{grid-column:2/3;display:flex!important;align-items:center;gap:2px}#extTable td.c-cat select.ed{flex:1;min-width:0}#extTable td.c-ref{grid-column:3/5}#extTable td.c-split{grid-column:2/5}#extTable td select.ed{width:100%!important}
+  #extTable td.c-obs{grid-column:2/3}#extTable td.c-quem{grid-column:3/5}#extTable td.c-obs input,#extTable td.c-quem input{width:100%!important}
+  #extTable td.c-det{grid-column:2/5;font-size:12px!important}#extTable td.c-det:empty{display:none}#extTable td.c-bk{grid-column:2/3;font-size:12px;color:var(--mu)}#extTable td.acts{grid-column:3/5;justify-self:end;white-space:nowrap}
+  #extTable tr.parte{display:flex;flex-wrap:wrap;gap:6px;padding:6px 0 6px 34px}#extTable tr.parte>td{padding:0;border:0}#extTable tr.parte>td:empty{display:none}#extTable tr.mais,#extTable tr.fim{display:block}#extTable tr.mais>td,#extTable tr.fim>td{display:block}
+  .extbar{position:static}.exban .tx,.exban .t2{display:none}.exban{flex-wrap:nowrap}.exban{padding:6px 10px;margin-top:6px}}
 .exban{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 0;padding:9px 14px;border:1px dashed var(--ac);border-radius:12px;background:var(--ac2);font-size:13.5px}.exban .r{margin-left:auto;display:flex;gap:6px}.exban[hidden]{display:none}
 .syncst.ex{color:var(--ac)}
 .syncst{border:1px solid var(--bd);background:var(--card);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--mu);cursor:pointer;margin-left:auto;white-space:nowrap}
@@ -338,7 +351,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
     <button type="button" data-tab="saude">Saúde financeira</button>
   </nav>
   <div class="dica" id="dica" hidden role="dialog" aria-label="Dica"></div><div class="infpop" id="infPop" hidden role="tooltip"></div>
-  <div class="exban" id="exBan" hidden>🧪 <b>Conta de exemplo</b> — movimentos fictícios, só neste browser, separados dos seus dados. Explore à vontade.<span class="r"><button class="btn sm" type="button" data-exb="p">👤 Voltar ao Pessoal</button><button class="btn sm" type="button" data-exb="x">🗑 Apagar exemplo</button></span></div>
+  <div class="exban" id="exBan" hidden>🧪 <b>Conta de exemplo</b><span class="tx"> — movimentos fictícios, só neste browser, separados dos seus dados. Explore à vontade.</span><span class="r"><button class="btn sm" type="button" data-exb="p">👤 <span class="t2">Voltar ao </span>Pessoal</button><button class="btn sm" type="button" data-exb="x" title="Apagar a conta de exemplo">🗑 Apagar</button></span></div>
 </div></div>
 
 <main class="wrap">
@@ -371,7 +384,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
     <div class="card"><h3>Importar extrato</h3>
       <div class="upl">
         <label class="drop" id="drop"><input type="file" id="fExt" accept=".csv,.txt,.xlsx,.xls" multiple hidden>
-          <span class="ico">📄</span><b>Arraste o extrato ou clique para escolher</b><small>· CSV da CGD · Excel do Millennium (conta e cartão) · Excel do BPI · Excel/CSV do cartão refeição · vários de uma vez</small></label>
+          <span class="ico">📄</span><b class="dk">Arraste o extrato ou clique para escolher</b><b class="mb">Escolher extrato(s)</b><small>· CSV da CGD · Excel do Millennium (conta e cartão) · Excel do BPI · Excel/CSV do cartão refeição · vários de uma vez</small></label>
         <select id="bankSel" aria-label="Banco" title="Banco"><option value="">Banco: auto</option><option value="CGD">CGD</option><option value="__cartao">Cartão refeição</option></select>
       </div>
       <div id="impRes"></div>
@@ -522,7 +535,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.10b'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10c'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -792,6 +805,21 @@ function nomeContaGen(titulo,fname){const forc=$('#bankSel').value;if(forc==='__
   const n=prompt(`De que conta é o ficheiro "${fname}"?`,titulo||'');if(!n||!n.trim())throw new Error('Importação cancelada (sem nome de conta).');return n.trim()}
 
 /* ================= importação ================= */
+/* v0.10c: banco não suportado — amostra anónima (só a estrutura: datas mantidas, letras → X, algarismos ao acaso), enviada pelas Sugestões depois de a pessoa a ver */
+const FALHOU=new Map();
+const NAO_LIDO='Bancos lidos: <b>CGD</b> (CSV), <b>Millennium</b> e <b>BPI</b> (Excel) e <b>cartão refeição</b>; outros CSV/Excel com colunas de data, descrição e valor costumam funcionar. Se o seu banco não é lido, envie-nos uma <b>amostra anónima</b> — os textos e os valores são trocados aqui no browser e vê tudo antes de enviar.';
+function anonimiza(linhas){const eData=c=>/^\s*(\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4}|\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2})(\s+\d{1,2}:\d{2}(:\d{2})?)?\s*$/.test(c);
+  const dig=x=>x.replace(/\d/g,()=>String(Math.floor(Math.random()*10))),let_=x=>x.replace(/[A-Za-zÀ-ÿ]/g,c=>c===c.toUpperCase()?'X':'x');
+  const L=linhas.map(r=>(r||[]).map(c=>c==null?'':c instanceof Date?c.toISOString().slice(0,10):String(c)));const hi=L.findIndex(r=>r.some(eData)),cab=hi>0?hi-1:-1;
+  return L.slice(0,hi<0?20:hi+15).map((r,i)=>r.map(c=>eData(c)?c:i===cab?dig(c):let_(dig(c))))}
+window.fpAmostra=async nome=>{const f=FALHOU.get(nome);if(!f)return;const ext=(f.name.split('.').pop()||'').toLowerCase(),buf=await f.arrayBuffer();let linhas,sep=';';
+  try{if(/^xlsx?$/.test(ext))linhas=(await lerExcel(buf)).linhas;else{const t=decode(buf),l=t.split(/\r?\n/).filter(x=>x.trim()).slice(0,60);sep=[';','\t',','].map(s=>[s,l.slice(0,10).reduce((n,x)=>n+x.split(s).length,0)]).sort((a,b)=>b[1]-a[1])[0][0];linhas=l.map(x=>x.split(sep))}}
+  catch(e){toast('Não foi possível ler o ficheiro');return}
+  const a=anonimiza(linhas).map(r=>r.join(sep==='\t'?' | ':sep)).join('\n').slice(0,3300);trk('amostra_banco',{ext});
+  const txt=`Banco não suportado — banco: (escreva aqui o nome do banco e o tipo de conta)\nFicheiro .${ext} · ${linhas.length} linhas\nAmostra anónima (letras trocadas por X, algarismos ao acaso, datas mantidas):\n${a}`;
+  window.__amostra=txt;
+  try{if(window.parent!==window&&window.parent.FPSug){window.parent.FPSug.amostra(txt);return}}catch(e){}
+  try{await navigator.clipboard.writeText(txt);toast('Amostra copiada — cole-a numa sugestão')}catch(e){toast('Abra o site principal para enviar a amostra')}};
 async function importar(files){
   const res=[];
   for(const f of files){
@@ -810,12 +838,12 @@ async function importar(files){
       aplicaRegras(novos);aplicaPessoas(novos);autoLiga();
       DB.imports.push({id:impId,ficheiro:f.name,banco:r.banco,conta:r.conta,titular:r.titular,inicio:r.inicio,fim:r.fim,em:new Date().toISOString(),novos:novos.length,dup});
       res.push({ok:true,f:f.name,r,v,novos:novos.length,auto:novos.filter(m=>m.cat).length,dup,elim});
-    }catch(e){res.push({ok:false,f:f.name,msg:e.message})}
+    }catch(e){FALHOU.set(f.name,f);if(FALHOU.size>10)FALHOU.delete(FALHOU.keys().next().value);res.push({ok:false,f:f.name,msg:e.message})}
   }
   save();
   res.forEach(x=>trk(x.ok?'import':'import_falhou',x.ok?{banco:x.r.banco,linhas:x.r.mov.length,novos:x.novos,dup:x.dup}:{ext:(String(x.f).split('.').pop()||'').toLowerCase().slice(0,6),banco:$('#bankSel').value||'auto',motivo:String(x.msg).slice(0,150)}));
   $('#impRes').innerHTML=res.map(x=>x.ok?`<div class="imp ok">✓ <b>${esc(x.f)}</b> — ${esc(x.r.banco)}${x.r.conta?` · conta ${esc(x.r.conta)}`:''} · ${fmtD(x.r.inicio)} a ${fmtD(x.r.fim)}<br><b>${x.novos}</b> movimentos novos${x.novos?` (${x.auto} categorizados pelas regras)`:''}${x.dup?` · ${x.dup} já existiam (ignorados)`:''}${x.elim?` · ${x.elim} tinham sido eliminados (não entraram)`:''} · ${x.r.mov.every(m=>m.saldo==null)?'sem saldos no ficheiro':x.v.erros===0?'✓ saldos consistentes':`⚠ ${x.v.erros} saldos não batem certo`}${x.v.fin===true?` · saldo final ${E(x.r.saldoFinal)} ✓`:x.v.fin===false?' · ⚠ saldo final diferente':''}</div>`
-    :`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}</div>`).join('');
+    :`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}${/\.(csv|txt|xlsx?)$/i.test(x.f)?`<br><span class="muted" style="font-size:12.5px">${NAO_LIDO}</span> <button class="btn sm" type="button" data-amostra="${esc(x.f)}">📨 Enviar amostra anónima</button>`:''}</div>`).join('');
   const ok=res.filter(x=>x.ok);
   if(ok.length){const last=ok.map(x=>x.r.mov[0].dm).sort().pop();P.d=new Date(+last.slice(0,4),+last.slice(5,7)-1,1);P.m='mes';$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel()}
   render();
@@ -992,13 +1020,13 @@ const refOpts=(cat,sel)=>{const c=DB.cats.find(x=>x.nome===cat);const rs=c?c.ref
 const EXT_PASSO=100,EXT={rows:[],n:EXT_PASSO,chave:'',ctx:{}};
 function extLinha(m){const {LG,RK,DS}=EXT.ctx,cm=m.cat?corMovC(m.cat,m.ref):'',tl=COR.pint==='linha'?tintaC(cm,12):'',tc=COR.pint==='caixa'?tintaC(cm,30):'';return `<tr data-id="${m.id}" class="${m.man?'man':''}${SEL.has(m.id)?' selr':''}"${tl?` style="--tl:${tl}"`:''}>
     <td class="ck"><input type="checkbox" class="sel"${SEL.has(m.id)?' checked':''} aria-label="Selecionar"></td>
-    <td title="${m.dv&&m.dv!==m.dm?'Data valor: '+fmtD(m.dv):''}">${fmtD(m.dm)}</td>${(o=>o?`<td class="desc" title="Reembolso de: ${esc(nomeMov(o))}\nDescrição no extrato: ${esc(m.desc)}">↩ ${esc(nomeMov(o))}</td>`:`<td class="desc" title="${esc(m.desc)}">${esc(m.desc)}</td>`)(m.reemb&&RK.get(m.reemb))}<td class="num" title="${m.man?(DS.has(m.id)?'Saldo: '+E(DS.get(m.id)):''):m.saldo==null?'':'Saldo: '+E(m.saldo)}">${val(m.valor)}</td>
-    ${m.partes&&m.partes.length?`<td colspan="2"><button type="button" class="sptog" data-sptog="${m.id}" title="${SPOPEN.has(m.id)?'Esconder':'Mostrar'} as linhas" aria-expanded="${SPOPEN.has(m.id)}">${SPOPEN.has(m.id)?'▾':'▸'}</button><button class="btn sm${isUnc(m)?' unc':''}" data-split="${m.id}" title="Editar a divisão">✂ Dividido em ${m.partes.length}</button></td>`:`<td><select class="ed${m.cat?'':' unc'}" data-f="cat"${tc?` style="background:${tc}"`:''}>${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':m.catSrc==='rend'?'<span class="auto" title="Atribuído pela ligação a um rendimento">🔗</span>':''}</td>
-    <td><select class="ed${m.cat&&!m.ref?' unc':''}" data-f="ref"${m.cat?'':' disabled'}>${refOpts(m.cat,m.ref)}</select></td>`}
-    <td class="muted" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:(m.reemb&&RK.get(m.reemb)?`<span class="lk ok" data-golk="${esc(m.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(m.reemb)))}</span>`:esc(m.det)))(LG.get(chave(m)))}</td>
-    <td><input class="ed obs" data-f="obs" value="${esc(m.obs)}" placeholder="…"></td>
-    <td><input class="ed" data-f="quem" list="dlQuem" value="${esc(m.quem)}" style="width:110px"></td>
-    <td>${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td class="acts"><span class="sl">${m.valor>0&&!LG.get(chave(m))&&!(m.partes&&m.partes.length)?`<button class="btn ic sm" data-reemb="${m.id}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"><button class="btn ic sm" data-split="${m.id}" title="Dividir em várias linhas">✂</button></span><span class="sl">${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button>`:''}</span><span class="sl"><button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></span></td></tr>${m.partes&&m.partes.length&&SPOPEN.has(m.id)?m.partes.map((p,i)=>`<tr class="parte" data-pid="${m.id}#${i}"><td></td><td></td><td class="desc">↳ ${esc(p.desc||'parte '+(i+1))}</td><td class="num">${val(p.valor)}</td><td>${p.cat?esc(p.cat):'<span class="tag wait">Por categorizar</span>'}</td><td>${esc(p.ref||'—')}</td><td class="muted" style="white-space:normal;font-size:12px">${p.reemb&&RK.get(p.reemb)?`<span class="lk ok" data-golk="${esc(p.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(p.reemb)))}</span>`:''}</td><td><input class="obs pobs" data-pobs="${m.id}#${i}" value="${esc(p.obs||'')}" placeholder="…" aria-label="Observações da linha"></td><td colspan="2"></td><td class="acts"><span class="sl">${p.valor>0?`<button class="btn ic sm" data-reembp="${m.id}#${i}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"></span><span class="sl"></span><span class="sl"></span></td></tr>`).join(''):''}`}
+    <td class="c-dt" title="${m.dv&&m.dv!==m.dm?'Data valor: '+fmtD(m.dv):''}">${fmtD(m.dm)}</td>${(o=>o?`<td class="desc" title="Reembolso de: ${esc(nomeMov(o))}\nDescrição no extrato: ${esc(m.desc)}">↩ ${esc(nomeMov(o))}</td>`:`<td class="desc" title="${esc(m.desc)}">${esc(m.desc)}</td>`)(m.reemb&&RK.get(m.reemb))}<td class="num" title="${m.man?(DS.has(m.id)?'Saldo: '+E(DS.get(m.id)):''):m.saldo==null?'':'Saldo: '+E(m.saldo)}">${val(m.valor)}</td>
+    ${m.partes&&m.partes.length?`<td colspan="2" class="c-cat c-split"><button type="button" class="sptog" data-sptog="${m.id}" title="${SPOPEN.has(m.id)?'Esconder':'Mostrar'} as linhas" aria-expanded="${SPOPEN.has(m.id)}">${SPOPEN.has(m.id)?'▾':'▸'}</button><button class="btn sm${isUnc(m)?' unc':''}" data-split="${m.id}" title="Editar a divisão">✂ Dividido em ${m.partes.length}</button></td>`:`<td class="c-cat"><select class="ed${m.cat?'':' unc'}" data-f="cat"${tc?` style="background:${tc}"`:''}>${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':m.catSrc==='rend'?'<span class="auto" title="Atribuído pela ligação a um rendimento">🔗</span>':''}</td>
+    <td class="c-ref"><select class="ed${m.cat&&!m.ref?' unc':''}" data-f="ref"${m.cat?'':' disabled'}>${refOpts(m.cat,m.ref)}</select></td>`}
+    <td class="muted c-det" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:(m.reemb&&RK.get(m.reemb)?`<span class="lk ok" data-golk="${esc(m.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(m.reemb)))}</span>`:esc(m.det)))(LG.get(chave(m)))}</td>
+    <td class="c-obs"><input class="ed obs" data-f="obs" value="${esc(m.obs)}" placeholder="Observações…" aria-label="Observações"></td>
+    <td class="c-quem"><input class="ed" data-f="quem" list="dlQuem" placeholder="Quem é" aria-label="Quem é" value="${esc(m.quem)}" style="width:110px"></td>
+    <td class="c-bk">${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td class="acts"><span class="sl">${m.valor>0&&!LG.get(chave(m))&&!(m.partes&&m.partes.length)?`<button class="btn ic sm" data-reemb="${m.id}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"><button class="btn ic sm" data-split="${m.id}" title="Dividir em várias linhas">✂</button></span><span class="sl">${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button>`:''}</span><span class="sl"><button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></span></td></tr>${m.partes&&m.partes.length&&SPOPEN.has(m.id)?m.partes.map((p,i)=>`<tr class="parte" data-pid="${m.id}#${i}"><td></td><td></td><td class="desc">↳ ${esc(p.desc||'parte '+(i+1))}</td><td class="num">${val(p.valor)}</td><td>${p.cat?esc(p.cat):'<span class="tag wait">Por categorizar</span>'}</td><td>${esc(p.ref||'—')}</td><td class="muted" style="white-space:normal;font-size:12px">${p.reemb&&RK.get(p.reemb)?`<span class="lk ok" data-golk="${esc(p.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(p.reemb)))}</span>`:''}</td><td><input class="obs pobs" data-pobs="${m.id}#${i}" value="${esc(p.obs||'')}" placeholder="…" aria-label="Observações da linha"></td><td colspan="2"></td><td class="acts"><span class="sl">${p.valor>0?`<button class="btn ic sm" data-reembp="${m.id}#${i}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"></span><span class="sl"></span><span class="sl"></span></td></tr>`).join(''):''}`}
 const extMaisTr=()=>EXT.rows.length>EXT.n?`<tr class="mais" id="extMais"><td colspan="11">A mostrar ${EXT.n} de ${EXT.rows.length} · <button type="button" class="btn sm" data-extmais>Mostrar mais ${Math.min(EXT_PASSO,EXT.rows.length-EXT.n)}</button></td></tr>`:'';
 function extMais(ate){const tb=$('#extTable tbody');if(!tb)return;const n0=EXT.n;EXT.n=Math.min(EXT.rows.length,Math.max(EXT.n+EXT_PASSO,ate||0));if(EXT.n===n0)return;
   const x=$('#extMais');if(x)x.remove();const fim=tb.querySelector('tr.fim');fim.insertAdjacentHTML('beforebegin',EXT.rows.slice(n0,EXT.n).map(extLinha).join('')+extMaisTr());ajustaLarg();observaMais()}
@@ -1964,6 +1992,7 @@ document.addEventListener('click',e=>{const p=$('#infPop'),b=e.target.closest('.
   const txt=b.dataset.inf||b.getAttribute('title');if(!txt)return;if(b.tagName==='TH'&&!matchMedia('(hover:none)').matches&&!e.target.closest('.inf'))return;
   p.textContent=txt;p.hidden=false;const r=b.getBoundingClientRect(),pw=p.offsetWidth;p.style.left=Math.min(innerWidth-pw-10,Math.max(10,r.left-20))+'px';const ph=p.offsetHeight;p.style.top=(r.bottom+6+ph>innerHeight-8?Math.max(8,r.top-ph-6):r.bottom+6)+'px'},true);
 addEventListener('scroll',()=>{const p=$('#infPop');if(p&&!p.hidden)p.hidden=true},{passive:true});
+$('#impRes').addEventListener('click',e=>{const b=e.target.closest('[data-amostra]');if(b)window.fpAmostra(b.dataset.amostra)});
 window.fpCtx={atual:()=>({...CTX}),muda:(c)=>trocaCtx(c),db:()=>DB,temEx,
   exemplo:async()=>{const n=criaEx();trk('exemplo',{acao:'criar'});await trocaCtx({t:'x'});const h=new Date();P.m='mes';P.d=new Date(h.getFullYear(),h.getMonth()-1,1);$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel();render();avisaPer();return n},apagaEx};
 $('#exBan').addEventListener('click',e=>{const b=e.target.closest('[data-exb]');if(!b)return;if(b.dataset.exb==='p')trocaCtx({t:'p'});else if(confirm('Apagar a conta de exemplo? Os seus dados pessoais não são afetados.'))apagaEx()});

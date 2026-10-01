@@ -446,6 +446,19 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     d.body.click();await w.fpCtx.apagaEx();await W(300);
     ok({ok:vis&&esc&&volta&&mostra&&fecha&&umaVez&&infs>=10&&pop,vis,esc,volta,mostra,fecha,umaVez,infs,pop})}));
   t('D107','Primeiros passos no Início (progresso, Esconder, volta em Definições), dicas só na 1.ª visita a cada aba (desligáveis), ajuda ⓘ nas caixas',z107.ok,z107);
+  const z108=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    const f=new File(['Titular;Joana Ficticia Teste\nNIB;0035 1234 5678\nData;Coisa;Outra\n01/09/2026;LOJA JOANA 4321;abc\n'],'banco-x.csv',{type:'text/csv'});
+    const n0=w.fpCtx.db().mov.length;await w.importar([f]);const b=d.querySelector('#impRes [data-amostra]');const exp=!!b&&/Bancos lidos/.test(d.querySelector('#impRes').textContent);
+    if(b)b.click();await W(400);const tx=document.querySelector('#sgTxt').value;const sug=!document.querySelector('#mSet').hidden&&/Banco não suportado/.test(tx)&&/01\/09\/2026/.test(tx)&&!/Joana|JOANA|4321|0035/.test(tx)&&w.fpCtx.db().mov.length===n0;
+    document.querySelector('#sgTxt').value='';document.querySelector('#mSet').hidden=true;d.querySelector('#impRes').innerHTML='';ok({ok:exp&&sug,exp,sug,tx:tx.slice(0,300)})}));
+  t('D108','banco não suportado: explica os bancos lidos e abre a sugestão com uma amostra anónima (datas mantidas, sem nomes nem números)',z108.ok,z108);
+  await p.setViewportSize({width:375,height:740});await p.waitForTimeout(400);
+  const z109=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    w.go('ext');w.render();await W(400);const tr=d.querySelector('#extTable tr[data-id]');const cartao=!!tr&&w.getComputedStyle(tr).display==='grid'&&tr.getBoundingClientRect().right<=d.documentElement.clientWidth+1&&w.getComputedStyle(d.querySelector('#extHead')).display==='none';
+    const bar=document.querySelector('.bar'),menu=document.querySelector('#btMenu').getBoundingClientRect(),barra=menu.right<=innerWidth+1&&menu.width>0&&document.documentElement.scrollWidth<=innerWidth+1;
+    const semScroll=d.documentElement.scrollWidth<=d.documentElement.clientWidth+1;w.go('home');ok({ok:cartao&&barra&&semScroll,cartao,barra,semScroll})}));
+  await p.setViewportSize({width:1500,height:900});await p.waitForTimeout(300);
+  t('D109','telemóvel: barra de cima em duas linhas com o menu visível, movimentos dos Extratos em cartões, sem deslocamento horizontal',z109.ok,z109);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

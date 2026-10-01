@@ -139,10 +139,16 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
 - D106 **Assistente da 1.ª vez** (configuração inicial, abre sozinho na 1.ª entrada e em Definições › Visita guiada › Configuração inicial): idioma/tema → bem-vindo → 1.º mês do ano → 1.º extrato *ou* conta de exemplo → rever categorias (só se tiram as sem movimentos e que não são do sistema) → regras sugeridas (descrições mais frequentes por categorizar, criadas só as marcadas) → visita guiada opcional. A configuração vai **sempre para a conta pessoal**. A **conta 🧪 Exemplo** tem movimentos fictícios gerados no browser, fica **só neste browser** (nunca vai para a conta nem para o Supabase), aparece no seletor de contas com uma faixa a avisar e apaga-se com um clique; usa as categorias e regras da conta pessoal.
 - D107 **Primeiros passos, dicas e ajuda**: caixa "🚀 Primeiros passos" no Início (importar, categorizar ≥ 90%, criar regra, escrever o previsto, adicionar rendimento, visita guiada) com progresso; some quando está tudo feito, com "Esconder" (fica na conta) e não aparece nos agregados. **Dicas** (1–3 bolhas nos botões reais) só na **1.ª visita** a Extratos, Rendimentos, Despesas e Previsões, só para quem fez a configuração inicial ou pediu em Definições; "Não mostrar dicas" desliga-as; nunca por cima da visita guiada. **ⓘ** nas caixas (texto em `INF`) e nas colunas com explicação (`th[title]`), com balão ao clicar (telemóvel). Definições › Visita guiada tem "Configuração inicial" e "Mostrar as dicas outra vez".
+- D108 **Banco não suportado**: quando um extrato falha, explica que bancos são lidos e oferece "📨 Enviar amostra anónima" (também no assistente). A amostra é feita **no browser**: só as primeiras linhas, datas mantidas, letras → X, algarismos ao acaso, cabeçalho das colunas com as palavras; abre Enviar sugestão (tipo Problema) já preenchida para a pessoa **ver e editar antes de enviar**. O ficheiro nunca sai do browser.
+- D109 **Telemóvel** (≤ 760 px): barra de cima em duas linhas (separadores + menu; contas + período), sem deslocamento horizontal; nos Extratos (≤ 640 px) cada movimento é um cartão (data, descrição, valor, categoria/referência, observações/quem, ações) e os filtros não ficam presos; faixa do exemplo numa linha.
 
 ---
 
 ## Histórico
+
+### v0.10c — 01/10/2026 (v0.10 — passo 3)
+- Telemóvel (D109): barra de cima em duas linhas, movimentos dos Extratos em cartões, "Escolher extrato(s)" em vez de "Arraste", filtros não presos, faixa do exemplo compacta.
+- Banco não suportado (D108): explicação + amostra anónima enviada pelas Sugestões (`fpAmostra`, `FPSug.amostra`).
 
 ### v0.10b — 01/10/2026 (v0.10 — Onboarding, passo 2)
 - Primeiros passos no Início, dicas na 1.ª visita a cada aba e ajuda ⓘ (D107).

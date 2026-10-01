@@ -146,6 +146,9 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .onb ul{text-align:left;font-size:13.5px;color:var(--tx);line-height:1.6;margin:8px auto 0;max-width:380px;padding-left:18px}
 .onb .dots{display:flex;gap:6px;justify-content:center;margin:16px 0 12px}.onb .dots i{width:7px;height:7px;border-radius:50%;background:var(--bd)}.onb .dots i.on{background:var(--ac);width:18px;border-radius:4px}
 @media (max-width:420px){.brand{display:none}}
+/* v0.10c telemóvel: barra em duas linhas — separadores + menu; depois contas + período */
+@media (max-width:760px){.bar{flex-wrap:wrap;height:auto;row-gap:6px;column-gap:8px;padding:6px 10px;overflow:visible}.bar>.sp{display:none}.brand{order:0}#tabs{order:1;flex:1 1 calc(100% - 80px);height:34px}.fper .nv .lb{white-space:nowrap}.mbtn{order:2;margin-left:auto}
+  .ctxsel{order:3;max-width:100%;overflow-x:auto;scrollbar-width:none}.ctxsel button{padding:5px 9px}.fper{order:4;flex:1 1 auto;justify-content:space-between;gap:6px}.fper .nv .lb{min-width:0;padding:4px 4px}}
 </style>
 <script>
 /* tema claro/escuro partilhado por todos os separadores */
@@ -412,8 +415,9 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
         b.querySelector('#tourFile').onchange=async e=>{const fs=[...e.target.files];if(!fs.length)return;r.innerHTML='A ler…';const w=await app();if(!w||!w.fpCfg){r.innerHTML='Não foi possível abrir as Finanças.';return}
           let res=[];try{res=await w.fpCfg.importar(fs)}catch(x){res=fs.map(f=>({ok:false,f:f.name,msg:x.message}))}e.target.value='';const ok=res.filter(x=>x.ok),ko=res.filter(x=>!x.ok);
           if(ok.length){EXP=false;bx.classList.remove('on')}
-          MSG=ok.map(x=>`<div class="ok">✓ <b>${esc(x.f)}</b> — ${esc(x.banco)}: ${x.novos} movimentos novos${x.auto?` (${x.auto} já categorizados)`:''}</div>`).join('')+ko.map(x=>`<div class="ko">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}</div>`).join('')
-            +(ko.length&&!ok.length?'<div>Pode tentar outro ficheiro ou <b>usar o exemplo</b> por agora (e importar mais tarde em Extratos).</div>':'');r.innerHTML=MSG;posiciona()};
+          MSG=ok.map(x=>`<div class="ok">✓ <b>${esc(x.f)}</b> — ${esc(x.banco)}: ${x.novos} movimentos novos${x.auto?` (${x.auto} já categorizados)`:''}</div>`).join('')+ko.map(x=>`<div class="ko">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)} <button class="bt" type="button" data-am="${esc(x.f)}" title="Banco não suportado? Envie uma amostra anónima para o passarmos a ler">📨 Enviar amostra anónima</button></div>`).join('')
+            +(ko.length&&!ok.length?'<div>Pode tentar outro ficheiro ou <b>usar o exemplo</b> por agora (e importar mais tarde em Extratos). Se o seu banco não é lido, envie uma <b>amostra anónima</b>: textos e algarismos são trocados no browser e vê tudo antes de enviar.</div>':'');r.innerHTML=MSG;posiciona()};
+        r.onclick=async e=>{const a=e.target.closest('[data-am]');if(!a)return;const w=await app();fecha();if(w&&w.fpAmostra)w.fpAmostra(a.dataset.am)};
         bx.onclick=()=>{EXP=!EXP;bx.classList.toggle('on',EXP);MSG=EXP?'<div class="ok">✓ No fim abrimos a conta <b>🧪 Exemplo</b> com 3 meses de movimentos fictícios. Para voltar aos seus dados use <b>👤 Pessoal</b> no topo; apaga-se com um clique.</div>':'';r.innerHTML=MSG;posiciona()}}},
     {g:'cfg',id:'cats',larga:1,t:'🗂 Categorias e tipos',x:'Estas são as categorias de partida. <b>Desmarque</b> as que não lhe interessam (as que já têm movimentos ou são do sistema ficam). Cada referência tem um <b>tipo</b> (Fixas essenciais, Variáveis…) já sugerido — pode mudar tudo em <b>Despesas › ✏ Editar categorias</b> e em <b>Definições › 🏷 Tipos de despesa</b>.',
       html:'<div class="cfgcats" id="tourCats">A carregar…</div>',
@@ -580,6 +584,8 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
     $('sgTxt').value='';$('sgMail').checked=false;$('sgMsg').textContent='✓ Obrigado! Sugestão enviada.';setTimeout(()=>{if(/Obrigado/.test($('sgMsg').textContent))$('sgMsg').textContent=''},6000);
     fetch(SUG_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).catch(()=>{});
     try{FPTrack.log('sugestao',{tipo:d.tipo});const c=window.plataforma;if(c&&c.from&&!d.site)c.from('sugestoes').insert({site_id:'financas',user_id:u?u.id:null,tipo:d.tipo,texto:t,email:d.email||null,separador:(d.separador||'').slice(0,60),versao:(d.versao||'').slice(0,20)}).then(()=>{},()=>{})}catch(e){}});
+  /* v0.10c: banco não suportado — abre a sugestão já preenchida com uma amostra anónima (a pessoa vê e edita antes de enviar) */
+  window.FPSug={amostra:txt=>{const b=document.querySelector('[data-set="sugestao"]');if(b)b.click();setTimeout(()=>{const p=[...$('sgTipo').children].find(x=>x.dataset.v==='Problema');if(p)p.click();$('sgTxt').value=txt.slice(0,4000);$('sgTxt').focus();$('sgTxt').setSelectionRange(0,0);pinta()},60)}};
   pinta()})();
 </script>
 <script>
@@ -671,6 +677,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.10c',d:'01/10/2026',n:['Banco não suportado? Envie uma amostra anónima do extrato (vê tudo antes de enviar) para o passarmos a ler'],a:['Telemóvel: barra de cima em duas linhas e movimentos dos Extratos em cartões, mais fáceis de categorizar']},
  {v:'0.10b',d:'01/10/2026',n:['Primeiros passos no Início: o que falta fazer para tirar partido do site','Dicas rápidas na primeira visita a cada aba','Ajuda ⓘ nas caixas e nas colunas menos óbvias'],a:['Definições › Visita guiada: repetir a configuração inicial e voltar a ver as dicas']},
  {v:'0.10a',d:'01/10/2026',n:['Configuração inicial para quem começa: 1.º mês do ano, primeiro extrato, categorias e regras sugeridas','Conta 🧪 Exemplo com movimentos fictícios para experimentar, separada dos seus dados e apagável com um clique'],a:['A visita guiada passa a ser opcional no fim da configuração (e continua em Definições)']},
  {v:'0.9h',d:'01/10/2026',n:[],a:['Estatísticas (admin): ao escolher um site, só contam as contas que usam esse site; nova coluna com os movimentos do agregado']},
