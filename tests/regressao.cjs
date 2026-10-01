@@ -449,7 +449,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   const z108=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
     const f=new File(['Titular;Joana Ficticia Teste\nNIB;0035 1234 5678\nData;Coisa;Outra\n01/09/2026;LOJA JOANA 4321;abc\n'],'banco-x.csv',{type:'text/csv'});
     const n0=w.fpCtx.db().mov.length;await w.importar([f]);const b=d.querySelector('#impRes [data-amostra]');const exp=!!b&&/Bancos lidos/.test(d.querySelector('#impRes').textContent);
-    if(b)b.click();await W(400);const tx=document.querySelector('#sgTxt').value;const sug=!document.querySelector('#mSet').hidden&&/Banco não suportado/.test(tx)&&/01\/09\/2026/.test(tx)&&!/Joana|JOANA|4321|0035/.test(tx)&&w.fpCtx.db().mov.length===n0;
+    if(b)b.click();await W(400);const tx=document.querySelector('#sgTxt').value;const sug=!document.querySelector('#mSet').hidden&&/Extrato não reconhecido/.test(tx)&&/01\/09\/2026/.test(tx)&&!/Joana|JOANA|4321|0035/.test(tx)&&w.fpCtx.db().mov.length===n0;
     document.querySelector('#sgTxt').value='';document.querySelector('#mSet').hidden=true;d.querySelector('#impRes').innerHTML='';ok({ok:exp&&sug,exp,sug,tx:tx.slice(0,300)})}));
   t('D108','banco não suportado: explica os bancos lidos e abre a sugestão com uma amostra anónima (datas mantidas, sem nomes nem números)',z108.ok,z108);
   await p.setViewportSize({width:375,height:740});await p.waitForTimeout(400);
@@ -482,6 +482,24 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   const p2=await b.newPage();await p2.goto(U+'/index.html');await p2.waitForTimeout(1500);const gate=await p2.evaluate(()=>!document.querySelector('#gate').hidden);
   await p2.goto(U+'/financas.html');await p2.waitForTimeout(800);const redir=/index\.html/.test(p2.url());await p2.close();
   t('D112','é preciso conta (sem sessão só o ecrã de entrar; financas.html sozinho vai para o site), opção para tirar a ajuda ⓘ, pesquisa com texto fica azul, Cancelar ao criar regra repõe a categoria',z112.ok&&gate&&redir,{...z112,gate,redir});
+  const z114=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),velho=window.plataforma,vu=window.financasUser,up=[];
+    window.plataforma={...velho,from:t=>({select:()=>({eq:()=>({eq:()=>({eq:()=>({maybeSingle:async()=>({data:{valor:{civil:'Solteiro(a)'}},error:null})})})})}),upsert:async(o)=>{up.push([t,o]);return {error:null}},insert:async()=>({error:null})})};
+    window.financasUser={id:'u14',email:'p@exemplo.pt'};FPPerfil._reset();document.querySelector('#mSet').hidden=false;document.querySelector('#setNav [data-s="perfil"]').click();await W(200);
+    const sec=!document.querySelector('#setSc section[data-s="perfil"]').hidden,lido=document.querySelector('#pfCivil').value==='Solteiro(a)'&&document.querySelector('#pfTribW').hidden;
+    const c=document.querySelector('#pfCivil');c.value='Casado(a)';c.dispatchEvent(new Event('change',{bubbles:true}));const trib=!document.querySelector('#pfTribW').hidden;
+    document.querySelector('#pfDepAdd').click();const di=document.querySelector('#pfDeps input');di.value='2015';di.dispatchEvent(new Event('change',{bubbles:true}));
+    const inc=document.querySelector('#pfBox [data-pf="incap60"]');inc.checked=true;inc.dispatchEvent(new Event('change',{bubbles:true}));await W(800);
+    const u=up[up.length-1];const grava=!!u&&u[0]==='user_site_data'&&u[1].site_id==='financas'&&u[1].chave==='perfil'&&u[1].valor.civil==='Casado(a)'&&u[1].valor.deps[0]===2015&&u[1].valor.incap60===true;
+    document.querySelector('#setNav [data-s="agr"]').click();const sa=document.querySelector('#setSc section[data-s="agr"]');const bt=document.createElement('button');bt.className='opt';sa.appendChild(bt);
+    const roxo=getComputedStyle(bt).backgroundColor==='rgb(123, 31, 162)';bt.remove();document.querySelector('#mSet').hidden=true;
+    window.plataforma=velho;window.financasUser=vu;FPPerfil._reset();
+    const w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;w.go('prev');w.render();await W(100);
+    const hd=d.querySelector('#prevHead'),prev=!!hd&&w.getComputedStyle(hd).position==='sticky'&&/Média\/mês/.test(hd.querySelectorAll('thead tr')[1].children[0].textContent)&&!d.querySelector('#prevTw thead');
+    await w.fpCtx.exemplo();await W(300);const f=new File(['Data;Descrição;Valor\n01/09/2026;LOJA TESTE GEN;-10,00\n02/09/2026;OUTRA TESTE GEN;-5,50\n'],'banco-y.csv',{type:'text/csv'});
+    await w.importar([f]);const ir=d.querySelector('#impRes');const gen=/Banco não reconhecido/.test(ir.textContent)&&!!ir.querySelector('[data-amostra]')&&w.fpCtx.db().mov.some(m=>m.desc==='LOJA TESTE GEN');
+    ir.innerHTML='';await w.fpCtx.apagaEx();w.go('home');
+    ok({ok:sec&&lido&&trib&&grava&&roxo&&prev&&gen,sec,lido,trib,grava,roxo,prev,gen})}));
+  t('D114','Perfil financeiro (opcional, privado, guardado na conta pessoal), botões do agregado a roxo, Previsões com títulos que acompanham e Média/mês antes do Total, extrato não reconhecido importa e pede um exemplo',z114.ok,z114);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

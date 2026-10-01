@@ -145,10 +145,17 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D111 **Segurança Supabase**: funções de trigger sem execute pela API; funções com `search_path` fixo; funções que dizem respeito a quem tem sessão só para `authenticated`. Exceções de propósito para `anon`: `parkncharge.is_admin`, `e_admin_site` (políticas de leitura pública) e `promo_is_allowed` (antes do login). Novas funções `security definer` sempre com `set search_path = ''`, revoke de `public, anon` e verificação de `auth.uid()`.
 - D112 **É preciso conta** (v0.10e): sem sessão a página principal só mostra o ecrã "Entrar / Criar conta" (sem ligação ao serviço de contas, explica e não deixa usar); `financas.html` aberto sozinho vai para `index.html#financas`. Os testes automáticos usam `?teste=1` para saltar isto. A conta 🧪 Exemplo continua (com sessão). Substitui o uso "só neste browser" sem conta (D73: o estado continua a existir mas já não se usa sem sessão).
 - D113 **Ajuda ⓘ** pode ser escondida em Definições › Geral (`fp_inf`). **Pesquisa dos Extratos** com texto fica azul. **Criar regra**: "Cancelar" repõe a categoria/referência que o movimento tinha antes da mudança (só quando a janela abre por mudar a categoria). **Previsto vs real**: a escala vai até 110% do previsto, para o traço do previsto ficar dentro da barra.
+- D114 **Perfil financeiro** (Definições › 🧾 Perfil financeiro): tudo opcional — data de nascimento, estado civil, tributação (só se casado/união de facto), situação profissional, anos de descontos, região fiscal, habitação, incapacidade **só como sim/não ≥ 60%** (nunca detalhes de saúde) e dependentes (ano de nascimento de cada um). Privado: guardado em `user_site_data` (site `financas`, chave `perfil`, RLS só do próprio), nunca nos agregados; entra na exportação e apaga-se com os dados das Finanças; descrito na página de privacidade.
+- D115 **Agregado** com botões a roxo (#7b1fa2, a cor do agregado no seletor). **Previsões**: títulos das colunas numa barra fixa que acompanha o scroll (como nos Extratos); nos anos anteriores, Média/mês antes do Total. **Extrato não reconhecido** (banco sem leitor próprio): tenta ler as colunas de data, descrição e valor; se conseguir importa e avisa "Banco não reconhecido — confira e envie-nos um exemplo"; se não, "Extrato não reconhecido — envie-nos um exemplo"; em ambos com o botão da amostra anónima (D108).
 
 ---
 
 ## Histórico
+
+### v0.10f — 02/10/2026
+- Perfil financeiro (D114).
+- Agregado a roxo, Previsões com títulos fixos e Média/mês primeiro, extrato não reconhecido (D115).
+- A altura da barra fixa das Finanças atualiza-se sozinha (faixa do exemplo), para os títulos fixos não ficarem tapados.
 
 ### v0.10e — 01/10/2026
 - É preciso conta para usar as Finanças (D112): ecrã de entrar/criar conta; `financas.html` sozinho redireciona.

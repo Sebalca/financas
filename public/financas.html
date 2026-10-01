@@ -110,6 +110,7 @@ span.lk[data-golk]:hover,span.lk[data-gorend]:hover{outline:1px solid var(--c1)}
 tr.flash td{animation:pisca 2.2s ease-out}
 .exthead{overflow:hidden;margin:0 0 -1px}.exthead table.t{margin:0}.exthead table.t thead th{position:static;border-bottom:1px solid var(--bd)}
 .exthead:empty{display:none}
+.pvhead{position:sticky;top:var(--stkH,0px);z-index:5;background:var(--card)}
 table.ra{table-layout:fixed;min-width:1100px}table.t.ra td,table.t.ra th{overflow:hidden;text-overflow:ellipsis}table.t.ra th{white-space:normal;vertical-align:bottom}
 table.t.ra td:nth-last-child(2){white-space:normal}
 tr.ra-m{cursor:pointer}tr.ra-m td:first-child::before{content:'▸';display:inline-block;width:14px;color:var(--mu);transition:transform .15s}
@@ -537,7 +538,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.10e'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10f'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -809,7 +810,7 @@ function nomeContaGen(titulo,fname){const forc=$('#bankSel').value;if(forc==='__
 /* ================= importação ================= */
 /* v0.10c: banco não suportado — amostra anónima (só a estrutura: datas mantidas, letras → X, algarismos ao acaso), enviada pelas Sugestões depois de a pessoa a ver */
 const FALHOU=new Map();
-const NAO_LIDO='Bancos lidos: <b>CGD</b> (CSV), <b>Millennium</b> e <b>BPI</b> (Excel) e <b>cartão refeição</b>; outros CSV/Excel com colunas de data, descrição e valor costumam funcionar. Se o seu banco não é lido, envie-nos uma <b>amostra anónima</b> — os textos e os valores são trocados aqui no browser e vê tudo antes de enviar.';
+const NAO_LIDO='<b>Extrato não reconhecido.</b> Envie-nos um exemplo para o passarmos a ler — é uma <b>amostra anónima</b>: os textos e os valores são trocados aqui no browser e vê tudo antes de enviar. Bancos lidos: <b>CGD</b> (CSV), <b>Millennium</b> e <b>BPI</b> (Excel) e <b>cartão refeição</b>.';
 function anonimiza(linhas){const eData=c=>/^\s*(\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4}|\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2})(\s+\d{1,2}:\d{2}(:\d{2})?)?\s*$/.test(c);
   const dig=x=>x.replace(/\d/g,()=>String(Math.floor(Math.random()*10))),let_=x=>x.replace(/[A-Za-zÀ-ÿ]/g,c=>c===c.toUpperCase()?'X':'x');
   const L=linhas.map(r=>(r||[]).map(c=>c==null?'':c instanceof Date?c.toISOString().slice(0,10):String(c)));const hi=L.findIndex(r=>r.some(eData)),cab=hi>0?hi-1:-1;
@@ -818,7 +819,7 @@ window.fpAmostra=async nome=>{const f=FALHOU.get(nome);if(!f)return;const ext=(f
   try{if(/^xlsx?$/.test(ext))linhas=(await lerExcel(buf)).linhas;else{const t=decode(buf),l=t.split(/\r?\n/).filter(x=>x.trim()).slice(0,60);sep=[';','\t',','].map(s=>[s,l.slice(0,10).reduce((n,x)=>n+x.split(s).length,0)]).sort((a,b)=>b[1]-a[1])[0][0];linhas=l.map(x=>x.split(sep))}}
   catch(e){toast('Não foi possível ler o ficheiro');return}
   const a=anonimiza(linhas).map(r=>r.join(sep==='\t'?' | ':sep)).join('\n').slice(0,3300);trk('amostra_banco',{ext});
-  const txt=`Banco não suportado — banco: (escreva aqui o nome do banco e o tipo de conta)\nFicheiro .${ext} · ${linhas.length} linhas\nAmostra anónima (letras trocadas por X, algarismos ao acaso, datas mantidas):\n${a}`;
+  const txt=`Extrato não reconhecido — banco: (escreva aqui o nome do banco e o tipo de conta)\nFicheiro .${ext} · ${linhas.length} linhas\nAmostra anónima (letras trocadas por X, algarismos ao acaso, datas mantidas):\n${a}`;
   window.__amostra=txt;
   try{if(window.parent!==window&&window.parent.FPSug){window.parent.FPSug.amostra(txt);return}}catch(e){}
   try{await navigator.clipboard.writeText(txt);toast('Amostra copiada — cole-a numa sugestão')}catch(e){toast('Abra o site principal para enviar a amostra')}};
@@ -827,10 +828,10 @@ async function importar(files){
   for(const f of files){
     try{
       if(!/\.(csv|txt|xlsx|xls)$/i.test(f.name))throw new Error('Formato não suportado — use CSV ou Excel.');
-      const buf=await f.arrayBuffer(),forc=$('#bankSel').value;let r;
-      if(/\.xlsx?$/i.test(f.name)){const x=await lerExcel(buf);if(eMillennium(x.linhas))r=leMillennium(x.linhas);else if(eBPI(x.linhas))r=leBPI(x.linhas);else{r=leGenerico(x.linhas,'',null);r.banco=nomeContaGen(r.titulo||x.titulo,f.name)}}
+      const buf=await f.arrayBuffer(),forc=$('#bankSel').value;let r,gen=false;
+      if(/\.xlsx?$/i.test(f.name)){const x=await lerExcel(buf);if(eMillennium(x.linhas))r=leMillennium(x.linhas);else if(eBPI(x.linhas))r=leBPI(x.linhas);else{gen=true;r=leGenerico(x.linhas,'',null);r.banco=nomeContaGen(r.titulo||x.titulo,f.name)}}
       else{const t=decode(buf);const L=forc==='__cartao'?null:LEITORES.find(l=>forc?l.banco===forc:l.detect(t));
-        if(L)r=L.parse(t);else{const sep=(t.split('\n').find(l=>/descri/i.test(l))||'').split(';').length>2?';':',';
+        if(L)r=L.parse(t);else{gen=true;const sep=(t.split('\n').find(l=>/descri/i.test(l))||'').split(';').length>2?';':',';
           const linhas=t.split(/\r?\n/).map(l=>l.split(sep).map(c=>c.replace(/^"|"$/g,'').trim()));r=leGenerico(linhas,'',null);r.banco=nomeContaGen(r.titulo,f.name)}}
       if(!r.mov.length)throw new Error('O ficheiro não tem movimentos.');
       const REP=new Map(),di=new Set(DB.delImp||[]),v=validar(r),ex=new Set(DB.mov.map(chave)),exD=new Set(DB.del.filter(k=>!(DB.rep[k]>0)&&!di.has(k))),impId=uid('i');let novos=[],dup=0,elim=0;
@@ -839,13 +840,14 @@ async function importar(files){
         tiraPrefixo(o);{const kb=chave(o),n=REP.get(kb)||0;REP.set(kb,n+1);if(n)o.rep=n}const k=chave(o);if(ex.has(k)){dup++;DB.seq--;return}if(exD.has(k)){elim++;DB.seq--;return}if(di.has(k)){DB.rep[k]=Date.now();DB.delImp=DB.delImp.filter(x=>x!==k)}ex.add(k);DB.mov.push(o);novos.push(o)});
       aplicaRegras(novos);aplicaPessoas(novos);autoLiga();
       DB.imports.push({id:impId,ficheiro:f.name,banco:r.banco,conta:r.conta,titular:r.titular,inicio:r.inicio,fim:r.fim,em:new Date().toISOString(),novos:novos.length,dup});
-      res.push({ok:true,f:f.name,r,v,novos:novos.length,auto:novos.filter(m=>m.cat).length,dup,elim});
+      if(gen){FALHOU.set(f.name,f);if(FALHOU.size>10)FALHOU.delete(FALHOU.keys().next().value)}
+      res.push({ok:true,f:f.name,r,v,novos:novos.length,auto:novos.filter(m=>m.cat).length,dup,elim,gen});
     }catch(e){FALHOU.set(f.name,f);if(FALHOU.size>10)FALHOU.delete(FALHOU.keys().next().value);res.push({ok:false,f:f.name,msg:e.message})}
   }
   save();
   res.forEach(x=>trk(x.ok?'import':'import_falhou',x.ok?{banco:x.r.banco,linhas:x.r.mov.length,novos:x.novos,dup:x.dup}:{ext:(String(x.f).split('.').pop()||'').toLowerCase().slice(0,6),banco:$('#bankSel').value||'auto',motivo:String(x.msg).slice(0,150)}));
-  $('#impRes').innerHTML=res.map(x=>x.ok?`<div class="imp ok">✓ <b>${esc(x.f)}</b> — ${esc(x.r.banco)}${x.r.conta?` · conta ${esc(x.r.conta)}`:''} · ${fmtD(x.r.inicio)} a ${fmtD(x.r.fim)}<br><b>${x.novos}</b> movimentos novos${x.novos?` (${x.auto} categorizados pelas regras)`:''}${x.dup?` · ${x.dup} já existiam (ignorados)`:''}${x.elim?` · ${x.elim} tinham sido eliminados (não entraram)`:''} · ${x.r.mov.every(m=>m.saldo==null)?'sem saldos no ficheiro':x.v.erros===0?'✓ saldos consistentes':`⚠ ${x.v.erros} saldos não batem certo`}${x.v.fin===true?` · saldo final ${E(x.r.saldoFinal)} ✓`:x.v.fin===false?' · ⚠ saldo final diferente':''}</div>`
-    :`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}${/\.(csv|txt|xlsx?)$/i.test(x.f)?`<br><span class="muted" style="font-size:12.5px">${NAO_LIDO}</span> <button class="btn sm" type="button" data-amostra="${esc(x.f)}">📨 Enviar amostra anónima</button>`:''}</div>`).join('');
+  $('#impRes').innerHTML=res.map(x=>x.ok?`<div class="imp ok">✓ <b>${esc(x.f)}</b> — ${esc(x.r.banco)}${x.r.conta?` · conta ${esc(x.r.conta)}`:''} · ${fmtD(x.r.inicio)} a ${fmtD(x.r.fim)}<br><b>${x.novos}</b> movimentos novos${x.novos?` (${x.auto} categorizados pelas regras)`:''}${x.dup?` · ${x.dup} já existiam (ignorados)`:''}${x.elim?` · ${x.elim} tinham sido eliminados (não entraram)`:''} · ${x.r.mov.every(m=>m.saldo==null)?'sem saldos no ficheiro':x.v.erros===0?'✓ saldos consistentes':`⚠ ${x.v.erros} saldos não batem certo`}${x.v.fin===true?` · saldo final ${E(x.r.saldoFinal)} ✓`:x.v.fin===false?' · ⚠ saldo final diferente':''}${x.gen?`<br><span style="font-size:12.5px">⚠ <b>Banco não reconhecido</b> — lemos as colunas de data, descrição e valor; confira os movimentos. Envie-nos um exemplo para o passarmos a ler.</span> <button class="btn sm" type="button" data-amostra="${esc(x.f)}">📨 Enviar exemplo (anónimo)</button>`:''}</div>`
+    :`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}${/\.(csv|txt|xlsx?)$/i.test(x.f)?`<br><span class="muted" style="font-size:12.5px">${NAO_LIDO}</span> <button class="btn sm" type="button" data-amostra="${esc(x.f)}">📨 Enviar exemplo (anónimo)</button>`:''}</div>`).join('');
   const ok=res.filter(x=>x.ok);
   if(ok.length){const last=ok.map(x=>x.r.mov[0].dm).sort().pop();P.d=new Date(+last.slice(0,4),+last.slice(5,7)-1,1);P.m='mes';$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel()}
   render();
@@ -1214,7 +1216,7 @@ function renderPrev(){const Y=prevAno(),anos=[Y-2,Y-1,Y],cats=DB.cats.filter(c=>
   const hj=new Date(),yh=anoIni(hj).getFullYear(),div=y=>y<yh?12:y>yh?0:Math.max(1,(hj.getFullYear()-y)*12+hj.getMonth()-MES1+1);
   const T={};expande(DB.mov).forEach(m=>{if(!m.cat||eFora(m.cat)||!m.ref)return;const y=anoDe(m.dm);if(!anos.includes(y))return;const k=m.cat+'›'+m.ref;(T[k]||(T[k]={}))[y]=((T[k]||{})[y]||0)-m.valor});
   const tv=(k,y)=>(T[k]&&T[k][y])||0,md=(v,y)=>div(y)?v/div(y):0;
-  const cy=y=>`<td class="num bl">${Math.abs(y.t)>.004?E(y.t):'<span class="muted">—</span>'}</td><td class="num">${Math.abs(y.t)>.004&&div(y.y)?E(y.m):'<span class="muted">—</span>'}</td>`;
+  const cy=y=>`<td class="num bl">${Math.abs(y.t)>.004&&div(y.y)?E(y.m):'<span class="muted">—</span>'}</td><td class="num">${Math.abs(y.t)>.004?E(y.t):'<span class="muted">—</span>'}</td>`;
   const linhas=[],porTipo={};let tot=0;
   cats.forEach(c=>{const rs=c.refs.map(r=>{const k=c.nome+'›'+r,ys=anos.map(y=>({y,t:tv(k,y),m:md(tv(k,y),y)})),p=pv(k);return {r,k,ys,p}}).filter(x=>!PVONLY||x.p||x.ys.some(y=>Math.abs(y.t)>.004));
     if(!rs.length)return;const sp=rs.reduce((s,x)=>s+x.p,0);tot+=sp;rs.forEach(x=>{const t=tipoDe(c.nome,x.r),id=t?t.id:'';porTipo[id]=(porTipo[id]||0)+x.p});
@@ -1227,10 +1229,12 @@ function renderPrev(){const Y=prevAno(),anos=[Y-2,Y-1,Y],cats=DB.cats.filter(c=>
   const tn=DB.tiposDesp.map(t=>({l:t.nome,c:t.cor,v:porTipo[t.id]||0})).concat([{l:'Sem tipo',c:'var(--c8)',v:porTipo['']||0}]).filter(x=>x.v>.004);
   $('#prevTot').innerHTML=`<span class="ch tot">Total previsto <b>${E(tot)}</b>/mês · <b>${E(tot*12)}</b>/ano</span>`+tn.map(x=>`<span class="ch"><i class="dot" style="background:${x.c}"></i>${esc(x.l)} <b>${E(x.v)}</b>/mês · ${E(x.v*12)}/ano</span>`).join('');
   const hy=y=>`<th class="yr" colspan="2">${anoTxt(new Date(y,MES1,1))}${y===yh?' <small>(até agora)</small>':''}</th>`;
-  $('#prevDes').innerHTML=`<div class="tw"><table class="t prevt"><colgroup><col style="width:220px"><col style="width:150px">${anos.map(()=>'<col style="width:95px"><col style="width:85px">').join('')}<col style="width:120px"><col style="width:120px"><col style="width:40px"></colgroup>
-    <thead><tr><th rowspan="2">Categoria / referência</th><th rowspan="2">Tipo</th>${anos.map(hy).join('')}<th class="yr" colspan="3">Previsão ${anoTxt(new Date(Y,MES1,1))}</th></tr>
-    <tr>${anos.map(()=>'<th class="num bl">Total</th><th class="num">Média/mês</th>').join('')}<th class="num bl">Média/mês</th><th class="num">Total ano</th><th></th></tr></thead>
-    <tbody>${linhas.join('')||'<tr><td colspan="11"><div class="empty"><b>Sem referências com valores</b></div></td></tr>'}</tbody></table></div>`;
+  const cg=`<colgroup><col style="width:220px"><col style="width:150px">${anos.map(()=>'<col style="width:90px"><col style="width:95px">').join('')}<col style="width:120px"><col style="width:120px"><col style="width:40px"></colgroup>`;
+  const sx=($('#prevTw')||{}).scrollLeft||0;
+  $('#prevDes').innerHTML=`<div class="exthead pvhead" id="prevHead"><table class="t prevt">${cg}<thead><tr><th rowspan="2">Categoria / referência</th><th rowspan="2">Tipo</th>${anos.map(hy).join('')}<th class="yr" colspan="3">Previsão ${anoTxt(new Date(Y,MES1,1))}</th></tr>
+    <tr>${anos.map(()=>'<th class="num bl">Média/mês</th><th class="num">Total</th>').join('')}<th class="num bl">Média/mês</th><th class="num">Total ano</th><th></th></tr></thead></table></div>
+    <div class="tw" id="prevTw"><table class="t prevt">${cg}<tbody>${linhas.join('')||'<tr><td colspan="11"><div class="empty"><b>Sem referências com valores</b></div></td></tr>'}</tbody></table></div>`;
+  {const tw=$('#prevTw'),hd=$('#prevHead');tw.scrollLeft=sx;hd.scrollLeft=sx;tw.addEventListener('scroll',()=>{hd.scrollLeft=tw.scrollLeft},{passive:true})}
   $('#prevNota').innerHTML=(dono!=null&&dono!==Y?`Este ano ainda não tem previsão própria: está a usar a de <b>${anoTxt(new Date(dono,MES1,1))}</b> (fica copiada ao alterar um valor). `:'')+`A média do ano atual divide pelos meses já passados (${div(yh)}); a dos anos anteriores divide por 12. A previsão guarda-se por ano.`}
 window.fpTipos={lista:()=>JSON.parse(JSON.stringify(DB.tiposDesp)),
   uso:()=>{const u={};Object.values(DB.refTipo).forEach(id=>u[id]=(u[id]||0)+1);return u},
@@ -1384,6 +1388,7 @@ function ajustaLarg(){const W=$('#extTable').clientWidth;if(!W)return;const soma
 addEventListener('resize',ajustaLarg); // os títulos vivem na barra fixa; só acompanham o scroll horizontal
 $('#extTable').addEventListener('scroll',fixaCab,{passive:true});
 const stkH=()=>document.documentElement.style.setProperty('--stkH',$('.stk').offsetHeight+'px');stkH();
+try{new ResizeObserver(stkH).observe($('.stk'))}catch(e){} // a faixa do exemplo muda a altura da barra fixa
 window.FP_VERSAO=APP_VERSAO;
 /* API para o menu da página principal (definições): cópia de segurança e apagar dados */
 window.fpBackup=()=>({app:'financas',versao:APP_VERSAO,exportado:new Date().toISOString(),dados:payload()});
@@ -2014,7 +2019,7 @@ function sugRegras(src){const lista=src==='ex'?(()=>{const d=normaliza({...fresh
     const m=s&&D.match(s[0]);return {...x,txt:ok&&m?m[0].trim():D.trim(),cat:ok?s[1]:'',ref:ok?s[2]:'',tipo:x.t<0?'s':x.t>0?'e':''}})}
 const FIXAS_C=['Banco','Por tratar','Rendimentos','Poupanças'];
 window.fpCfg={
-  importar:async files=>{if(CTX.t!=='p')await trocaCtx({t:'p'});const r=await importar(files);return r.map(x=>x.ok?{ok:true,f:x.f,banco:x.r.banco,novos:x.novos,auto:x.auto,dup:x.dup}:{ok:false,f:x.f,msg:x.msg})},
+  importar:async files=>{if(CTX.t!=='p')await trocaCtx({t:'p'});const r=await importar(files);return r.map(x=>x.ok?{ok:true,f:x.f,banco:x.r.banco,novos:x.novos,auto:x.auto,dup:x.dup,gen:!!x.gen}:{ok:false,f:x.f,msg:x.msg})},
   cats:()=>DB.cats.map(c=>({nome:c.nome,refs:c.refs.length,usada:DB.mov.some(m=>m.cat===c.nome||(m.partes||[]).some(p=>p.cat===c.nome)),fixa:FIXAS_C.includes(c.nome)})),
   tiraCats:nomes=>{const f=new Set(nomes.filter(n=>!FIXAS_C.includes(n)&&!DB.mov.some(m=>m.cat===n)));if(!f.size)return 0;DB.cats=DB.cats.filter(c=>!f.has(c.nome));DB.regras=DB.regras.filter(r=>!f.has(r.cat));save();render();return f.size},
   sugRegras,refs:()=>DB.cats.map(c=>({nome:c.nome,refs:c.refs.slice()})),

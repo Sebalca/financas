@@ -129,6 +129,11 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .big .grp{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .big .opt{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:9px;padding:7px 12px;cursor:pointer;font:600 13px system-ui,sans-serif}
 .big .opt.on{border-color:var(--ac);background:var(--ac2);color:var(--ac)}
+.pfg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}.pfg label[hidden]{display:none}.pfg label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu)}.pfg input,.pfg select,.pfdeps input{border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);padding:7px 9px;font:14px system-ui,sans-serif}
+.pfdeps{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}.pfdeps span{display:inline-flex;align-items:center;gap:4px}.pfdeps input{width:92px}.pfdeps button{border:0;background:none;color:var(--mu);cursor:pointer;font-size:14px}@media(max-width:560px){.pfg{grid-template-columns:1fr}}
+/* v0.10f: botões do agregado a roxo (a cor do agregado no seletor) */
+.big section[data-s="agr"] .opt:not(.danger){background:#7b1fa2;border-color:#7b1fa2;color:#fff}.big section[data-s="agr"] .opt:not(.danger):hover{background:#6a1b9a;border-color:#6a1b9a}.big section[data-s="agr"] .opt.danger{border-color:#7b1fa2}
+#mConv .bt.pri{background:#7b1fa2;border-color:#7b1fa2}
 .big .opt:disabled{opacity:.5;cursor:not-allowed}
 .big .danger{border-color:#d1495b;color:#d1495b}
 .big textarea,.big select,.big .sc input{width:100%;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;padding:9px;font:14px system-ui,sans-serif}
@@ -193,7 +198,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 <div class="mod" id="mSet" hidden><div class="box big" role="dialog" aria-label="Definições">
   <div class="bh"><h2>Definições</h2><button class="bx" data-fecha="mSet" type="button" aria-label="Fechar">✕</button></div>
   <div class="bb"><nav class="sn" id="setNav">
-    <button data-s="tema" type="button">⚙ Geral</button><button data-s="tipos" type="button">🏷 Tipos de despesa</button><button data-s="agr" type="button">👪 Agregado familiar<span class="bdg" id="bdgAgr" hidden></span></button><button data-s="conta" type="button">👤 Conta</button><button data-s="backup" type="button">💾 Cópia de segurança</button>
+    <button data-s="tema" type="button">⚙ Geral</button><button data-s="tipos" type="button">🏷 Tipos de despesa</button><button data-s="agr" type="button">👪 Agregado familiar<span class="bdg" id="bdgAgr" hidden></span></button><button data-s="conta" type="button">👤 Conta</button><button data-s="perfil" type="button">🧾 Perfil financeiro</button><button data-s="backup" type="button">💾 Cópia de segurança</button>
     <button data-s="apagar" type="button">🗑 Apagar dados</button><button data-s="onb" type="button">🧭 Onboarding</button>
     <button data-s="ajuda" type="button">❓ FAQs<span class="bdg" id="bdgFaq2" hidden></span></button><button data-s="sugestao" type="button">💬 Enviar sugestão<span class="bdg" id="bdgSug2" hidden></span></button></nav>
   <div class="sc" id="setSc">
@@ -217,6 +222,20 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <div id="tiposL"></div><div class="grp"><button class="opt" id="tipoAdd" type="button">＋ Novo tipo</button></div><div class="note2" id="tiposMsg"></div></section>
     <section data-s="agr" hidden><h3>Agregado familiar</h3><p>Um agregado é uma conta de Finanças <b>partilhada</b> com outras pessoas (por exemplo, a família). A sua conta pessoal continua privada — só entra no agregado o que for lá registado.</p>
       <div id="agrBox"></div><div class="note2" id="agrMsg"></div></section>
+    <section data-s="perfil" hidden><h3>Perfil financeiro</h3><p>Informação opcional que ajuda nas contas (por exemplo, no IRS e nas sugestões). É <b>privada</b>: fica só na sua conta pessoal e não é partilhada com agregados.</p>
+      <div id="pfBox"><div class="pfg">
+        <label>Data de nascimento<input type="date" id="pfNasc" data-pf="nasc"></label>
+        <label>Estado civil<select id="pfCivil" data-pf="civil"><option value="">—</option><option>Solteiro(a)</option><option>Casado(a)</option><option>União de facto</option><option>Divorciado(a) / separado(a)</option><option>Viúvo(a)</option></select></label>
+        <label id="pfTribW">Tributação no IRS<select data-pf="trib"><option value="">—</option><option>Conjunta</option><option>Separada</option></select></label>
+        <label>Situação profissional<select data-pf="sit"><option value="">—</option><option>Trabalhador por conta de outrem</option><option>Trabalhador independente</option><option>Pensionista / reformado</option><option>Desempregado</option><option>Estudante</option><option>Outra</option></select></label>
+        <label>Anos de descontos<input type="number" min="0" max="60" step="1" inputmode="numeric" data-pf="anosDesc" placeholder="ex.: 12"></label>
+        <label>Região fiscal<select data-pf="regiao"><option value="">—</option><option>Continente</option><option>Açores</option><option>Madeira</option></select></label>
+        <label>Habitação<select data-pf="hab"><option value="">—</option><option>Própria com crédito</option><option>Própria sem crédito</option><option>Arrendada</option><option>Outra (ex.: casa de familiares)</option></select></label>
+      </div>
+      <label class="sw2" style="margin-top:10px"><input type="checkbox" data-pf="incap60"> <span>Tenho incapacidade igual ou superior a 60% <small style="color:var(--mu)">(conta para deduções no IRS)</small></span></label>
+      <h3 style="margin-top:16px">Dependentes <small style="color:var(--mu);font-weight:400" id="pfDepN"></small></h3><p class="note2" style="margin-top:0">Indique o ano de nascimento de cada dependente (filhos ou outros a cargo).</p>
+      <div id="pfDeps" class="pfdeps"></div><div class="grp"><button class="opt" type="button" id="pfDepAdd">＋ Dependente</button></div></div>
+      <div class="note2" id="pfMsg"></div></section>
     <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div><h3 style="margin-top:18px">Dados de uso</h3><p>Com sessão iniciada, guardamos estatísticas de uso associadas à conta: sessões e tempo no site, abas abertas, ações (importar extrato e falhas na importação, categorizar, criar regras, dividir, previsões, agregado, exportar, sugestões) e erros técnicos. <b>Nunca</b> são guardados valores, descrições de movimentos nem nomes de ficheiros. Servem só para melhorar o site e apagam-se ao fim de 12 meses. As visitas anónimas são contadas sem cookies. Mais detalhes na <a href="privacidade.html" target="_blank" rel="noopener">página de privacidade</a>.</p></section>
     <section data-s="backup" hidden><h3>Cópia de segurança</h3><p>Exporta tudo das Finanças (movimentos, categorias, regras, pessoas, rendimentos, previstos) para um ficheiro .json, que pode importar noutro dispositivo ou mais tarde.</p>
       <div class="grp"><button class="opt" id="bkExp" type="button">⤓ Exportar ficheiro</button><button class="opt" id="bkImpBt" type="button">⤒ Importar ficheiro…</button><input type="file" id="bkImp" accept=".json,application/json" hidden></div><div class="note2" id="bkMsg"></div></section>
@@ -387,6 +406,26 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
   const secao=s=>{$$('#setNav button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));$$('#setSc section').forEach(x=>x.hidden=x.dataset.s!==s)};
   $$('[data-set]').forEach(b=>b.onclick=()=>{abre(false);secao(b.dataset.set);pinta();$('mSet').hidden=false});
   $('setNav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)secao(b.dataset.s)});
+  /* v0.10f: perfil financeiro — opcional e privado; guardado na conta pessoal (user_site_data, site financas, chave "perfil") */
+  {let PF={},deps=[],t=null,carregado='';const box=$('pfBox'),msg=$('pfMsg');
+   const pinta=()=>{box.querySelectorAll('[data-pf]').forEach(el=>{const v=PF[el.dataset.pf];if(el.type==='checkbox')el.checked=!!v;else el.value=v==null?'':v});
+     const cas=/Casado|União/.test(PF.civil||'');$('pfTribW').hidden=!cas;
+     $('pfDeps').innerHTML=deps.map((a,i)=>`<span><input type="number" min="1900" max="2100" inputmode="numeric" placeholder="Ano" value="${a||''}" data-dep="${i}" aria-label="Ano de nascimento do dependente ${i+1}"><button type="button" data-depx="${i}" title="Tirar">✕</button></span>`).join('');
+     $('pfDepN').textContent=deps.length?`(${deps.length})`:''};
+   const grava=()=>{clearTimeout(t);t=setTimeout(async()=>{const u=window.financasUser,c=window.plataforma;if(!u||!c||!c.from){msg.textContent='Entre na sua conta para guardar.';return}
+       PF.deps=deps.filter(Boolean);PF.atualizado=new Date().toISOString();
+       const {error}=await c.from('user_site_data').upsert({user_id:u.id,site_id:'financas',chave:'perfil',valor:PF},{onConflict:'user_id,site_id,chave'});
+       msg.textContent=error?'Não foi possível guardar: '+error.message:'✓ Guardado na sua conta';try{FPTrack.log('perfil',{campos:Object.keys(PF).filter(k=>PF[k]&&k!=='atualizado'&&k!=='deps').length,deps:PF.deps.length})}catch(e){}},500)};
+   const carrega=async()=>{const u=window.financasUser,c=window.plataforma;if(!u||!c||!c.from){PF={};deps=[];pinta();msg.textContent='Entre na sua conta para preencher o perfil.';return}
+     if(carregado===u.id){pinta();return}msg.textContent='A carregar…';
+     try{const {data,error}=await c.from('user_site_data').select('valor').eq('user_id',u.id).eq('site_id','financas').eq('chave','perfil').maybeSingle();if(error)throw error;
+       PF=(data&&data.valor)||{};deps=Array.isArray(PF.deps)?PF.deps.slice():[];carregado=u.id;msg.textContent=''}catch(e){msg.textContent='Não foi possível carregar o perfil.'}pinta()};
+   box.addEventListener('change',e=>{const el=e.target;if(el.dataset.pf){PF[el.dataset.pf]=el.type==='checkbox'?el.checked:el.type==='number'?(el.value===''?null:+el.value):el.value;if(el.dataset.pf==='civil'&&!/Casado|União/.test(el.value))delete PF.trib;pinta();grava()}
+     else if(el.dataset.dep!=null){deps[+el.dataset.dep]=el.value===''?null:+el.value;grava()}});
+   box.addEventListener('click',e=>{const b=e.target.closest('[data-depx]');if(b){deps.splice(+b.dataset.depx,1);pinta();grava()}});
+   $('pfDepAdd').onclick=()=>{deps.push(null);pinta();const l=$('pfDeps').querySelectorAll('input');if(l.length)l[l.length-1].focus()};
+   document.querySelectorAll('#setNav [data-s="perfil"]').forEach(b=>b.addEventListener('click',()=>setTimeout(carrega,0)));
+   window.FPPerfil={carrega,_reset:()=>{carregado='';PF={};deps=[]},dados:()=>({...PF,deps:deps.filter(Boolean)})}}
   $$('[data-fecha]').forEach(b=>b.onclick=()=>$(b.dataset.fecha).hidden=true);
   ['mSet','mPlano'].forEach(i=>$(i).addEventListener('click',e=>{if(e.target.id===i)$(i).hidden=true}));
   $('gTema').addEventListener('click',e=>{const b=e.target.closest('.opt');if(b)FPTema.tema(b.dataset.v)});
@@ -443,7 +482,7 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
         b.querySelector('#tourFile').onchange=async e=>{const fs=[...e.target.files];if(!fs.length)return;r.innerHTML='A ler…';const w=await app();if(!w||!w.fpCfg){r.innerHTML='Não foi possível abrir as Finanças.';return}
           let res=[];try{res=await w.fpCfg.importar(fs)}catch(x){res=fs.map(f=>({ok:false,f:f.name,msg:x.message}))}e.target.value='';const ok=res.filter(x=>x.ok),ko=res.filter(x=>!x.ok);
           if(ok.length){EXP=false;bx.classList.remove('on')}
-          MSG=ok.map(x=>`<div class="ok">✓ <b>${esc(x.f)}</b> — ${esc(x.banco)}: ${x.novos} movimentos novos${x.auto?` (${x.auto} já categorizados)`:''}</div>`).join('')+ko.map(x=>`<div class="ko">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)} <button class="bt" type="button" data-am="${esc(x.f)}" title="Banco não suportado? Envie uma amostra anónima para o passarmos a ler">📨 Enviar amostra anónima</button></div>`).join('')
+          MSG=ok.map(x=>`<div class="ok">✓ <b>${esc(x.f)}</b> — ${esc(x.banco)}: ${x.novos} movimentos novos${x.auto?` (${x.auto} já categorizados)`:''}${x.gen?`<br>⚠ Banco não reconhecido: confira os movimentos e envie-nos um exemplo. <button class="bt" type="button" data-am="${esc(x.f)}">📨 Enviar exemplo (anónimo)</button>`:''}</div>`).join('')+ko.map(x=>`<div class="ko">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)} <button class="bt" type="button" data-am="${esc(x.f)}" title="Extrato não reconhecido: envie-nos um exemplo anónimo para o passarmos a ler">📨 Enviar exemplo (anónimo)</button></div>`).join('')
             +(ko.length&&!ok.length?'<div>Pode tentar outro ficheiro ou <b>usar o exemplo</b> por agora (e importar mais tarde em Extratos). Se o seu banco não é lido, envie uma <b>amostra anónima</b>: textos e algarismos são trocados no browser e vê tudo antes de enviar.</div>':'');r.innerHTML=MSG;posiciona()};
         r.onclick=async e=>{const a=e.target.closest('[data-am]');if(!a)return;const w=await app();fecha();if(w&&w.fpAmostra)w.fpAmostra(a.dataset.am)};
         bx.onclick=()=>{EXP=!EXP;bx.classList.toggle('on',EXP);MSG=EXP?'<div class="ok">✓ No fim abrimos a conta <b>🧪 Exemplo</b> com 3 meses de movimentos fictícios. Para voltar aos seus dados use <b>👤 Pessoal</b> no topo; apaga-se com um clique.</div>':'';r.innerHTML=MSG;posiciona()}}},
@@ -709,6 +748,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.10f',d:'02/10/2026',n:['Perfil financeiro nas Definições: estado civil, dependentes, situação profissional e outros dados opcionais e privados','Extrato de um banco não reconhecido: avisa e pede-nos um exemplo anónimo para o passarmos a ler'],a:['Previsões: os títulos das colunas acompanham ao descer; nos anos anteriores aparece primeiro a média por mês e depois o total','Agregado: botões a roxo, a cor do agregado']},
  {v:'0.10e',d:'01/10/2026',n:['Opção para esconder a ajuda ⓘ (Definições › Geral)','Ao criar uma regra, “Cancelar” volta à categoria que o movimento tinha'],a:['As Finanças passam a precisar de conta','Exportar e apagar os dados tratam só das Finanças (a conta continua)','A pesquisa dos Extratos fica azul quando tem texto','Previsto vs real: o traço do previsto fica dentro da barra','Página de privacidade mais simples']},
  {v:'0.10d',d:'01/10/2026',n:['Exportar todos os seus dados e apagar a conta (Definições › Conta)','Página de privacidade: o que guardamos, quem vê e os seus direitos'],a:['Segurança da base de dados reforçada']},
  {v:'0.10c',d:'01/10/2026',n:['Banco não suportado? Envie uma amostra anónima do extrato (vê tudo antes de enviar) para o passarmos a ler'],a:['Telemóvel: barra de cima em duas linhas e movimentos dos Extratos em cartões, mais fáceis de categorizar']},
