@@ -29,5 +29,6 @@ $$;
 --   adm_ok(site)            → erro se não for admin da plataforma (profiles.is_admin) nem do site
 --   adm_ev(site,dias)       → eventos do período;  adm_ses(site,dias) → sessões (min/máx, minutos = duração + 1)
 --   adm_kpis / adm_series / adm_users → blocos do resultado;  adm_limpa() → apaga eventos com mais de 12 meses
+--   adm_uids(site)          → contas que usam o site (eventos, user_site_data, financas_dados, agregados, dados_utilizador, goal_completions)
 --   admin_stats(site,dias)  → junta tudo (único com execute para authenticated; os adm_* não têm execute para anon/authenticated)
 -- Ver o código atual no Supabase: select pg_get_functiondef('public.admin_stats(text,int)'::regprocedure);

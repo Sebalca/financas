@@ -294,7 +294,7 @@ abrir(location.hash.slice(1));
    Umami (visitantes anónimos, sem cookies): pôr o Website ID em UMAMI_ID.
    FPTrack (utilizadores com sessão → Supabase site_eventos): sessões, tempo (ping a cada minuto com a página visível), abas e ações.
    Nunca enviar valores, descrições de movimentos ou nomes de ficheiros. */
-const UMAMI_ID='';
+const UMAMI_ID='89c0e7c4-94e0-4973-b666-06d3f174b741';
 if(UMAMI_ID){const u=document.createElement('script');u.defer=true;u.src='https://cloud.umami.is/script.js';u.dataset.websiteId=UMAMI_ID;u.dataset.autoTrack='false';
   u.onload=()=>{try{umami.track(p=>({...p,url:'/'+(location.hash.slice(1)||'financas')}))}catch(e){}};document.head.appendChild(u)}
 const FPTrack=(()=>{const SITE='financas',S=(Date.now().toString(36)+Math.random().toString(36).slice(2,10));let U=null,fila=[],t=null,ping=null;
@@ -624,6 +624,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.9h',d:'01/10/2026',n:[],a:['Estatísticas (admin): ao escolher um site, só contam as contas que usam esse site; nova coluna com os movimentos do agregado']},
  {v:'0.9g',d:'01/10/2026',n:['Estatísticas de uso (só para o administrador): visitas, tempo no site e funcionalidades mais usadas'],a:['Definições › Conta explica que dados de uso são recolhidos (nunca valores nem descrições dos movimentos)']},
  {v:'0.9f',d:'29/09/2026',n:['Cor por referência (Despesas › Editar), com a opção "Pintar só nos Extratos"','Aba Objetivos (em desenvolvimento)','Início: cada gráfico circular mostra valores (€) ou percentagens (%)'],a:['Previsto vs real: barra que enche até à linha do previsto e fica vermelha quando passa','Definições: "Extratos: pintar a" caixa da categoria ou linha inteira (só uma); os gráficos usam sempre as cores escolhidas','Ao passar de Ano para Mês abre o mês atual (se for desse ano) ou o último mês escolhido','No Editar das Despesas, o botão Concluir acompanha a página']},
  {v:'0.9e',d:'29/09/2026',n:[],a:['Corrigido: com sessão iniciada, Definições › Agregado familiar pedia para entrar e não deixava criar o agregado']},

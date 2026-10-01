@@ -142,6 +142,10 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 
 ## Histórico
 
+### v0.9h — 01/10/2026
+- Estatísticas: filtro por site passa a filtrar as contas (caixas, contas novas, percurso e tabela) às que usam esse site; coluna "Mov. agregado".
+- Umami ligada (Website ID em `UMAMI_ID`).
+
 ### v0.9g — 01/10/2026
 - Estatísticas de uso (D105): tabela `site_eventos` + funções de admin no Supabase; registo de eventos na página principal (FPTrack) e nas Finanças; página `admin.html` com caixas, gráficos (ativos/tempo por dia, contas novas), percurso, abas, funcionalidades, utilizadores (email), falhas de importação e erros.
 - Umami preparado (falta o Website ID). Item "📊 Estatísticas (admin)" no menu da conta para admins.
