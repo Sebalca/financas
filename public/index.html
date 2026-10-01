@@ -213,7 +213,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <div id="tiposL"></div><div class="grp"><button class="opt" id="tipoAdd" type="button">＋ Novo tipo</button></div><div class="note2" id="tiposMsg"></div></section>
     <section data-s="agr" hidden><h3>Agregado familiar</h3><p>Um agregado é uma conta de Finanças <b>partilhada</b> com outras pessoas (por exemplo, a família). A sua conta pessoal continua privada — só entra no agregado o que for lá registado.</p>
       <div id="agrBox"></div><div class="note2" id="agrMsg"></div></section>
-    <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div><h3 style="margin-top:18px">Dados de uso</h3><p>Com sessão iniciada, guardamos estatísticas de uso associadas à conta: sessões e tempo no site, abas abertas, ações (importar extrato e falhas na importação, categorizar, criar regras, dividir, previsões, agregado, exportar, sugestões) e erros técnicos. <b>Nunca</b> são guardados valores, descrições de movimentos nem nomes de ficheiros. Servem só para melhorar o site e apagam-se ao fim de 12 meses. As visitas anónimas são contadas sem cookies.</p></section>
+    <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div><h3 style="margin-top:18px">Dados de uso</h3><p>Com sessão iniciada, guardamos estatísticas de uso associadas à conta: sessões e tempo no site, abas abertas, ações (importar extrato e falhas na importação, categorizar, criar regras, dividir, previsões, agregado, exportar, sugestões) e erros técnicos. <b>Nunca</b> são guardados valores, descrições de movimentos nem nomes de ficheiros. Servem só para melhorar o site e apagam-se ao fim de 12 meses. As visitas anónimas são contadas sem cookies. Mais detalhes na <a href="privacidade.html" target="_blank" rel="noopener">página de privacidade</a>.</p></section>
     <section data-s="backup" hidden><h3>Cópia de segurança</h3><p>Exporta tudo das Finanças (movimentos, categorias, regras, pessoas, rendimentos, previstos) para um ficheiro .json, que pode importar noutro dispositivo ou mais tarde.</p>
       <div class="grp"><button class="opt" id="bkExp" type="button">⤓ Exportar ficheiro</button><button class="opt" id="bkImpBt" type="button">⤒ Importar ficheiro…</button><input type="file" id="bkImp" accept=".json,application/json" hidden></div><div class="note2" id="bkMsg"></div></section>
     <section data-s="apagar" hidden><h3>Apagar dados</h3><p>Apaga os dados das Finanças. Exporte antes uma cópia de segurança se os quiser guardar.</p>
@@ -262,6 +262,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
     <div class="row"><button class="bt pri" type="submit" id="btLogin">Entrar</button><button class="bt" type="button" id="btCriar">Criar conta</button></div>
     <div class="row" style="margin-top:8px"><button class="bt" type="button" id="btCancel">Cancelar</button></div>
     <div class="msg" id="lMsg" role="status"></div>
+    <p style="margin:10px 0 0;font-size:12px;color:var(--mu);text-align:center">Os seus dados são só seus. <a href="privacidade.html" target="_blank" rel="noopener" style="color:var(--ac)">Privacidade</a></p>
   </form>
 </div>
 <div class="frames" id="frames"><a class="extlink" id="extLink" target="_blank" rel="noopener noreferrer" hidden title="Se o site não aparecer aqui, abra-o numa nova aba">↗ Abrir numa nova aba</a></div>
@@ -347,8 +348,25 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
     $('mSub').textContent=on?'Dados guardados na conta':'Os dados ficam só neste dispositivo';$('miEntrar').hidden=on||!window.FP_AUTH;$('miSair').hidden=!on;
     $('contaInfo').innerHTML=on?`<p>Sessão iniciada como <b>${U.email.replace(/</g,'&lt;')}</b>. A mesma conta funciona nos outros sites frisk.pt.</p>
       <label for="novaPass">Mudar palavra-passe</label><input id="novaPass" type="password" minlength="6" autocomplete="new-password" placeholder="Nova palavra-passe (mín. 6)">
-      <div class="grp" style="margin-top:8px"><button class="opt" id="btPass" type="button">Guardar palavra-passe</button><button class="opt danger" id="btSair2" type="button">Terminar sessão</button></div><div class="note2" id="passMsg"></div>`
-      :`<p>Sem sessão iniciada: os dados ficam só neste dispositivo.</p><div class="grp"><button class="opt" id="btEntrar2" type="button">🔑 Entrar / criar conta</button></div>`;
+      <div class="grp" style="margin-top:8px"><button class="opt" id="btPass" type="button">Guardar palavra-passe</button><button class="opt danger" id="btSair2" type="button">Terminar sessão</button></div><div class="note2" id="passMsg"></div>
+      <h3 style="margin-top:18px">Os meus dados</h3><p>Leve uma cópia de tudo o que a sua conta tem na plataforma, ou apague a conta. Saiba mais na <a href="privacidade.html" target="_blank" rel="noopener">página de privacidade</a>.</p>
+      <div class="grp"><button class="opt" id="btExpConta" type="button">📦 Exportar os meus dados</button><button class="opt danger" id="btApConta" type="button">🗑 Apagar a minha conta</button></div>
+      <div id="apcBox" hidden style="margin-top:10px;border:1px solid #c62828;border-radius:10px;padding:12px"><p style="margin-top:0"><b>Isto apaga a conta em todos os sites da plataforma</b> (Finanças e os outros sites frisk.pt): perfil, dados das Finanças, dados dos outros sites, sugestões e estatísticas de uso. Os agregados de que é dono passam para o membro mais antigo (ou são apagados, se for o único). <b>Não se pode desfazer</b> — exporte os dados primeiro, se os quiser guardar.</p>
+        <label for="apcMail">Escreva o seu email para confirmar</label><input id="apcMail" type="email" autocomplete="off" placeholder="${U.email.replace(/"/g,'')}"><div class="grp" style="margin-top:8px"><button class="opt danger" id="apcOk" type="button">Apagar a conta definitivamente</button><button class="opt" id="apcNo" type="button">Cancelar</button></div></div>
+      <div class="note2" id="rgpdMsg"></div>`
+      :`<p>Sem sessão iniciada: os dados ficam só neste dispositivo.</p><div class="grp"><button class="opt" id="btEntrar2" type="button">🔑 Entrar / criar conta</button></div><p class="note2"><a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a></p>`;
+    /* v0.10d RGPD: exportar todos os dados da conta (plataforma) e apagar a conta (função no servidor, confirma com o email) */
+    const bx=$('btExpConta');if(bx)bx.onclick=async()=>{const c=window.plataforma;$('rgpdMsg').textContent='A preparar…';
+      try{const {data,error}=await c.rpc('minha_conta_exportar');if(error)throw error;const b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');
+        a.href=URL.createObjectURL(b);a.download='meus-dados-frisk-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+        $('rgpdMsg').textContent='✓ Ficheiro descarregado.';try{FPTrack.log('rgpd',{acao:'exportar'})}catch(e){}}catch(e){$('rgpdMsg').textContent='Não foi possível exportar: '+(e.message||e)}};
+    const ba=$('btApConta');if(ba)ba.onclick=()=>{$('apcBox').hidden=false;$('apcMail').focus()};const an=$('apcNo');if(an)an.onclick=()=>{$('apcBox').hidden=true;$('apcMail').value=''};
+    const ao=$('apcOk');if(ao)ao.onclick=async()=>{const v=$('apcMail').value.trim().toLowerCase();if(v!==(U.email||'').toLowerCase()){$('rgpdMsg').textContent='O email não corresponde ao da conta.';return}
+      if(!confirm('Apagar a conta e todos os dados, em todos os sites? Não se pode desfazer.'))return;$('rgpdMsg').textContent='A apagar…';
+      try{const {error}=await window.plataforma.rpc('apagar_minha_conta',{p_confirma:v});if(error)throw error;
+        try{Object.keys(localStorage).filter(k=>/^(financas_v1|fp_)/.test(k)&&!/^fp_(tema|zoom)$/.test(k)).forEach(k=>localStorage.removeItem(k))}catch(e){}
+        try{await window.plataforma.auth.signOut()}catch(e){}alert('A sua conta foi apagada.');location.reload()}
+      catch(e){const m=String(e.message||e);$('rgpdMsg').textContent=/apagar_minha_conta|function|404|PGRST202/i.test(m)?'Ainda não é possível apagar a conta por aqui. Peça em Enviar sugestão (com o seu email) e tratamos disso.':'Não foi possível apagar: '+m}};
     const bp=$('btPass');if(bp)bp.onclick=async()=>{const v=$('novaPass').value;if(v.length<6){$('passMsg').textContent='Mínimo 6 caracteres.';return}
       try{const {error}=await window.plataforma.auth.updateUser({password:v});$('passMsg').textContent=error?('Erro: '+error.message):'✓ Palavra-passe alterada.';$('novaPass').value=''}catch(e){$('passMsg').textContent='Não foi possível alterar.'}};
     const s2=$('btSair2');if(s2)s2.onclick=()=>{$('mSet').hidden=true;window.sairConta&&window.sairConta()};
@@ -677,6 +695,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.10d',d:'01/10/2026',n:['Exportar todos os seus dados e apagar a conta (Definições › Conta)','Página de privacidade: o que guardamos, quem vê e os seus direitos'],a:['Segurança da base de dados reforçada']},
  {v:'0.10c',d:'01/10/2026',n:['Banco não suportado? Envie uma amostra anónima do extrato (vê tudo antes de enviar) para o passarmos a ler'],a:['Telemóvel: barra de cima em duas linhas e movimentos dos Extratos em cartões, mais fáceis de categorizar']},
  {v:'0.10b',d:'01/10/2026',n:['Primeiros passos no Início: o que falta fazer para tirar partido do site','Dicas rápidas na primeira visita a cada aba','Ajuda ⓘ nas caixas e nas colunas menos óbvias'],a:['Definições › Visita guiada: repetir a configuração inicial e voltar a ver as dicas']},
  {v:'0.10a',d:'01/10/2026',n:['Configuração inicial para quem começa: 1.º mês do ano, primeiro extrato, categorias e regras sugeridas','Conta 🧪 Exemplo com movimentos fictícios para experimentar, separada dos seus dados e apagável com um clique'],a:['A visita guiada passa a ser opcional no fim da configuração (e continua em Definições)']},

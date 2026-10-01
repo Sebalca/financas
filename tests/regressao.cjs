@@ -459,6 +459,16 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const semScroll=d.documentElement.scrollWidth<=d.documentElement.clientWidth+1;w.go('home');ok({ok:cartao&&barra&&semScroll,cartao,barra,semScroll})}));
   await p.setViewportSize({width:1500,height:900});await p.waitForTimeout(300);
   t('D109','telemóvel: barra de cima em duas linhas com o menu visível, movimentos dos Extratos em cartões, sem deslocamento horizontal',z109.ok,z109);
+  const z110=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),velho=window.plataforma,ch=[];
+    window.plataforma={...velho,auth:{onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),signOut:async()=>({})},rpc:async(f,a)=>{ch.push([f,a]);return f==='minha_conta_exportar'?{data:{conta:{email:'t@exemplo.pt'}}}:{error:{message:'PGRST202 function not found'}}}};
+    FPMenu.sessao({id:'u9',email:'t@exemplo.pt'});const $=id=>document.getElementById(id);const tem=!!$('btExpConta')&&!!$('btApConta')&&!!document.querySelector('#contaInfo a[href="privacidade.html"]');
+    $('btExpConta').click();await W(200);const exp=ch.some(c=>c[0]==='minha_conta_exportar')&&/descarregado/.test($('rgpdMsg').textContent);
+    $('btApConta').click();const box=!$('apcBox').hidden;$('apcMail').value='outro@x.pt';$('apcOk').click();const errado=/não corresponde/.test($('rgpdMsg').textContent)&&!ch.some(c=>c[0]==='apagar_minha_conta');
+    const cf=window.confirm;window.confirm=()=>true;$('apcMail').value='T@exemplo.pt';$('apcOk').click();await W(200);window.confirm=cf;
+    const apaga=ch.some(c=>c[0]==='apagar_minha_conta'&&c[1].p_confirma==='t@exemplo.pt')&&/Enviar sugestão/.test($('rgpdMsg').textContent);
+    window.plataforma=velho;FPMenu.sessao(null);ok({ok:tem&&exp&&box&&errado&&apaga,tem,exp,box,errado,apaga})}));
+  const priv=await (await fetch(U+'/privacidade.html')).text();
+  t('D110','RGPD: exportar os meus dados e apagar a conta (confirmação com o email, função no servidor) em Definições › Conta; página de privacidade ligada',z110.ok&&/Os seus direitos/.test(priv)&&/CNPD/.test(priv),z110);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

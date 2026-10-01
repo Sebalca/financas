@@ -141,10 +141,16 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D107 **Primeiros passos, dicas e ajuda**: caixa "🚀 Primeiros passos" no Início (importar, categorizar ≥ 90%, criar regra, escrever o previsto, adicionar rendimento, visita guiada) com progresso; some quando está tudo feito, com "Esconder" (fica na conta) e não aparece nos agregados. **Dicas** (1–3 bolhas nos botões reais) só na **1.ª visita** a Extratos, Rendimentos, Despesas e Previsões, só para quem fez a configuração inicial ou pediu em Definições; "Não mostrar dicas" desliga-as; nunca por cima da visita guiada. **ⓘ** nas caixas (texto em `INF`) e nas colunas com explicação (`th[title]`), com balão ao clicar (telemóvel). Definições › Visita guiada tem "Configuração inicial" e "Mostrar as dicas outra vez".
 - D108 **Banco não suportado**: quando um extrato falha, explica que bancos são lidos e oferece "📨 Enviar amostra anónima" (também no assistente). A amostra é feita **no browser**: só as primeiras linhas, datas mantidas, letras → X, algarismos ao acaso, cabeçalho das colunas com as palavras; abre Enviar sugestão (tipo Problema) já preenchida para a pessoa **ver e editar antes de enviar**. O ficheiro nunca sai do browser.
 - D109 **Telemóvel** (≤ 760 px): barra de cima em duas linhas (separadores + menu; contas + período), sem deslocamento horizontal; nos Extratos (≤ 640 px) cada movimento é um cartão (data, descrição, valor, categoria/referência, observações/quem, ações) e os filtros não ficam presos; faixa do exemplo numa linha.
+- D110 **RGPD**: Definições › Conta tem "Exportar os meus dados" (`minha_conta_exportar`: tudo o que a conta tem em **todos os sites** da plataforma, num JSON) e "Apagar a minha conta" (`apagar_minha_conta`, confirmação escrevendo o email; apaga em todos os sites; agregados de que é dono passam ao membro mais antigo, ou apagam-se se for o único; sugestões e perguntas não públicas apagadas). Página `privacidade.html` (o que se guarda, o que não, quem vê, onde — Supabase UE/Irlanda, Cloudflare, Google para sugestões, Umami —, prazos e direitos), ligada na conta, no login e em "Dados de uso". Qualquer novo dado guardado tem de entrar na exportação e na página.
+- D111 **Segurança Supabase**: funções de trigger sem execute pela API; funções com `search_path` fixo; funções que dizem respeito a quem tem sessão só para `authenticated`. Exceções de propósito para `anon`: `parkncharge.is_admin`, `e_admin_site` (políticas de leitura pública) e `promo_is_allowed` (antes do login). Novas funções `security definer` sempre com `set search_path = ''`, revoke de `public, anon` e verificação de `auth.uid()`.
 
 ---
 
 ## Histórico
+
+### v0.10d — 01/10/2026 (fecha a v0.10)
+- RGPD (D110): exportar os meus dados, apagar a minha conta, página de privacidade (`privacidade.html`).
+- Segurança (D111): migração `seguranca_v010d` (revoke em funções de trigger e de verificação, search_path fixo, política das partilhas só com sessão); `minha_conta_exportar` aplicada. `apagar_minha_conta` está em `supabase/006_rgpd_seguranca.sql` para correr no editor SQL (até lá o botão explica que se pede pelas Sugestões).
 
 ### v0.10c — 01/10/2026 (v0.10 — passo 3)
 - Telemóvel (D109): barra de cima em duas linhas, movimentos dos Extratos em cartões, "Escolher extrato(s)" em vez de "Arraste", filtros não presos, faixa do exemplo compacta.
