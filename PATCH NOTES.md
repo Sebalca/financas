@@ -138,10 +138,16 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D105 **Estatísticas de uso**: só com sessão iniciada, guardadas em `site_eventos` (plataforma, por site) com o utilizador — sessão, ping a cada minuto com a página visível (tempo no site), separador e abas, importar (banco, linhas) e importação/exportação falhada (extensão e motivo), categorizar, regras, dividir, previsões, agregado, exportar, cópias, sugestões, perguntas e erros de JavaScript. **Nunca** valores, descrições de movimentos nem nomes de ficheiros. Ninguém lê a tabela diretamente; a página `admin.html` (menu da conta › Estatísticas, só admins) mostra os totais via `admin_stats`, com emails. Apagam-se ao fim de 12 meses. Visitantes anónimos: Umami (sem cookies; `UMAMI_ID` em index.html). Definições › Conta explica o que é recolhido.
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
 - D106 **Assistente da 1.ª vez** (configuração inicial, abre sozinho na 1.ª entrada e em Definições › Visita guiada › Configuração inicial): idioma/tema → bem-vindo → 1.º mês do ano → 1.º extrato *ou* conta de exemplo → rever categorias (só se tiram as sem movimentos e que não são do sistema) → regras sugeridas (descrições mais frequentes por categorizar, criadas só as marcadas) → visita guiada opcional. A configuração vai **sempre para a conta pessoal**. A **conta 🧪 Exemplo** tem movimentos fictícios gerados no browser, fica **só neste browser** (nunca vai para a conta nem para o Supabase), aparece no seletor de contas com uma faixa a avisar e apaga-se com um clique; usa as categorias e regras da conta pessoal.
+- D107 **Primeiros passos, dicas e ajuda**: caixa "🚀 Primeiros passos" no Início (importar, categorizar ≥ 90%, criar regra, escrever o previsto, adicionar rendimento, visita guiada) com progresso; some quando está tudo feito, com "Esconder" (fica na conta) e não aparece nos agregados. **Dicas** (1–3 bolhas nos botões reais) só na **1.ª visita** a Extratos, Rendimentos, Despesas e Previsões, só para quem fez a configuração inicial ou pediu em Definições; "Não mostrar dicas" desliga-as; nunca por cima da visita guiada. **ⓘ** nas caixas (texto em `INF`) e nas colunas com explicação (`th[title]`), com balão ao clicar (telemóvel). Definições › Visita guiada tem "Configuração inicial" e "Mostrar as dicas outra vez".
 
 ---
 
 ## Histórico
+
+### v0.10b — 01/10/2026 (v0.10 — Onboarding, passo 2)
+- Primeiros passos no Início, dicas na 1.ª visita a cada aba e ajuda ⓘ (D107).
+- Definições › Visita guiada: repetir a configuração inicial e voltar a mostrar as dicas/primeiros passos.
+- A visita guiada completa marca o passo "Fazer a visita guiada".
 
 ### v0.10a — 01/10/2026 (v0.10 — Onboarding, passo 1)
 - Assistente da 1.ª vez (D106) substitui a visita automática para contas novas: 1.º mês do ano, primeiro extrato (com bancos suportados e como exportar), rever categorias, regras sugeridas com categoria proposta, e no fim a visita guiada opcional.

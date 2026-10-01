@@ -5,7 +5,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.10a)
+## Já feito (v0.1 → v0.10b)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.
@@ -37,7 +37,7 @@ Ordem sugerida: primeiro garantir que os números estão certos (é a base de tu
 
 - 🔄 **v0.10 — Onboarding completo + melhorias** *(v0.8g já trouxe a visita guiada por aba, Novidades e FAQs)*
   1. ✅ (v0.10a) Assistente da 1.ª vez: idioma/tema → 1.º mês do ano → 1.º extrato (ou conta de exemplo) → rever categorias → regras sugeridas → visita guiada opcional. Conta 🧪 Exemplo à parte, só no browser, apagável com um clique.
-  2. ⬜ (v0.10b) "Primeiros passos" no Início, dicas na 1.ª visita a cada aba, ajuda ⓘ nas caixas.
+  2. ✅ (v0.10b) "Primeiros passos" no Início, dicas na 1.ª visita a cada aba, ajuda ⓘ nas caixas.
   3. ⬜ (v0.10c) Telemóvel; "banco não suportado" (explicar + enviar ficheiro anonimizado pelas Sugestões).
   4. ⬜ (v0.10d) RGPD (exportar dados, apagar conta, página de privacidade) e segurança do Supabase.
 

@@ -436,6 +436,16 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const pessoal=w.fpCtx.atual().t==='p'&&!w.fpCtx.temEx()&&p0.regras.some(r=>r.txt==='PASTELARIA'&&r.ref==='Almoço / Jantar fora')&&!p0.cats.some(x=>x.nome==='Trabalho')&&p0.cats.some(x=>x.nome==='Banco')&&!document.querySelector('#fCtx:not([hidden]) [data-cx="__ex"]');
     ok({ok:mes&&ext&&exMsg&&!!fixa&&fixa.disabled&&rows>0&&sup&&fimOk&&exOk&&sincroniza&&pessoal,passos,mes,ext,exMsg,fixa:fixa&&fixa.disabled,rows,sup,fimOk,exOk,pessoal})}));
   t('D106','assistente da 1.ª vez: 1.º mês, extrato ou exemplo, rever categorias, regras sugeridas; conta 🧪 Exemplo à parte (só neste browser) e apagável; configuração vai para a conta pessoal',z106.ok,z106);
+  const z107=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(400);w.go('home');w.render();const pp=d.querySelector('#homePP');const vis=!pp.hidden&&pp.querySelectorAll('.ppl li').length===6&&pp.querySelectorAll('.ppl li.ok').length>=1;
+    pp.querySelector('[data-ppx]').click();const esc=pp.hidden&&w.fpCtx.db().ppOff===true;w.fpPP.mostra();const volta=!pp.hidden;
+    w.localStorage.setItem('fp_dicas','1');w.localStorage.removeItem('fp_dica_des');w.go('des');await W(800);const b=d.querySelector('#dica');const mostra=!b.hidden&&!!d.querySelector('.dicaAlvo');
+    let n=0;while(!b.hidden&&n++<5){b.querySelector('[data-dc="seg"]').click();await W(50)}const fecha=b.hidden&&!d.querySelector('.dicaAlvo')&&w.localStorage.getItem('fp_dica_des')==='1';
+    w.go('home');w.go('des');await W(800);const umaVez=b.hidden;w.go('home');
+    const infs=d.querySelectorAll('.card h3 .inf').length;d.querySelector('#homeBanks').closest('.card').querySelector('.inf').click();const pop=!d.querySelector('#infPop').hidden&&/Saldo/.test(d.querySelector('#infPop').textContent);
+    d.body.click();await w.fpCtx.apagaEx();await W(300);
+    ok({ok:vis&&esc&&volta&&mostra&&fecha&&umaVez&&infs>=10&&pop,vis,esc,volta,mostra,fecha,umaVez,infs,pop})}));
+  t('D107','Primeiros passos no Início (progresso, Esconder, volta em Definições), dicas só na 1.ª visita a cada aba (desligáveis), ajuda ⓘ nas caixas',z107.ok,z107);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

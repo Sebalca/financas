@@ -217,7 +217,8 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
       <div class="grp"><button class="opt danger" data-apaga="local" type="button">Apagar só neste dispositivo</button><button class="opt danger" data-apaga="conta" type="button">Apagar tudo (também na conta)</button></div><div class="note2" id="apMsg">Com sessão iniciada, "só neste dispositivo" volta a descarregar os dados da conta.</div></section>
     <section data-s="onb" hidden><h3>Visita guiada</h3><p>Mostra, nos botões reais, tudo o que dá para fazer. Aparece sozinha a primeira vez que entra depois de criar a conta.</p>
       <div class="grp"><button class="opt" id="setOnb" type="button">▶ Visita completa</button></div>
-      <h3>Só uma página</h3><p>Escolha a parte que quer rever.</p><div class="grp" id="setOnbG"></div></section>
+      <h3>Só uma página</h3><p>Escolha a parte que quer rever.</p><div class="grp" id="setOnbG"></div>
+      <h3>Configuração e dicas</h3><p>Volte a fazer a configuração inicial ou a ver as dicas de cada aba e a caixa “Primeiros passos”.</p><div class="grp"><button class="opt" type="button" id="setCfg">⚙ Configuração inicial</button><button class="opt" type="button" id="setDicas">💡 Mostrar as dicas outra vez</button></div><div class="note2" id="setDicasMsg"></div></section>
         <section data-s="ajuda" hidden><h3>FAQs</h3>
       <div class="fq-tabs" id="fqTabs"><button type="button" data-ft="faq" class="on">Perguntas frequentes</button><button type="button" data-ft="minhas">As minhas perguntas</button><button type="button" data-ft="adm" hidden>🛠 Gerir <span id="fqNovas"></span></button></div>
       <div id="fqFaq"><div class="fq-top"><input type="search" id="fqQ" placeholder="🔍 Procurar nas perguntas…"></div><div class="fq-lb" id="fqLb"></div><div class="fq" id="fqList"></div>
@@ -484,18 +485,20 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
       if(v)setTimeout(()=>abre(),300)}}
   async function fim(){const st=L[i];if(st&&st.sai)await st.sai();fecha()}
   function tecla(e){if($('tour').hidden)return;if(e.key!=='Escape'&&e.target.closest&&e.target.closest('#tourBub input,#tourBub select,#tourBub summary'))return;if(e.key==='Escape'){e.preventDefault();fecha()}else if(e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();seg()}else if(e.key==='ArrowLeft'){e.preventDefault();if(i>0){i--;mostra()}}}
-  async function seg(){const st=L[i];if(st&&st.sai)await st.sai();if(i<L.length-1){i++;mostra()}else fecha()}
+  async function seg(){const st=L[i];if(st&&st.sai)await st.sai();if(i<L.length-1){i++;mostra()}else{if(MODO!=='cfg')try{localStorage.setItem('fp_tour_ok','1');const w=fw();if(w&&w.render)w.render()}catch(e){}fecha()}}
   $('tourBub').addEventListener('click',e=>{const t=e.target.closest('[data-tt]');if(t){FPTema.tema(t.dataset.tt);[...t.parentNode.children].forEach(b=>b.classList.toggle('on',b===t));return}});
   $('tourBub').addEventListener('click',e=>{const b=e.target.closest('[data-tv]');if(!b)return;const v=b.dataset.tv;if(v==='sair')fecha();else if(v==='ant'){if(i>0){i--;mostra()}}else seg()});
   $('tourBlock').addEventListener('click',()=>{});
   addEventListener('resize',()=>{if(!$('tour').hidden)posiciona()});
-  function abre(g){MODO=g||'';if(g==='cfg'){EXP=false;MSG='';TIRA.clear();RG=[];NRG=0;VIS=false}L=g==='cfg'?S.filter(x=>x.g==='intro'||x.g==='cfg'):g?S.filter(x=>x.g===g):S.filter(x=>x.g!=='cfg');i=0;$('mSet').hidden=true;$('tour').hidden=false;document.addEventListener('keydown',tecla,true);mostra()}
+  function abre(g){MODO=g||'';if(g==='cfg'){try{localStorage.setItem('fp_dicas','1')}catch(e){}EXP=false;MSG='';TIRA.clear();RG=[];NRG=0;VIS=false}L=g==='cfg'?S.filter(x=>x.g==='intro'||x.g==='cfg'):g?S.filter(x=>x.g===g):S.filter(x=>x.g!=='cfg');i=0;$('mSet').hidden=true;$('tour').hidden=false;document.addEventListener('keydown',tecla,true);mostra()}
   const talvez=u=>{try{const k='fp_onb_'+u.id;if(localStorage.getItem(k))return;
       const novo=(localStorage.getItem('fp_onb_novo')||'')===(u.email||'').toLowerCase()||(u.created_at&&Date.now()-new Date(u.created_at)<864e5&&!u.last_sign_in_at)||(u.created_at&&u.last_sign_in_at&&Math.abs(new Date(u.last_sign_in_at)-new Date(u.created_at))<6e5);
       if(!novo)return;localStorage.setItem(k,'1');localStorage.removeItem('fp_onb_novo');setTimeout(()=>abre('cfg'),600)}catch(e){}};
   const grupos=()=>G.filter(g=>g[0]!=='intro'&&g[0]!=='fim');
   document.getElementById('setOnbG').innerHTML=grupos().map(g=>`<button class="opt" type="button" data-og="${g[0]}">▶ ${g[1]}</button>`).join('');
   document.getElementById('setOnbG').addEventListener('click',e=>{const b=e.target.closest('[data-og]');if(b)abre(b.dataset.og)});
+  document.getElementById('setCfg').addEventListener('click',()=>abre('cfg'));
+  document.getElementById('setDicas').addEventListener('click',()=>{const w=fw();if(w&&w.fpPP){w.fpPP.mostra();$('setDicasMsg').textContent='✓ As dicas voltam a aparecer na 1.ª visita a cada aba.'}else $('setDicasMsg').textContent='Abra primeiro o separador Finanças.'});
   return {abre,talvez,grupos,S,fecha}})();
 
 
@@ -668,6 +671,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.10b',d:'01/10/2026',n:['Primeiros passos no Início: o que falta fazer para tirar partido do site','Dicas rápidas na primeira visita a cada aba','Ajuda ⓘ nas caixas e nas colunas menos óbvias'],a:['Definições › Visita guiada: repetir a configuração inicial e voltar a ver as dicas']},
  {v:'0.10a',d:'01/10/2026',n:['Configuração inicial para quem começa: 1.º mês do ano, primeiro extrato, categorias e regras sugeridas','Conta 🧪 Exemplo com movimentos fictícios para experimentar, separada dos seus dados e apagável com um clique'],a:['A visita guiada passa a ser opcional no fim da configuração (e continua em Definições)']},
  {v:'0.9h',d:'01/10/2026',n:[],a:['Estatísticas (admin): ao escolher um site, só contam as contas que usam esse site; nova coluna com os movimentos do agregado']},
  {v:'0.9g',d:'01/10/2026',n:['Estatísticas de uso (só para o administrador): visitas, tempo no site e funcionalidades mais usadas'],a:['Definições › Conta explica que dados de uso são recolhidos (nunca valores nem descrições dos movimentos)']},

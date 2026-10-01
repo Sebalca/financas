@@ -298,6 +298,14 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 .extbar{position:sticky;top:var(--stkH,0px);z-index:20;background:var(--card);margin:0 -16px;padding:8px 16px 2px}
 .extbar .filt{margin-bottom:8px}
 #fCat,#fRef{width:190px;flex:none;text-overflow:ellipsis}#fBanco,#fQuem,#fTipo{width:160px;flex:none;text-overflow:ellipsis}.extbar .bulk{margin-bottom:8px}
+.pp .ppbar{height:6px;border-radius:9px;background:var(--soft);overflow:hidden;margin:2px 0 10px}.pp .ppbar i{display:block;height:100%;background:var(--ac);border-radius:9px}
+.ppl{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}@media(max-width:900px){.ppl{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.ppl{grid-template-columns:1fr}}.ppl li{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--bd);border-radius:10px}.ppl li>span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column}.ppl small{color:var(--mu);font-size:12px}
+.ppl .ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--bd);display:grid;place-items:center;font-size:12px;flex:none}.ppl li.ok{opacity:.6}.ppl li.ok .ck{background:var(--ac);border-color:var(--ac);color:#fff}
+.dica{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));background:var(--card);border:1px solid var(--ac);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.25);padding:12px 14px;font-size:13.5px;line-height:1.55}.dica[hidden]{display:none}.dica p{margin:0 0 8px}.dica .db{display:flex;align-items:center;gap:8px}.dica .db span{margin-left:auto;color:var(--mu);font-size:12px}.dica .lnk{border:0;background:none;color:var(--mu);font-size:12px;text-decoration:underline;cursor:pointer;padding:0}
+.dicaAlvo{outline:3px solid var(--ac)!important;outline-offset:3px;border-radius:10px}
+.inf{border:0;background:none;color:var(--mu);font-size:13px;cursor:help;padding:0 4px;line-height:1;vertical-align:1px}.inf:hover{color:var(--ac)}
+th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400}
+.infpop{position:fixed;z-index:85;max-width:min(320px,calc(100vw - 20px));background:var(--tx);color:var(--card);border-radius:9px;padding:8px 11px;font-size:12.5px;line-height:1.5;box-shadow:0 8px 22px rgba(0,0,0,.25)}.infpop[hidden]{display:none}
 .exban{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 0;padding:9px 14px;border:1px dashed var(--ac);border-radius:12px;background:var(--ac2);font-size:13.5px}.exban .r{margin-left:auto;display:flex;gap:6px}.exban[hidden]{display:none}
 .syncst.ex{color:var(--ac)}
 .syncst{border:1px solid var(--bd);background:var(--card);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--mu);cursor:pointer;margin-left:auto;white-space:nowrap}
@@ -329,12 +337,14 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
     <button type="button" data-tab="fat">Faturas</button>
     <button type="button" data-tab="saude">Saúde financeira</button>
   </nav>
+  <div class="dica" id="dica" hidden role="dialog" aria-label="Dica"></div><div class="infpop" id="infPop" hidden role="tooltip"></div>
   <div class="exban" id="exBan" hidden>🧪 <b>Conta de exemplo</b> — movimentos fictícios, só neste browser, separados dos seus dados. Explore à vontade.<span class="r"><button class="btn sm" type="button" data-exb="p">👤 Voltar ao Pessoal</button><button class="btn sm" type="button" data-exb="x">🗑 Apagar exemplo</button></span></div>
 </div></div>
 
 <main class="wrap">
   <!-- ================= INÍCIO ================= -->
   <section class="panel on" id="tab-home">
+    <div class="card pp" id="homePP" hidden></div>
     <div class="kpis" id="homeKpis"></div>
     <div class="grid3">
       <div class="card"><h3>Entradas e saídas por mês <small id="barsSub"></small><span class="r"><span class="seg mini" id="barsVista"><button type="button" class="on" data-v="s">Simples</button><button type="button" data-v="d">Detalhado</button></span></span></h3><div class="bars" id="homeBars"></div></div>
@@ -512,7 +522,7 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 
 <script>
 'use strict';
-const APP_VERSAO='0.10a'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10b'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1012,6 +1022,7 @@ function render(){
 
   const k=mesesPeriodo();
   if(TAB==='home'){ /* ---- Início ---- */
+  renderPP();
   {const fora=perX.filter(m=>m.valor>0).reduce((s,m)=>s+m.valor,0)-ent,nE=perC.filter(m=>m.valor>0&&!eReemb(m)).length,nS=perC.filter(m=>m.valor<0).length;
    $('#homeKpis').innerHTML=kpiH('Entradas',E(ent),`Rendimentos e entradas por categorizar · ${nE} movimentos${fora>.004?`\nNão contam ${E(fora)} (categorias fora das contas e reembolsos)`:''}\nClique para ver nos Extratos`,'pos','data-gotipo="e"','ent')
     +kpiH('Saídas',E(sai),`${nS} movimentos${reembP>.004?` · já descontados ${E(reembP)} de reembolsos`:''}\nClique para ver nos Extratos`,'neg','data-gotipo="s"','sai')
@@ -1640,7 +1651,7 @@ $('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==
 function limpaFiltros(){['#fQ','#fBanco','#fCat','#fRef','#fQuem','#fTipo'].forEach(i=>$(i).value='')}
 function go(tab,keep){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;if(muda)trk('aba',{aba:tab});
   if(muda&&abaAtiva()==='ext'){EXT.n=EXT_PASSO;DESENHADA.ext=-1;if(EXT_IO)EXT_IO.disconnect();const t=$('#extTable');if(t)t.innerHTML=''} /* ao sair dos Extratos volta às 100 primeiras linhas */
-  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des','prev'].includes(tab))render();if(!keep)window.scrollTo({top:0});fixaCab()}
+  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des','prev'].includes(tab))render();if(!keep)window.scrollTo({top:0});fixaCab();if(muda)setTimeout(()=>dica(tab),450)}
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-dtog],[data-dgo],[data-corq],[data-pvusa],[data-corset],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-gorendx],[data-goref],[data-reemb],[data-rbsel],[data-extmais],[data-calc],[data-calcmov],[data-calcrend],[data-sptog],[data-split],[data-spdel],[data-spreemb],[data-reembp],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
   const d=t.dataset;
@@ -1881,6 +1892,78 @@ function criaEx(){const b=basePessoal(),d=normaliza({...fresh(),...b,exemplo:tru
   d.imports=[{id:'ex',ficheiro:'exemplo (fictício)',banco:'Banco Exemplo',conta:'0000',titular:'',inicio:d.mov[0].dm,fim:d.mov[d.mov.length-1].dm,em:new Date().toISOString(),novos:d.mov.length,dup:0}];
   const db0=DB;DB=d;aplicaRegras();DB=db0;d.owner='ex';d.updatedAt=Date.now();try{localStorage.setItem(KEY+'_ex',JSON.stringify(d))}catch(e){}return d.mov.length}
 async function apagaEx(){if(CTX.t==='x')await trocaCtx({t:'p'});try{localStorage.removeItem(KEY+'_ex')}catch(e){}trk('exemplo',{acao:'apagar'});try{window.parent.FPCtx.pinta()}catch(e){}}
+
+/* ================= v0.10b: Primeiros passos, dicas na 1.ª visita a cada aba, ajuda ⓘ ================= */
+const lsG=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsS=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
+const tourFeito=()=>{if(lsG('fp_tour_ok'))return true;try{for(let i=0;i<localStorage.length;i++)if(/^fp_onb_[0-9a-f-]{8,}/.test(localStorage.key(i)))return true}catch(e){}return false};
+function passosPP(){const temPrev=Object.values(DB.prevAno||{}).some(o=>Object.values(o||{}).some(v=>+v>0))||Object.values(DB.prev||{}).some(v=>+v>0);
+  const nm=DB.mov.length,nc=DB.mov.filter(m=>!isUnc(m)).length,pc=nm?Math.round(nc/nm*100):0;
+  return [{id:'imp',t:'Importar um extrato',x:'CSV ou Excel do homebanking',ok:DB.imports.length>0,go:'ext'},
+    {id:'cat',t:'Categorizar os movimentos',x:nm?`${pc}% categorizados`:'depois de importar',ok:nm>0&&pc>=90,go:'unc'},
+    {id:'rg',t:'Criar uma regra',x:'categoriza sozinha os movimentos iguais',ok:DB.regras.some(r=>!r.predef),go:'rg'},
+    {id:'pv',t:'Escrever o previsto',x:'quanto conta gastar por referência',ok:temPrev,go:'prev'},
+    {id:'ren',t:'Adicionar um rendimento',x:'recibo de vencimento em PDF ou à mão',ok:DB.rend.length>0,go:'ren'},
+    {id:'tour',t:'Fazer a visita guiada',x:'2 minutos pelas abas',ok:tourFeito(),go:'tour'}]}
+function renderPP(){const el=$('#homePP');if(!el)return;const L=passosPP(),n=L.filter(x=>x.ok).length;
+  if(DB.ppOff||CTX.t==='a'||n===L.length){el.hidden=true;return}el.hidden=false;
+  el.innerHTML=`<h3>🚀 Primeiros passos <small>${n} de ${L.length}</small><span class="r"><button class="btn sm" type="button" data-ppx title="Pode voltar a mostrar em Definições › Visita guiada">Esconder</button></span></h3>
+    <div class="ppbar"><i style="width:${n/L.length*100}%"></i></div>
+    <ol class="ppl">${L.map(x=>`<li class="${x.ok?'ok':''}"><span class="ck">${x.ok?'✓':''}</span><span><b>${x.t}</b><small>${esc(x.x)}</small></span>${x.ok?'':`<button class="btn sm" type="button" data-ppgo="${x.go}">Fazer →</button>`}</li>`).join('')}</ol>`}
+$('#homePP').addEventListener('click',e=>{const b=e.target.closest('[data-ppx],[data-ppgo]');if(!b)return;
+  if(b.dataset.ppx!=null){DB.ppOff=true;save();renderPP();toast('Pode voltar a mostrar em Definições › Visita guiada');return}
+  const g=b.dataset.ppgo;trk('primeiros_passos',{passo:g});
+  if(g==='unc'){const u=document.querySelector('[data-gounc]');if(u)u.click()}else if(g==='rg'){go('ext');$('#btRegras').click()}
+  else if(g==='tour'){try{window.parent.FPOnb.abre()}catch(x){}}else go(g)});
+window.fpPP={mostra:()=>{DB.ppOff=false;save();lsS('fp_dicas','1');Object.keys(DICAS).forEach(k=>lsS('fp_dica_'+k,null));render()}};
+/* dicas: 1–3 bolhas nos botões reais, só na 1.ª visita a cada aba (contas novas, ou se pedir em Definições) */
+const DICAS={
+  ext:[['#drop','Arraste para aqui os <b>extratos</b> (CSV ou Excel). Pode importar vários de uma vez; os repetidos não entram duas vezes.'],
+    ['#extTable','Escolha a <b>categoria</b> e a <b>referência</b> em cada linha — o site propõe uma <b>regra</b> para os movimentos semelhantes.'],
+    ['#btRegras','Aqui estão as <b>regras</b> de categorização automática e as <b>pessoas</b> das transferências.']],
+  ren:[['[data-dd="ddRend"]','Carregue o <b>recibo de vencimento</b> em PDF (lido no browser) ou adicione um rendimento à mão.'],
+    ['#renAno','Mês a mês: ordenado, subsídios, descontos e <b>líquido</b>. Abra um mês para ver cada recibo.']],
+  des:[['#desKpis','<b>Previsto</b>, <b>saídas</b> e a <b>diferença</b> no período escolhido em cima.'],
+    ['#desCats','Cada categoria e referência com as saídas, o previsto e a média mensal. Clique numa linha para ver os movimentos.'],
+    ['#btDesEdit','Mude nomes, ordem, cores e o <b>tipo</b> de cada referência.']],
+  prev:[['#prevDes','Escreva a <b>média por mês</b> ou o <b>total do ano</b> de cada referência. Os 3 anos anteriores ajudam a decidir.'],
+    ['#pvUsar','Atalho: preenche tudo com a média mensal do ano anterior.']]};
+let DQ=null;
+function dica(tab){if(lsG('fp_dicas')!=='1'||!DICAS[tab]||lsG('fp_dica_'+tab))return;
+  try{const t=window.parent.document.getElementById('tour');if(t&&!t.hidden)return}catch(e){}
+  if(abaAtiva()!==tab)return;const L=DICAS[tab].filter(([q])=>{const el=document.querySelector(q);return el&&el.offsetParent});if(!L.length)return;
+  lsS('fp_dica_'+tab,'1');DQ={L,i:0};mostraDica()}
+function fechaDica(){const b=$('#dica');if(b)b.hidden=true;$$('.dicaAlvo').forEach(x=>x.classList.remove('dicaAlvo'));DQ=null}
+function mostraDica(){$$('.dicaAlvo').forEach(x=>x.classList.remove('dicaAlvo'));if(!DQ||DQ.i>=DQ.L.length){fechaDica();return}
+  const [q,txt]=DQ.L[DQ.i],el=document.querySelector(q),b=$('#dica');if(!el){DQ.i++;mostraDica();return}
+  el.scrollIntoView({block:'center'});el.classList.add('dicaAlvo');const ult=DQ.i===DQ.L.length-1;
+  b.innerHTML=`<p>💡 ${txt}</p><div class="db"><button type="button" class="lnk" data-dc="off">Não mostrar dicas</button><span>${DQ.i+1}/${DQ.L.length}</span><button type="button" class="btn sm pri" data-dc="seg">${ult?'Percebi':'Seguinte ›'}</button></div>`;
+  b.hidden=false;requestAnimationFrame(()=>{const r=el.getBoundingClientRect(),bw=b.offsetWidth,bh=b.offsetHeight;let y=r.bottom+10;if(y+bh>innerHeight-8)y=Math.max(8,r.top-bh-10);
+    b.style.left=Math.min(innerWidth-bw-10,Math.max(10,r.left+Math.min(r.width,300)/2-bw/2))+'px';b.style.top=y+'px'})}
+$('#dica').addEventListener('click',e=>{const b=e.target.closest('[data-dc]');if(!b)return;if(b.dataset.dc==='off'){lsS('fp_dicas','0');fechaDica();toast('Dicas desligadas — pode voltar a ligá-las em Definições')}else{DQ.i++;mostraDica()}});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&DQ)fechaDica()});
+/* ajuda ⓘ: nas caixas (texto aqui) e nas colunas com explicação (th com title) */
+const INF={homeBars:'Entradas e saídas de cada mês do ano (o ano começa no mês escolhido em Definições). Movimentos entre contas e poupanças não contam. "Detalhado" divide as barras por categoria.',
+  homeBanks:'Saldo de cada conta no fim do período, pelo último saldo do extrato. "Dinheiro" junta os levantamentos e os gastos em dinheiro registados à mão.',
+  homeDonut:'Saídas do período por categoria, já descontados os reembolsos. Não inclui movimentos entre contas nem poupanças.',
+  homeDonutRef:'Saídas do período por referência (a subdivisão da categoria), já descontados os reembolsos.',
+  homeRend:'Entradas categorizadas em Rendimentos, por entidade (quem pagou). ✓ = tem recibo ligado na aba Rendimentos.',
+  homeRendTipo:'Rendimentos por referência: salário, subsídios, prémios, rendas…',
+  homeDonutTipo:'Despesas agrupadas pelo tipo de cada referência (fixas ou variáveis, essenciais ou não, extras). O tipo muda-se em Despesas › ✏ Editar.',
+  homeBudget:'Por categoria: o que gastou (barra) e o previsto para o período (risco). Vermelho = acima do previsto. O previsto escreve-se nas Previsões.',
+  homeLast:'Os movimentos mais recentes do período, de todas as contas.',
+  homeUnc:'Movimentos do período ainda sem categoria. ⚡ cria uma regra que categoriza estes e os próximos com a mesma descrição.',
+  drop:'Ficheiros CSV/Excel exportados do homebanking. São lidos no browser e só os movimentos ficam guardados. Os repetidos não entram duas vezes e os saldos são verificados.',
+  extTable:'Categoria e referência em cada linha; "Quem é" identifica a pessoa de uma transferência; "Obs." são notas suas. Marque várias linhas (caixa à esquerda) para editar em massa.',
+  renAno:'Rendimentos de cada mês pela visão fiscal (recibos): bruto, descontos e líquido — para comparar com a declaração de IRS.',
+  desCats:'Saídas − reembolsos de cada referência no período, comparadas com o previsto. A média mensal usa os últimos 12 meses com movimentos.',
+  prevDes:'O previsto de cada referência por ano. Escreva a média por mês ou o total do ano; ao lado estão os 3 anos anteriores (total e média/mês).'};
+Object.entries(INF).forEach(([id,txt])=>{const el=document.getElementById(id),c=el&&el.closest('.card'),h=c&&c.querySelector('h3');if(!h||h.querySelector('.inf'))return;
+  const i=document.createElement('button');i.type='button';i.className='inf';i.dataset.inf=txt;i.title=txt;i.setAttribute('aria-label','Ajuda');i.textContent='ⓘ';
+  const r=h.querySelector('.r,small,.tag');h.insertBefore(i,r||null)});
+document.addEventListener('click',e=>{const p=$('#infPop'),b=e.target.closest('.inf,th[title]');if(!b){p.hidden=true;return}
+  const txt=b.dataset.inf||b.getAttribute('title');if(!txt)return;if(b.tagName==='TH'&&!matchMedia('(hover:none)').matches&&!e.target.closest('.inf'))return;
+  p.textContent=txt;p.hidden=false;const r=b.getBoundingClientRect(),pw=p.offsetWidth;p.style.left=Math.min(innerWidth-pw-10,Math.max(10,r.left-20))+'px';const ph=p.offsetHeight;p.style.top=(r.bottom+6+ph>innerHeight-8?Math.max(8,r.top-ph-6):r.bottom+6)+'px'},true);
+addEventListener('scroll',()=>{const p=$('#infPop');if(p&&!p.hidden)p.hidden=true},{passive:true});
 window.fpCtx={atual:()=>({...CTX}),muda:(c)=>trocaCtx(c),db:()=>DB,temEx,
   exemplo:async()=>{const n=criaEx();trk('exemplo',{acao:'criar'});await trocaCtx({t:'x'});const h=new Date();P.m='mes';P.d=new Date(h.getFullYear(),h.getMonth()-1,1);$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel();render();avisaPer();return n},apagaEx};
 $('#exBan').addEventListener('click',e=>{const b=e.target.closest('[data-exb]');if(!b)return;if(b.dataset.exb==='p')trocaCtx({t:'p'});else if(confirm('Apagar a conta de exemplo? Os seus dados pessoais não são afetados.'))apagaEx()});
