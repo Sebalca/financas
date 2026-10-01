@@ -137,10 +137,17 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D104 Início: cada gráfico circular tem o seu botão € / %. "Previsto vs real": barra que enche com o real e uma linha no previsto; vermelha quando passa. Ao passar de Ano para Mês abre o mês atual se estiver nesse ano, senão o último mês escolhido. No Editar das Despesas o cabeçalho com Concluir fica fixo. Aba Objetivos existe (em desenvolvimento).
 - D105 **Estatísticas de uso**: só com sessão iniciada, guardadas em `site_eventos` (plataforma, por site) com o utilizador — sessão, ping a cada minuto com a página visível (tempo no site), separador e abas, importar (banco, linhas) e importação/exportação falhada (extensão e motivo), categorizar, regras, dividir, previsões, agregado, exportar, cópias, sugestões, perguntas e erros de JavaScript. **Nunca** valores, descrições de movimentos nem nomes de ficheiros. Ninguém lê a tabela diretamente; a página `admin.html` (menu da conta › Estatísticas, só admins) mostra os totais via `admin_stats`, com emails. Apagam-se ao fim de 12 meses. Visitantes anónimos: Umami (sem cookies; `UMAMI_ID` em index.html). Definições › Conta explica o que é recolhido.
 - Poupanças: aparecem como "Poupanças - referência" em "Saldo por banco" e abrem os Extratos filtrados.
+- D106 **Assistente da 1.ª vez** (configuração inicial, abre sozinho na 1.ª entrada e em Definições › Visita guiada › Configuração inicial): idioma/tema → bem-vindo → 1.º mês do ano → 1.º extrato *ou* conta de exemplo → rever categorias (só se tiram as sem movimentos e que não são do sistema) → regras sugeridas (descrições mais frequentes por categorizar, criadas só as marcadas) → visita guiada opcional. A configuração vai **sempre para a conta pessoal**. A **conta 🧪 Exemplo** tem movimentos fictícios gerados no browser, fica **só neste browser** (nunca vai para a conta nem para o Supabase), aparece no seletor de contas com uma faixa a avisar e apaga-se com um clique; usa as categorias e regras da conta pessoal.
 
 ---
 
 ## Histórico
+
+### v0.10a — 01/10/2026 (v0.10 — Onboarding, passo 1)
+- Assistente da 1.ª vez (D106) substitui a visita automática para contas novas: 1.º mês do ano, primeiro extrato (com bancos suportados e como exportar), rever categorias, regras sugeridas com categoria proposta, e no fim a visita guiada opcional.
+- Conta 🧪 Exemplo (contexto `x`, chave `financas_v1_ex`): 3 meses de movimentos fictícios, sem sincronizar; seletor mostra-a; faixa com "Voltar ao Pessoal" / "Apagar exemplo".
+- `importar()` devolve o resultado (usado pelo assistente); `fpCfg` (importar, categorias, regras sugeridas) e `fpCtx.exemplo/apagaEx/temEx`.
+- As Finanças só usam o cliente Supabase da página principal quando já tem `auth` (evita erro com a página ainda a carregar).
 
 ### v0.9h — 01/10/2026
 - Estatísticas: filtro por site passa a filtrar as contas (caixas, contas novas, percurso e tabela) às que usam esse site; coluna "Mov. agregado".

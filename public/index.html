@@ -62,6 +62,9 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 #tourBub{position:fixed;z-index:92;width:min(380px,calc(100vw - 24px));background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.3);padding:14px 16px 12px;font:14px system-ui,sans-serif;transition:top .25s,left .25s}
 #tourBub .grp2{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}#tourBub .grp2 span{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--bg);color:var(--mu)}#tourBub .grp2 span.on{background:var(--ac);color:#fff}
 #tourBub h4{margin:0 0 6px;font-size:16px}#tourBub p{margin:0;color:var(--mu);line-height:1.75;font-size:13.5px}#tourBub .esc{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}#tourBub .esc button.on{background:var(--ac);border-color:var(--ac);color:#fff}#tourBub select{margin-top:10px;width:100%;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);padding:8px;font:14px system-ui,sans-serif}#tourBub p b{color:var(--tx)}
+#tourBub.larga{width:min(560px,calc(100vw - 24px))}#tourBub .chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--bd);color:var(--tx)}#tourBub .chip small{color:var(--mu)}#tourBub .chip.fx{opacity:.65}
+#tourBub .cfgd{margin-top:10px;font-size:13px;color:var(--mu);line-height:1.6}#tourBub .cfgd summary{cursor:pointer;color:var(--ac);font-weight:600}#tourBub .cfgres{margin-top:8px;font-size:13px;line-height:1.6;max-height:140px;overflow:auto}#tourBub .cfgres .ok{color:var(--ok,#1a7f37)}#tourBub .cfgres .ko{color:#c62828}
+#tourBub .cfgcats{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;max-height:40vh;overflow:auto}#tourBub .cfgrg{margin-top:10px;max-height:42vh;overflow:auto;display:grid;gap:6px}#tourBub .rgl{display:grid;grid-template-columns:auto 1fr minmax(140px,45%);gap:8px;align-items:center;font-size:13px}#tourBub .rgl span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#tourBub .rgl select{margin:0;padding:5px;font-size:13px}#tourBub .muted{color:var(--mu)}
 #tourBub .tb{display:flex;align-items:center;gap:6px;margin-top:12px}#tourBub .tb .n{font-size:12px;color:var(--mu);margin-right:auto}
 /* FAQs */
 .fq-top{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}.fq-top input{flex:1;min-width:160px;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);padding:8px 10px;font:14px system-ui,sans-serif}
@@ -392,11 +395,42 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
 /* ===== onboarding (aparece no 1.º login depois de criar conta; relançável no menu) ===== */
 const FPOnb=(function(){const $=id=>document.getElementById(id);
   /* passos: g = grupo (aba), a = aba das Finanças a abrir, el = alvo ('f:' dentro das Finanças, 'p:' nesta página), t/x = texto */
-  const G=[['intro','Bem-vindo'],['barra','Barra e menu'],['home','Início'],['ext','Extratos'],['ren','Rendimentos'],['des','Despesas'],['fim','Fim']];
+  const G=[['intro','Bem-vindo'],['cfg','Configuração inicial'],['barra','Barra e menu'],['home','Início'],['ext','Extratos'],['ren','Rendimentos'],['des','Despesas'],['fim','Fim']];
   const S=[
     {g:'intro',id:'idioma',t:'🌐 Idioma',x:'Escolha o idioma do site. Por agora só há português; outros idiomas chegam em breve.',html:'<select id="tourIdioma" aria-label="Idioma"><option>Português (Portugal)</option><option disabled>English (em breve)</option><option disabled>Español (em breve)</option></select>'},
     {g:'intro',id:'tema',t:'🌙 Tema',x:'Prefere o site claro ou escuro? Pode mudar mais tarde no menu ou em Definições.',html:'<div class="esc" id="tourTema"><button class="bt" type="button" data-tt="">🖥 Automático</button><button class="bt" type="button" data-tt="light">☀️ Claro</button><button class="bt" type="button" data-tt="dark">🌙 Escuro</button></div>'},
-    {g:'intro',t:'👋 Bem-vindo às Finanças Pessoais',x:'Junte os <b>extratos dos bancos</b>, os <b>recibos de vencimento</b> e as <b>despesas</b> num só sítio, sem escrever movimentos à mão. Esta visita mostra tudo o que dá para fazer, aba a aba. Use as setas ← → do teclado ou os botões.'},
+    {g:'intro',t:'👋 Bem-vindo às Finanças Pessoais',x:()=>'Junte os <b>extratos dos bancos</b>, os <b>recibos de vencimento</b> e as <b>despesas</b> num só sítio, sem escrever movimentos à mão. '+(MODO==='cfg'?'Primeiro, <b>4 passos rápidos</b> para configurar (pode saltar qualquer um); no fim pode fazer a visita guiada.':'Esta visita mostra tudo o que dá para fazer, aba a aba. Use as setas ← → do teclado ou os botões.')},
+    /* v0.10a: configuração inicial (1.ª vez) — tudo vai para a conta pessoal; o exemplo fica à parte */
+    {g:'cfg',id:'mes1',t:'📅 Primeiro mês do ano',x:'Em que mês começa o <b>seu ano</b>? Se organiza as contas de janeiro a dezembro, deixe <b>Janeiro</b>; se for, por exemplo, de setembro a agosto, escolha <b>Setembro</b>. Usado no Início e nas Despesas (pode mudar em Definições).',
+      html:'<select id="tourMes1" aria-label="Primeiro mês do ano"></select>',liga:b=>{const sel=b.querySelector('#tourMes1'),o=$('optMes1');sel.innerHTML=o.innerHTML;sel.value=o.value;sel.onchange=()=>{o.value=sel.value;o.dispatchEvent(new Event('change'))}}},
+    {g:'cfg',id:'ext',larga:1,t:'🏦 O seu primeiro extrato',x:'Importe um extrato do seu banco para começar já com os <b>seus</b> movimentos. O ficheiro é lido <b>só no browser</b>; ficam guardados apenas os movimentos. Não tem agora? Use a <b>conta de exemplo</b> (fictícia, à parte dos seus dados).',
+      html:`<div class="esc"><span class="chip">CGD · CSV</span><span class="chip">Millennium · Excel</span><span class="chip">BPI · Excel</span><span class="chip">Cartão refeição</span><span class="chip">Outros CSV/Excel</span></div>
+        <details class="cfgd"><summary>Como tirar o extrato do banco?</summary>No homebanking (no computador), abra a conta › <b>Movimentos</b> › escolha as datas › <b>Exportar</b> / <b>Descarregar</b> em <b>CSV</b> ou <b>Excel</b>. Pode importar vários ficheiros de uma vez e repetir mais tarde (os movimentos repetidos não entram duas vezes). Se o seu banco não for lido, diga-nos em <b>Enviar sugestão</b>.</details>
+        <div class="esc"><label class="bt pri" style="cursor:pointer">📂 Escolher ficheiro(s)<input type="file" id="tourFile" accept=".csv,.txt,.xlsx,.xls" multiple hidden></label><button class="bt" type="button" id="tourEx">🧪 Não tenho — usar o exemplo</button></div><div id="tourImp" class="cfgres"></div>`,
+      liga:b=>{const r=b.querySelector('#tourImp'),bx=b.querySelector('#tourEx');r.innerHTML=MSG;bx.classList.toggle('on',EXP);
+        b.querySelector('#tourFile').onchange=async e=>{const fs=[...e.target.files];if(!fs.length)return;r.innerHTML='A ler…';const w=await app();if(!w||!w.fpCfg){r.innerHTML='Não foi possível abrir as Finanças.';return}
+          let res=[];try{res=await w.fpCfg.importar(fs)}catch(x){res=fs.map(f=>({ok:false,f:f.name,msg:x.message}))}e.target.value='';const ok=res.filter(x=>x.ok),ko=res.filter(x=>!x.ok);
+          if(ok.length){EXP=false;bx.classList.remove('on')}
+          MSG=ok.map(x=>`<div class="ok">✓ <b>${esc(x.f)}</b> — ${esc(x.banco)}: ${x.novos} movimentos novos${x.auto?` (${x.auto} já categorizados)`:''}</div>`).join('')+ko.map(x=>`<div class="ko">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}</div>`).join('')
+            +(ko.length&&!ok.length?'<div>Pode tentar outro ficheiro ou <b>usar o exemplo</b> por agora (e importar mais tarde em Extratos).</div>':'');r.innerHTML=MSG;posiciona()};
+        bx.onclick=()=>{EXP=!EXP;bx.classList.toggle('on',EXP);MSG=EXP?'<div class="ok">✓ No fim abrimos a conta <b>🧪 Exemplo</b> com 3 meses de movimentos fictícios. Para voltar aos seus dados use <b>👤 Pessoal</b> no topo; apaga-se com um clique.</div>':'';r.innerHTML=MSG;posiciona()}}},
+    {g:'cfg',id:'cats',larga:1,t:'🗂 Categorias e tipos',x:'Estas são as categorias de partida. <b>Desmarque</b> as que não lhe interessam (as que já têm movimentos ou são do sistema ficam). Cada referência tem um <b>tipo</b> (Fixas essenciais, Variáveis…) já sugerido — pode mudar tudo em <b>Despesas › ✏ Editar categorias</b> e em <b>Definições › 🏷 Tipos de despesa</b>.',
+      html:'<div class="cfgcats" id="tourCats">A carregar…</div>',
+      liga:async b=>{const w=await app(),el=b.querySelector('#tourCats');if(!w||!w.fpCfg){el.textContent='';return}const C=w.fpCfg.cats();
+        el.innerHTML=C.map(c=>`<label class="chip${c.fixa||c.usada?' fx':''}" title="${c.fixa?'Categoria do sistema':c.usada?'Já tem movimentos':''}"><input type="checkbox" data-cc="${esc(c.nome)}" ${TIRA.has(c.nome)?'':'checked'} ${c.fixa||c.usada?'disabled':''}> ${esc(c.nome)} <small>${c.refs}</small></label>`).join('');
+        el.onchange=e=>{const n=e.target.dataset.cc;if(n==null)return;if(e.target.checked)TIRA.delete(n);else TIRA.add(n)}},
+      sai:async()=>{if(!TIRA.size)return;const w=await app();if(w&&w.fpCfg)w.fpCfg.tiraCats([...TIRA]);TIRA.clear()}},
+    {g:'cfg',id:'regras',larga:1,t:'⚡ Regras sugeridas',x:'As <b>regras</b> categorizam sozinhas os movimentos com a mesma descrição — agora e nos próximos extratos. Estas são as descrições mais frequentes ainda por categorizar. Ao avançar, são criadas as <b>marcadas</b> (na sua conta pessoal).',
+      html:'<div id="tourRg" class="cfgrg">A carregar…</div>',
+      liga:async b=>{const w=await app(),el=b.querySelector('#tourRg');if(!w||!w.fpCfg){el.textContent='';return}RG=w.fpCfg.sugRegras(EXP?'ex':'');const R=w.fpCfg.refs();
+        if(!RG.length){el.innerHTML='<p class="muted">Ainda não há movimentos por categorizar. Depois de importar um extrato, crie regras em <b>Início › Por categorizar</b> (⚡) ou nos <b>Extratos</b>.</p>';return}
+        const op=R.map(c=>`<optgroup label="${esc(c.nome)}">${c.refs.map(r=>`<option value="${esc(c.nome+'›'+r)}">${esc(r)}</option>`).join('')}</optgroup>`).join('');
+        el.innerHTML=RG.map((x,i)=>`<div class="rgl"><input type="checkbox" data-ri="${i}" ${x.cat?'checked':''} aria-label="Criar esta regra"><span title="${esc(x.d)}"><b>${esc(x.txt)}</b> <small>${x.n}×</small></span><select data-rs="${i}" aria-label="Categoria"><option value="">— escolher —</option>${op}</select></div>`).join('');
+        RG.forEach((x,i)=>{if(x.cat)el.querySelector(`[data-rs="${i}"]`).value=x.cat+'›'+x.ref});
+        el.onchange=e=>{const d=e.target.dataset;if(d.rs!=null){const [c,r]=e.target.value.split('›');Object.assign(RG[+d.rs],{cat:c||'',ref:r||''});el.querySelector(`[data-ri="${d.rs}"]`).checked=!!c}}},
+      sai:async()=>{const el=$('tourBub').querySelector('#tourRg');if(!el||!RG.length)return;const L=RG.filter((x,i)=>{const c=el.querySelector(`[data-ri="${i}"]`);return c&&c.checked&&x.cat});RG=[];if(!L.length)return;const w=await app();if(w&&w.fpCfg){const n=w.fpCfg.criaRegras(L);if(n)NRG+=n}}},
+    {g:'cfg',id:'fimcfg',t:'✅ Configuração concluída',x:()=>(NRG?`Criou <b>${NRG} regra${NRG>1?'s':''}</b>. `:'')+(EXP?'Ao concluir abrimos a conta <b>🧪 Exemplo</b> para explorar; os seus dados ficam em <b>👤 Pessoal</b>. ':'')+'Quer uma <b>visita guiada</b> de 2 minutos pelas abas? Pode fazê-la mais tarde em <b>Definições › Visita guiada</b>.',
+      html:'<div class="esc"><button class="bt" type="button" id="tourVis">▶ Fazer a visita guiada</button></div>',liga:b=>{b.querySelector('#tourVis').onclick=()=>{VIS=true;fim()}}},
     {g:'barra',el:'p:#tabs',t:'Separadores',x:'<b>Finanças</b> é a aplicação principal. Ao lado estão o <b>Simulador salarial</b> e sites úteis. Tudo usa a mesma conta.'},
     {g:'barra',el:'p:#fPer',t:'Período',x:'Escolha <b>Mês</b>, <b>Ano</b> ou <b>Intervalo</b>. Clique na data para abrir o <b>calendário</b> e em <b>Hoje</b> para voltar ao período atual. Todas as abas usam este período. À esquerda vê se os dados estão <b>guardados na conta</b>.'},
     {g:'barra',el:'p:#btMenu',t:'Menu da conta',x:'Entrar ou criar conta, <b>Definições</b> (tema, tamanho, ordem dos movimentos, ícone 🧮), cópia de segurança, <b>Novidades</b>, <b>FAQs</b>, enviar sugestões e esta visita guiada.'},
@@ -419,9 +453,13 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
     {g:'des',a:'des',el:'f:#desCats',t:'Categorias e referências',x:'Escreva o <b>previsto por mês</b> e compare com as entradas, saídas, total e a <b>média mensal</b> dos últimos 12 meses. Na vista <b>Ano</b> vê a grelha dos 12 meses.'},
     {g:'des',a:'des',el:'f:#btDesEdit',t:'Editar categorias',x:'Mude nomes, ordem (↑↓), acrescente ou apague categorias e referências, e marque as “📌 só este movimento”.'},
     {g:'fim',t:'✅ Está pronto!',x:'Comece por importar um extrato. Pode rever esta visita (completa ou só de uma página) em <b>Definições › Visita guiada</b>. Dúvidas? Veja as <b>FAQs</b> ou envie uma pergunta.'}];
-  let L=[],i=0;const fin=()=>document.querySelector('iframe[data-id="financas"]');
+  let L=[],i=0,MODO='',EXP=false,MSG='',TIRA=new Set(),RG=[],NRG=0,VIS=false,RP=null;const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fin=()=>document.querySelector('iframe[data-id="financas"]');
   const fw=()=>{try{return fin().contentWindow}catch(e){return null}};
   const pronto=()=>new Promise(ok=>{let n=0;const t=setInterval(()=>{const w=fw();if((w&&w.fpPer&&w.go)||++n>60){clearInterval(t);ok()}},100)});
+  async function app(){if(typeof abrir==='function'&&!(fin()&&fin().classList.contains('on')))abrir('financas');await pronto();const w=fw();
+    if(MODO==='cfg'&&w&&w.fpCtx&&w.fpCtx.atual().t!=='p')await w.fpCtx.muda({t:'p'}); // a configuração é sempre da conta pessoal
+    return w}
   function alvo(st){if(!st.el)return null;const [onde,q]=[st.el.slice(0,2),st.el.slice(2)];
     if(onde==='p:')return {el:document.querySelector(q),off:{x:0,y:0}};
     const w=fw();if(!w)return null;const el=w.document.querySelector(q);if(!el)return null;const r=fin().getBoundingClientRect();return {el,off:{x:r.left,y:r.top},w}}
@@ -432,24 +470,29 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
       if(b.width||b.height){const x=a.off.x+b.left,y=a.off.y+b.top;R={x:Math.max(4,x-6),y:Math.max(4,y-6),w:Math.min(innerWidth-8,b.width+12),h:Math.min(innerHeight-8,b.height+12)}}}
     if(R){spot.classList.remove('centro');Object.assign(spot.style,{left:R.x+'px',top:R.y+'px',width:R.w+'px',height:R.h+'px'})}else spot.classList.add('centro');
     const gi=G.findIndex(g=>g[0]===st.g),gs=[...new Set(L.map(x=>x.g))];
-    bub.innerHTML=`<h4>${st.t}</h4><p>${st.x}</p>${st.html||''}
+    bub.classList.toggle('larga',!!st.larga);bub.innerHTML=`<h4>${st.t}</h4><p>${typeof st.x==='function'?st.x():st.x}</p>${st.html||''}
       <div class="tb"><span class="n">${i+1} / ${L.length}</span><button class="bt" type="button" data-tv="sair">Sair</button>${i?'<button class="bt" type="button" data-tv="ant">‹</button>':''}<button class="bt pri" type="button" data-tv="seg">${i===L.length-1?'Concluir ✓':'Seguinte ›'}</button></div>`;
-    const bw=bub.offsetWidth,bh=bub.offsetHeight;let bx,by;
-    if(R){by=R.y+R.h+12;if(by+bh>innerHeight-8)by=R.y-bh-12;if(by<8)by=Math.min(innerHeight-bh-8,R.y+12);bx=Math.min(innerWidth-bw-12,Math.max(12,R.x+R.w/2-bw/2))}else{bx=(innerWidth-bw)/2;by=Math.max(20,innerHeight*.3-bh/2)}
-    Object.assign(bub.style,{left:bx+'px',top:by+'px'});
+    if(st.liga)await st.liga(bub);RP=R;posiciona();
     const tt=bub.querySelector('#tourTema');if(tt){const g=(()=>{try{return localStorage.getItem('fp_tema')||''}catch(e){return ''}})();[...tt.children].forEach(b=>b.classList.toggle('on',b.dataset.tt===g))}
     bub.querySelector('[data-tv="seg"]').focus()}
-  function fecha(){$('tour').hidden=true;document.removeEventListener('keydown',tecla,true)}
-  function tecla(e){if($('tour').hidden)return;if(e.key==='Escape'){e.preventDefault();fecha()}else if(e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();seg()}else if(e.key==='ArrowLeft'){e.preventDefault();if(i>0){i--;mostra()}}}
-  function seg(){if(i<L.length-1){i++;mostra()}else fecha()}
+  function posiciona(){const R=RP,bub=$('tourBub');const bw=bub.offsetWidth,bh=bub.offsetHeight;let bx,by;
+    if(R){by=R.y+R.h+12;if(by+bh>innerHeight-8)by=R.y-bh-12;if(by<8)by=Math.min(innerHeight-bh-8,R.y+12);bx=Math.min(innerWidth-bw-12,Math.max(12,R.x+R.w/2-bw/2))}else{bx=(innerWidth-bw)/2;by=Math.max(20,innerHeight*.3-bh/2)}
+    Object.assign(bub.style,{left:bx+'px',top:Math.max(8,by)+'px'})}
+  async function fecha(){$('tour').hidden=true;document.removeEventListener('keydown',tecla,true);const m=MODO;MODO='';
+    if(m==='cfg'){const x=EXP,v=VIS;EXP=false;VIS=false;MSG='';TIRA.clear();
+      if(x){const w=await app();if(w&&w.fpCtx&&w.fpCtx.exemplo)await w.fpCtx.exemplo()}
+      if(v)setTimeout(()=>abre(),300)}}
+  async function fim(){const st=L[i];if(st&&st.sai)await st.sai();fecha()}
+  function tecla(e){if($('tour').hidden)return;if(e.key!=='Escape'&&e.target.closest&&e.target.closest('#tourBub input,#tourBub select,#tourBub summary'))return;if(e.key==='Escape'){e.preventDefault();fecha()}else if(e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();seg()}else if(e.key==='ArrowLeft'){e.preventDefault();if(i>0){i--;mostra()}}}
+  async function seg(){const st=L[i];if(st&&st.sai)await st.sai();if(i<L.length-1){i++;mostra()}else fecha()}
   $('tourBub').addEventListener('click',e=>{const t=e.target.closest('[data-tt]');if(t){FPTema.tema(t.dataset.tt);[...t.parentNode.children].forEach(b=>b.classList.toggle('on',b===t));return}});
   $('tourBub').addEventListener('click',e=>{const b=e.target.closest('[data-tv]');if(!b)return;const v=b.dataset.tv;if(v==='sair')fecha();else if(v==='ant'){if(i>0){i--;mostra()}}else seg()});
   $('tourBlock').addEventListener('click',()=>{});
-  addEventListener('resize',()=>{if(!$('tour').hidden)mostra()});
-  function abre(g){L=g?S.filter(x=>x.g===g):S.slice();i=0;$('mSet').hidden=true;$('tour').hidden=false;document.addEventListener('keydown',tecla,true);mostra()}
+  addEventListener('resize',()=>{if(!$('tour').hidden)posiciona()});
+  function abre(g){MODO=g||'';if(g==='cfg'){EXP=false;MSG='';TIRA.clear();RG=[];NRG=0;VIS=false}L=g==='cfg'?S.filter(x=>x.g==='intro'||x.g==='cfg'):g?S.filter(x=>x.g===g):S.filter(x=>x.g!=='cfg');i=0;$('mSet').hidden=true;$('tour').hidden=false;document.addEventListener('keydown',tecla,true);mostra()}
   const talvez=u=>{try{const k='fp_onb_'+u.id;if(localStorage.getItem(k))return;
       const novo=(localStorage.getItem('fp_onb_novo')||'')===(u.email||'').toLowerCase()||(u.created_at&&Date.now()-new Date(u.created_at)<864e5&&!u.last_sign_in_at)||(u.created_at&&u.last_sign_in_at&&Math.abs(new Date(u.last_sign_in_at)-new Date(u.created_at))<6e5);
-      if(!novo)return;localStorage.setItem(k,'1');localStorage.removeItem('fp_onb_novo');setTimeout(()=>abre(),600)}catch(e){}};
+      if(!novo)return;localStorage.setItem(k,'1');localStorage.removeItem('fp_onb_novo');setTimeout(()=>abre('cfg'),600)}catch(e){}};
   const grupos=()=>G.filter(g=>g[0]!=='intro'&&g[0]!=='fim');
   document.getElementById('setOnbG').innerHTML=grupos().map(g=>`<button class="opt" type="button" data-og="${g[0]}">▶ ${g[1]}</button>`).join('');
   document.getElementById('setOnbG').addEventListener('click',e=>{const b=e.target.closest('[data-og]');if(b)abre(b.dataset.og)});
@@ -597,15 +640,16 @@ const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=
 const FPCtx=(()=>{const $=id=>document.getElementById(id);let pend=true;
   const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const win=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.contentWindow&&f.contentWindow.fpCtx?f:null}catch(e){return null}};
-  function pinta(){const f=win(),el=$('fCtx');if(pend)valida(true);const L=FPAgr.ativos();const mostra=!!f&&f.classList.contains('on')&&L.length>0;document.body.classList.toggle('comctx',mostra);if(!mostra){el.hidden=true;return}
+  function pinta(){const f=win(),el=$('fCtx');if(pend)valida(true);const L=FPAgr.ativos(),ex=!!f&&f.contentWindow.fpCtx.temEx&&f.contentWindow.fpCtx.temEx();const mostra=!!f&&f.classList.contains('on')&&(L.length>0||ex);document.body.classList.toggle('comctx',mostra);if(!mostra){el.hidden=true;return}
     const c=f.contentWindow.fpCtx.atual();el.hidden=false;
-    el.innerHTML=`<button type="button" data-cx="" class="${c.t==='p'?'on':''}" title="Os seus dados pessoais (privados)">👤 Pessoal</button>`+L.map(g=>`<button type="button" data-cx="${esc(g.id)}" class="${c.t==='a'&&c.id===g.id?'on':''}" title="Dados partilhados do agregado ${esc(g.nome)}">👪 ${esc(g.nome)}</button>`).join('')}
+    el.innerHTML=`<button type="button" data-cx="" class="${c.t==='p'?'on':''}" title="Os seus dados pessoais (privados)">👤 Pessoal</button>`+L.map(g=>`<button type="button" data-cx="${esc(g.id)}" class="${c.t==='a'&&c.id===g.id?'on':''}" title="Dados partilhados do agregado ${esc(g.nome)}">👪 ${esc(g.nome)}</button>`).join('')+(ex?`<button type="button" data-cx="__ex" class="${c.t==='x'?'on':''}" title="Conta de exemplo: dados fictícios, só neste browser">🧪 Exemplo</button>`:'')}
   function valida(dePinta){const f=win();if(!f||!FPAgr.pronto()){pend=true;return}pend=false;const w=f.contentWindow.fpCtx,c=w.atual(),L=FPAgr.ativos();
     if(c.t==='a'){const g=L.find(x=>x.id===c.id);if(!g)w.muda({t:'p'}).then(pinta);else if(c.nome!==g.nome)w.muda({t:'a',id:g.id,nome:g.nome})}
     if(!dePinta)pinta()}
   $('fCtx').addEventListener('click',e=>{const b=e.target.closest('button[data-cx]'),f=win();if(!b||!f)return;const id=b.dataset.cx,g=FPAgr.ativos().find(x=>x.id===id);
-    f.contentWindow.fpCtx.muda(id&&g?{t:'a',id,nome:g.nome}:{t:'p'}).then(pinta);pinta()});
+    f.contentWindow.fpCtx.muda(id==='__ex'?{t:'x'}:id&&g?{t:'a',id,nome:g.nome}:{t:'p'}).then(pinta);pinta()});
   return {pinta,valida}})();
+window.FPCtx=FPCtx;
 const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementById(id),esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const api=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.contentWindow&&f.contentWindow.fpTipos}catch(e){return null}};
   const grava=remap=>{const a=api();if(!a)return;a.grava(L,remap||{});carrega()};
@@ -624,6 +668,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.10a',d:'01/10/2026',n:['Configuração inicial para quem começa: 1.º mês do ano, primeiro extrato, categorias e regras sugeridas','Conta 🧪 Exemplo com movimentos fictícios para experimentar, separada dos seus dados e apagável com um clique'],a:['A visita guiada passa a ser opcional no fim da configuração (e continua em Definições)']},
  {v:'0.9h',d:'01/10/2026',n:[],a:['Estatísticas (admin): ao escolher um site, só contam as contas que usam esse site; nova coluna com os movimentos do agregado']},
  {v:'0.9g',d:'01/10/2026',n:['Estatísticas de uso (só para o administrador): visitas, tempo no site e funcionalidades mais usadas'],a:['Definições › Conta explica que dados de uso são recolhidos (nunca valores nem descrições dos movimentos)']},
  {v:'0.9f',d:'29/09/2026',n:['Cor por referência (Despesas › Editar), com a opção "Pintar só nos Extratos"','Aba Objetivos (em desenvolvimento)','Início: cada gráfico circular mostra valores (€) ou percentagens (%)'],a:['Previsto vs real: barra que enche até à linha do previsto e fica vermelha quando passa','Definições: "Extratos: pintar a" caixa da categoria ou linha inteira (só uma); os gráficos usam sempre as cores escolhidas','Ao passar de Ano para Mês abre o mês atual (se for desse ano) ou o último mês escolhido','No Editar das Despesas, o botão Concluir acompanha a página']},

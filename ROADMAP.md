@@ -5,7 +5,7 @@ Detalhe de cada alteração: ver `PATCH NOTES.md`.
 
 ---
 
-## Já feito (v0.1 → v0.9g)
+## Já feito (v0.1 → v0.10a)
 - ✅ **v0.1–v0.3** Separadores, publicação em `financas.frisk.pt`, login opcional com as contas da plataforma, layout das abas.
 - ✅ **v0.4** Importação do CSV da CGD sem IA; categorias/referências; regras automáticas; Observações; Pessoas (quem é).
 - ✅ **v0.5** Dados guardados na conta (Supabase) e sincronizados entre dispositivos.
@@ -35,8 +35,11 @@ Ordem sugerida: primeiro garantir que os números estão certos (é a base de tu
   3. ✅ (v0.9c) Agregado no Supabase: `agregados`, `agregado_membros` (dono/editor), `agregado_convites` (por email; conta tem de existir), `agregado_dados`; RLS só para membros; apagar guarda 30 dias; reutilizável por outros sites.
   4. ✅ (v0.9d) Seletor "Pessoal / Família" na barra de cima; ao criar copia categorias e regras; gravação com número de versão + junção quando duas pessoas gravam.
 
-- ⬜ **v0.10 — Onboarding completo** *(v0.8g já trouxe a visita guiada por aba, Novidades e FAQs)*
-  - Passos com destaque nos botões reais, configuração inicial (banco, primeiro extrato, categorias base, primeiras regras), lista de tarefas com progresso, dicas na primeira visita a cada aba, dados de exemplo para experimentar.
+- 🔄 **v0.10 — Onboarding completo + melhorias** *(v0.8g já trouxe a visita guiada por aba, Novidades e FAQs)*
+  1. ✅ (v0.10a) Assistente da 1.ª vez: idioma/tema → 1.º mês do ano → 1.º extrato (ou conta de exemplo) → rever categorias → regras sugeridas → visita guiada opcional. Conta 🧪 Exemplo à parte, só no browser, apagável com um clique.
+  2. ⬜ (v0.10b) "Primeiros passos" no Início, dicas na 1.ª visita a cada aba, ajuda ⓘ nas caixas.
+  3. ⬜ (v0.10c) Telemóvel; "banco não suportado" (explicar + enviar ficheiro anonimizado pelas Sugestões).
+  4. ⬜ (v0.10d) RGPD (exportar dados, apagar conta, página de privacidade) e segurança do Supabase.
 
 - ⬜ **v1.0 — Lançamento para a família**
   - Revisão de segurança do Supabase (RLS, avisos antigos de outros sites) e da privacidade dos dados.

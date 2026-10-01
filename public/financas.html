@@ -298,6 +298,8 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 .extbar{position:sticky;top:var(--stkH,0px);z-index:20;background:var(--card);margin:0 -16px;padding:8px 16px 2px}
 .extbar .filt{margin-bottom:8px}
 #fCat,#fRef{width:190px;flex:none;text-overflow:ellipsis}#fBanco,#fQuem,#fTipo{width:160px;flex:none;text-overflow:ellipsis}.extbar .bulk{margin-bottom:8px}
+.exban{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 0;padding:9px 14px;border:1px dashed var(--ac);border-radius:12px;background:var(--ac2);font-size:13.5px}.exban .r{margin-left:auto;display:flex;gap:6px}.exban[hidden]{display:none}
+.syncst.ex{color:var(--ac)}
 .syncst{border:1px solid var(--bd);background:var(--card);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--mu);cursor:pointer;margin-left:auto;white-space:nowrap}
 .syncst.ok{color:var(--ok);border-color:color-mix(in srgb,var(--c1) 40%,transparent)}.syncst.erro{color:var(--neg);border-color:color-mix(in srgb,var(--c2) 45%,transparent)}.syncst.busy{color:var(--ac)}
 @media (max-width:640px){.syncst{order:3;margin-left:0}}
@@ -327,6 +329,7 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
     <button type="button" data-tab="fat">Faturas</button>
     <button type="button" data-tab="saude">Saúde financeira</button>
   </nav>
+  <div class="exban" id="exBan" hidden>🧪 <b>Conta de exemplo</b> — movimentos fictícios, só neste browser, separados dos seus dados. Explore à vontade.<span class="r"><button class="btn sm" type="button" data-exb="p">👤 Voltar ao Pessoal</button><button class="btn sm" type="button" data-exb="x">🗑 Apagar exemplo</button></span></div>
 </div></div>
 
 <main class="wrap">
@@ -509,7 +512,7 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 
 <script>
 'use strict';
-const APP_VERSAO='0.9h'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10a'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -596,8 +599,9 @@ const KEY='financas_v1';
 const trk=(t,d)=>{try{if(window.parent!==window&&window.parent.FPTrack)window.parent.FPTrack.log(t,d||{})}catch(e){}};
 {let nErr=0;addEventListener('error',e=>{if(++nErr<=20)trk('erro_js',{msg:String(e.message||'').slice(0,200),src:String(e.filename||'').split('/').pop()+':'+(e.lineno||0),onde:'financas'})})}
 /* v0.9d: contexto dos dados — Pessoal (financas_dados) ou um Agregado (agregado_dados); cada um com a sua cópia neste browser */
-let CTX={t:'p'};try{const c=localStorage.getItem('fp_ctx');if(c)CTX={t:'a',id:c}}catch(e){}
-const KEYC=()=>CTX.t==='a'?KEY+'_agr_'+CTX.id:KEY;
+let CTX={t:'p'};try{const c=localStorage.getItem('fp_ctx');if(c==='__ex'){if(localStorage.getItem(KEY+'_ex'))CTX={t:'x'}}else if(c)CTX={t:'a',id:c}}catch(e){}
+/* v0.10a: t:'x' = conta 🧪 Exemplo — dados fictícios, só neste browser (nunca vão para a conta) */
+const KEYC=()=>CTX.t==='a'?KEY+'_agr_'+CTX.id:CTX.t==='x'?KEY+'_ex':KEY;
 function fresh(){return {refSo:{},esp:null,ver:2,mov:[],imports:[],rend:[],seq:0,cats:null,regras:null,pessoas:[],prev:{},del:[],delM:[],rep:{},updatedAt:0,syncedAt:0,remoteAt:'',owner:''}}
 function normaliza(d){d={...fresh(),...d};
   if(!Array.isArray(d.mov))d.mov=[];if(!Array.isArray(d.imports))d.imports=[];if(!Array.isArray(d.del))d.del=[];if(!Array.isArray(d.delM))d.delM=[];if(!Array.isArray(d.delImp))d.delImp=[];if(!d.rep||typeof d.rep!=='object')d.rep={};
@@ -805,6 +809,7 @@ async function importar(files){
   const ok=res.filter(x=>x.ok);
   if(ok.length){const last=ok.map(x=>x.r.mov[0].dm).sort().pop();P.d=new Date(+last.slice(0,4),+last.slice(5,7)-1,1);P.m='mes';$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel()}
   render();
+  return res;
 }
 
 /* ================= período global ================= */
@@ -1786,7 +1791,8 @@ const TAB='financas_dados',FERR='financas',CH='estado';
 function setSt(st,extra){SY.st=st;const el=$('#syncSt');if(!el)return;el.className='syncst '+st;
   el.innerHTML=st==='local'?(SY.sb?'💾 Só neste browser · <u>Entrar</u> para guardar na conta':'💾 Só neste browser')
    :st==='busy'?'☁ A sincronizar…':st==='ok'?`☁ Guardado na conta${SY.hora?' · '+SY.hora:''}`:`⚠ Erro a sincronizar · <u>tentar de novo</u>${extra?'':''}`;
-  el.title=SY.user?`Conta: ${SY.user.email}`:'';avisaPer()}
+  if(CTX.t==='x'){el.className='syncst ex';el.innerHTML='🧪 Conta de exemplo · dados fictícios, só neste browser'}
+  el.title=SY.user?`Conta: ${SY.user.email}`:'';const b=$('#exBan');if(b)b.hidden=CTX.t!=='x';avisaPer()}
 const payload=()=>{const {syncedAt,remoteAt,owner,...d}=DB;return d};
 function junta(novo,velho){ // fica a versão mais recente; movimentos que só existem na mais antiga são acrescentados (exceto os apagados)
   const rep={...(velho.rep||{})};Object.entries(novo.rep||{}).forEach(([k,t])=>{if(!(k in rep)||Math.abs(t)>=Math.abs(rep[k]))rep[k]=t});novo.rep=rep;
@@ -1801,14 +1807,14 @@ function junta(novo,velho){ // fica a versão mais recente; movimentos que só e
   novo.del=[...new Set([...(novo.del||[]),...(velho.del||[])])];novo.delImp=[...new Set([...(novo.delImp||[]),...(velho.delImp||[])])].filter(k=>!(rep[k]>0));novo.mov=novo.mov.filter(m=>!del.has(chave(m)));
   const vistos=new Set();novo.mov.forEach(m=>{if(vistos.has(m.id))m.id='m'+(++novo.seq);vistos.add(m.id)});
   return {d:novo,n}}
-const dono=()=>CTX.t==='a'?'agr:'+CTX.id:SY.user.id;
+const dono=()=>CTX.t==='a'?'agr:'+CTX.id:CTX.t==='x'?'ex':SY.user.id;
 async function lerRemoto(){const q=CTX.t==='a'?SY.sb.from('agregado_dados').select('dados,updated_at').eq('agregado_id',CTX.id):SY.sb.from(TAB).select('dados,updated_at').eq('user_id',SY.user.id);
   const {data,error}=await q.eq('ferramenta',FERR).eq('chave',CH).maybeSingle();if(error)throw error;return data}
 const gravaRemoto=()=>CTX.t==='a'?SY.sb.from('agregado_dados').upsert({agregado_id:CTX.id,ferramenta:FERR,chave:CH,dados:payload()},{onConflict:'agregado_id,ferramenta,chave'}).select('updated_at').single()
   :SY.sb.from(TAB).upsert({user_id:SY.user.id,ferramenta:FERR,chave:CH,dados:payload()},{onConflict:'user_id,ferramenta,chave'}).select('updated_at').single();
 function aplicaRemoto(r){const keep={owner:dono(),syncedAt:0,remoteAt:r.updated_at};DB=normaliza({...r.dados,...keep});DB.syncedAt=DB.updatedAt;saveLocal();render()}
 async function enviar(){
-  if(!SY.user||!SY.sb)return;if(SY.busy){SY.again=true;return}
+  if(!SY.user||!SY.sb||CTX.t==='x')return;if(SY.busy){SY.again=true;return}
   SY.busy=true;setSt('busy');
   try{
     const r=await lerRemoto();
@@ -1822,14 +1828,14 @@ async function enviar(){
   }catch(e){console.warn('sync',e);setSt('erro')}
   finally{SY.busy=false;if(SY.again){SY.again=false;agendaEnvio(300)}}
 }
-function agendaEnvio(ms){if(!SY.user)return;clearTimeout(SY.t);SY.t=setTimeout(enviar,ms??1200)}
+function agendaEnvio(ms){if(!SY.user||CTX.t==='x')return;clearTimeout(SY.t);SY.t=setTimeout(enviar,ms??1200)}
 async function aoEntrar(u){
   if(SY.user&&u&&SY.user.id===u.id)return; // p.ex. renovação de sessão
-  if(!u){if(CTX.t==='a')await trocaCtx({t:'p'},true);const tinha=!!DB.owner;SY.user=null;
+  if(!u){if(CTX.t==='a')await trocaCtx({t:'p'},true);const tinha=!!DB.owner&&CTX.t!=='x';SY.user=null;
     if(tinha){DB=normaliza(fresh());saveLocal();render();toast('Sessão terminada — os dados continuam guardados na conta')}
     setSt('local');return}
   SY.user=u;await carregaConta(u)}
-async function carregaConta(u){setSt('busy');
+async function carregaConta(u){if(CTX.t==='x'){setSt(SY.st);return}setSt('busy');
   try{
     if(DB.owner&&DB.owner!==dono()){DB=normaliza(fresh())} // cache de outra conta/agregado neste browser
     const r=await lerRemoto();
@@ -1852,25 +1858,63 @@ const CFG_K=['cats','regras','esp','tiposDesp','refTipo','corCat','refSo','poupC
 function basePessoal(){let p=null;try{p=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}if(!p)return {};p=normaliza(p);
   const o={};CFG_K.forEach(k=>{if(p[k]!==undefined)o[k]=JSON.parse(JSON.stringify(p[k]))});return o}
 let TROCA=Promise.resolve();
-function trocaCtx(novo,semConta){const id=novo&&novo.t==='a'?String(novo.id):'';const n={t:id?'a':'p',...(id?{id,nome:novo.nome||''}:{})};
+function trocaCtx(novo,semConta){const id=novo&&novo.t==='a'?String(novo.id):'';const n=id?{t:'a',id,nome:novo.nome||''}:{t:novo&&novo.t==='x'?'x':'p'};
   if(n.t===CTX.t&&(n.id||'')===(CTX.id||'')){if(n.nome)CTX.nome=n.nome;return TROCA}
   TROCA=TROCA.then(async()=>{clearTimeout(SY.t);
     if(SY.user&&!semConta&&DB.updatedAt>(DB.syncedAt||0)){try{while(SY.busy)await new Promise(r=>setTimeout(r,100));await enviar()}catch(e){}}
-    saveLocal();CTX=n;try{if(n.t==='a')localStorage.setItem('fp_ctx',n.id);else localStorage.removeItem('fp_ctx')}catch(e){}
+    saveLocal();CTX=n;try{if(n.t==='a')localStorage.setItem('fp_ctx',n.id);else if(n.t==='x')localStorage.setItem('fp_ctx','__ex');else localStorage.removeItem('fp_ctx')}catch(e){}
     let j=null;try{j=JSON.parse(localStorage.getItem(KEYC())||'null')}catch(e){}DB=normaliza(j&&Array.isArray(j.mov)?j:fresh());
     SEL.clear();try{limpaFiltros()}catch(e){}RV++;render();avisaPer();
-    if(SY.user&&!semConta)await carregaConta(SY.user);toast(n.t==='a'?`👪 ${n.nome||'Agregado'}`:'👤 Pessoal')});return TROCA}
-window.fpCtx={atual:()=>({...CTX}),muda:(c)=>trocaCtx(c),db:()=>DB};
+    setSt(SY.user?SY.st:'local');if(SY.user&&!semConta)await carregaConta(SY.user);toast(n.t==='a'?`👪 ${n.nome||'Agregado'}`:n.t==='x'?'🧪 Exemplo':'👤 Pessoal');try{window.parent.FPCtx.pinta()}catch(e){}});return TROCA}
+/* v0.10a: conta 🧪 Exemplo — movimentos fictícios gerados aqui; as categorias e regras vêm da conta pessoal */
+const temEx=()=>{try{return !!localStorage.getItem(KEY+'_ex')}catch(e){return false}};
+function exMov(){const H=new Date(),out=[];let seq=0,saldo=1850;const ini=new Date(H.getFullYear(),H.getMonth()-3,1);
+  const R=(()=>{let x=7;return ()=>(x=(x*16807)%2147483647)/2147483647})(); // pseudo-aleatório fixo: o exemplo é sempre igual
+  const fixos=[[1,'SALARIO EMPRESA EXEMPLO LDA',1720],[2,'RENDA CASA SENHORIO',-650],[5,'EDP COMERCIAL DD',-48.3],[6,'MEO SERVICOS DD',-39.99],[8,'EPAL AGUAS DD',-18.6],[10,'GINASIO FITNESS EXEMPLO',-29.9],[12,'NETFLIX.COM',-11.99],[15,'SPOTIFY',-7.99],[20,'SEGURO FIDELIDADE AUTO',-32.4]];
+  const varios=[['COMPRA CONTINENTE',-35,-85,3],['COMPRA PINGO DOCE',-12,-48,4],['COMPRA LIDL',-15,-55,2],['REPSOL ESTACAO SERVICO',-40,-62,2],['RESTAURANTE O PATEO',-18,-42,2],['PASTELARIA CENTRAL',-2.5,-7,5],['UBER TRIP',-6,-14,2],['FARMACIA EXEMPLO',-8,-26,1],['VIA VERDE',-4,-12,2],['ZARA PORTUGAL',-25,-60,0.5],['LEV ATM MULTIBANCO',-20,-40,1]];
+  for(let d=new Date(ini);d<=H;d.setDate(d.getDate()+1)){const ds=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),dia=[];
+    fixos.forEach(([n,t,v])=>{if(d.getDate()===n)dia.push([t,v])});
+    varios.forEach(([t,a,b,f])=>{if(R()<f/30)dia.push([t,Math.round((a+(b-a)*R())*100)/100])});
+    dia.forEach(([t,v],i)=>{saldo=Math.round((saldo+v)*100)/100;out.push({id:'m'+(++seq),imp:'ex',banco:'Banco Exemplo',conta:'0000',dm:ds,dv:ds,desc:t,valor:v,saldo,cat:'',ref:'',catSrc:'',det:'',obs:'',quem:'',quemMan:false,ord:i})})}
+  return out}
+function criaEx(){const b=basePessoal(),d=normaliza({...fresh(),...b,exemplo:true});d.mov=exMov();d.seq=d.mov.length;
+  d.imports=[{id:'ex',ficheiro:'exemplo (fictício)',banco:'Banco Exemplo',conta:'0000',titular:'',inicio:d.mov[0].dm,fim:d.mov[d.mov.length-1].dm,em:new Date().toISOString(),novos:d.mov.length,dup:0}];
+  const db0=DB;DB=d;aplicaRegras();DB=db0;d.owner='ex';d.updatedAt=Date.now();try{localStorage.setItem(KEY+'_ex',JSON.stringify(d))}catch(e){}return d.mov.length}
+async function apagaEx(){if(CTX.t==='x')await trocaCtx({t:'p'});try{localStorage.removeItem(KEY+'_ex')}catch(e){}trk('exemplo',{acao:'apagar'});try{window.parent.FPCtx.pinta()}catch(e){}}
+window.fpCtx={atual:()=>({...CTX}),muda:(c)=>trocaCtx(c),db:()=>DB,temEx,
+  exemplo:async()=>{const n=criaEx();trk('exemplo',{acao:'criar'});await trocaCtx({t:'x'});const h=new Date();P.m='mes';P.d=new Date(h.getFullYear(),h.getMonth()-1,1);$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel();render();avisaPer();return n},apagaEx};
+$('#exBan').addEventListener('click',e=>{const b=e.target.closest('[data-exb]');if(!b)return;if(b.dataset.exb==='p')trocaCtx({t:'p'});else if(confirm('Apagar a conta de exemplo? Os seus dados pessoais não são afetados.'))apagaEx()});
+/* v0.10a: assistente da 1.ª vez (página principal) — importar, rever categorias, sugerir regras; mexe sempre na conta pessoal */
+const SUG_RG=[[/CONTINENTE|PINGO DOCE|LIDL|ALDI|MERCADONA|INTERMARCHE|AUCHAN|MINIPRECO|SPAR|EL CORTE INGLES SUPERM/,'Alimentação','Supermercado'],
+  [/NETFLIX|SPOTIFY|HBO|DISNEY|PRIME VIDEO|APPLE\.COM|GOOGLE \*|YOUTUBE/,'Outros','Subscrições'],[/EDP|GOLDENERGY|ENDESA|IBERDROLA|GALP GAS|LUZBOA/,'Casa','Eletricidade / gás'],
+  [/EPAL|AGUAS|SMAS|INDAQUA/,'Casa','Água'],[/\bMEO\b|\bNOS\b|VODAFONE|NOWO|DIGI/,'Casa','Internet'],[/FARMACIA|WELLS/,'Saúde','Farmácia'],
+  [/GINASIO|FITNESS|SOLINCA|HOLMES|GO FIT|BASIC.FIT|FITNESS HUT/,'Saúde','Exercício fisico'],[/\bUBER\b(?! ?EATS)|BOLT(?! FOOD)|FREENOW|CABIFY/,'Transporte','Uber / Taxi / Outros'],
+  [/ZARA|PRIMARK|H&M|PULL|BERSHKA|DECATHLON|SPRINGFIELD/,'Outros','Vestuário / calçado'],[/WORTEN|FNAC|RADIO POPULAR/,'Lazer','Equipamentos'],
+  [/IKEA|LEROY|AKI\b|BRICOMARCHE/,'Casa','Equipamentos - Casa'],[/RENDA/,'Casa','Renda'],[/SALARIO|ORDENADO|VENCIMENTO/,'Rendimentos','Salário'],
+  [/RESTAURANTE|MC ?DONALDS|BURGER|TELEPIZZA|PIZZA|PASTELARIA|CAFE|SNACK|TASCA|CERVEJARIA|SUSHI/,'Alimentação','Almoço / Jantar fora']];
+function sugRegras(src){const lista=src==='ex'?(()=>{const d=normaliza({...fresh(),...basePessoal()});d.mov=exMov();const db0=DB;DB=d;aplicaRegras();DB=db0;return d.mov})():DB.mov;
+  const g=new Map();lista.filter(m=>!m.cat&&!(m.partes&&m.partes.length)).forEach(m=>{const k=norm(m.desc);const x=g.get(k)||{d:m.desc,n:0,t:0};x.n++;x.t+=m.valor;g.set(k,x)});
+  return [...g.values()].sort((a,b)=>b.n-a.n||Math.abs(b.t)-Math.abs(a.t)).slice(0,8).map(x=>{const D=String(x.d).toUpperCase(),s=SUG_RG.find(r=>r[0].test(D)),ok=s&&DB.cats.some(c=>c.nome===s[1]&&c.refs.includes(s[2]));
+    const m=s&&D.match(s[0]);return {...x,txt:ok&&m?m[0].trim():D.trim(),cat:ok?s[1]:'',ref:ok?s[2]:'',tipo:x.t<0?'s':x.t>0?'e':''}})}
+const FIXAS_C=['Banco','Por tratar','Rendimentos','Poupanças'];
+window.fpCfg={
+  importar:async files=>{if(CTX.t!=='p')await trocaCtx({t:'p'});const r=await importar(files);return r.map(x=>x.ok?{ok:true,f:x.f,banco:x.r.banco,novos:x.novos,auto:x.auto,dup:x.dup}:{ok:false,f:x.f,msg:x.msg})},
+  cats:()=>DB.cats.map(c=>({nome:c.nome,refs:c.refs.length,usada:DB.mov.some(m=>m.cat===c.nome||(m.partes||[]).some(p=>p.cat===c.nome)),fixa:FIXAS_C.includes(c.nome)})),
+  tiraCats:nomes=>{const f=new Set(nomes.filter(n=>!FIXAS_C.includes(n)&&!DB.mov.some(m=>m.cat===n)));if(!f.size)return 0;DB.cats=DB.cats.filter(c=>!f.has(c.nome));DB.regras=DB.regras.filter(r=>!f.has(r.cat));save();render();return f.size},
+  sugRegras,refs:()=>DB.cats.map(c=>({nome:c.nome,refs:c.refs.slice()})),
+  criaRegras:L=>{let n=0;L.forEach(r=>{if(!r.txt||!r.cat||!DB.cats.some(c=>c.nome===r.cat&&c.refs.includes(r.ref)))return;if(DB.regras.some(x=>String(x.txt||'').toUpperCase()===r.txt.toUpperCase()))return;
+      DB.regras.unshift({id:uid('r'),txt:r.txt,modo:'contem',tipo:r.tipo||'',cat:r.cat,ref:r.ref,ativo:true,predef:false});n++});
+    if(n){aplicaRegras();save();render();trk('regra',{origem:'assistente',n})}return n}};
 setInterval(()=>{if(CTX.t==='a'&&!document.hidden)verificaRemoto()},30000); // agregado: vê as alterações dos outros membros
 async function verificaRemoto(){ // ao voltar à página: há novidades de outro dispositivo?
-  if(!SY.user||SY.busy)return;
+  if(!SY.user||SY.busy||CTX.t==='x')return;
   try{const r=await lerRemoto();if(!r||r.updated_at===DB.remoteAt)return;
     if(DB.updatedAt>(DB.syncedAt||0)){agendaEnvio(0);return}
     aplicaRemoto(r);SY.hora=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});setSt('ok')}catch(e){setSt('erro')}}
 function carregaScript(src){return new Promise((ok,ko)=>{const x=document.createElement('script');x.src=src;x.onload=ok;x.onerror=ko;document.head.appendChild(x)})}
 async function obterCliente(){
   let emb=false;try{emb=window.parent!==window&&!!window.parent.document}catch(e){}
-  if(emb){for(let i=0;i<40;i++){try{if(window.parent.plataforma)return window.parent.plataforma}catch(e){}await new Promise(r=>setTimeout(r,250))}return null}
+  if(emb){for(let i=0;i<40;i++){try{if(window.parent.plataforma&&window.parent.plataforma.auth)return window.parent.plataforma}catch(e){}await new Promise(r=>setTimeout(r,250))}return null}
   try{if(!window.plataforma){await carregaScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');await carregaScript('https://cdn.jsdelivr.net/gh/sebalca/plataforma-core@main/auth.js')}return window.plataforma||null}catch(e){return null}
 }
 function pedirLogin(){try{const b=window.parent!==window&&window.parent.document.getElementById('btEntrar');if(b){b.click();return}}catch(e){}

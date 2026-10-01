@@ -420,6 +420,22 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await p.goto(U+'/index.html');await p.waitForTimeout(300);
   t('D82','FAQs: pesquisa, filtro por labels, perguntar e aba de gestão (só admin)',await ev(()=>['#fqQ','#fqLb','#fqList','#fqNova','#fqEnviar','#fqTabs [data-ft="minhas"]'].every(q=>document.querySelector(q))&&document.querySelector('#fqTabs [data-ft="adm"]').hidden&&/FAQs/.test(document.querySelector('#setNav [data-s="ajuda"]').textContent)));
 
+  const z106=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),B=()=>document.querySelector('#tourBub'),seg=async()=>{B().querySelector('[data-tv="seg"]').click();await W(700)};
+    FPOnb.abre('cfg');await W(900);const passos=[];let n=0;
+    while(!B().querySelector('#tourMes1')&&n++<5){passos.push(B().querySelector('h4').textContent);await seg()}
+    const mes=!!B().querySelector('#tourMes1')&&B().querySelector('#tourMes1').options.length===12;await seg();
+    const ext=!!B().querySelector('#tourFile')&&!!B().querySelector('#tourEx');B().querySelector('#tourEx').click();await W(100);const exMsg=/Exemplo/.test(B().querySelector('#tourImp').textContent);await seg();
+    const cb=[...B().querySelectorAll('#tourCats input[data-cc]')],livre=cb.find(c=>!c.disabled&&c.dataset.cc==='Trabalho'),fixa=cb.find(c=>c.dataset.cc==='Banco');
+    if(livre){livre.checked=false;livre.dispatchEvent(new Event('change',{bubbles:true}))}await seg();
+    const rows=B().querySelectorAll('#tourRg .rgl').length,sup=[...B().querySelectorAll('#tourRg .rgl')].some(r=>/PASTELARIA/.test(r.textContent)&&r.querySelector('select').value==='Alimentação›Almoço / Jantar fora');await seg();
+    const fimOk=!!B().querySelector('#tourVis');B().querySelector('[data-tv="seg"]').click();await W(1500);
+    const w=document.querySelector('iframe[data-id="financas"]').contentWindow,c=w.fpCtx.atual(),db=w.fpCtx.db();
+    const exOk=c.t==='x'&&db.mov.length>30&&db.mov.every(m=>m.banco==='Banco Exemplo')&&!!w.document.querySelector('#exBan:not([hidden])')&&!!document.querySelector('#fCtx [data-cx="__ex"].on');
+    const sincroniza=!w.localStorage.getItem('financas_v1_ex')?false:true;
+    await w.fpCtx.apagaEx();await W(300);const p0=w.fpCtx.db();
+    const pessoal=w.fpCtx.atual().t==='p'&&!w.fpCtx.temEx()&&p0.regras.some(r=>r.txt==='PASTELARIA'&&r.ref==='Almoço / Jantar fora')&&!p0.cats.some(x=>x.nome==='Trabalho')&&p0.cats.some(x=>x.nome==='Banco')&&!document.querySelector('#fCtx:not([hidden]) [data-cx="__ex"]');
+    ok({ok:mes&&ext&&exMsg&&!!fixa&&fixa.disabled&&rows>0&&sup&&fimOk&&exOk&&sincroniza&&pessoal,passos,mes,ext,exMsg,fixa:fixa&&fixa.disabled,rows,sup,fimOk,exOk,pessoal})}));
+  t('D106','assistente da 1.ª vez: 1.º mês, extrato ou exemplo, rever categorias, regras sugeridas; conta 🧪 Exemplo à parte (só neste browser) e apagável; configuração vai para a conta pessoal',z106.ok,z106);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
