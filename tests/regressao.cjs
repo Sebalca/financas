@@ -5,7 +5,7 @@ const {chromium}=require('playwright');
 const http=require('http'),fs=require('fs'),path=require('path');
 const PUB=path.join(__dirname,'..','public'),FX=path.join(__dirname,'fixtures');
 const MIME={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/json'};
-const srv=http.createServer((q,r)=>{const f=path.join(PUB,decodeURIComponent(q.url.split('?')[0]).replace(/^\/$/,'/index.html'));
+const srv=http.createServer((q,r)=>{const f=path.join(PUB,decodeURIComponent(q.url.split('?')[0]).replace(/^\/$/,'/index.html?teste=1'));
   fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);r.end();return}r.writeHead(200,{'content-type':MIME[path.extname(f)]||'application/octet-stream'});r.end(d)})});
 let ok=0,falhas=[];
 const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}else{falhas.push(`${id} ${nome}`);console.log(`  ✗ ${id} ${nome}${info!==undefined?' → '+JSON.stringify(info):''}`)}};
@@ -14,7 +14,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   const b=await chromium.launch();const p=await b.newPage({viewport:{width:1500,height:900}});const erros=[];
   p.on('pageerror',e=>erros.push(e.message));p.on('dialog',d=>d.accept('Cartão refeição'));
   await p.route(/cdn\.jsdelivr\.net/,r=>r.abort()); // sem login nos testes
-  await p.goto(U+'/financas.html');await p.evaluate(()=>localStorage.clear());await p.reload();
+  await p.goto(U+'/financas.html?teste=1');await p.evaluate(()=>localStorage.clear());await p.reload();
   const ev=(f,a)=>p.evaluate(f,a);const go=async tab=>{await ev(`document.querySelector('[data-tab="${tab}"]').click()`)};
 
   console.log('Extratos');
@@ -325,7 +325,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D93','BPI (Excel do BPI Net): conta com saldo validado, prefixos limpos (compra/levantamento com data e cartão, transferências, débito direto)',z93.ok,z93);
 
   console.log('Página principal');
-  await p.goto(U+'/index.html');await p.waitForTimeout(300);
+  await p.goto(U+'/index.html?teste=1');await p.waitForTimeout(300);
   const tabs=await ev(()=>[...document.querySelectorAll('nav a')].map(a=>a.textContent));
   t('D40','Finanças é o primeiro separador',tabs[0]==='Finanças',tabs);
   t('D41','separadores externos nunca recebem sessão/tema (data-ext)',await ev(()=>{location.hash='#biblia';return new Promise(r=>setTimeout(()=>r(!!document.querySelector('iframe[data-ext]')&&/:not\(\[data-ext\]\)/.test(document.body.innerHTML)),300))}));
@@ -403,7 +403,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const ok1=semSessao&&tipos.includes('sessao')&&tipos.includes('aba')&&!!fal&&fal.dados.ext==='pdf'&&!JSON.stringify(ins).includes('secreto')&&ins.every(x=>x._t==='site_eventos'&&x.user_id==='u9'&&x.site_id==='financas'&&x.sessao);
     FPTrack.sessao(null);window.plataforma=velho;w.document.querySelector('[data-tab="home"]').click();ok({ok:ok1,tipos,semSessao})}));
   t('D105','estatísticas de uso: só com sessão, eventos (sessão, abas, importação falhada com extensão e sem nome do ficheiro) gravados em site_eventos com o utilizador',z105.ok,z105);
-  await p.goto(U+'/financas.html');await p.waitForTimeout(300);
+  await p.goto(U+'/financas.html?teste=1');await p.waitForTimeout(300);
   const x104=await ev(()=>{const m=DB.mov.find(x=>x.valor<0&&x.cat&&x.ref&&!eFora(x.cat));const k=m.cat+'›'+m.ref;P.m='mes';P.d=new Date(+m.dm.slice(0,4),+m.dm.slice(5,7)-1,1);perLabel();
     document.querySelector('[data-tab="des"]').click();DES.edit=true;render();const q=document.querySelector(`#desCats [data-corq="r:${k}"]`);q.click();const pop=!document.querySelector('#corPop').hidden&&!!document.querySelector('#corExt');
     document.querySelector('#corExt').checked=true;document.querySelector('#corPop [data-corset]').click();const guard=DB.corRef[k]&&DB.corRef[k].ext===1;
@@ -417,7 +417,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     go('obj');render();const obj=/em desenvolvimento/.test(document.querySelector('#tab-obj').textContent);go('home');
     return {ok:pop&&guard&&sticky&&naoPintaDes&&ext&&dRef&&pct&&pv&&mes&&obj,pop,guard,sticky,naoPintaDes,ext,dRef,pct,pv,mes,obj}});
   t('D104','cor por referência (com "Pintar só nos Extratos"), Concluir fixo no Editar, donuts € / %, Previsto vs real com linha do previsto, Ano → Mês abre o mês atual/último, aba Objetivos',x104.ok,x104);
-  await p.goto(U+'/index.html');await p.waitForTimeout(300);
+  await p.goto(U+'/index.html?teste=1');await p.waitForTimeout(300);
   t('D82','FAQs: pesquisa, filtro por labels, perguntar e aba de gestão (só admin)',await ev(()=>['#fqQ','#fqLb','#fqList','#fqNova','#fqEnviar','#fqTabs [data-ft="minhas"]'].every(q=>document.querySelector(q))&&document.querySelector('#fqTabs [data-ft="adm"]').hidden&&/FAQs/.test(document.querySelector('#setNav [data-s="ajuda"]').textContent)));
 
   const z106=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),B=()=>document.querySelector('#tourBub'),seg=async()=>{B().querySelector('[data-tv="seg"]').click();await W(700)};
@@ -460,15 +460,28 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await p.setViewportSize({width:1500,height:900});await p.waitForTimeout(300);
   t('D109','telemóvel: barra de cima em duas linhas com o menu visível, movimentos dos Extratos em cartões, sem deslocamento horizontal',z109.ok,z109);
   const z110=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),velho=window.plataforma,ch=[];
-    window.plataforma={...velho,auth:{onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),signOut:async()=>({})},rpc:async(f,a)=>{ch.push([f,a]);return f==='minha_conta_exportar'?{data:{conta:{email:'t@exemplo.pt'}}}:{error:{message:'PGRST202 function not found'}}}};
+    window.plataforma={...velho,auth:{onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),signOut:async()=>({})},rpc:async(f,a)=>{ch.push([f,a]);return f==='financas_exportar'?{data:{conta:{email:'t@exemplo.pt'}}}:{error:{message:'PGRST202 function not found'}}}};
     FPMenu.sessao({id:'u9',email:'t@exemplo.pt'});const $=id=>document.getElementById(id);const tem=!!$('btExpConta')&&!!$('btApConta')&&!!document.querySelector('#contaInfo a[href="privacidade.html"]');
-    $('btExpConta').click();await W(200);const exp=ch.some(c=>c[0]==='minha_conta_exportar')&&/descarregado/.test($('rgpdMsg').textContent);
-    $('btApConta').click();const box=!$('apcBox').hidden;$('apcMail').value='outro@x.pt';$('apcOk').click();const errado=/não corresponde/.test($('rgpdMsg').textContent)&&!ch.some(c=>c[0]==='apagar_minha_conta');
+    $('btExpConta').click();await W(200);const exp=ch.some(c=>c[0]==='financas_exportar')&&/descarregado/.test($('rgpdMsg').textContent);
+    $('btApConta').click();const box=!$('apcBox').hidden;$('apcMail').value='outro@x.pt';$('apcOk').click();const errado=/não corresponde/.test($('rgpdMsg').textContent)&&!ch.some(c=>c[0]==='financas_apagar_dados');
     const cf=window.confirm;window.confirm=()=>true;$('apcMail').value='T@exemplo.pt';$('apcOk').click();await W(200);window.confirm=cf;
-    const apaga=ch.some(c=>c[0]==='apagar_minha_conta'&&c[1].p_confirma==='t@exemplo.pt')&&/Enviar sugestão/.test($('rgpdMsg').textContent);
+    const apaga=ch.some(c=>c[0]==='financas_apagar_dados'&&c[1].p_confirma==='t@exemplo.pt')&&/Enviar sugestão/.test($('rgpdMsg').textContent);
     window.plataforma=velho;FPMenu.sessao(null);ok({ok:tem&&exp&&box&&errado&&apaga,tem,exp,box,errado,apaga})}));
   const priv=await (await fetch(U+'/privacidade.html')).text();
-  t('D110','RGPD: exportar os meus dados e apagar a conta (confirmação com o email, função no servidor) em Definições › Conta; página de privacidade ligada',z110.ok&&/Os seus direitos/.test(priv)&&/CNPD/.test(priv),z110);
+  t('D110','RGPD só das Finanças: exportar os meus dados e apagar os dados das Finanças (confirmação com o email, função no servidor; a conta continua) em Definições › Conta; página de privacidade ligada',z110.ok&&/Os seus direitos/.test(priv)&&/extratos são guardados mas estão protegidos/.test(priv)&&!/plataforma|CNPD/.test(priv),z110);
+  const z112=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    const oi=document.querySelector('#optInf');oi.checked=false;oi.dispatchEvent(new Event('change'));await W(150);const semInf=d.documentElement.classList.contains('semInf')&&w.getComputedStyle(d.querySelector('.card h3 .inf')).display==='none';
+    oi.checked=true;oi.dispatchEvent(new Event('change'));await W(150);const comInf=!d.documentElement.classList.contains('semInf');
+    w.go('ext');const q=d.querySelector('#fQ');const b0=w.getComputedStyle(q).borderColor;q.value='x';const azul=w.getComputedStyle(q).borderColor!==b0;q.value='';
+    const m=w.fpCtx.db().mov.find(x=>!x.cat&&!x.partes&&!x.man);let canc=false;
+    if(m){w.render();await W(100);const tr=d.querySelector(`#extTable tr[data-id="${m.id}"]`)||(w.extMostraId(m.id),w.render(),d.querySelector(`#extTable tr[data-id="${m.id}"]`));
+      const sc=tr.querySelector('select[data-f="cat"]');sc.value='Lazer';sc.dispatchEvent(new Event('change',{bubbles:true}));await W(50);
+      const sr=d.querySelector(`#extTable tr[data-id="${m.id}"] select[data-f="ref"]`);sr.value='Jogos';sr.dispatchEvent(new Event('change',{bubbles:true}));await W(50);
+      const aberto=!d.querySelector('#mNovaRegra').hidden&&!d.querySelector('#nrCanc').hidden;d.querySelector('#nrCanc').click();const mm=w.fpCtx.db().mov.find(x=>x.id===m.id);canc=aberto&&!mm.cat&&!mm.ref&&d.querySelector('#mNovaRegra').hidden}
+    w.go('home');ok({ok:semInf&&comInf&&azul&&canc,semInf,comInf,azul,canc,temM:!!m})}));
+  const p2=await b.newPage();await p2.goto(U+'/index.html');await p2.waitForTimeout(1500);const gate=await p2.evaluate(()=>!document.querySelector('#gate').hidden);
+  await p2.goto(U+'/financas.html');await p2.waitForTimeout(800);const redir=/index\.html/.test(p2.url());await p2.close();
+  t('D112','é preciso conta (sem sessão só o ecrã de entrar; financas.html sozinho vai para o site), opção para tirar a ajuda ⓘ, pesquisa com texto fica azul, Cancelar ao criar regra repõe a categoria',z112.ok&&gate&&redir,{...z112,gate,redir});
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

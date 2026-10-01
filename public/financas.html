@@ -303,6 +303,8 @@ table.dgrid tr.tot td.nm{background:var(--soft)}
 .ppl .ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--bd);display:grid;place-items:center;font-size:12px;flex:none}.ppl li.ok{opacity:.6}.ppl li.ok .ck{background:var(--ac);border-color:var(--ac);color:#fff}
 .dica{position:fixed;z-index:80;width:min(320px,calc(100vw - 20px));background:var(--card);border:1px solid var(--ac);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.25);padding:12px 14px;font-size:13.5px;line-height:1.55}.dica[hidden]{display:none}.dica p{margin:0 0 8px}.dica .db{display:flex;align-items:center;gap:8px}.dica .db span{margin-left:auto;color:var(--mu);font-size:12px}.dica .lnk{border:0;background:none;color:var(--mu);font-size:12px;text-decoration:underline;cursor:pointer;padding:0}
 .dicaAlvo{outline:3px solid var(--ac)!important;outline-offset:3px;border-radius:10px}
+.semInf .inf{display:none!important}.semInf th[title]::after{content:none!important}
+#fQ:not(:placeholder-shown){border-color:var(--ac);background:var(--ac2);box-shadow:0 0 0 1px var(--ac)}
 .inf{border:0;background:none;color:var(--mu);font-size:13px;cursor:help;padding:0 4px;line-height:1;vertical-align:1px}.inf:hover{color:var(--ac)}
 th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400}
 .infpop{position:fixed;z-index:85;max-width:min(320px,calc(100vw - 20px));background:var(--tx);color:var(--card);border-radius:9px;padding:8px 11px;font-size:12.5px;line-height:1.5;box-shadow:0 8px 22px rgba(0,0,0,.25)}.infpop[hidden]{display:none}
@@ -477,7 +479,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
  <div class="fld"><label>Aplicar a</label><select id="nrTipo"><option value="">entradas e saídas</option><option value="e">só entradas</option><option value="s">só saídas</option></select></div>
  <div class="fld"><label>Classificar como</label><div id="nrCat" style="font-weight:700"></div><div id="nrEsc" style="display:flex;gap:6px" hidden><select id="nrCatSel"></select><select id="nrRefSel"></select></div></div>
  <p class="note" id="nrCnt"></p>
- <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button class="btn" id="nrNao">Só este movimento</button><button class="btn pri" id="nrSim">Criar regra</button></div></div></div></div>
+ <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button class="btn" id="nrCanc" style="margin-right:auto" title="Volta à categoria que o movimento tinha">Cancelar</button><button class="btn" id="nrNao">Só este movimento</button><button class="btn pri" id="nrSim">Criar regra</button></div></div></div></div>
 <div class="modal" id="mElim" hidden><div class="sheet wide"><div class="mh"><div class="mtabs" role="tablist"><button type="button" role="tab" data-mtab="mMov">＋ Novo movimento</button><button type="button" class="on" role="tab" aria-selected="true">🗑 Movimentos eliminados</button></div><button class="mx" type="button" data-close="mElim" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
  <p class="note" style="margin:0 0 10px">Guardam-se os últimos 50 movimentos eliminados para poder repor. Os movimentos apagados não voltam a entrar ao reimportar um extrato (exceto os de uma importação removida em Importar/Exportar › Importações feitas).</p>
  <div class="tw" id="elimList"></div></div></div></div>
@@ -535,7 +537,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.10d'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10e'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -873,6 +875,7 @@ function mesesPeriodo(){if(P.m==='mes')return 1;if(P.m==='ano')return 12;if(!P.i
   const a=new Date(P.ini),b=new Date(P.fim);return Math.max(1,(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth()+1)}
 /* período controlado pela barra da página principal (quando as Finanças estão num separador) */
 const EMB=window.parent!==window;
+if(!EMB&&!/[?&]teste/.test(location.search))location.replace('index.html#financas'); // v0.10e: as Finanças abrem sempre dentro do site (com conta)
 function avisaPer(){if(EMB)try{window.parent.postMessage({tipo:'fp-per'},'*')}catch(e){}}
 function perAtual(){const h=new Date(),hj=hoje();if(P.m==='mes')return P.d.getFullYear()===h.getFullYear()&&P.d.getMonth()===h.getMonth();if(P.m==='ano')return anoIni(P.d).getTime()===anoIni(h).getTime();return P.ini===hj.slice(0,8)+'01'&&P.fim===hj}
 function perHoje(){const h=new Date();if(P.m==='int'){const hj=hoje();P.ini=hj.slice(0,8)+'01';P.fim=hj;$('#rIni').value=P.ini;$('#rFim').value=P.fim}else P.d=P.m==='ano'?anoIni(h):new Date(h.getFullYear(),h.getMonth(),1);$('#calPop').hidden=true;perLabel();render()}
@@ -1104,7 +1107,7 @@ function render(){
    $('#homeRend').innerHTML=r1.length?donut(r1,DPCT.has('homeRend')):vaz;$('#homeRendTipo').innerHTML=r2_.length?donut(r2_,DPCT.has('homeRendTipo')):vaz}
   const resumo=DB.cats.filter(c=>!eFora(c.nome)).map(c=>{const yH=anoIni(P.d).getFullYear(),p=c.refs.reduce((s,r)=>s+pvK(yH,c.nome+'›'+r),0)*k,r=-perX.filter(m=>m.cat===c.nome).reduce((s,m)=>s+m.valor,0);return {c,p,r}}).filter(x=>(x.p||Math.abs(x.r)>.004));
   $$('[data-dpct]').forEach(sg=>[...sg.children].forEach(b=>b.classList.toggle('on',!!b.dataset.v===DPCT.has(sg.dataset.dpct))));
-  $('#homeBudget').innerHTML=resumo.length?`<table class="t pvr"><thead><tr><th>Categoria</th><th class="num">Real / previsto</th><th style="width:55%"></th></tr></thead><tbody>${resumo.map(({c,p,r})=>{const mx=Math.max(p,r)||1,over=p>0&&r>p+.004,cor=over?'var(--c2)':p?corCat(c.nome):'var(--c8)';
+  $('#homeBudget').innerHTML=resumo.length?`<table class="t pvr"><thead><tr><th>Categoria</th><th class="num">Real / previsto</th><th style="width:55%"></th></tr></thead><tbody>${resumo.map(({c,p,r})=>{const mx=Math.max(p*1.1,r)||1,over=p>0&&r>p+.004,cor=over?'var(--c2)':p?corCat(c.nome):'var(--c8)';
     return `<tr><td><i class="dot" style="background:${corCat(c.nome)}"></i>${esc(c.nome)}</td><td class="num${over?' neg':''}">${E(r)} <span class="muted">/ ${p?E(p):'—'}</span></td><td><div class="pvbar" title="${over?`Acima do previsto em ${E(r-p)}`:p?`Faltam ${E(p-r)} para o previsto`:'Sem previsão'}"><i style="width:${Math.max(0,r/mx*100)}%;background:${cor}"></i>${p?`<b style="left:${p/mx*100}%"></b>`:''}</div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem valores no período</b></div>';
   const last=ordena(per).slice(0,8);
   $('#homeLast').innerHTML=last.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th></tr></thead><tbody>${last.map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td>${m.cat?`<span class="tag">${esc(m.cat)}${m.ref?' · '+esc(m.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos no período</b></div>';
@@ -1355,18 +1358,19 @@ $('#espList').addEventListener('click',e=>{const b=e.target.closest('button');if
 function pessoasMudaram(){aplicaPessoas();save();render();renderPessoas()}
 
 /* ================= criar regra a partir de um movimento ================= */
-let NR=null,NR_ESC=false;
+let NR=null,NR_ESC=false,NR_ANT=null;const ANT=new Map(); // ANT: categoria antes da mudança (para Cancelar)
 $('#nrCatSel').addEventListener('change',()=>{$('#nrRefSel').innerHTML=refOpts($('#nrCatSel').value,'')});
 function sugestao(desc){const w=desc.replace(/[^\p{L}\p{N}\s.&-]/gu,' ').split(/\s+/).filter(t=>t&&!/\d/.test(t)&&t.length>1);return (w.slice(0,2).join(' ')||desc.split(/\s+/)[0]).toUpperCase()}
 function contaNR(){if(!NR)return;const r={ativo:true,txt:$('#nrTxt').value,modo:$('#nrModo').value,tipo:$('#nrTipo').value};
   const ms=DB.mov.filter(m=>corresponde(r,m)),n=ms.filter(m=>m.catSrc!=='manual').length;
   $('#nrCnt').textContent=n?`Vai classificar mais ${n} movimento(s) semelhante(s) já existentes, e os que forem importados no futuro. Os classificados à mão não mudam.`:`Não há outros movimentos semelhantes para já — a regra aplica-se aos que forem importados no futuro.`}
-function abreNovaRegra(m,esc_){NR=m;NR_ESC=!!esc_;$('#nrEsc').hidden=!NR_ESC;$('#nrCat').hidden=NR_ESC;
+function abreNovaRegra(m,esc_,ant){NR=m;NR_ESC=!!esc_;NR_ANT=ant||null;$('#nrCanc').hidden=NR_ESC||!NR_ANT;$('#nrEsc').hidden=!NR_ESC;$('#nrCat').hidden=NR_ESC;
   if(NR_ESC){$('#nrCatSel').innerHTML=catOpts(m.cat).replace('— Por categorizar —','— escolha a categoria —');$('#nrRefSel').innerHTML=refOpts(m.cat,m.ref)}
   $('#mNovaRegra h3').textContent=NR_ESC?'Criar regra para esta descrição':'Criar regra a partir deste movimento?';$('#nrNao').textContent=NR_ESC?'Cancelar':'Só este movimento';$('#nrDesc').textContent=`“${m.desc}” (${E(m.valor)})`;$('#nrTxt').value=sugestao(m.desc);$('#nrModo').value='contem';$('#nrTipo').value=m.valor<0?'s':'e';
   $('#nrCat').textContent=m.cat+(m.ref?' › '+m.ref:'');contaNR();$('#mNovaRegra').hidden=false;$('#nrTxt').focus();$('#nrTxt').select()}
 ['nrTxt','nrModo','nrTipo'].forEach(id=>$('#'+id).addEventListener('input',contaNR));
 $('#nrNao').addEventListener('click',()=>{$('#mNovaRegra').hidden=true;NR=null});
+$('#nrCanc').addEventListener('click',()=>{const m=NR,a=NR_ANT;$('#mNovaRegra').hidden=true;NR=null;NR_ANT=null;if(!m||!a)return;m.cat=a.cat;m.ref=a.ref;m.catSrc=a.catSrc;m.u=Date.now();ANT.delete(m.id);save();render();toast('Categoria reposta')});
 $('#nrSim').addEventListener('click',()=>{if(!NR)return;const txt=$('#nrTxt').value.trim();if(!txt){toast('Escreva o texto da regra');return}
   const cat=NR_ESC?$('#nrCatSel').value:NR.cat,ref=NR_ESC?$('#nrRefSel').value:NR.ref;if(!cat||!ref){toast('Escolha a categoria e a referência');return}
   trk('regra',{origem:'movimento'});DB.regras.unshift({id:uid('r'),txt,modo:$('#nrModo').value,tipo:$('#nrTipo').value,cat,ref,ativo:true,predef:false});
@@ -1747,9 +1751,9 @@ document.addEventListener('change',e=>{const el=e.target;
     const sa=$('#selAll'),n=$$('#extTable tr[data-id]').length;if(sa){sa.checked=SEL.size===n;sa.indeterminate=SEL.size>0&&SEL.size<n}bulkBar();return}
   const tr=el.closest('tr[data-id]');
   if(tr&&el.classList.contains('ed')){const m=DB.mov.find(x=>x.id===tr.dataset.id);if(!m)return;const f=el.dataset.f,v=el.value.trim();m.u=Date.now();
-    if(f==='cat'){trk('categorizar',{campo:'cat'});const deAntes=deEsp(m.cat,m.ref)||ESP_DE.has(m.id);if(deAntes)ESP_DE.set(m.id,1);else ESP_DE.delete(m.id);m.cat=v;m.ref='';if(v){m.catSrc='manual'}else{m.catSrc='';aplicaRegras([m])}save();render();
-      const c=DB.cats.find(x=>x.nome===v);if(v&&c&&!c.refs.length&&!deAntes)abreNovaRegra(m);return}
-    if(f==='ref'){const deAntes=deEsp(m.cat,m.ref)||ESP_DE.has(m.id);ESP_DE.delete(m.id);m.ref=v;m.catSrc='manual';save();render();if(m.cat&&v&&!soMov(m.cat,v)&&!deAntes)abreNovaRegra(m);return}
+    if(f==='cat'){trk('categorizar',{campo:'cat'});{const a=ANT.get(m.id);if(!a||Date.now()-a.t>3e5)ANT.set(m.id,{cat:m.cat,ref:m.ref,catSrc:m.catSrc,t:Date.now()})}const deAntes=deEsp(m.cat,m.ref)||ESP_DE.has(m.id);if(deAntes)ESP_DE.set(m.id,1);else ESP_DE.delete(m.id);m.cat=v;m.ref='';if(v){m.catSrc='manual'}else{m.catSrc='';aplicaRegras([m])}save();render();
+      const c=DB.cats.find(x=>x.nome===v);if(v&&c&&!c.refs.length&&!deAntes){abreNovaRegra(m,false,ANT.get(m.id));ANT.delete(m.id)}return}
+    if(f==='ref'){const deAntes=deEsp(m.cat,m.ref)||ESP_DE.has(m.id);ESP_DE.delete(m.id);let ant=ANT.get(m.id);if(!ant||Date.now()-ant.t>3e5)ant={cat:m.cat,ref:m.ref,catSrc:m.catSrc};ANT.delete(m.id);m.ref=v;m.catSrc='manual';save();render();if(m.cat&&v&&!soMov(m.cat,v)&&!deAntes)abreNovaRegra(m,false,ant);return}
     if(f==='quem'){m.quem=v;m.quemMan=!!v;if(!v)aplicaPessoas([m])}
     else m[f]=v;
     save();clearTimeout(render.h);render.h=setTimeout(render,60);return}
@@ -2062,6 +2066,7 @@ if(EST){try{render();Object.entries(EST.f||{}).forEach(([i,v])=>{$('#'+i).value=
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-ordem'){ORDEM=e.data.ordem||'';render()}});
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-cores'){Object.assign(COR,e.data.cores||{});corNorm();RV++;render()}});
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-mes1'){MES1=+e.data.mes||0;perLabel();render()}});
+  {const inf=on=>document.documentElement.classList.toggle('semInf',!on);try{inf(localStorage.getItem('fp_inf')!=='0')}catch(e){}addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-inf')inf(!!e.data.on)})}
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-calc'){CALC_ON=!!e.data.on;if(!CALC_ON)calcFecha();render()}});
   addEventListener('storage',e=>{if(e.key==='fp_calc'){CALC_ON=e.newValue!=='0';if(!CALC_ON)calcFecha();render()}});
   addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-zoom')zm(e.data.zoom)});
