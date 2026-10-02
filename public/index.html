@@ -94,6 +94,8 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .box p{margin:0 0 14px;color:var(--mu);font-size:13px}
 .box label{display:block;font-size:13px;color:var(--mu);margin:10px 0 4px}
 .box input{width:100%;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;padding:10px;font-size:16px}
+.pw{position:relative}.pw input{padding-right:44px!important}.pwv{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;font-size:16px;padding:6px 8px;border-radius:8px;opacity:.6;line-height:1}.pwv:hover,.pwv.on{opacity:1}
+.box .lnk{border:0;background:none;color:var(--ac);font-size:12.5px;cursor:pointer;padding:6px 0 0;text-decoration:underline}
 .box input:focus{outline:2px solid var(--ac2);border-color:var(--ac)}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .row .bt{flex:1;padding:9px 12px}
@@ -283,13 +285,24 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 <div class="mod" id="mod" hidden>
   <form class="box" id="fLogin" autocomplete="on">
     <h2>Entrar ou criar conta</h2>
-    <p>Use a mesma conta dos outros sites frisk.pt. Sem sessão, os dados ficam guardados só neste dispositivo.</p>
+    <p>Entre com o seu email e palavra-passe, ou crie uma conta nova.</p>
     <label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="email" required>
-    <label for="lPass">Palavra-passe</label><input id="lPass" type="password" autocomplete="current-password" minlength="6" required>
+    <label for="lPass">Palavra-passe</label><div class="pw"><input id="lPass" type="password" autocomplete="current-password" minlength="6" required><button class="pwv" type="button" data-pwv="lPass" aria-label="Mostrar a palavra-passe" title="Mostrar a palavra-passe">👁</button></div>
+    <button class="lnk" type="button" id="btEsq">Esqueceu-se da palavra-passe?</button>
     <div class="row"><button class="bt pri" type="submit" id="btLogin">Entrar</button><button class="bt" type="button" id="btCriar">Criar conta</button></div>
     <div class="row" style="margin-top:8px"><button class="bt" type="button" id="btCancel">Cancelar</button></div>
     <div class="msg" id="lMsg" role="status"></div>
     <p style="margin:10px 0 0;font-size:12px;color:var(--mu);text-align:center">Os seus dados são só seus. <a href="privacidade.html" target="_blank" rel="noopener" style="color:var(--ac)">Privacidade</a></p>
+  </form>
+</div>
+<div class="mod" id="mRec" hidden>
+  <form class="box" id="fRec" autocomplete="off">
+    <h2>Nova palavra-passe</h2>
+    <p>Escolha uma palavra-passe nova para a sua conta.</p>
+    <label for="rPass">Nova palavra-passe</label><div class="pw"><input id="rPass" type="password" autocomplete="new-password" minlength="6" required><button class="pwv" type="button" data-pwv="rPass" aria-label="Mostrar a palavra-passe" title="Mostrar a palavra-passe">👁</button></div>
+    <label for="rPass2">Repetir a palavra-passe</label><div class="pw"><input id="rPass2" type="password" autocomplete="new-password" minlength="6" required><button class="pwv" type="button" data-pwv="rPass2" aria-label="Mostrar a palavra-passe" title="Mostrar a palavra-passe">👁</button></div>
+    <div class="row"><button class="bt pri" type="submit">Guardar</button><button class="bt" type="button" id="btRecNo">Agora não</button></div>
+    <div class="msg" id="rMsg" role="status"></div>
   </form>
 </div>
 <div class="frames" id="frames"><a class="extlink" id="extLink" target="_blank" rel="noopener noreferrer" hidden title="Se o site não aparecer aqui, abra-o numa nova aba">↗ Abrir numa nova aba</a></div>
@@ -374,7 +387,7 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
     $('av').textContent=l;$('mail').textContent=on?U.email:'Menu';$('mAv').textContent=on?l:'?';$('mMail').textContent=on?U.email:'Sem sessão';
     $('mSub').textContent=on?'Dados guardados na conta':'Os dados ficam só neste dispositivo';$('miEntrar').hidden=on||!window.FP_AUTH;$('miSair').hidden=!on;
     $('contaInfo').innerHTML=on?`<p>Sessão iniciada como <b>${U.email.replace(/</g,'&lt;')}</b>.</p>
-      <label for="novaPass">Mudar palavra-passe</label><input id="novaPass" type="password" minlength="6" autocomplete="new-password" placeholder="Nova palavra-passe (mín. 6)">
+      <label for="novaPass">Mudar palavra-passe</label><div class="pw"><input id="novaPass" type="password" minlength="6" autocomplete="new-password" placeholder="Nova palavra-passe (mín. 6)"><button class="pwv" type="button" data-pwv="novaPass" aria-label="Mostrar a palavra-passe" title="Mostrar a palavra-passe">👁</button></div>
       <div class="grp" style="margin-top:8px"><button class="opt" id="btPass" type="button">Guardar palavra-passe</button><button class="opt danger" id="btSair2" type="button">Terminar sessão</button></div><div class="note2" id="passMsg"></div>
       <h3 style="margin-top:18px">Os meus dados</h3><p>Leve uma cópia de todos os seus dados das Finanças, ou apague-os. Saiba mais na <a href="privacidade.html" target="_blank" rel="noopener">página de privacidade</a>.</p>
       <div class="grp"><button class="opt" id="btExpConta" type="button">📦 Exportar os meus dados</button><button class="opt danger" id="btApConta" type="button">🗑 Apagar os meus dados das Finanças</button></div>
@@ -573,6 +586,8 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
   return {abre,talvez,grupos,S,fecha}})();
 
 
+/* v0.10g: mostrar/esconder a palavra-passe */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pwv]');if(!b)return;const i=document.getElementById(b.dataset.pwv);if(!i)return;const v=i.type==='password';i.type=v?'text':'password';b.classList.toggle('on',v);b.textContent=v?'🙈':'👁';b.title=b.ariaLabel=v?'Esconder a palavra-passe':'Mostrar a palavra-passe';i.focus()});
 /* ===== login partilhado ===== */
 (function(){
   const $=id=>document.getElementById(id);
@@ -587,6 +602,8 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
     if(/already registered/i.test(m))return 'Já existe uma conta com este email — use "Entrar".';
     if(/Email not confirmed/i.test(m))return 'Confirme o email antes de entrar (verifique a caixa de correio).';
     if(/Password should/i.test(m))return 'A palavra-passe tem de ter pelo menos 6 caracteres.';
+    if(/rate limit|too many|security purposes/i.test(m))return 'Demasiados pedidos seguidos. Espere alguns minutos e tente de novo.';
+    if(/different from the old/i.test(m))return 'A nova palavra-passe tem de ser diferente da anterior.';
     return m||'Não foi possível concluir. Tente novamente.';};
   function mostrar(user){
     const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);try{FPFaq.sessao(user)}catch(e){}try{FPAdm.sessao(user||null)}catch(e){}try{FPNov.verifica(user||null)}catch(e){}try{FPAgr.sessao(user||null)}catch(e){}try{FPTrack.sessao(user||null)}catch(e){}
@@ -606,8 +623,20 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
     if(error)return setMsg(traduz(error));
     try{localStorage.setItem('fp_onb_novo',$('lEmail').value.trim().toLowerCase())}catch(e){} // mostrar o onboarding no 1.º login
     if(data.session){mod.hidden=true;mostrar(data.user)}else setMsg('Conta criada. Confirme o email e depois clique em "Entrar".',true)};
+  /* v0.10g: recuperar a palavra-passe — email com link que volta a este site e pede a nova palavra-passe */
+  const rec=$('mRec'),rMsg=$('rMsg'),setR=(t,ok)=>{rMsg.textContent=t||'';rMsg.className='msg'+(t?(ok?' ok':' err'):'')};
+  $('btEsq').onclick=async()=>{const em=$('lEmail').value.trim();if(!em||!$('lEmail').checkValidity()){setMsg('Escreva primeiro o seu email e volte a clicar em "Esqueceu-se da palavra-passe?".');$('lEmail').focus();return}
+    setMsg('A enviar…',true);try{const {error}=await window.plataforma.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});if(error)return setMsg(traduz(error));
+      setMsg('Se existir uma conta com este email, enviámos um link para definir uma palavra-passe nova. Veja a caixa de correio (e o spam).',true);try{FPTrack.log('recuperar_pass',{})}catch(e){}}catch(e){setMsg(traduz(e))}};
+  const abreRec=()=>{mod.hidden=true;setR('');rec.hidden=false;$('rPass').focus()};
+  $('btRecNo').onclick=()=>{rec.hidden=true};
+  $('fRec').addEventListener('submit',async e=>{e.preventDefault();const a=$('rPass').value,b=$('rPass2').value;if(a.length<6)return setR('A palavra-passe tem de ter pelo menos 6 caracteres.');if(a!==b)return setR('As duas palavras-passe não são iguais.');
+    setR('A guardar…',true);const {error}=await window.plataforma.auth.updateUser({password:a});if(error)return setR(traduz(error));
+    $('rPass').value=$('rPass2').value='';setR('✓ Palavra-passe alterada. Já pode usar a nova.',true);setTimeout(()=>{rec.hidden=true},1800)});
+  if(/type=recovery/.test(location.hash+location.search))setTimeout(abreRec,400);
+  window.FPRec={abre:abreRec};
   window.sairConta=async()=>{await Auth.signOut();mostrar(null)};
-  Auth.onChange((ev,session)=>mostrar(session&&session.user));
+  Auth.onChange((ev,session)=>{mostrar(session&&session.user);if(ev==='PASSWORD_RECOVERY')abreRec()});
   Auth.getSession().then(s=>mostrar(s&&s.user));
 })();
 </script>
@@ -748,6 +777,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.10g',d:'02/10/2026',n:['Recuperar a palavra-passe: “Esqueceu-se da palavra-passe?” envia um link por email para definir uma nova','Botão 👁 para mostrar ou esconder a palavra-passe'],a:['Texto da janela de entrar mais simples']},
  {v:'0.10f',d:'02/10/2026',n:['Perfil financeiro nas Definições: estado civil, dependentes, situação profissional e outros dados opcionais e privados','Extrato de um banco não reconhecido: avisa e pede-nos um exemplo anónimo para o passarmos a ler'],a:['Previsões: os títulos das colunas acompanham ao descer; nos anos anteriores aparece primeiro a média por mês e depois o total','Agregado: botões a roxo, a cor do agregado']},
  {v:'0.10e',d:'01/10/2026',n:['Opção para esconder a ajuda ⓘ (Definições › Geral)','Ao criar uma regra, “Cancelar” volta à categoria que o movimento tinha'],a:['As Finanças passam a precisar de conta','Exportar e apagar os dados tratam só das Finanças (a conta continua)','A pesquisa dos Extratos fica azul quando tem texto','Previsto vs real: o traço do previsto fica dentro da barra','Página de privacidade mais simples']},
  {v:'0.10d',d:'01/10/2026',n:['Exportar todos os seus dados e apagar a conta (Definições › Conta)','Página de privacidade: o que guardamos, quem vê e os seus direitos'],a:['Segurança da base de dados reforçada']},

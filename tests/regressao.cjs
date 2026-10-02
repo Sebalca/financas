@@ -500,6 +500,9 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     ir.innerHTML='';await w.fpCtx.apagaEx();w.go('home');
     ok({ok:sec&&lido&&trib&&grava&&roxo&&prev&&gen,sec,lido,trib,grava,roxo,prev,gen})}));
   t('D114','Perfil financeiro (opcional, privado, guardado na conta pessoal), botões do agregado a roxo, Previsões com títulos que acompanham e Média/mês antes do Total, extrato não reconhecido importa e pede um exemplo',z114.ok,z114);
+  const z116=await ev(()=>{const i=document.querySelector('#lPass'),b=document.querySelector('[data-pwv="lPass"]');b.click();const ver=i.type==='text';b.click();const esc=i.type==='password';
+    return {ok:ver&&esc&&!!document.querySelector('#btEsq')&&!!document.querySelector('#mRec #rPass2')&&!!document.querySelector('[data-pwv="novaPass"],#contaInfo')&&!/frisk\.pt|só neste dispositivo/.test(document.querySelector('#fLogin').textContent),ver,esc}});
+  t('D116','login: mostrar/esconder a palavra-passe, "Esqueceu-se da palavra-passe?" e janela para a nova palavra-passe; texto sem os outros sites',z116.ok,z116);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

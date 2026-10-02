@@ -147,10 +147,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D113 **Ajuda ⓘ** pode ser escondida em Definições › Geral (`fp_inf`). **Pesquisa dos Extratos** com texto fica azul. **Criar regra**: "Cancelar" repõe a categoria/referência que o movimento tinha antes da mudança (só quando a janela abre por mudar a categoria). **Previsto vs real**: a escala vai até 110% do previsto, para o traço do previsto ficar dentro da barra.
 - D114 **Perfil financeiro** (Definições › 🧾 Perfil financeiro): tudo opcional — data de nascimento, estado civil, tributação (só se casado/união de facto), situação profissional, anos de descontos, região fiscal, habitação, incapacidade **só como sim/não ≥ 60%** (nunca detalhes de saúde) e dependentes (ano de nascimento de cada um). Privado: guardado em `user_site_data` (site `financas`, chave `perfil`, RLS só do próprio), nunca nos agregados; entra na exportação e apaga-se com os dados das Finanças; descrito na página de privacidade.
 - D115 **Agregado** com botões a roxo (#7b1fa2, a cor do agregado no seletor). **Previsões**: títulos das colunas numa barra fixa que acompanha o scroll (como nos Extratos); nos anos anteriores, Média/mês antes do Total. **Extrato não reconhecido** (banco sem leitor próprio): tenta ler as colunas de data, descrição e valor; se conseguir importa e avisa "Banco não reconhecido — confira e envie-nos um exemplo"; se não, "Extrato não reconhecido — envie-nos um exemplo"; em ambos com o botão da amostra anónima (D108).
+- D116 **Login**: 👁 mostra/esconde a palavra-passe (login, nova palavra-passe e Definições › Conta). "Esqueceu-se da palavra-passe?" usa o email escrito e envia um link (`resetPasswordForEmail`, volta a este site); a resposta nunca diz se a conta existe. Ao voltar pelo link (evento `PASSWORD_RECOVERY`) abre a janela "Nova palavra-passe" (duas vezes, mín. 6). Os emails precisam de SMTP próprio no Supabase e do site nas Redirect URLs.
 
 ---
 
 ## Histórico
+
+### v0.10g — 02/10/2026
+- Login: mostrar/esconder a palavra-passe, recuperar a palavra-passe por email, janela da nova palavra-passe (D116). Texto da janela de entrar sem "outros sites" nem "só neste dispositivo".
 
 ### v0.10f — 02/10/2026
 - Perfil financeiro (D114).
