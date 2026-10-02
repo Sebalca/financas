@@ -514,6 +514,20 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const a=anonRecibo({W:800,items:it});const anon=!/ANA|Ficticia|1 500,00|500000000/.test(a)&&/Remunerações/.test(a)&&/31\/08\/2026/.test(a)&&/R01/.test(a);
     return {ok:ok&&!!falha&&anon&&typeof w.fpAmostraRec==="function",r:{mes:r.mes,bruto:r.bruto,liq:r.liquido,ok:r.ok},falha,anon}});
   t('D117','recibos: modelo PRIMAVERA (Remunerações | Descontos, "1 020,00", Total Pago) lido e conferido; recibo não reconhecido pede um recibo tipo anónimo',z117.ok,z117);
+  const z118=await ev(()=>{const w=document.querySelector('iframe[data-id="financas"]').contentWindow,I=(x,y,s)=>({x,y,s,w:s.length*4});
+    const copia=dy=>[I(6,808-dy,'EMPRESA FICTICIA TESTE LDA'),I(401,808-dy,'RECIBO DE REMUNERAÇÕES'),I(507,798-dy,dy?'DUPLICADO':'ORIGINAL'),I(199,788-dy,'NIF: 500000000'),I(18,778-dy,'DATA'),I(73,778-dy,'MÊS'),I(11,769-dy,'28-2-2025'),I(64,769-dy,'Fevereiro / 25'),
+      I(17,735-dy,'CÓD.'),I(119,735-dy,'REMUNERAÇÕES'),I(274,735-dy,'TEMPOS'),I(356,735-dy,'VALOR UNITÁRIO'),I(465,735-dy,'VALOR REMUNERAÇÃO'),I(23,726-dy,'1'),I(52,726-dy,'Remun.Normal'),I(303,726-dy,'173,33'),I(426,726-dy,'6,00'),I(542,726-dy,'1 000,00'),
+      I(22,717-dy,'20'),I(52,717-dy,'Subs. de Ferias'),I(546,717-dy,'80,00'),I(69,617-dy,'AUSÊNCIAS'),I(229,617-dy,'DESCONTOS'),I(362,617-dy,'INCIDÊNCIAS'),I(466,617-dy,'VALOR DO DESCONTO'),
+      I(180,608-dy,'Segurança Social'),I(299,608-dy,'11,00%'),I(412,608-dy,'1 080,00'),I(542,608-dy,'118,80'),I(180,599-dy,'I.R.S.'),I(299,599-dy,'5,00%'),I(542,599-dy,'54,00'),
+      I(365,537-dy,'Acumulados para Irs: - Incidência:'),I(476,537-dy,'2 000,00 - Retenção:'),I(549,537-dy,'0,00'),I(27,524-dy,'VALOR ILÍQUIDO'),I(142,524-dy,'DESCONTOS'),I(444,524-dy,'VALOR LÍQUIDO A RECEBER'),I(76,514-dy,'1 080,00'),I(192,514-dy,'172,80'),I(542,514-dy,'907,20')];
+    const c=w.leRecibo({W:570,items:copia(0).concat(copia(423))});
+    const prim=w.leRecibo({W:800,items:[I(12,571,'Empresa Ficticia, Lda.'),I(12,560,'NIF 500000000'),I(12,529,'Original'),I(400,529,'Duplicado'),I(12,501,'Recibo de Vencimentos'),I(12,466,'Data Fecho'),I(73,466,'31/07/2026'),
+      I(12,350,'Cód.'),I(49,350,'Data'),I(91,350,'Descrição'),I(235,350,'Faltas'),I(275,350,'Remunerações'),I(356,350,'Descontos'),I(12,337,'R01'),I(49,337,'07-2026'),I(85,338,'Vencimento'),I(297,337,'900,00'),
+      I(12,313,'F50'),I(49,313,'01/07/2026'),I(85,314,'Gozo de Férias - 5,0000 Dias'),I(236,314,'0,00'),I(12,301,'D01'),I(49,301,'07-2026'),I(85,301,'Segurança Social (11%)'),I(366,301,'99,00'),
+      I(233,151,'Total'),I(292,151,'900,00'),I(366,151,'99,00'),I(267,128,'Total Pago ( EUR )'),I(366,128,'801,00')]});
+    const ok=c.mes==='2025-02'&&c.bruto===1080&&c.ss===118.8&&c.irs===54&&c.liquido===907.2&&c.ok&&c.linhas.length===2&&prim.bruto===900&&prim.liquido===801&&prim.ok&&prim.linhas.length===1;
+    return {ok,c:{mes:c.mes,b:c.bruto,l:c.liquido,ok:c.ok,n:c.linhas.length},p:{b:prim.bruto,l:prim.liquido,ok:prim.ok,n:prim.linhas.length}}});
+  t('D118','recibos: modelo "RECIBO DE REMUNERAÇÕES" (original e duplicado um por cima do outro, "Março / 25") e PRIMAVERA com linha de faltas a 0,00 e descrição desalinhada',z118.ok,z118);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

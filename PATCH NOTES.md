@@ -149,10 +149,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D115 **Agregado** com botões a roxo (#7b1fa2, a cor do agregado no seletor). **Previsões**: títulos das colunas numa barra fixa que acompanha o scroll (como nos Extratos); nos anos anteriores, Média/mês antes do Total. **Extrato não reconhecido** (banco sem leitor próprio): tenta ler as colunas de data, descrição e valor; se conseguir importa e avisa "Banco não reconhecido — confira e envie-nos um exemplo"; se não, "Extrato não reconhecido — envie-nos um exemplo"; em ambos com o botão da amostra anónima (D108).
 - D116 **Login**: 👁 mostra/esconde a palavra-passe (login, nova palavra-passe e Definições › Conta). "Esqueceu-se da palavra-passe?" usa o email escrito e envia um link (`resetPasswordForEmail`, volta a este site); a resposta nunca diz se a conta existe. Ao voltar pelo link (evento `PASSWORD_RECOVERY`) abre a janela "Nova palavra-passe" (duas vezes, mín. 6). Os emails precisam de SMTP próprio no Supabase e do site nas Redirect URLs.
 - D117 **Recibos**: além do modelo antigo, lê o modelo **PRIMAVERA** (colunas Remunerações | Descontos, valores com espaço nos milhares "1 020,00", linha "Total" e "Total Pago ( EUR )", NIF da empresa no cabeçalho) e só dá "totais conferem" se o total das remunerações e o total pago baterem. **Recibo não reconhecido** (ou totais que não conferem): explica e oferece "📨 Enviar recibo tipo (anónimo)" — feito no browser: palavras típicas do recibo, códigos (R01, D02) e datas mantidos; nomes, empresas e outros textos → X; algarismos ao acaso; abre a sugestão para a pessoa ver antes de enviar. O PDF nunca sai do browser.
+- D118 **Recibos (mais modelos)**: modelo "RECIBO DE REMUNERAÇÕES" (Cód. | Remunerações | Tempos | Valor unitário | Valor remuneração; Descontos | Incidências | Valor do desconto; Valor ilíquido / Descontos / Valor líquido a receber; mês "Março / 25"). Original e duplicado **um por cima do outro** → usa só o de cima; lado a lado só quando "Duplicado" está à altura de "Original". PRIMAVERA: linhas com valor 0,00 na coluna Faltas não contam e a descrição é lida mesmo desalinhada do título.
 
 ---
 
 ## Histórico
+
+### v0.10i — 02/10/2026
+- Recibos: modelo "RECIBO DE REMUNERAÇÕES", cópias empilhadas e PRIMAVERA com faltas (D118). Testes com recibos fictícios.
 
 ### v0.10h — 02/10/2026
 - Recibos PRIMAVERA e recibo tipo anónimo quando não é reconhecido (D117). Teste com recibo fictício (itens gerados no teste, sem PDF real no repositório).
