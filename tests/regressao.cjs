@@ -503,6 +503,17 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   const z116=await ev(()=>{const i=document.querySelector('#lPass'),b=document.querySelector('[data-pwv="lPass"]');b.click();const ver=i.type==='text';b.click();const esc=i.type==='password';
     return {ok:ver&&esc&&!!document.querySelector('#btEsq')&&!!document.querySelector('#mRec #rPass2')&&!!document.querySelector('[data-pwv="novaPass"],#contaInfo')&&!/frisk\.pt|só neste dispositivo/.test(document.querySelector('#fLogin').textContent),ver,esc}});
   t('D116','login: mostrar/esconder a palavra-passe, "Esqueceu-se da palavra-passe?" e janela para a nova palavra-passe; texto sem os outros sites',z116.ok,z116);
+  const z117=await ev(()=>{const w=document.querySelector('iframe[data-id="financas"]').contentWindow,leRecibo=w.leRecibo,anonRecibo=w.anonRecibo;const I=(x,y,s)=>({x,y,s,w:s.length*4});const it=[I(12,571,'Empresa Ficticia Teste, Lda.'),I(12,560,'NIF 500000000 | NISS 20000000000'),I(12,529,'Original'),I(400,529,'Duplicado'),I(12,501,'Recibo de Vencimentos'),
+      I(12,477,'Período'),I(73,477,'agosto'),I(132,477,'Nome'),I(195,477,'ANA TESTE FICTICIA'),I(12,466,'Data Fecho'),I(73,466,'31/08/2026'),
+      I(12,352,'Cód.'),I(49,352,'Data'),I(91,353,'Descrição'),I(235,353,'Faltas'),I(278,353,'Remunerações'),I(357,353,'Descontos'),
+      I(12,338,'R01'),I(49,338,'08-2026'),I(93,339,'Vencimento'),I(290,339,'1 500,00'),I(12,326,'R11'),I(49,326,'08-2026'),I(93,327,'Subsídio Alimentação'),I(300,327,'120,00'),I(93,317,'(20 Un.)'),
+      I(12,307,'D01'),I(49,307,'08-2026'),I(93,307,'Segurança Social (11%)'),I(365,307,'165,00'),I(12,294,'D02'),I(49,294,'08-2026'),I(93,295,'IRS (Venc. 10%)'),I(368,295,'150,00'),
+      I(233,148,'Total'),I(290,148,'1 620,00'),I(366,148,'315,00'),I(267,129,'Total Pago ( EUR )'),I(355,129,'1 305,00'),I(12,37,'© PRIMAVERA BSS / Licença de: Contabilidade Ficticia, Lda')];
+    const r=leRecibo({W:800,items:it});const ok=r.mes==='2026-08'&&r.nif==='500000000'&&r.bruto===1620&&r.ss===165&&r.irs===150&&r.liquido===1305&&r.ok&&r.ref==='Salário';
+    let falha='';try{leRecibo({W:800,items:[I(12,500,'Fatura'),I(12,480,'Total 10,00')]})}catch(e){falha=e.message}
+    const a=anonRecibo({W:800,items:it});const anon=!/ANA|Ficticia|1 500,00|500000000/.test(a)&&/Remunerações/.test(a)&&/31\/08\/2026/.test(a)&&/R01/.test(a);
+    return {ok:ok&&!!falha&&anon&&typeof w.fpAmostraRec==="function",r:{mes:r.mes,bruto:r.bruto,liq:r.liquido,ok:r.ok},falha,anon}});
+  t('D117','recibos: modelo PRIMAVERA (Remunerações | Descontos, "1 020,00", Total Pago) lido e conferido; recibo não reconhecido pede um recibo tipo anónimo',z117.ok,z117);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

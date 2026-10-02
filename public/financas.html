@@ -538,7 +538,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.10g'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10h'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1475,7 +1475,7 @@ async function textoPDF(buf){await carrega('lib/pdf.min.js');pdfjsLib.GlobalWork
   const doc=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;const pg=await doc.getPage(1);const vp=pg.getViewport({scale:1});
   const tc=await pg.getTextContent();return {W:vp.width,items:tc.items.filter(i=>i.str&&i.str.trim()).map(i=>({s:i.str.trim(),x:i.transform[4],y:i.transform[5],w:i.width||0}))}}
 const MESN={janeiro:1,fevereiro:2,marco:3,abril:4,maio:5,junho:6,julho:7,agosto:8,setembro:9,outubro:10,novembro:11,dezembro:12};
-const ehNum=s=>/^-?[\d.]*\d,\d{2}$/.test(s);
+const ehNum=s=>/^-?[\d.]*\d,\d{2}$/.test(s)||/^-?\d{1,3}(?:[ \u00a0.]\d{3})+,\d{2}$/.test(s); // também "1 020,00"
 function leRecibo({W,items}){
   // recibos com Original e Duplicado lado a lado: usar só a metade esquerda
   if(items.some(i=>/^duplicado$/i.test(i.s)&&i.x>W/2))items=items.filter(i=>i.x<W/2);
@@ -1494,6 +1494,7 @@ function leRecibo({W,items}){
   const tel=items.find(i=>/^telefone/i.test(i.s));
   if(tel){const l=items.filter(i=>Math.abs(i.y-tel.y)<3&&i.x<tel.x).sort((a,b)=>a.x-b.x);if(l.length)r.entidade=l.map(i=>i.s).join(' ')}
   const nifs=[...txt.matchAll(/Contribuinte:?\s*(\d{9})/gi)].map(m=>m[1]);if(nifs.length)r.nif=nifs[nifs.length-1];
+  if(!r.nif){const nf=txt.match(/\bNIF:?\s*(\d{9})/i);if(nf)r.nif=nf[1]} // v0.10h: cabeçalho "NIF 123456789" da empresa
   if(!r.entidade){const l=items.find(i=>/\b(lda|s\.?a\.?|unipessoal)\b\.?$/i.test(i.s));if(l)r.entidade=l.s}
   // colunas de remunerações e descontos
   const hRem=items.find(i=>/^remunera[cç][oõ]es$/i.test(i.s)),hDes=items.find(i=>/^descontos/i.test(i.s)&&(!hRem||Math.abs(i.y-hRem.y)<4));
@@ -1505,6 +1506,15 @@ function leRecibo({W,items}){
     grupos.forEach(g=>{[[g.it.filter(i=>i.x<x0),r.linhas],[g.it.filter(i=>i.x>=x0),r.descontos]].forEach(([its,dst])=>{its.sort((a,b)=>a.x-b.x);
       const desc=its.filter(i=>!ehNum(i.s)&&!/%$/.test(i.s)).map(i=>i.s).join(' ').trim(),ns=its.filter(i=>ehNum(i.s));
       if(desc&&ns.length){const taxa=(its.find(i=>/%$/.test(i.s))||{}).s||'';dst.push({desc,valor:num(ns[ns.length-1].s),taxa})}})})}
+  else if(hRem&&hDes){ /* v0.10h: modelo PRIMAVERA — Cód. | Data | Descrição | Faltas | Remunerações | Descontos, linha "Total" e "Total Pago ( EUR )" */
+    const tt=items.filter(i=>/^total$/i.test(i.s)&&i.y<hRem.y).sort((a,b)=>b.y-a.y)[0],hDs=items.find(i=>/^descri/i.test(i.s)&&Math.abs(i.y-hRem.y)<4),hF=items.find(i=>/^faltas$/i.test(i.s)&&Math.abs(i.y-hRem.y)<4);
+    const xD=hDs?hDs.x-3:0,xF=hF?hF.x-3:hRem.x-3,xDes=hDes.x-15,ehDes=i=>i.x>=xDes;
+    const corpo=items.filter(i=>i.y<hRem.y-4&&i.y>(tt?tt.y+4:0)),grupos=[];
+    corpo.sort((a,b)=>b.y-a.y||a.x-b.x).forEach(i=>{const g=grupos.find(g=>Math.abs(g.y-i.y)<3);g?g.it.push(i):grupos.push({y:i.y,it:[i]})});
+    grupos.forEach(g=>{const ns=g.it.filter(i=>ehNum(i.s)&&i.x>=xF),desc=g.it.filter(i=>i.x>=xD&&i.x<xF&&!ehNum(i.s)).sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').trim();
+      if(!desc||!ns.length)return;const tx=(desc.match(/(\d+(?:,\d+)?%)/)||[])[1]||'';ns.forEach(n=>(ehDes(n)?r.descontos:r.linhas).push({desc,valor:num(n.s),taxa:tx}))});
+    if(tt){items.filter(i=>ehNum(i.s)&&Math.abs(i.y-tt.y)<4&&i.x>tt.x).forEach(v=>{if(ehDes(v))r.tDescontos=num(v.s);else r.tRem=num(v.s)})}
+    const tp=items.filter(i=>/^total pago/i.test(i.s)).sort((a,b)=>b.y-a.y)[0];if(tp){const v=items.filter(i=>ehNum(i.s)&&Math.abs(i.y-tp.y)<4&&i.x>tp.x).sort((a,b)=>b.x-a.x)[0];if(v)r.tTotal=num(v.s)}}
   // totais: cada valor fica com o rótulo mais próximo na linha de cima
   if(tot){const rot=items.filter(i=>Math.abs(i.y-tot.y)<3),vals=items.filter(i=>ehNum(i.s)&&i.y<tot.y&&i.y>tot.y-22);
     const T={};vals.forEach(v=>{const cx=v.x+v.w/2;let best=null,bd=1e9;rot.forEach(l=>{const d=Math.abs(l.x+l.w/2-cx);if(d<bd){bd=d;best=l}});if(best)T[norm(best.s)]=num(v.s)});
@@ -1519,12 +1529,32 @@ function leRecibo({W,items}){
   r.vale=r.tVale!=null?r.tVale:soma(r.linhas,/cartao|vale/);
   r.premios=soma(r.linhas,/premio|gratifica|bonus/);r.subsNF=soma(r.linhas,/natal|ferias/);
   r.liquido=r2(r.bruto-r.ss-r.irs-r.outros);
-  r.ok=(r.tTotal==null||Math.abs(r.tTotal-r.liquido)<.011)&&(r.tTransf==null||Math.abs(r.tTransf-(r.liquido-r.vale))<.011);
+  r.ok=(r.tTotal==null||Math.abs(r.tTotal-r.liquido)<.011)&&(r.tTransf==null||Math.abs(r.tTransf-(r.liquido-r.vale))<.011)&&(r.tRem==null||Math.abs(r.tRem-r.bruto)<.011);
   if(!r.bruto)throw new Error('Não consegui ler os valores do recibo.');
   const mt=MESES[+r.mes.slice(5)-1].toLowerCase()+' '+r.mes.slice(0,4);
   if(r.subsNF&&Math.abs(r.subsNF-r.bruto)<.011){const f=r.linhas.some(l=>/ferias/.test(norm(l.desc)));r.desc=(f?'Subsídio de férias ':'Subsídio de Natal ')+mt;r.ref='Subsídio Natal / Férias'}
   else{r.desc='Vencimento '+mt+(r.num?' (n.º '+r.num+')':'');r.ref='Salário'}
   return r}
+
+/* v0.10h: recibo não reconhecido — "recibo tipo" anónimo (só a estrutura: palavras do recibo mantidas, nomes → X, algarismos ao acaso, datas mantidas) */
+const FALHOU_R=new Map();
+const REC_PAL=new Set(('recibo recibos vencimento vencimentos remuneracao remuneracoes remun desconto descontos total totais liquido iliquido bruto irs retencao retido seguranca social ss subsidio subsidios alimentacao refeicao ferias natal '
+  +'periodo data datas mes ano dias dia horas hora cod codigo descricao quantidade qtd valor valores taxa base faltas premio premios gratificacao bonus euro euros eur pago pagamento pagamentos forma formas transferencia numerario cheque '
+  +'sujeito sujeitos nao isento isentos contribuinte nif niss nome categoria departamento original duplicado cartao vale duodecimos fecho mecan benef contrib seguro turno abono abonos ajudas custo custos km horas extra trabalho '
+  +'suplementar diuturnidades diuturnidade isencao fundo compensacao fct sindicato quota quotas penhora adiantamento adiantamentos acerto acertos moeda obs declaro recebi quantia constante neste un unid unidades processamento '
+  +'venc alim un primavera sage phc artsoft cegid jasmin toconline moloni bss licenca de da do das dos e a o em por para com sem no na nos nas').split(' '));
+['janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'].forEach(m=>REC_PAL.add(m));
+function anonRecibo({W,items}){if(items.some(i=>/^duplicado$/i.test(i.s)&&i.x>W/2))items=items.filter(i=>i.x<W/2);
+  const eData=c=>/^(\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4}|\d{2}[-\/]\d{4}|\d{4}[-\/.]\d{1,2}([-\/.]\d{1,2})?)$/.test(c);
+  const pal=w=>REC_PAL.has(norm(w).replace(/[^a-z]/g,''))||/^[A-Z]{1,2}\d{1,3}$/.test(w)?w:w.replace(/[A-Za-zÀ-ÿ]/g,c=>c===c.toUpperCase()?'X':'x');
+  const tok=s=>s.split(/(\s+)/).map(w=>/^\s+$/.test(w)||!w?w:eData(w)||/^[A-Z]{1,2}\d{1,3}$/.test(w)?w:pal(w).replace(/\d/g,()=>String(Math.floor(Math.random()*10)))).join('');
+  const L=[];items.slice().sort((a,b)=>b.y-a.y||a.x-b.x).forEach(i=>{const l=L.find(l=>Math.abs(l.y-i.y)<3);l?l.it.push(i):L.push({y:i.y,it:[i]})});
+  return L.map(l=>l.it.sort((a,b)=>a.x-b.x).map(i=>`[${Math.round(i.x)}] ${tok(i.s)}`).join('   ')).join('\n')}
+window.fpAmostraRec=async nome=>{const f=FALHOU_R.get(nome);if(!f)return;let a='';try{a=anonRecibo(await textoPDF(await f.arrayBuffer()))}catch(e){toast('Não foi possível ler o PDF');return}trk('amostra_recibo',{});
+  const txt=`Recibo não reconhecido — empresa / programa de salários: (escreva aqui, se souber)\nRecibo tipo anónimo (nomes trocados por X, algarismos ao acaso, datas e palavras do recibo mantidas; [n] = posição na linha):\n${a}`.slice(0,4000);
+  try{if(window.parent!==window&&window.parent.FPSug){window.parent.FPSug.amostra(txt);return}}catch(e){}
+  try{await navigator.clipboard.writeText(txt);toast('Recibo tipo copiado — cole-o numa sugestão')}catch(e){toast('Abra o site principal para enviar o recibo tipo')}};
+const REC_NAO='<b>Recibo não reconhecido.</b> Envie-nos um <b>recibo tipo</b> para o passarmos a ler — é anónimo: os nomes e os valores são trocados aqui no browser e vê tudo antes de enviar. Entretanto pode adicionar à mão com ＋ Adicionar.';
 
 /* ================= rendimentos ================= */
 const REND='Rendimentos';
@@ -1639,18 +1669,21 @@ async function carregaRecibos(files){const res=[];
       const assin=x=>(x.linhas||[]).map(l=>norm(l.desc)+':'+l.valor).sort().join('|');
       const dup=DB.rend.find(x=>x.tipo==='rec'&&(x.nif&&r.nif?x.nif===r.nif:norm(x.entidade)===norm(r.entidade))&&(r.num&&x.num?x.num===r.num:(x.mes===r.mes&&x.data===r.data&&Math.abs(x.liquido-r.liquido)<.011&&assin(x)===assin(r))));
       if(dup){res.push({ok:true,dup:true,f:f.name,r});continue}
+      if(!r.ok){FALHOU_R.set(f.name,f)}
       Object.assign(r,{id:uid('r'),ficheiro:f.name,pessoa:'',lk:{},lkMan:{},u:Date.now()});DB.rend.push(r);res.push({ok:true,f:f.name,r});
-    }catch(e){res.push({ok:false,f:f.name,msg:e.message})}}
+    }catch(e){if(/\.pdf$/i.test(f.name)){FALHOU_R.set(f.name,f);if(FALHOU_R.size>10)FALHOU_R.delete(FALHOU_R.keys().next().value)}res.push({ok:false,f:f.name,msg:e.message})}}
   autoLiga();save();
   const K=new Map(DB.mov.map(m=>[chave(m),m]));
-  $('#recRes').innerHTML=res.map(x=>!x.ok?`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)} Pode adicionar à mão com ＋ Adicionar.</div>`
+  const btRT=f=>`<button class="btn sm" type="button" data-amrec="${esc(f)}">📨 Enviar recibo tipo (anónimo)</button>`;
+  $('#recRes').innerHTML=res.map(x=>!x.ok?`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}${/\.pdf$/i.test(x.f)?`<br><span class="muted" style="font-size:12.5px">${REC_NAO}</span> ${btRT(x.f)}`:' Pode adicionar à mão com ＋ Adicionar.'}</div>`
     :x.dup?`<div class="imp">↺ <b>${esc(x.f)}</b> — o recibo de ${mesTxt(x.r.mes)} já existe (ignorado).</div>`
-    :`<div class="imp ${x.r.ok?'ok':'err'}">${x.r.ok?'✓':'⚠'} <b>${esc(x.f)}</b> — ${mesTxt(x.r.mes)} · ${esc(x.r.entidade||'entidade?')} · bruto <b>${E(x.r.bruto)}</b> · IRS ${E(x.r.irs)} · SS ${E(x.r.ss)} · líquido <b>${E(x.r.liquido)}</b>${x.r.vale?` (transferência ${E(transfDe(x.r))} + cartão ${E(x.r.vale)})`:''} · ${x.r.ok?'totais conferem ✓':'os totais não conferem — verifique com ✏'}<br>${celLig(x.r,K)}</div>`).join('');
+    :`<div class="imp ${x.r.ok?'ok':'err'}">${x.r.ok?'✓':'⚠'} <b>${esc(x.f)}</b> — ${mesTxt(x.r.mes)} · ${esc(x.r.entidade||'entidade?')} · bruto <b>${E(x.r.bruto)}</b> · IRS ${E(x.r.irs)} · SS ${E(x.r.ss)} · líquido <b>${E(x.r.liquido)}</b>${x.r.vale?` (transferência ${E(transfDe(x.r))} + cartão ${E(x.r.vale)})`:''} · ${x.r.ok?'totais conferem ✓':`os totais não conferem — verifique com ✏ ou envie-nos um recibo tipo ${btRT(x.f)}`}<br>${celLig(x.r,K)}</div>`).join('');
   const ok=res.filter(x=>x.ok&&!x.dup);if(ok.length){const last=ok.map(x=>x.r.mes).sort().pop();RA.open.add(last);P.d=new Date(+last.slice(0,4),+last.slice(5,7)-1,1);P.m='mes';$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel()}
   render()}
 
 function apagaRend(r){DB.delR=(DB.delR||[]).concat(r.id).slice(-500);DB.rend=DB.rend.filter(x=>x!==r);autoLiga();$('#mRend').hidden=true;RD=null;save();render()}
 $('#btRec').addEventListener('click',()=>$('#fRec').click());
+$('#recRes').addEventListener('click',e=>{const b=e.target.closest('[data-amrec]');if(b)window.fpAmostraRec(b.dataset.amrec)});
 $('#fRec').addEventListener('change',()=>{const fs=[...$('#fRec').files];$('#fRec').value='';if(fs.length){$('#recRes').innerHTML='<div class="imp">A ler…</div>';carregaRecibos(fs)}});
 $('#rdTipo').addEventListener('click',e=>{const b=e.target.closest('button');if(b)rdTipo(b.dataset.t)});
 ['rdBruto','rdIrs','rdSs','rdOut','rdVale'].forEach(id=>$('#'+id).addEventListener('input',rdCalc));
