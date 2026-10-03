@@ -152,10 +152,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D118 **Recibos (mais modelos)**: modelo "RECIBO DE REMUNERAÇÕES" (Cód. | Remunerações | Tempos | Valor unitário | Valor remuneração; Descontos | Incidências | Valor do desconto; Valor ilíquido / Descontos / Valor líquido a receber; mês "Março / 25"). Original e duplicado **um por cima do outro** → usa só o de cima; lado a lado só quando "Duplicado" está à altura de "Original". PRIMAVERA: linhas com valor 0,00 na coluna Faltas não contam e a descrição é lida mesmo desalinhada do título.
 - D119 **Previsto vs real** (Início): o traço do previsto fica sempre no mesmo sítio (≈91% da barra) em todas as linhas; a barra é real ÷ previsto até ao traço, **azul** até ao previsto e **vermelha** quando o ultrapassa (passa o traço); sem previsto, barra cinzenta cheia. **Reembolso**: pesquisa sempre visível (descrição, valor, categoria, referência, quem é); "＋ Sugerir mais" junta as saídas de valor **igual ou maior** de mais um mês para trás a cada clique. **Ir para a despesa** (↩ nos Detalhes): fica logo abaixo das barras fixas e aparece "↩ Voltar ao reembolso" (20 s), que repõe filtros, período e a linha. Mensagens de importação de extratos e recibos com "✕ Limpar". **Agregado**: com um agregado escolhido, os botões/destaques das Finanças e da barra de cima ficam roxos (#7b1fa2).
 - D120 **Ir para a despesa** mantém a vista: em Ano fica Ano (no ano da despesa); em Intervalo fica se a data cabe; senão vai para o mês. O botão "↩ Voltar ao reembolso" aparece também a partir das linhas de um movimento dividido (e as linhas divididas mostram "↩ descrição" com a data ao passar o rato). A **janela do reembolso** tem altura fixa (a lista desliza por dentro).
+- D121 **Reembolso ligado (↩) conta na data da despesa original** — também cada linha de um movimento dividido — em todas as contas: Início (caixas, gráficos, previsto vs real, 🧮), Despesas (grelha, médias, mini janela), Previsões (anos anteriores, "média do ano anterior"). Nos Extratos e no saldo por banco o movimento fica na data real em que o dinheiro entrou. Reembolsos sem ligação contam na data em que entraram. (Internamente `expandeC` desloca `dm` e guarda a data real em `dm0`; a chave do movimento usa sempre a data real.)
 
 ---
 
 ## Histórico
+
+### v0.10l — 03/10/2026
+- Reembolsos ligados contam na data da despesa original (D121); na mini janela das Despesas aparecem com ↩ e a data real ao passar o rato.
 
 ### v0.10k — 03/10/2026
 - Despesas: mini janela com os movimentos de cada valor (D61 atualizada).

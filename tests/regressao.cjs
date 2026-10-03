@@ -551,6 +551,16 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const sh=d.querySelector('#mReemb .sheet');w.abreReemb(rb);const h1=sh.offsetHeight;d.querySelector('#rbTodas').click();const h2=sh.offsetHeight;d.querySelector('#mReemb').hidden=true;
     d.querySelector('#perMode [data-m="mes"]').click();await w.fpCtx.apagaEx();w.go('home');ok({ok:miniOk&&foi&&ano&&vb&&h1===h2,miniOk,foi,ano,vb,h1,h2})}));
   t('D120','Despesas: valor abre mini janela com os movimentos (data, descrição, valor) que levam aos Extratos; ir para a despesa mantém a vista Ano e mostra o botão de voltar; janela do reembolso com tamanho fixo',z120.ok,z120);
+  const z121=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),chave=w.eval('chave');const desp=db.mov.find(m=>m.valor<0&&/EDP/.test(m.desc)&&m.dm.slice(5,7)!==db.mov[db.mov.length-1].dm.slice(5,7));
+    const mA=desp.dm.slice(0,7),last=db.mov.map(m=>m.dm).sort().pop(),mB=last.slice(0,7);
+    db.mov.push({id:'mSpR',k:'spr',man:true,banco:'Dinheiro',conta:'',saldo:null,det:'',ord:0,c:'',dm:last,dv:last,desc:'TFI AMIGO TESTE',valor:30,cat:'',ref:'',catSrc:'manual',quem:'',quemMan:false,obs:'',
+      partes:[{valor:20,cat:desp.cat,ref:desp.ref,desc:'mês A',reemb:chave(desp)},{valor:10,cat:'Outros',ref:'Prendas',desc:'resto'}]});
+    w.verMes(desp.dm);w.go('des');w.render();await W(50);const cell=k=>{const c=d.querySelector(`#desCats td.clk[data-dgo="${k}|${desp.cat}|${desp.ref}"]`);return c?c.textContent:''};
+    const vA=cell(mA),vB=cell(mB);const esperado=(-desp.valor-20).toFixed(2).replace('.',',')+' €';
+    d.querySelector(`#desCats td.clk[data-dgo="${mA}|${desp.cat}|${desp.ref}"]`).click();await W(50);const mini=/↩/.test(d.querySelector('#dgPop').textContent)&&/mês A/.test(d.querySelector('#dgPop').textContent);d.querySelector('#dgPop').hidden=true;
+    await w.fpCtx.apagaEx();w.go('home');ok({ok:vA.replace(/\s/g,'')===esperado.replace(/\s/g,'')&&!vB&&mini,vA,vB,esperado,mini,mA,mB})}));
+  t('D121','reembolso ligado (também linha de movimento dividido) conta na data da despesa original, não na data em que o dinheiro entrou',z121.ok,z121);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

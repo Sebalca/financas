@@ -548,7 +548,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.10k'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10l'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -621,6 +621,9 @@ const eReemb=m=>m.valor>0&&!!m.cat&&!eFora(m.cat);
 /* movimentos divididos (✂): nas contas usam-se as partes (D18) */
 const SPOPEN=new Set();
 const chaveParte=(m,i)=>'man|'+(m.k||chave(m))+'#'+i;
+/* v0.10l: nas contas, um reembolso ligado (↩) conta na data da despesa original (dm0 = data real em que o dinheiro entrou) */
+function expandeC(l){const X=expande(l);if(!X.some(m=>m.reemb&&m.valor>0))return X;const K=mapaChaves();
+  return X.map(m=>{if(!(m.reemb&&m.valor>0))return m;const o=K.get(m.reemb);return o&&o.dm&&o.dm!==m.dm?{...m,dm0:m.dm,dm:o.dm}:m})}
 function mapaChaves(){const r=new Map(DB.mov.map(x=>[chave(x),x]));expande(DB.mov).forEach(x=>{if(x.parte!=null)r.set(chave(x),x)});return r}
 const nomeMov=o=>{if(o.parte==null)return o.desc;const pai=o.pai||DB.mov.find(x=>x.id===o.id.split('#')[0]),p=pai&&pai.partes&&pai.partes[o.parte];return `${o.desc} (${p&&p.desc||'parte '+(o.parte+1)})`};
 const expande=l=>l.flatMap(m=>Array.isArray(m.partes)&&m.partes.length?m.partes.map((p,i)=>({...m,id:m.id+'#'+i,valor:p.valor,cat:p.cat||'',ref:p.ref||'',obs:p.obs||'',pdesc:p.desc||'',catSrc:'manual',partes:null,reemb:p.reemb||'',parte:i,k:(m.k||chave(m))+'#'+i})):[m]);
@@ -707,7 +710,7 @@ const LEITORES=[{
   }}];
 function validar(r){let erros=0;for(let i=0;i<r.mov.length-1;i++){const a=r.mov[i],b=r.mov[i+1];if(a.saldo==null||b.saldo==null)continue;if(Math.abs(r2(a.saldo-a.valor)-b.saldo)>0.011)erros++}
   const fin=r.saldoFinal!=null&&r.mov.length?Math.abs(r.mov[0].saldo-r.saldoFinal)<0.011:null;return {erros,fin}}
-const chave=m=>m.k?'man|'+m.k:[m.banco,m.conta,m.dm,m.dv,m.desc0||m.desc,m.valor.toFixed(2),m.saldo==null?'':m.saldo.toFixed(2)].join('|')+(m.rep?'#'+m.rep:''); // rep: n.º do movimento igual no mesmo ficheiro (contas sem saldo)
+const chave=m=>m.k?'man|'+m.k:[m.banco,m.conta,m.dm0||m.dm,m.dv,m.desc0||m.desc,m.valor.toFixed(2),m.saldo==null?'':m.saldo.toFixed(2)].join('|')+(m.rep?'#'+m.rep:''); // rep: n.º do movimento igual no mesmo ficheiro (contas sem saldo)
 
 /* ================= regras (categoria) ================= */
 function corresponde(r,m){
@@ -1052,7 +1055,7 @@ function extMostraId(id){const i=EXT.rows.findIndex(m=>m.id===id);if(i>=EXT.n)ex
 let RV=0;const DESENHADA={};const abaAtiva=()=>(($('nav.tabs button.on')||{}).dataset||{}).tab||'home';
 function render(){
   RV++;const TAB=abaAtiva();DESENHADA[TAB]=RV;
-  const [a,b]=range();const all=DB.mov,per=all.filter(m=>m.dm>=a&&m.dm<=b),allX=expande(all),perX=expande(per),perC=perX.filter(contaInicio);
+  const [a,b]=range();const all=DB.mov,per=all.filter(m=>m.dm>=a&&m.dm<=b),allX=expandeC(all),perX=allX.filter(m=>m.dm>=a&&m.dm<=b),perC=perX.filter(contaInicio);
   const reembP=perC.filter(eReemb).reduce((s,m)=>s+m.valor,0),ent=perC.filter(m=>m.valor>0&&!eReemb(m)).reduce((s,m)=>s+m.valor,0),sai=-perC.filter(m=>m.valor<0).reduce((s,m)=>s+m.valor,0)-reembP;
   const unc=ordena(per.filter(isUnc));
   const quems=uniq(DB.pessoas.map(p=>p.pessoa).concat(all.map(m=>m.quem)));
@@ -1193,7 +1196,7 @@ function renderDespesas(per,k){
   renderDesEdit(norm_,fora);return;
   /* média mensal: últimos 12 meses até ao fim do período, a dividir pelos meses com movimentos */
   const fimM=b.slice(0,7),iniD=new Date(+fimM.slice(0,4),+fimM.slice(5,7)-12,1),iniM=`${iniD.getFullYear()}-${pad(iniD.getMonth()+1)}`;
-  const u12=expande(DB.mov).filter(m=>{const x=m.dm.slice(0,7);return x>=iniM&&x<=fimM}),n12=Math.max(1,new Set(u12.map(m=>m.dm.slice(0,7))).size);
+  const u12=expandeC(DB.mov).filter(m=>{const x=m.dm.slice(0,7);return x>=iniM&&x<=fimM}),n12=Math.max(1,new Set(u12.map(m=>m.dm.slice(0,7))).size);
   const med=(c,r)=>liqP(u12,c,r)/n12;
   const bloco=({c,ci},isF)=>{
     const semRef=isF?saiP(per,c.nome,''):liqP(per,c.nome,'');
@@ -1225,7 +1228,7 @@ const prevAno=()=>PREVY!=null?PREVY:anoIni(P.d).getFullYear();
 function renderPrev(){const Y=prevAno(),anos=[Y-2,Y-1,Y],cats=DB.cats.filter(c=>!eFora(c.nome)),pv=k=>pvK(Y,k),dono=PVde(Y);
   $('#pvAno').textContent=anoTxt(new Date(Y,MES1,1));$('#pvOnly').textContent=PVONLY?'Mostrar todas':'Só com valores';$('#pvOnly').classList.toggle('on',PVONLY);
   const hj=new Date(),yh=anoIni(hj).getFullYear(),div=y=>y<yh?12:y>yh?0:Math.max(1,(hj.getFullYear()-y)*12+hj.getMonth()-MES1+1);
-  const T={};expande(DB.mov).forEach(m=>{if(!m.cat||eFora(m.cat)||!m.ref)return;const y=anoDe(m.dm);if(!anos.includes(y))return;const k=m.cat+'›'+m.ref;(T[k]||(T[k]={}))[y]=((T[k]||{})[y]||0)-m.valor});
+  const T={};expandeC(DB.mov).forEach(m=>{if(!m.cat||eFora(m.cat)||!m.ref)return;const y=anoDe(m.dm);if(!anos.includes(y))return;const k=m.cat+'›'+m.ref;(T[k]||(T[k]={}))[y]=((T[k]||{})[y]||0)-m.valor});
   const tv=(k,y)=>(T[k]&&T[k][y])||0,md=(v,y)=>div(y)?v/div(y):0;
   const cy=y=>`<td class="num bl">${Math.abs(y.t)>.004&&div(y.y)?E(y.m):'<span class="muted">—</span>'}</td><td class="num">${Math.abs(y.t)>.004?E(y.t):'<span class="muted">—</span>'}</td>`;
   const linhas=[],porTipo={};let tot=0;
@@ -1261,7 +1264,7 @@ function renderDesEdit(norm_,fora){$('#desCats').closest('.card').classList.add(
   $('#desCats').innerHTML='<h4 class="des-t">Despesas <small>entram nas contas</small></h4>'+norm_.map(x=>bloco(x,false)).join('')+`<div class="addcat"><button class="btn sm" data-cadd="n">＋ Adicionar categoria</button></div>`
     +(fora.length?`<h4 class="des-t fora">Não entram nas contas</h4>`+fora.map(x=>bloco(x,true)).join(''):'')}
 function renderDesGrelha(norm_,fora,saiP,entP,prv,prvC){$('#desCats').closest('.card').classList.remove('desedit');
-  const ms=mesesGrelha(),X=expande(DB.mov).filter(m=>{const k=m.dm.slice(0,7);return k>=ms[0]&&k<=ms[11]}),porMes=ms.map(p=>X.filter(m=>m.dm.startsWith(p)));
+  const ms=mesesGrelha(),X=expandeC(DB.mov).filter(m=>{const k=m.dm.slice(0,7);return k>=ms[0]&&k<=ms[11]}),porMes=ms.map(p=>X.filter(m=>m.dm.startsWith(p)));
   const nMes=Math.max(1,porMes.filter(l=>l.length).length),sel=P.m==='mes'?`${P.d.getFullYear()}-${pad(P.d.getMonth()+1)}`:'';
   const vM=(l,c,r,isF)=>isF?entP(l,c,r)-saiP(l,c,r):saiP(l,c,r)-entP(l,c,r);
   const lab=k=>`${MES3[+k.slice(5)-1].toUpperCase()}/${k.slice(2,4)}`;
@@ -1297,7 +1300,7 @@ function renderDesGrelha(norm_,fora,saiP,entP,prv,prvC){$('#desCats').closest('.
     <tr class="tot"><td class="nm">Total</td>${tf.map((v,i)=>`<td class="num${ms[i]===sel?' msel':''}">${Math.abs(v)>.004?val(v):'–'}</td>`).join('')}<td class="num">${val(tft)}</td><td class="num">${val(tft/nMes)}</td><td></td></tr></tbody></table></div>`:'');
 }
 function renderDesAno(norm_,fora,saiP,entP,prv,prvC){
-  const y=P.d.getFullYear(),ms=MESES.map((_,i)=>`${y}-${pad(i+1)}`),doAno=expande(DB.mov).filter(m=>m.dm.startsWith(y+'-'));
+  const y=P.d.getFullYear(),ms=MESES.map((_,i)=>`${y}-${pad(i+1)}`),doAno=expandeC(DB.mov).filter(m=>m.dm.startsWith(y+'-'));
   const porMes=ms.map(p=>doAno.filter(m=>m.dm.startsWith(p)));
   const nMes=Math.max(1,porMes.filter(l=>l.length).length); // meses com movimentos importados
   const cel=v=>`<td class="num">${Math.abs(v)>.004?E(v):'—'}</td>`;
@@ -1667,10 +1670,10 @@ function volta(){const v=VOLTA;$('#voltaBt').hidden=true;clearTimeout(VOLTA_T);V
 /* v0.10k: Despesas — clicar num valor abre uma mini janela com os movimentos desse valor; clicar num movimento leva aos Extratos */
 let DG_T=0;
 function abreDgo(td,spec){const [k,c,r]=spec.split('|'),ms=mesesGrelha(),pop=$('#dgPop');
-  const L=expande(DB.mov).filter(m=>m.cat===c&&(r==='*'||(r===''?!m.ref:m.ref===r))&&(k==='ANO'?(m.dm.slice(0,7)>=ms[0]&&m.dm.slice(0,7)<=ms[11]):m.dm.startsWith(k))).sort((a,b)=>a.dm<b.dm?-1:a.dm>b.dm?1:0);
+  const L=expandeC(DB.mov).filter(m=>m.cat===c&&(r==='*'||(r===''?!m.ref:m.ref===r))&&(k==='ANO'?(m.dm.slice(0,7)>=ms[0]&&m.dm.slice(0,7)<=ms[11]):m.dm.startsWith(k))).sort((a,b)=>a.dm<b.dm?-1:a.dm>b.dm?1:0);
   const tot=L.reduce((s,m)=>s+m.valor,0),per=k==='ANO'?anoTxt(new Date(+ms[0].slice(0,4),+ms[0].slice(5,7)-1,1)):`${MESES[+k.slice(5)-1]} ${k.slice(0,4)}`;
   pop.innerHTML=`<div class="dh"><b title="${esc(c)}${r!=='*'?' › '+esc(r||'(sem referência)'):''}">${esc(c)}${r!=='*'?' › '+esc(r||'(sem referência)'):''} <small class="muted">· ${esc(per)}</small></b><button type="button" data-dgfecha aria-label="Fechar">✕</button></div>
-    <div class="dl"><table><tbody>${L.map(m=>`<tr class="clk" data-dgmov="${esc(m.k||chave(m))}" title="Ver nos Extratos"><td style="white-space:nowrap">${fmtD(m.dm)}</td><td class="dsc">${esc(m.pdesc||m.desc)}</td><td class="num">${val(m.valor)}</td></tr>`).join('')||'<tr><td class="muted">Sem movimentos</td></tr>'}</tbody></table></div>
+    <div class="dl"><table><tbody>${L.map(m=>`<tr class="clk" data-dgmov="${esc(m.k||chave(m))}" title="Ver nos Extratos"><td style="white-space:nowrap"${m.dm0?` title="Reembolso recebido a ${fmtD(m.dm0)}; conta na data da despesa"`:''}>${fmtD(m.dm)}${m.dm0?' ↩':''}</td><td class="dsc">${esc(m.pdesc||m.desc)}</td><td class="num">${val(m.valor)}</td></tr>`).join('')||'<tr><td class="muted">Sem movimentos</td></tr>'}</tbody></table></div>
     <div class="df"><span>${L.length} movimento${L.length===1?'':'s'} · ${val(tot)}</span><button class="btn sm" type="button" data-dgox="${esc(spec)}">Ver todos nos Extratos →</button></div>`;
   pop.hidden=false;DG_T=Date.now();const R=td.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight;let x=Math.min(innerWidth-pw-10,Math.max(10,R.left+R.width/2-pw/2)),y=R.bottom+6;if(y+ph>innerHeight-8)y=Math.max(8,R.top-ph-6);pop.style.left=x+'px';pop.style.top=y+'px'}
 document.addEventListener('click',e=>{const pop=$('#dgPop');if(pop.hidden)return;const m=e.target.closest('[data-dgmov]');if(m){pop.hidden=true;irMovimento(m.dataset.dgmov);return}
@@ -1781,7 +1784,7 @@ document.addEventListener('click',e=>{
   if(d.cmv){e.preventDefault();const [i,dd]=d.cmv.split('|').map(Number);if(moveArr(DB.cats,i,dd)){save();render()}return}
   if(d.rmv){const [ci,ri,dd]=d.rmv.split('|').map(Number);if(moveArr(DB.cats[ci].refs,ri,dd)){save();render()}return}
   if(d.cadd){const n=prompt('Nome da nova categoria:');if(!n||!n.trim())return;if(DB.cats.some(c=>c.nome===n.trim()))return toast('Já existe');const i=DB.cats.findIndex(c=>eFora(c.nome));DB.cats.splice(i<0?DB.cats.length:i,0,{id:uid('c'),nome:n.trim(),refs:[]});save();render();return}
-  if(d.pvusa){const Y=prevAno(),k=d.pvusa;let t=0;expande(DB.mov).forEach(m=>{if(m.cat+'›'+m.ref===k&&anoDe(m.dm)===Y-1)t-=m.valor});const o=PVW(Y);if(t/12>.004)o[k]=Math.round(t/12*100)/100;else delete o[k];save();render();return}
+  if(d.pvusa){const Y=prevAno(),k=d.pvusa;let t=0;expandeC(DB.mov).forEach(m=>{if(m.cat+'›'+m.ref===k&&anoDe(m.dm)===Y-1)t-=m.valor});const o=PVW(Y);if(t/12>.004)o[k]=Math.round(t/12*100)/100;else delete o[k];save();render();return}
   if(d.corq!=null){e.preventDefault();const p=$('#corPop'),n=d.corq,eR=n.startsWith('r:'),ro=eR?corRefO(n.slice(2)):null,cur=eR?(ro?ro.c:''):corEsc(n);p.innerHTML=PALETA.map(c=>`<button type="button" data-corset="${c}" class="${c===cur?'on':''}" style="background:color-mix(in srgb,${c} 45%,transparent)" title="${c}"></button>`).join('')+(eR?`<label><input type="checkbox" id="corExt"${ro&&ro.ext?' checked':''}> Pintar só nos Extratos (não pinta as Despesas)</label>`:'')+`<button type="button" class="sem" data-corset="">Sem cor${eR?' (usa a da categoria)':''}</button>`;p.dataset.n=n;const r=t.getBoundingClientRect();p.style.left=Math.min(innerWidth-220,r.left)+'px';p.style.top=(r.bottom+6)+'px';p.hidden=false;return}
   if(d.corset!=null){const n=$('#corPop').dataset.n;if(n.startsWith('r:')){const k=n.slice(2);DB.corRef=DB.corRef||{};if(d.corset)DB.corRef[k]={c:d.corset,...($('#corExt')&&$('#corExt').checked?{ext:1}:{})};else delete DB.corRef[k]}else{DB.corCat=DB.corCat||{};if(d.corset)DB.corCat[n]=d.corset;else delete DB.corCat[n]}$('#corPop').hidden=true;save();render();return}
   if(d.dtog!=null){DES.fech.has(d.dtog)?DES.fech.delete(d.dtog):DES.fech.add(d.dtog);render();return}
@@ -1899,7 +1902,7 @@ $('#desCats').addEventListener('toggle',e=>{const d=e.target;if(!d.matches||!d.m
 $('#pvNav').addEventListener('click',e=>{const b=e.target.closest('[data-pvy]');if(!b)return;PREVY=prevAno()+(+b.dataset.pvy);render()});
 $('#pvOnly').addEventListener('click',()=>{PVONLY=!PVONLY;render()});
 $('#pvUsar').addEventListener('click',()=>{const Y=prevAno();if(!confirm(`Substituir a previsão de ${anoTxt(new Date(Y,MES1,1))} pela média mensal de ${anoTxt(new Date(Y-1,MES1,1))} em todas as referências?`))return;
-  const T={};expande(DB.mov).forEach(m=>{if(!m.cat||eFora(m.cat)||!m.ref||anoDe(m.dm)!==Y-1)return;const k=m.cat+'›'+m.ref;T[k]=(T[k]||0)-m.valor});
+  const T={};expandeC(DB.mov).forEach(m=>{if(!m.cat||eFora(m.cat)||!m.ref||anoDe(m.dm)!==Y-1)return;const k=m.cat+'›'+m.ref;T[k]=(T[k]||0)-m.valor});
   const o=PVW(Y);DB.cats.filter(c=>!eFora(c.nome)).forEach(c=>c.refs.forEach(r=>{const k=c.nome+'›'+r,v=(T[k]||0)/12;if(v>.004)o[k]=Math.round(v*100)/100;else delete o[k]}));save();render()});
 $('#pvLimpa').addEventListener('click',()=>{const Y=prevAno();if(!confirm(`Apagar a previsão de ${anoTxt(new Date(Y,MES1,1))}?`))return;PA()[Y]={};save();render()});
 $('#desGrp').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;DES.grp=b.dataset.g;try{localStorage.setItem('fp_desgrp',DES.grp)}catch(x){}render()});
