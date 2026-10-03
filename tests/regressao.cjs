@@ -579,6 +579,16 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     d.querySelector('#desCats td.clk[data-dgo]').click();await W(50);const qm=d.querySelectorAll('#dgPop [data-dgmov] td').length>=4&&!!d.querySelector('#dgPop td.qm');d.querySelector('#dgPop').hidden=true;
     await w.fpCtx.apagaEx();w.go('home');ok({ok:ro&&fixo&&qm,ro,fixo,qm})}));
   t('D123','Despesas com títulos fixos que acompanham; mini janela com "Quem é"; nos Extratos "Quem é" só de leitura (vem das Pessoas)',z123.ok,z123);
+  const z124=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),chave=w.eval('chave');const sal=db.mov.filter(m=>/SALARIO/.test(m.desc));sal.forEach(m=>{m.cat='Rendimentos';m.ref='Salário';m.catSrc='manual'});
+    const m0=sal[sal.length-1];w.verMes(m0.dm);w.go('ren');d.querySelectorAll('#renAno tr.ra-m').forEach(tr=>tr.click());w.render();await W(50);
+    const xs=d.querySelectorAll('#renAno tr.ra-x').length,aviso=/recibo por ligar/.test(d.querySelector('#renAno').textContent),liq=/1\s?720,00/.test(d.querySelector('#renKpis').textContent);
+    const o=d.querySelector('#raOrig');o.value='rec';o.dispatchEvent(new Event('change'));await W(30);const semX=d.querySelectorAll('#renAno tr.ra-x').length===0;o.value='';o.dispatchEvent(new Event('change'));
+    const g=d.querySelector('#raLig');g.value='sim';g.dispatchEvent(new Event('change'));await W(30);const ligSo=d.querySelectorAll('#renAno tr.ra-x').length===0;g.value='';g.dispatchEvent(new Event('change'));
+    const nAntes=w.rendExt().length;db.rend.push({id:'rT',tipo:'pon',data:m0.dm,entidade:'Empresa Exemplo',desc:'Vencimento',ref:'Salário',bruto:1720,irs:0,ss:0,outros:0,vale:0,liquido:1720,lk:{t:chave(m0)},lkMan:{t:true},u:Date.now()});w.render();await W(30);
+    const n0=w.rendExt().length;w.render();const saiu=n0===sal.length-1&&!w.rendExt().some(r=>r.mov.id===m0.id);db.rend=db.rend.filter(r=>r.id!=='rT');
+    await w.fpCtx.apagaEx();w.go('home');ok({ok:xs>=1&&aviso&&liq&&semX&&ligSo&&saiu&&nAntes===sal.length,xs,aviso,liq,semX,ligSo,saiu})}));
+  t('D124','Rendimentos: entradas do extrato em Rendimentos sem recibo aparecem com "recibo por ligar" e contam no líquido; saem quando um recibo/rendimento as liga; filtros Origem e Ligação',z124.ok,z124);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

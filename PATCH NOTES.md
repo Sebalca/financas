@@ -155,10 +155,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D121 **Reembolso ligado (↩) conta na data da despesa original** — também cada linha de um movimento dividido — em todas as contas: Início (caixas, gráficos, previsto vs real, 🧮), Despesas (grelha, médias, mini janela), Previsões (anos anteriores, "média do ano anterior"). Nos Extratos e no saldo por banco o movimento fica na data real em que o dinheiro entrou. Reembolsos sem ligação contam na data em que entraram. (Internamente `expandeC` desloca `dm` e guarda a data real em `dm0`; a chave do movimento usa sempre a data real.)
 - D122 **Extratos e movimentos divididos**: os filtros de categoria/referência e a pesquisa de texto olham para **cada linha** do movimento dividido (descrição, categoria, referência, observações e a despesa do reembolso); o movimento aparece aberto só com as linhas que batem e os totais do cabeçalho contam só essas linhas. Se a pesquisa bater na descrição do próprio movimento, mostra todas as linhas. **Mini janela das Despesas**: a data é a do extrato (a conta continua na data da despesa, D121; ↩ e explicação ao passar o rato); clicar num reembolso abre o movimento (antes dava "Movimento não encontrado").
 - D123 **"Quem é" nos Extratos só de leitura**: preenche-se só pelas regras de Pessoas (⚙ Regras e pessoas); na lista e na edição em massa não se escreve (os movimentos em dinheiro adicionados à mão continuam a ter o campo). **Despesas**: títulos da grelha numa barra fixa que acompanha o scroll (como nas Previsões). **Mini janela**: coluna "Quem é" (numa linha de movimento dividido, o do movimento original).
+- D124 **Rendimentos e extrato**: as entradas dos Extratos na categoria Rendimentos que **não estão ligadas** a um recibo/rendimento aparecem no Resumo anual (etiqueta "extrato", "⚠ recibo por ligar", clicável para o movimento) e contam no **Líquido** (não no bruto, IRS, SS nem ordenado). Quando um recibo/rendimento as liga (🔗), a linha do extrato sai e fica a do recibo. Filtros no Resumo anual: **Origem** (todas / com recibo ou rendimento / só extrato) e **Ligação** (ligados e por ligar / só ligados / só por ligar), além da entidade.
 
 ---
 
 ## Histórico
+
+### v0.10o — 03/10/2026
+- Rendimentos do extrato sem recibo na aba Rendimentos, com filtros de origem e ligação (D124).
 
 ### v0.10n — 03/10/2026
 - Despesas com títulos fixos, "Quem é" na mini janela, "Quem é" só de leitura nos Extratos (D123).
