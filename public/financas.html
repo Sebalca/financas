@@ -22,6 +22,10 @@
   --bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--soft:#1c222b;
   --ac:#7d9bff;--ac2:#1c2740;--ok:#3ecf95;--neg:#ff7d62;--warn:#f0b35a;
   --c1:#3ecf95;--c2:#ff6f86;--c3:#f5a543;--c4:#7d9bff;--c5:#b393ff;--c6:#4cc9d9;--c7:#c9937a;--c8:#7b8594;--sh:none;color-scheme:dark}
+/* v0.10j: dentro de um agregado os botões e destaques ficam a roxo (a cor do agregado) */
+html:root.ctxAgr{--ac:#7b1fa2;--ac2:#f3e5f5}
+@media (prefers-color-scheme:dark){html:root.ctxAgr:not([data-theme=light]){--ac:#ce93d8;--ac2:#33203d}}
+html:root.ctxAgr[data-theme=dark]{--ac:#ce93d8;--ac2:#33203d}
 html{zoom:.9}
 *{box-sizing:border-box}
 html{overflow-y:scroll;scrollbar-gutter:stable}
@@ -322,6 +326,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
   #extTable td.c-det{grid-column:2/5;font-size:12px!important}#extTable td.c-det:empty{display:none}#extTable td.c-bk{grid-column:2/3;font-size:12px;color:var(--mu)}#extTable td.acts{grid-column:3/5;justify-self:end;white-space:nowrap}
   #extTable tr.parte{display:flex;flex-wrap:wrap;gap:6px;padding:6px 0 6px 34px}#extTable tr.parte>td{padding:0;border:0}#extTable tr.parte>td:empty{display:none}#extTable tr.mais,#extTable tr.fim{display:block}#extTable tr.mais>td,#extTable tr.fim>td{display:block}
   .extbar{position:static}.exban .tx,.exban .t2{display:none}.exban{flex-wrap:nowrap}.exban{padding:6px 10px;margin-top:6px}}
+.voltabt{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:60;border:0;border-radius:999px;background:var(--ac);color:#fff;font:700 14px system-ui,sans-serif;padding:10px 18px;box-shadow:0 8px 22px rgba(0,0,0,.25);cursor:pointer}.voltabt[hidden]{display:none}
 .exban{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 0;padding:9px 14px;border:1px dashed var(--ac);border-radius:12px;background:var(--ac2);font-size:13.5px}.exban .r{margin-left:auto;display:flex;gap:6px}.exban[hidden]{display:none}
 .syncst.ex{color:var(--ac)}
 .syncst{border:1px solid var(--bd);background:var(--card);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--mu);cursor:pointer;margin-left:auto;white-space:nowrap}
@@ -353,7 +358,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
     <button type="button" data-tab="fat">Faturas</button>
     <button type="button" data-tab="saude">Saúde financeira</button>
   </nav>
-  <div class="dica" id="dica" hidden role="dialog" aria-label="Dica"></div><div class="infpop" id="infPop" hidden role="tooltip"></div>
+  <button class="voltabt" id="voltaBt" type="button" hidden>↩ Voltar ao reembolso</button><div class="dica" id="dica" hidden role="dialog" aria-label="Dica"></div><div class="infpop" id="infPop" hidden role="tooltip"></div>
   <div class="exban" id="exBan" hidden>🧪 <b>Conta de exemplo</b><span class="tx"> — movimentos fictícios, só neste browser, separados dos seus dados. Explore à vontade.</span><span class="r"><button class="btn sm" type="button" data-exb="p">👤 <span class="t2">Voltar ao </span>Pessoal</button><button class="btn sm" type="button" data-exb="x" title="Apagar a conta de exemplo">🗑 Apagar</button></span></div>
 </div></div>
 
@@ -525,7 +530,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 </div></div></div>
 <div class="modal" id="mReemb" hidden><div class="sheet wide"><div class="mh"><h3>Reembolso</h3><button class="mx" type="button" data-close="mReemb" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
  <div class="rbcab" id="rbDesc"></div>
- <div class="rbbar"><span id="rbInfo" class="note" style="margin:0"></span><span style="flex:1"></span><button class="btn sm" id="rbPost" type="button" hidden title="Mostrar as saídas depois da data do reembolso">Posteriores</button><input type="search" id="rbQ" placeholder="Pesquisar descrição ou valor…" hidden><button class="btn sm" id="rbTodas" type="button" data-rbtodas>Mostrar todas</button></div>
+ <div class="rbbar"><span id="rbInfo" class="note" style="margin:0"></span><span style="flex:1"></span><button class="btn sm" id="rbPost" type="button" hidden title="Mostrar as saídas depois da data do reembolso">Posteriores</button><input type="search" id="rbQ" placeholder="Pesquisar descrição, valor, categoria ou quem é…"><button class="btn sm" id="rbMais" type="button" title="Mostrar também as saídas de valor igual ou maior de mais um mês para trás">＋ Sugerir mais</button><button class="btn sm" id="rbTodas" type="button" data-rbtodas>Mostrar todas</button></div>
  <div id="rbCat" class="rbcat" hidden></div>
  <div class="tw" id="rbList"></div></div></div></div>
 <div class="modal" id="mSplit" hidden><div class="sheet wide"><div class="mh"><h3 style="flex:1">Dividir movimento</h3><span class="spinfo"><button class="mx" type="button" id="spInfo" aria-label="Ajuda" title="Como funciona" aria-expanded="false">ⓘ</button><span class="spbal" id="spAjuda" role="tooltip" hidden>Divida o valor por várias categorias: escreva as outras linhas e a 1.ª fica com o resto (valor original − outras linhas). Nas contas passam a contar as linhas. Numa entrada, cada linha pode ser reembolso de uma despesa (↩).</span></span><button class="mx" type="button" data-close="mSplit" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
@@ -538,7 +543,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.10i'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10j'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -847,7 +852,7 @@ async function importar(files){
   save();
   res.forEach(x=>trk(x.ok?'import':'import_falhou',x.ok?{banco:x.r.banco,linhas:x.r.mov.length,novos:x.novos,dup:x.dup}:{ext:(String(x.f).split('.').pop()||'').toLowerCase().slice(0,6),banco:$('#bankSel').value||'auto',motivo:String(x.msg).slice(0,150)}));
   $('#impRes').innerHTML=res.map(x=>x.ok?`<div class="imp ok">✓ <b>${esc(x.f)}</b> — ${esc(x.r.banco)}${x.r.conta?` · conta ${esc(x.r.conta)}`:''} · ${fmtD(x.r.inicio)} a ${fmtD(x.r.fim)}<br><b>${x.novos}</b> movimentos novos${x.novos?` (${x.auto} categorizados pelas regras)`:''}${x.dup?` · ${x.dup} já existiam (ignorados)`:''}${x.elim?` · ${x.elim} tinham sido eliminados (não entraram)`:''} · ${x.r.mov.every(m=>m.saldo==null)?'sem saldos no ficheiro':x.v.erros===0?'✓ saldos consistentes':`⚠ ${x.v.erros} saldos não batem certo`}${x.v.fin===true?` · saldo final ${E(x.r.saldoFinal)} ✓`:x.v.fin===false?' · ⚠ saldo final diferente':''}${x.gen?`<br><span style="font-size:12.5px">⚠ <b>Banco não reconhecido</b> — lemos as colunas de data, descrição e valor; confira os movimentos. Envie-nos um exemplo para o passarmos a ler.</span> <button class="btn sm" type="button" data-amostra="${esc(x.f)}">📨 Enviar exemplo (anónimo)</button>`:''}</div>`
-    :`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}${/\.(csv|txt|xlsx?)$/i.test(x.f)?`<br><span class="muted" style="font-size:12.5px">${NAO_LIDO}</span> <button class="btn sm" type="button" data-amostra="${esc(x.f)}">📨 Enviar exemplo (anónimo)</button>`:''}</div>`).join('');
+    :`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}${/\.(csv|txt|xlsx?)$/i.test(x.f)?`<br><span class="muted" style="font-size:12.5px">${NAO_LIDO}</span> <button class="btn sm" type="button" data-amostra="${esc(x.f)}">📨 Enviar exemplo (anónimo)</button>`:''}</div>`).join('')+(res.length?limpaBt('impRes'):'');
   const ok=res.filter(x=>x.ok);
   if(ok.length){const last=ok.map(x=>x.r.mov[0].dm).sort().pop();P.d=new Date(+last.slice(0,4),+last.slice(5,7)-1,1);P.m='mes';$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel()}
   render();
@@ -1028,7 +1033,7 @@ function extLinha(m){const {LG,RK,DS}=EXT.ctx,cm=m.cat?corMovC(m.cat,m.ref):'',t
     <td class="c-dt" title="${m.dv&&m.dv!==m.dm?'Data valor: '+fmtD(m.dv):''}">${fmtD(m.dm)}</td>${(o=>o?`<td class="desc" title="Reembolso de: ${esc(nomeMov(o))}\nDescrição no extrato: ${esc(m.desc)}">↩ ${esc(nomeMov(o))}</td>`:`<td class="desc" title="${esc(m.desc)}">${esc(m.desc)}</td>`)(m.reemb&&RK.get(m.reemb))}<td class="num" title="${m.man?(DS.has(m.id)?'Saldo: '+E(DS.get(m.id)):''):m.saldo==null?'':'Saldo: '+E(m.saldo)}">${val(m.valor)}</td>
     ${m.partes&&m.partes.length?`<td colspan="2" class="c-cat c-split"><button type="button" class="sptog" data-sptog="${m.id}" title="${SPOPEN.has(m.id)?'Esconder':'Mostrar'} as linhas" aria-expanded="${SPOPEN.has(m.id)}">${SPOPEN.has(m.id)?'▾':'▸'}</button><button class="btn sm${isUnc(m)?' unc':''}" data-split="${m.id}" title="Editar a divisão">✂ Dividido em ${m.partes.length}</button></td>`:`<td class="c-cat"><select class="ed${m.cat?'':' unc'}" data-f="cat"${tc?` style="background:${tc}"`:''}>${catOpts(m.cat)}</select>${m.catSrc==='regra'?'<span class="auto" title="Atribuído por uma regra">⚡</span>':m.catSrc==='rend'?'<span class="auto" title="Atribuído pela ligação a um rendimento">🔗</span>':''}</td>
     <td class="c-ref"><select class="ed${m.cat&&!m.ref?' unc':''}" data-f="ref"${m.cat?'':' disabled'}>${refOpts(m.cat,m.ref)}</select></td>`}
-    <td class="muted c-det" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:(m.reemb&&RK.get(m.reemb)?`<span class="lk ok" data-golk="${esc(m.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(m.reemb)))}</span>`:esc(m.det)))(LG.get(chave(m)))}</td>
+    <td class="muted c-det" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:(m.reemb&&RK.get(m.reemb)?`<span class="lk ok" data-golk="${esc(m.reemb)}" title="${fmtD(RK.get(m.reemb).dm)}">↩ ${esc(nomeMov(RK.get(m.reemb)))}</span>`:esc(m.det)))(LG.get(chave(m)))}</td>
     <td class="c-obs"><input class="ed obs" data-f="obs" value="${esc(m.obs)}" placeholder="Observações…" aria-label="Observações"></td>
     <td class="c-quem"><input class="ed" data-f="quem" list="dlQuem" placeholder="Quem é" aria-label="Quem é" value="${esc(m.quem)}" style="width:110px"></td>
     <td class="c-bk">${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td class="acts"><span class="sl">${m.valor>0&&!LG.get(chave(m))&&!(m.partes&&m.partes.length)?`<button class="btn ic sm" data-reemb="${m.id}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"><button class="btn ic sm" data-split="${m.id}" title="Dividir em várias linhas">✂</button></span><span class="sl">${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button>`:''}</span><span class="sl"><button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></span></td></tr>${m.partes&&m.partes.length&&SPOPEN.has(m.id)?m.partes.map((p,i)=>`<tr class="parte" data-pid="${m.id}#${i}"><td></td><td></td><td class="desc">↳ ${esc(p.desc||'parte '+(i+1))}</td><td class="num">${val(p.valor)}</td><td>${p.cat?esc(p.cat):'<span class="tag wait">Por categorizar</span>'}</td><td>${esc(p.ref||'—')}</td><td class="muted" style="white-space:normal;font-size:12px">${p.reemb&&RK.get(p.reemb)?`<span class="lk ok" data-golk="${esc(p.reemb)}" title="Ir para a despesa original">↩ Reembolso de ${esc(nomeMov(RK.get(p.reemb)))}</span>`:''}</td><td><input class="obs pobs" data-pobs="${m.id}#${i}" value="${esc(p.obs||'')}" placeholder="…" aria-label="Observações da linha"></td><td colspan="2"></td><td class="acts"><span class="sl">${p.valor>0?`<button class="btn ic sm" data-reembp="${m.id}#${i}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"></span><span class="sl"></span><span class="sl"></span></td></tr>`).join(''):''}`}
@@ -1110,7 +1115,8 @@ function render(){
   const resumo=DB.cats.filter(c=>!eFora(c.nome)).map(c=>{const yH=anoIni(P.d).getFullYear(),p=c.refs.reduce((s,r)=>s+pvK(yH,c.nome+'›'+r),0)*k,r=-perX.filter(m=>m.cat===c.nome).reduce((s,m)=>s+m.valor,0);return {c,p,r}}).filter(x=>(x.p||Math.abs(x.r)>.004));
   $$('[data-dpct]').forEach(sg=>[...sg.children].forEach(b=>b.classList.toggle('on',!!b.dataset.v===DPCT.has(sg.dataset.dpct))));
   $('#homeBudget').innerHTML=resumo.length?`<table class="t pvr"><thead><tr><th>Categoria</th><th class="num">Real / previsto</th><th style="width:55%"></th></tr></thead><tbody>${resumo.map(({c,p,r})=>{const mx=Math.max(p*1.1,r)||1,over=p>0&&r>p+.004,cor=over?'var(--c2)':p?corCat(c.nome):'var(--c8)';
-    return `<tr><td><i class="dot" style="background:${corCat(c.nome)}"></i>${esc(c.nome)}</td><td class="num${over?' neg':''}">${E(r)} <span class="muted">/ ${p?E(p):'—'}</span></td><td><div class="pvbar" title="${over?`Acima do previsto em ${E(r-p)}`:p?`Faltam ${E(p-r)} para o previsto`:'Sem previsão'}"><i style="width:${Math.max(0,r/mx*100)}%;background:${cor}"></i>${p?`<b style="left:${p/mx*100}%"></b>`:''}</div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem valores no período</b></div>';
+    const F=100/1.1,w=p?Math.min(100,Math.max(0,r/p*F)):100,cb=p?(over?'var(--c2)':'var(--ac)'):'var(--c8)'; // v0.10j: traço do previsto fixo; a barra passa-o quando o real ultrapassa
+    return `<tr><td><i class="dot" style="background:${corCat(c.nome)}"></i>${esc(c.nome)}</td><td class="num${over?' neg':''}">${E(r)} <span class="muted">/ ${p?E(p):'—'}</span></td><td><div class="pvbar" title="${over?`Acima do previsto em ${E(r-p)}`:p?`Faltam ${E(p-r)} para o previsto`:'Sem previsão'}"><i style="width:${w}%;background:${cb}"></i>${p?`<b style="left:${F}%"></b>`:''}</div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem valores no período</b></div>';
   const last=ordena(per).slice(0,8);
   $('#homeLast').innerHTML=last.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th></tr></thead><tbody>${last.map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td>${m.cat?`<span class="tag">${esc(m.cat)}${m.ref?' · '+esc(m.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos no período</b></div>';
   $('#homeUncCnt').textContent=unc.length;
@@ -1425,16 +1431,20 @@ $('#spDesfaz').addEventListener('click',()=>{if(!SP)return;const p0=SP.partes[0]
 
 /* ================= reembolsos: escolher a despesa original ================= */
 let RB=null;
-let RB_TODAS=false,RB_O=null,RB_POST=false;
-function abreReemb(m){if(!m)return;RB=m;RB_TODAS=false;RB_POST=false;RB_O=null;$('#rbQ').value='';
+let RB_TODAS=false,RB_O=null,RB_POST=false,RB_MAIS=0;
+function abreReemb(m){if(!m)return;RB=m;RB_TODAS=false;RB_POST=false;RB_O=null;RB_MAIS=0;$('#rbQ').value='';
   $('#rbDesc').innerHTML=`<div class="d">${esc(m.desc)}</div><div class="v">${E(m.valor)}</div><div class="m">${fmtD(m.dm)}${m.quem?' · '+esc(m.quem):''}</div><div></div>`;
   listaReemb();$('#mReemb').hidden=false}
 function listaReemb(){const m=RB;if(!m)return;const v=Math.abs(m.valor);let c,info;
-  $('#rbQ').hidden=!RB_TODAS;$('#rbPost').hidden=!RB_TODAS;$('#rbPost').textContent=RB_POST?'Anteriores':'Posteriores';$('#rbPost').title=RB_POST?'Voltar às saídas até à data do reembolso':'Mostrar as saídas depois da data do reembolso';$('#rbTodas').textContent=RB_TODAS?'Só as sugeridas':'Mostrar todas';$('#rbCat').hidden=true;
-  if(RB_TODAS){const q=norm($('#rbQ').value);c=DB.mov.filter(o=>o.valor<0&&(!q||norm(o.desc+' '+Math.abs(o.valor).toFixed(2).replace('.',',')+' '+(o.cat||'')+' '+(o.ref||'')).includes(q))&&(RB_POST?o.dm>m.dm:o.dm<=m.dm)).sort((x,y)=>RB_POST?(x.dm<y.dm?-1:x.dm>y.dm?1:0):(x.dm<y.dm?1:x.dm>y.dm?-1:0));
+  $('#rbQ').hidden=false;$('#rbPost').hidden=!RB_TODAS;$('#rbMais').hidden=RB_TODAS;const q0=norm($('#rbQ').value),bate=o=>!q0||norm(o.desc+' '+Math.abs(o.valor).toFixed(2).replace('.',',')+' '+(o.cat||'')+' '+(o.ref||'')+' '+(o.quem||'')).includes(q0);$('#rbPost').textContent=RB_POST?'Anteriores':'Posteriores';$('#rbPost').title=RB_POST?'Voltar às saídas até à data do reembolso':'Mostrar as saídas depois da data do reembolso';$('#rbTodas').textContent=RB_TODAS?'Só as sugeridas':'Mostrar todas';$('#rbCat').hidden=true;
+  if(RB_TODAS){c=DB.mov.filter(o=>o.valor<0&&bate(o)&&(RB_POST?o.dm>m.dm:o.dm<=m.dm)).sort((x,y)=>RB_POST?(x.dm<y.dm?-1:x.dm>y.dm?1:0):(x.dm<y.dm?1:x.dm>y.dm?-1:0));
     info=`${c.length} saídas ${RB_POST?'depois de':'até'} ${fmtD(m.dm)}${RB_POST?' (mais próximas primeiro)':' (mais recentes primeiro)'}${c.length>200?' — mostram-se 200':''}`;c=c.slice(0,200)}
   else{const cand=DB.mov.filter(o=>o.valor<0&&Math.abs(o.valor)>v&&o.dm<=m.dm);const dia=cand.map(o=>o.dm).sort().pop();
-    c=dia?cand.filter(o=>o.dm===dia):[];info=dia?`Saídas de ${fmtD(dia)} maiores do que ${E(v)}`:'Não há saídas maiores neste dia nem antes'}
+    c=dia?cand.filter(o=>o.dm===dia):[];info=dia?`Saídas de ${fmtD(dia)} maiores do que ${E(v)}`:'Não há saídas maiores neste dia nem antes';
+    if(RB_MAIS){const d0=new Date(m.dm+'T12:00:00');d0.setMonth(d0.getMonth()-RB_MAIS);const ini=d0.toISOString().slice(0,10),ids=new Set(c.map(o=>o.id));
+      c=c.concat(DB.mov.filter(o=>o.valor<0&&Math.abs(o.valor)>=v-.004&&o.dm<=m.dm&&o.dm>=ini&&!ids.has(o.id)).sort((x,y)=>x.dm<y.dm?1:x.dm>y.dm?-1:0));
+      info=`Saídas iguais ou maiores do que ${E(v)} de ${fmtD(ini)} a ${fmtD(m.dm)} (${RB_MAIS} ${RB_MAIS===1?'mês':'meses'}, mais recentes primeiro)`}
+    c=c.filter(bate)}
   $('#rbInfo').textContent=info;
   $('#rbList').innerHTML=c.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th><th>Quem é</th><th></th></tr></thead><tbody>${c.map(o=>`<tr><td>${fmtD(o.dm)}</td><td class="desc">${esc(o.desc)}</td><td class="num">${val(o.valor)}</td><td>${o.partes&&o.partes.length?`<span class="tag">✂ dividido em ${o.partes.length}</span>`:o.cat?`<span class="tag">${esc(o.cat)}${o.ref?' · '+esc(o.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td><td>${esc(o.quem||'')}</td><td>${o.partes&&o.partes.length?'<span class="muted" style="font-size:12px">escolha a linha ↓</span>':`<button class="btn sm pri" data-rbsel="${o.id}">Escolher</button>`}</td></tr>${o.partes&&o.partes.length?o.partes.map((p,i)=>`<tr class="rbparte"><td></td><td class="desc">↳ ${esc(p.desc||'parte '+(i+1))}</td><td class="num">${val(p.valor)}</td><td>${p.cat?`<span class="tag">${esc(p.cat)}${p.ref?' · '+esc(p.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td><td></td><td><button class="btn sm pri" data-rbsel="${o.id}#${i}">Escolher</button></td></tr>`).join(''):''}`).join('')}</tbody></table>`
     :`<div class="empty"><b>${RB_TODAS?'Nenhuma saída encontrada':'Sem sugestões'}</b>${RB_TODAS?'':'Use "Mostrar todas" para procurar noutra data.'}</div>`}
@@ -1442,12 +1452,13 @@ function rbAlvo(id){const [pid,i]=String(id).split('#'),o=DB.mov.find(x=>x.id===
   const p=o.partes&&o.partes[+i];return p?{...o,id:o.id+'#'+i,valor:p.valor,cat:p.cat||'',ref:p.ref||'',obs:p.obs||'',partes:null,parte:+i,pai:o,pt:p,k:(o.k||chave(o))+'#'+i}:null}
 function aplicaReemb(m,o,cat,ref){if(!o.cat||!o.ref){o.cat=cat;o.ref=ref;if(o.pt){o.pt.cat=cat;o.pt.ref=ref;o.pai.u=Date.now()}else{o.catSrc='manual';o.u=Date.now()}}
   const key=o.pai?chaveParte(o.pai,o.parte):chave(o);
-  if(m._tr){const tr=m._tr,c=tr.querySelector('[data-spc]');c.value=o.cat;tr.querySelector('[data-spr]').innerHTML=refOpts(o.cat,o.ref);tr.dataset.reemb=key;tr.querySelector('.sprb').textContent='↩ Reembolso de '+nomeMov(o);const b=tr.querySelector('[data-spreemb]');if(b)b.classList.add('on');
+  if(m._tr){const tr=m._tr,c=tr.querySelector('[data-spc]');c.value=o.cat;tr.querySelector('[data-spr]').innerHTML=refOpts(o.cat,o.ref);tr.dataset.reemb=key;tr.querySelector('.sprb').textContent='↩ '+nomeMov(o);const b=tr.querySelector('[data-spreemb]');if(b)b.classList.add('on');
     save();$('#mReemb').hidden=true;RB=null;return}
   if(m._pai){const pt=m._pai.partes[m._i];pt.cat=o.cat;pt.ref=o.ref;pt.reemb=key;m._pai.u=Date.now();save();render();toast(`Reembolso de "${nomeMov(o)}" → ${o.cat}${o.ref?' › '+o.ref:''}`);$('#mReemb').hidden=true;RB=null;return}
   m.cat=o.cat;m.ref=o.ref;m.catSrc='manual';m.reemb=key;m.u=Date.now();save();render();toast(`Reembolso de "${nomeMov(o)}" → ${o.cat}${o.ref?' › '+o.ref:''}`);$('#mReemb').hidden=true;RB=null}
 $('#rbQ').addEventListener('input',listaReemb);
 $('#rbPost').addEventListener('click',()=>{RB_POST=!RB_POST;listaReemb()});
+$('#rbMais').addEventListener('click',()=>{RB_MAIS++;listaReemb()});
 $('#rbCat').addEventListener('change',e=>{if(e.target.id==='rbC')$('#rbR').innerHTML=refOpts(e.target.value,'')});
 
 /* ================= edição em massa ================= */
@@ -1641,7 +1652,13 @@ $('#raAbrir').addEventListener('click',()=>{RA.meses.forEach(m=>RA.open.add(m));
 $('#raFechar').addEventListener('click',()=>{RA.open.clear();render()});
 /* ---- navegar entre ligações ---- */
 function verMes(iso){P.m='mes';P.d=new Date(+iso.slice(0,4),+iso.slice(5,7)-1,1);$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel()}
-function realca(sel){requestAnimationFrame(()=>{const tr=document.querySelector(sel);if(!tr)return;const y=tr.getBoundingClientRect().top+scrollY-$('.stk').offsetHeight-60;window.scrollTo({top:Math.max(0,y),behavior:'smooth'});tr.classList.remove('flash');void tr.offsetWidth;tr.classList.add('flash')})}
+function realca(sel){requestAnimationFrame(()=>{const tr=document.querySelector(sel);if(!tr)return;const fx=el=>el&&el.offsetParent&&getComputedStyle(el).position==='sticky'?el.offsetHeight:0;
+  const y=tr.getBoundingClientRect().top+scrollY-$('.stk').offsetHeight-(tr.closest('#extTable')?fx($('#extBar'))+($('#extHead')?$('#extHead').offsetHeight:0):0)-12;window.scrollTo({top:Math.max(0,y),behavior:'smooth'});tr.classList.remove('flash');void tr.offsetWidth;tr.classList.add('flash')})}
+/* v0.10j: depois de "ir para a despesa", botão flutuante para voltar ao reembolso (com os filtros e o período de antes) */
+let VOLTA=null,VOLTA_T=null;
+function mostraVolta(){const b=$('#voltaBt');b.hidden=false;clearTimeout(VOLTA_T);VOLTA_T=setTimeout(()=>{b.hidden=true;VOLTA=null},20000)}
+function volta(){const v=VOLTA;$('#voltaBt').hidden=true;clearTimeout(VOLTA_T);VOLTA=null;if(!v)return;Object.entries(v.f).forEach(([i,x])=>{$('#'+i).value=x});
+  Object.assign(P,v.P);$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m===P.m));perLabel();go('ext',true);render();extMostraId(v.id);realca(`#extTable tr[data-id="${v.id}"]`)}
 function irMovimento(k){let m=DB.mov.find(x=>chave(x)===k),sel;
   if(!m){const p=mapaChaves().get(k);if(p&&p.parte!=null){m=DB.mov.find(x=>x.id===p.id.split('#')[0]);if(m){SPOPEN.add(m.id);sel=`#extTable tr[data-pid="${m.id}#${p.parte}"]`}}}
   if(!m){toast('Movimento não encontrado');return}
@@ -1691,12 +1708,14 @@ async function carregaRecibos(files){const res=[];
   const btRT=f=>`<button class="btn sm" type="button" data-amrec="${esc(f)}">📨 Enviar recibo tipo (anónimo)</button>`;
   $('#recRes').innerHTML=res.map(x=>!x.ok?`<div class="imp err">✕ <b>${esc(x.f)}</b> — ${esc(x.msg)}${/\.pdf$/i.test(x.f)?`<br><span class="muted" style="font-size:12.5px">${REC_NAO}</span> ${btRT(x.f)}`:' Pode adicionar à mão com ＋ Adicionar.'}</div>`
     :x.dup?`<div class="imp">↺ <b>${esc(x.f)}</b> — o recibo de ${mesTxt(x.r.mes)} já existe (ignorado).</div>`
-    :`<div class="imp ${x.r.ok?'ok':'err'}">${x.r.ok?'✓':'⚠'} <b>${esc(x.f)}</b> — ${mesTxt(x.r.mes)} · ${esc(x.r.entidade||'entidade?')} · bruto <b>${E(x.r.bruto)}</b> · IRS ${E(x.r.irs)} · SS ${E(x.r.ss)} · líquido <b>${E(x.r.liquido)}</b>${x.r.vale?` (transferência ${E(transfDe(x.r))} + cartão ${E(x.r.vale)})`:''} · ${x.r.ok?'totais conferem ✓':`os totais não conferem — verifique com ✏ ou envie-nos um recibo tipo ${btRT(x.f)}`}<br>${celLig(x.r,K)}</div>`).join('');
+    :`<div class="imp ${x.r.ok?'ok':'err'}">${x.r.ok?'✓':'⚠'} <b>${esc(x.f)}</b> — ${mesTxt(x.r.mes)} · ${esc(x.r.entidade||'entidade?')} · bruto <b>${E(x.r.bruto)}</b> · IRS ${E(x.r.irs)} · SS ${E(x.r.ss)} · líquido <b>${E(x.r.liquido)}</b>${x.r.vale?` (transferência ${E(transfDe(x.r))} + cartão ${E(x.r.vale)})`:''} · ${x.r.ok?'totais conferem ✓':`os totais não conferem — verifique com ✏ ou envie-nos um recibo tipo ${btRT(x.f)}`}<br>${celLig(x.r,K)}</div>`).join('')+(res.length?limpaBt('recRes'):'');
   const ok=res.filter(x=>x.ok&&!x.dup);if(ok.length){const last=ok.map(x=>x.r.mes).sort().pop();RA.open.add(last);P.d=new Date(+last.slice(0,4),+last.slice(5,7)-1,1);P.m='mes';$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel()}
   render()}
 
 function apagaRend(r){DB.delR=(DB.delR||[]).concat(r.id).slice(-500);DB.rend=DB.rend.filter(x=>x!==r);autoLiga();$('#mRend').hidden=true;RD=null;save();render()}
 $('#btRec').addEventListener('click',()=>$('#fRec').click());
+const limpaBt=id=>`<div style="text-align:right;margin-top:4px"><button class="btn sm" type="button" data-limpares="${id}" title="Limpar estas mensagens">✕ Limpar</button></div>`;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-limpares]');if(b){const el=document.getElementById(b.dataset.limpares);if(el)el.innerHTML=''}});
 $('#recRes').addEventListener('click',e=>{const b=e.target.closest('[data-amrec]');if(b)window.fpAmostraRec(b.dataset.amrec)});
 $('#fRec').addEventListener('change',()=>{const fs=[...$('#fRec').files];$('#fRec').value='';if(fs.length){$('#recRes').innerHTML='<div class="imp">A ler…</div>';carregaRecibos(fs)}});
 $('#rdTipo').addEventListener('click',e=>{const b=e.target.closest('button');if(b)rdTipo(b.dataset.t)});
@@ -1773,7 +1792,8 @@ document.addEventListener('click',e=>{
   if(d.gorent!=null){RA.ent=d.gorent;go('ren');render();return}
   if(d.gouncq!=null){limpaFiltros();render();$('#fCat').value='__unc';$('#fQ').value=d.gouncq;go('ext');render();return}
   if('gounc' in d){limpaFiltros();render();$('#fCat').value='__unc';go('ext');render();return}
-  if(d.golk){irMovimento(d.golk);return}
+  if(d.golk){const de=t.closest('#extTable tr[data-id]');if(de)VOLTA={id:de.dataset.id,f:Object.fromEntries(['fQ','fBanco','fCat','fRef','fQuem','fTipo'].map(i=>[i,$('#'+i).value])),P:{m:P.m,d:new Date(P.d),ini:P.ini,fim:P.fim}};
+    irMovimento(d.golk);if(de)mostraVolta();return}
   if(d.gorend){irRendimento(d.gorend);return}
   if(d.ram){RA.open.has(d.ram)?RA.open.delete(d.ram):RA.open.add(d.ram);render();return}
   if(d.radd2){abreRend(null,d.radd2);return}
@@ -2049,6 +2069,8 @@ document.addEventListener('click',e=>{const p=$('#infPop'),b=e.target.closest('.
   p.textContent=txt;p.hidden=false;const r=b.getBoundingClientRect(),pw=p.offsetWidth;p.style.left=Math.min(innerWidth-pw-10,Math.max(10,r.left-20))+'px';const ph=p.offsetHeight;p.style.top=(r.bottom+6+ph>innerHeight-8?Math.max(8,r.top-ph-6):r.bottom+6)+'px'},true);
 addEventListener('scroll',()=>{const p=$('#infPop');if(p&&!p.hidden)p.hidden=true},{passive:true});
 $('#impRes').addEventListener('click',e=>{const b=e.target.closest('[data-amostra]');if(b)window.fpAmostra(b.dataset.amostra)});
+{const pc=()=>document.documentElement.classList.toggle('ctxAgr',CTX.t==='a');pc();setInterval(pc,500)}
+$('#voltaBt').addEventListener('click',volta);
 window.fpCtx={atual:()=>({...CTX}),muda:(c)=>trocaCtx(c),db:()=>DB,temEx,
   exemplo:async()=>{const n=criaEx();trk('exemplo',{acao:'criar'});await trocaCtx({t:'x'});const h=new Date();P.m='mes';P.d=new Date(h.getFullYear(),h.getMonth()-1,1);$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel();render();avisaPer();return n},apagaEx};
 $('#exBan').addEventListener('click',e=>{const b=e.target.closest('[data-exb]');if(!b)return;if(b.dataset.exb==='p')trocaCtx({t:'p'});else if(confirm('Apagar a conta de exemplo? Os seus dados pessoais não são afetados.'))apagaEx()});

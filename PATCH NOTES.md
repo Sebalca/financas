@@ -99,7 +99,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D49 As sub-linhas de um movimento dividido estão minimizadas por defeito (▸ mostra, ▾ esconde).
 - D50 O reembolso (↩) pode ligar a uma linha de um movimento dividido; a ligação abre o movimento com as linhas visíveis.
 - D47 A pesquisa dos Extratos aceita datas (dd/mm, dd/mm/aaaa, mm/aaaa) e procura na data mov. ou data valor, em todos os períodos.
-- D19 Movimento marcado como reembolso mostra só "↩ Reembolso de …" nos Detalhes.
+- D19 Movimento marcado como reembolso mostra só "↩ <descrição da despesa>" nos Detalhes (sem "Reembolso de"); ao passar o rato mostra a data da despesa. (atualizada v0.10j)
 - D78 Um reembolso ligado mostra na Descrição "↩ nome da despesa original" (a descrição do extrato fica no tooltip) e a pesquisa encontra-o pelos dois nomes. (v0.8e)
 - D20b Janela do reembolso: mostra em destaque descrição, valor, data e quem; por defeito as saídas (todas as categorias) do próprio dia ou do anterior mais próximo, com valor maior que o reembolso; "Mostrar todas" com pesquisa; despesa sem categoria → escolher categoria/referência na hora (aplica-se às duas).
 - D17 Despesas: **Saídas** (antes "Real") = saídas − reembolsos; nas linhas chama-se **Total** (colunas Entradas e Saídas ao lado). (atualizada v0.7s)
@@ -150,10 +150,15 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D116 **Login**: 👁 mostra/esconde a palavra-passe (login, nova palavra-passe e Definições › Conta). "Esqueceu-se da palavra-passe?" usa o email escrito e envia um link (`resetPasswordForEmail`, volta a este site); a resposta nunca diz se a conta existe. Ao voltar pelo link (evento `PASSWORD_RECOVERY`) abre a janela "Nova palavra-passe" (duas vezes, mín. 6). Os emails precisam de SMTP próprio no Supabase e do site nas Redirect URLs.
 - D117 **Recibos**: além do modelo antigo, lê o modelo **PRIMAVERA** (colunas Remunerações | Descontos, valores com espaço nos milhares "1 020,00", linha "Total" e "Total Pago ( EUR )", NIF da empresa no cabeçalho) e só dá "totais conferem" se o total das remunerações e o total pago baterem. **Recibo não reconhecido** (ou totais que não conferem): explica e oferece "📨 Enviar recibo tipo (anónimo)" — feito no browser: palavras típicas do recibo, códigos (R01, D02) e datas mantidos; nomes, empresas e outros textos → X; algarismos ao acaso; abre a sugestão para a pessoa ver antes de enviar. O PDF nunca sai do browser.
 - D118 **Recibos (mais modelos)**: modelo "RECIBO DE REMUNERAÇÕES" (Cód. | Remunerações | Tempos | Valor unitário | Valor remuneração; Descontos | Incidências | Valor do desconto; Valor ilíquido / Descontos / Valor líquido a receber; mês "Março / 25"). Original e duplicado **um por cima do outro** → usa só o de cima; lado a lado só quando "Duplicado" está à altura de "Original". PRIMAVERA: linhas com valor 0,00 na coluna Faltas não contam e a descrição é lida mesmo desalinhada do título.
+- D119 **Previsto vs real** (Início): o traço do previsto fica sempre no mesmo sítio (≈91% da barra) em todas as linhas; a barra é real ÷ previsto até ao traço, **azul** até ao previsto e **vermelha** quando o ultrapassa (passa o traço); sem previsto, barra cinzenta cheia. **Reembolso**: pesquisa sempre visível (descrição, valor, categoria, referência, quem é); "＋ Sugerir mais" junta as saídas de valor **igual ou maior** de mais um mês para trás a cada clique. **Ir para a despesa** (↩ nos Detalhes): fica logo abaixo das barras fixas e aparece "↩ Voltar ao reembolso" (20 s), que repõe filtros, período e a linha. Mensagens de importação de extratos e recibos com "✕ Limpar". **Agregado**: com um agregado escolhido, os botões/destaques das Finanças e da barra de cima ficam roxos (#7b1fa2).
 
 ---
 
 ## Histórico
+
+### v0.10j — 03/10/2026
+- Previsto vs real com traço fixo, reembolso (sugerir mais, pesquisa, voltar, texto e data), limpar mensagens de importação, roxo no agregado (D119, D19 atualizada).
+- Texto antigo "Em breve: seletor Pessoal / Família" trocado por como usar o seletor.
 
 ### v0.10i — 02/10/2026
 - Recibos: modelo "RECIBO DE REMUNERAÇÕES", cópias empilhadas e PRIMAVERA com faltas (D118). Testes com recibos fictícios.

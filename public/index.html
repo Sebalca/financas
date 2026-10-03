@@ -124,6 +124,11 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .big nav.sn{flex:none;width:170px;border-right:1px solid var(--bd);padding:8px;display:flex;flex-direction:column;gap:2px;overflow:auto}
 .big nav.sn button{border:0;background:transparent;color:var(--mu);text-align:left;padding:8px 10px;border-radius:8px;cursor:pointer;font:600 13px system-ui,sans-serif}
 .big nav.sn button.on{background:var(--ac2);color:var(--ac)}
+/* v0.10j: dentro de um agregado a página fica com o roxo do agregado */
+body.ctxAgr{--ac:#7b1fa2;--ac2:#f3e5f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) body.ctxAgr{--ac:#ce93d8;--ac2:#33203d}}
+:root[data-theme=dark] body.ctxAgr{--ac:#ce93d8;--ac2:#33203d}
+.big nav.sn button[data-s="agr"].on{background:#f3e5f5;color:#7b1fa2}
 #mSet .big{height:min(600px,88vh)}
 .sw2{display:flex!important;flex-direction:row;gap:10px;align-items:center;cursor:pointer;padding:6px 0;text-align:left}.sw2 input{width:18px!important;height:18px;flex:none;margin:0;accent-color:var(--ac)}.sw2 span{flex:1}
 .big .sc{flex:1;overflow:auto;padding:16px 18px}
@@ -713,7 +718,7 @@ const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=
         :`<div class="grp" style="margin-top:12px"><button class="opt danger" type="button" data-asair="${g.id}" data-nm="${esc(g.nome)}">Sair do agregado</button></div>`}</div>`};
     const temDono=L.some(g=>g.dono);
     box.innerHTML=conv+L.map(card).join('')+(temDono?'':`<div class="agr-c"><h4>＋ Criar agregado</h4><form class="agr-f" id="agrNovo"><input required maxlength="80" placeholder="Nome (ex.: Família Silva)" aria-label="Nome do agregado"><button class="opt" type="submit">Criar</button></form><p class="note2">Fica como dono: pode convidar pessoas pelo email, remover membros e apagar o agregado.</p></div>`)
-      +(L.some(g=>!g.apagar_em)?'<p class="note2">Em breve: seletor <b>Pessoal / Família</b> na barra de cima para trabalhar nos dados do agregado.</p>':'');
+      +(L.some(g=>!g.apagar_em)?'<p class="note2">Use o seletor <b>👤 Pessoal / 👪 agregado</b> na barra de cima para trabalhar nos dados do agregado.</p>':'');
     msg(MSG)}
   const faz=async(f,ok)=>{if(ocupado)return;ocupado=true;msg('A guardar…');try{const r=await f();msg(typeof ok==='function'?ok(r):ok||'')}catch(e){msg('Erro: '+((e&&e.message)||'não foi possível concluir'),1)}ocupado=false;await carrega()};
   const RES={ok:e=>`✓ Convite enviado a ${e}. A pessoa vê o convite quando entrar nas Finanças.`,sem_conta:e=>`Não existe nenhuma conta com o email ${e}. A pessoa tem de criar conta primeiro (no futuro será enviado um email de convite).`,
@@ -749,7 +754,7 @@ const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=
 const FPCtx=(()=>{const $=id=>document.getElementById(id);let pend=true;
   const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const win=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.contentWindow&&f.contentWindow.fpCtx?f:null}catch(e){return null}};
-  function pinta(){const f=win(),el=$('fCtx');if(pend)valida(true);const L=FPAgr.ativos(),ex=!!f&&f.contentWindow.fpCtx.temEx&&f.contentWindow.fpCtx.temEx();const mostra=!!f&&f.classList.contains('on')&&(L.length>0||ex);document.body.classList.toggle('comctx',mostra);if(!mostra){el.hidden=true;return}
+  function pinta(){const f=win(),el=$('fCtx');if(pend)valida(true);const L=FPAgr.ativos(),ex=!!f&&f.contentWindow.fpCtx.temEx&&f.contentWindow.fpCtx.temEx();const mostra=!!f&&f.classList.contains('on')&&(L.length>0||ex);document.body.classList.toggle('comctx',mostra);try{document.body.classList.toggle('ctxAgr',!!f&&f.contentWindow.fpCtx.atual().t==='a')}catch(e){}if(!mostra){el.hidden=true;return}
     const c=f.contentWindow.fpCtx.atual();el.hidden=false;
     el.innerHTML=`<button type="button" data-cx="" class="${c.t==='p'?'on':''}" title="Os seus dados pessoais (privados)">👤 Pessoal</button>`+L.map(g=>`<button type="button" data-cx="${esc(g.id)}" class="${c.t==='a'&&c.id===g.id?'on':''}" title="Dados partilhados do agregado ${esc(g.nome)}">👪 ${esc(g.nome)}</button>`).join('')+(ex?`<button type="button" data-cx="__ex" class="${c.t==='x'?'on':''}" title="Conta de exemplo: dados fictícios, só neste browser">🧪 Exemplo</button>`:'')}
   function valida(dePinta){const f=win();if(!f||!FPAgr.pronto()){pend=true;return}pend=false;const w=f.contentWindow.fpCtx,c=w.atual(),L=FPAgr.ativos();
@@ -777,6 +782,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.10j',d:'03/10/2026',n:['Reembolso: “Sugerir mais” mostra saídas de valor igual ou maior de mais um mês para trás, e pesquisa por categoria ou quem é','Depois de ir para a despesa original, um botão “↩ Voltar ao reembolso” leva-o de volta'],a:['Num agregado, os botões e destaques ficam a roxo','Previsto vs real: o traço do previsto fica sempre no mesmo sítio; a barra fica azul e passa a vermelha quando ultrapassa','Importar extratos e recibos: botão para limpar as mensagens','A ligação do reembolso mostra só a descrição da despesa e, ao passar o rato, a data']},
  {v:'0.10i',d:'02/10/2026',n:[],a:['Mais modelos de recibos de vencimento lidos (incluindo original e duplicado um por cima do outro)']},
  {v:'0.10h',d:'02/10/2026',n:['Recibo não reconhecido? Envie-nos um recibo tipo anónimo (vê tudo antes de enviar) para o passarmos a ler'],a:['Recibos de vencimento do programa PRIMAVERA passam a ser lidos']},
  {v:'0.10g',d:'02/10/2026',n:['Recuperar a palavra-passe: “Esqueceu-se da palavra-passe?” envia um link por email para definir uma nova','Botão 👁 para mostrar ou esconder a palavra-passe'],a:['Texto da janela de entrar mais simples']},

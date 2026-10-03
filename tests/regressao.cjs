@@ -88,7 +88,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await p.fill('#fQ','DEVOLVE INTERNET');await p.waitForTimeout(150);
   await p.click('#extTable [data-reemb="mRb2"]');await p.waitForTimeout(150);await p.click('#rbTodas');await p.waitForTimeout(100);
   await p.click(`#rbList [data-rbsel="${nid}#1"]`);await p.waitForTimeout(150);
-  const rp=await ev(n=>{const m=DB.mov.find(x=>x.id==='mRb2'),o=DB.mov.find(x=>x.id===n);return {ok:m.reemb===chaveParte(o,1)&&m.cat==='Casa'&&m.ref==='Internet'&&/Reembolso de NETFLIX/.test(document.querySelector('#extTable tr[data-id="mRb2"]').children[6].textContent),cat:m.cat,r:m.reemb}},nid);
+  const rp=await ev(n=>{const m=DB.mov.find(x=>x.id==='mRb2'),o=DB.mov.find(x=>x.id===n);return {ok:m.reemb===chaveParte(o,1)&&m.cat==='Casa'&&m.ref==='Internet'&&/↩ NETFLIX/.test(document.querySelector('#extTable tr[data-id="mRb2"]').children[6].textContent),cat:m.cat,r:m.reemb}},nid);
   t('D50','reembolso pode ligar a uma linha de um movimento dividido',rp.ok,rp);
   await ev(()=>{DB.mov.push({id:'mRb3',k:'rbteste3',man:true,banco:'Dinheiro',conta:'',dm:'2026-09-23',dv:'2026-09-23',desc:'TRF RECEBIDA GRUPO',valor:30,saldo:null,cat:'',ref:'',catSrc:'',det:'',obs:'',quem:'',ord:0});render()});
   await p.fill('#fQ','TRF RECEBIDA GRUPO');await p.waitForTimeout(150);
@@ -108,7 +108,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   const d55=await ev(()=>{const rs=[...document.querySelectorAll('#extTable tbody tr[data-id]')];const all=[...DB.mov];document.querySelector('#fQ').value='';render();const rows=[...document.querySelectorAll('#extTable tbody tr[data-id]')];const pos=rows.map(tr=>[...tr.querySelectorAll('td.acts .sl')].map(s=>Math.round(s.getBoundingClientRect().left-tr.getBoundingClientRect().left)).join(','));return {ok:rows.length>1&&new Set(pos).size===1&&pos[0].split(',').length===4,pos:[...new Set(pos)]}});
   t('D55','botões do fim da linha em posições fixas (4 lugares)',d55.ok,d55);
   await p.fill('#fQ','');
-  t('D19','reembolso mostra só a ligação nos Detalhes',await ev(()=>{render();const tr=document.querySelector('#extTable tr[data-id="mRb"]');return !tr||(/Reembolso de/.test(tr.children[6].textContent)&&!/Diversos|COMPRAS/.test(tr.children[6].textContent))}));
+  t('D19','reembolso mostra só a ligação nos Detalhes',await ev(()=>{render();const tr=document.querySelector('#extTable tr[data-id="mRb"]');return !tr||(/↩/.test(tr.children[6].textContent)&&!/Diversos|COMPRAS/.test(tr.children[6].textContent))}));
 
   console.log('Pesquisa por data / calendário / pessoas');
   const dq=await ev(()=>{const m=DB.mov.find(x=>!x.man),d=m.dm.split('-');const q1=`${d[2]}/${d[1]}/${d[0]}`,q2=`${d[1]}/${d[0]}`;
@@ -528,6 +528,20 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const ok=c.mes==='2025-02'&&c.bruto===1080&&c.ss===118.8&&c.irs===54&&c.liquido===907.2&&c.ok&&c.linhas.length===2&&prim.bruto===900&&prim.liquido===801&&prim.ok&&prim.linhas.length===1;
     return {ok,c:{mes:c.mes,b:c.bruto,l:c.liquido,ok:c.ok,n:c.linhas.length},p:{b:prim.bruto,l:prim.liquido,ok:prim.ok,n:prim.linhas.length}}});
   t('D118','recibos: modelo "RECIBO DE REMUNERAÇÕES" (original e duplicado um por cima do outro, "Março / 25") e PRIMAVERA com linha de faltas a 0,00 e descrição desalinhada',z118.ok,z118);
+  const z119=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),y=new Date().getFullYear();db.prevAno=db.prevAno||{};db.prevAno[y]=db.prevAno[y-1]={'Casa›Renda':5000,'Alimentação›Supermercado':10};w.go('home');w.render();
+    const bs=[...d.querySelectorAll('#homeBudget .pvbar b')].map(b=>b.style.left),fixo=bs.length>=2&&bs.every(x=>x===bs[0]);const cores=[...d.querySelectorAll('#homeBudget .pvbar')].filter(x=>x.querySelector('b')).map(x=>x.querySelector('i').style.background);
+    const corOk=cores.some(c=>/--ac/.test(c))&&cores.some(c=>/--c2/.test(c));delete db.prevAno[y];delete db.prevAno[y-1];
+    w.go('ext');w.render();const ent=db.mov.filter(m=>m.valor<0&&m.cat&&m.ref).sort((a,b)=>a.dm<b.dm?1:-1)[0];const rb={id:'mRbX',k:'rbx',man:true,banco:'Dinheiro',conta:'',saldo:null,det:'',ord:0,c:'',dm:ent.dm,dv:ent.dm,desc:'DEVOLUCAO TESTE',valor:1,cat:'',ref:'',catSrc:'',quem:'',quemMan:false,obs:''};db.mov.push(rb);
+    w.abreReemb(rb);const q=!d.querySelector('#rbQ').hidden,n0=d.querySelectorAll('#rbList tbody tr').length;d.querySelector('#rbMais').click();const n1=d.querySelectorAll('#rbList tbody tr').length;
+    d.querySelector('#rbQ').value='Alimentação';d.querySelector('#rbQ').dispatchEvent(new Event('input'));const fil=[...d.querySelectorAll('#rbList tbody tr')].every(tr=>/Alimentação/.test(tr.textContent));
+    d.querySelector('#rbList [data-rbsel]').click();await W(50);const cs=d.querySelector('#rbCat:not([hidden]) button, #rbCat:not([hidden]) [data-rbok]');if(cs)cs.click();await W(50);
+    w.verMes(rb.dm);w.limpaFiltros();w.render();w.extMostraId('mRbX');w.render();const lk=d.querySelector('#extTable tr[data-id="mRbX"] [data-golk]');const txt=lk&&!/Reembolso de/.test(lk.textContent)&&/^\d{2}\/\d{2}\/\d{4}$/.test(lk.title);
+    if(lk)lk.click();await W(300);const vb=!d.querySelector('#voltaBt').hidden;d.querySelector('#voltaBt').click();await W(300);const voltou=d.querySelector('#voltaBt').hidden&&!!d.querySelector('#extTable tr[data-id="mRbX"]');
+    w.fpCtx.muda({t:'a',id:'gx',nome:'X'});await W(700);const roxo=d.documentElement.classList.contains('ctxAgr')&&w.getComputedStyle(d.documentElement).getPropertyValue('--ac').trim()==='#7b1fa2';
+    await w.fpCtx.muda({t:'p'});await W(300);await w.fpCtx.apagaEx();w.go('home');
+    ok({ok:fixo&&corOk&&q&&n1>=n0&&fil&&txt&&vb&&voltou&&roxo,fixo,corOk,q,n0,n1,fil,txt,vb,voltou,roxo})}));
+  t('D119','Previsto vs real com traço fixo (azul; vermelho se passar), reembolso com "Sugerir mais" e pesquisa por categoria/quem, ligação sem "Reembolso de" e com a data, botão para voltar, agregado a roxo',z119.ok,z119);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
