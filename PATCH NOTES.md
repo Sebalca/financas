@@ -153,10 +153,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D119 **Previsto vs real** (Início): o traço do previsto fica sempre no mesmo sítio (≈91% da barra) em todas as linhas; a barra é real ÷ previsto até ao traço, **azul** até ao previsto e **vermelha** quando o ultrapassa (passa o traço); sem previsto, barra cinzenta cheia. **Reembolso**: pesquisa sempre visível (descrição, valor, categoria, referência, quem é); "＋ Sugerir mais" junta as saídas de valor **igual ou maior** de mais um mês para trás a cada clique. **Ir para a despesa** (↩ nos Detalhes): fica logo abaixo das barras fixas e aparece "↩ Voltar ao reembolso" (20 s), que repõe filtros, período e a linha. Mensagens de importação de extratos e recibos com "✕ Limpar". **Agregado**: com um agregado escolhido, os botões/destaques das Finanças e da barra de cima ficam roxos (#7b1fa2).
 - D120 **Ir para a despesa** mantém a vista: em Ano fica Ano (no ano da despesa); em Intervalo fica se a data cabe; senão vai para o mês. O botão "↩ Voltar ao reembolso" aparece também a partir das linhas de um movimento dividido (e as linhas divididas mostram "↩ descrição" com a data ao passar o rato). A **janela do reembolso** tem altura fixa (a lista desliza por dentro).
 - D121 **Reembolso ligado (↩) conta na data da despesa original** — também cada linha de um movimento dividido — em todas as contas: Início (caixas, gráficos, previsto vs real, 🧮), Despesas (grelha, médias, mini janela), Previsões (anos anteriores, "média do ano anterior"). Nos Extratos e no saldo por banco o movimento fica na data real em que o dinheiro entrou. Reembolsos sem ligação contam na data em que entraram. (Internamente `expandeC` desloca `dm` e guarda a data real em `dm0`; a chave do movimento usa sempre a data real.)
+- D122 **Extratos e movimentos divididos**: os filtros de categoria/referência e a pesquisa de texto olham para **cada linha** do movimento dividido (descrição, categoria, referência, observações e a despesa do reembolso); o movimento aparece aberto só com as linhas que batem e os totais do cabeçalho contam só essas linhas. Se a pesquisa bater na descrição do próprio movimento, mostra todas as linhas. **Mini janela das Despesas**: a data é a do extrato (a conta continua na data da despesa, D121; ↩ e explicação ao passar o rato); clicar num reembolso abre o movimento (antes dava "Movimento não encontrado").
 
 ---
 
 ## Histórico
+
+### v0.10m — 03/10/2026
+- Filtros e pesquisa nos movimentos divididos; mini janela com a data do extrato e ligação certa dos reembolsos (D122).
 
 ### v0.10l — 03/10/2026
 - Reembolsos ligados contam na data da despesa original (D121); na mini janela das Despesas aparecem com ↩ e a data real ao passar o rato.

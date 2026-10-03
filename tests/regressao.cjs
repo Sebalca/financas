@@ -561,6 +561,18 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     d.querySelector(`#desCats td.clk[data-dgo="${mA}|${desp.cat}|${desp.ref}"]`).click();await W(50);const mini=/↩/.test(d.querySelector('#dgPop').textContent)&&/mês A/.test(d.querySelector('#dgPop').textContent);d.querySelector('#dgPop').hidden=true;
     await w.fpCtx.apagaEx();w.go('home');ok({ok:vA.replace(/\s/g,'')===esperado.replace(/\s/g,'')&&!vB&&mini,vA,vB,esperado,mini,mA,mB})}));
   t('D121','reembolso ligado (também linha de movimento dividido) conta na data da despesa original, não na data em que o dinheiro entrou',z121.ok,z121);
+  const z122=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),chave=w.eval('chave');const desp=db.mov.find(m=>m.valor<0&&/EDP/.test(m.desc));const last=db.mov.map(m=>m.dm).sort().pop();
+    db.mov.push({id:'mSpQ',k:'spq',man:true,banco:'Dinheiro',conta:'',saldo:null,det:'',ord:0,c:'',dm:last,dv:last,desc:'TFI AMIGA TESTE',valor:30,cat:'',ref:'',catSrc:'manual',quem:'',quemMan:false,obs:'',
+      partes:[{valor:20,cat:desp.cat,ref:desp.ref,desc:'luz abril',reemb:chave(desp)},{valor:10,cat:'Outros',ref:'Prendas',desc:'prenda xyz'}]});
+    w.verMes(last);w.go('ext');w.limpaFiltros();d.querySelector('#fRef').value=desp.cat+'›'+desp.ref;w.render();await W(50);
+    const vis=[...d.querySelectorAll('#extTable tr.parte[data-pid^="mSpQ#"]')].map(t=>t.dataset.pid),soRef=vis.length===1&&vis[0]==='mSpQ#0';
+    w.limpaFiltros();d.querySelector('#fQ').value='prenda xyz';w.render();await W(50);const txt=[...d.querySelectorAll('#extTable tr.parte[data-pid^="mSpQ#"]')].map(t=>t.dataset.pid).join()==='mSpQ#1';
+    w.limpaFiltros();w.verMes(desp.dm);w.go('des');w.render();await W(50);d.querySelector(`#desCats td.clk[data-dgo="${desp.dm.slice(0,7)}|${desp.cat}|${desp.ref}"]`).click();await W(50);
+    const tr=[...d.querySelectorAll('#dgPop [data-dgmov]')].find(t=>/↩/.test(t.textContent));const dataReal=!!tr&&tr.children[0].textContent.startsWith(w.eval('fmtD')(last));
+    let toastNF=false;const o=w.toast;w.toast=m=>{if(/não encontrado/.test(m))toastNF=true};if(tr)tr.click();await W(300);w.toast=o;const foi=!toastNF&&!!d.querySelector('#extTable tr.parte[data-pid="mSpQ#0"]');
+    await w.fpCtx.apagaEx();w.go('home');ok({ok:soRef&&txt&&dataReal&&foi,soRef,vis,txt,dataReal,foi})}));
+  t('D122','Extratos: filtros de categoria/referência e pesquisa olham para as linhas dos movimentos divididos (só aparecem as que batem); mini janela das Despesas com a data do extrato e reembolsos que abrem o movimento',z122.ok,z122);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
