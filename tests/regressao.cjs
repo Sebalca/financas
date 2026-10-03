@@ -41,7 +41,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   await ev(()=>{espSo().refs.push('Lazer›Jogos');aplicaRegras();render()});
   t('D12','referência "Só este movimento" não é usada pelas regras',await ev(()=>!DB.mov.some(m=>m.ref==='Jogos'&&m.catSrc==='regra')));
   await go('des');await p.click('#perMode [data-m="ano"]');await p.waitForTimeout(200);
-  t('D13','Despesas: grelha de 12 meses (Mês e Ano iguais), com Total, Média e Previsão, e tabela das categorias fora das contas alinhada com a de cima',await ev(()=>{const t=document.querySelectorAll('#desCats table.dgrid');if(t.length!==2)return false;const h=[...t[0].querySelectorAll('thead th')].map(x=>x.textContent.trim());const h2=[...t[1].querySelectorAll('thead th')].map(x=>x.textContent.trim());return h.length===16&&h[13]==='Total'&&h[14]==='Média'&&h[15]==='Previsão'&&h2.length===16&&!h2.includes('Previsão')&&[...t[0].querySelectorAll('col')].map(c=>c.style.width).join()===[...t[1].querySelectorAll('col')].map(c=>c.style.width).join()}));
+  t('D13','Despesas: grelha de 12 meses (Mês e Ano iguais), com Total, Média e Previsão, e tabela das categorias fora das contas alinhada com a de cima',await ev(()=>{const t=document.querySelectorAll('#desCats .dghead table.dgrid');if(t.length!==2)return false;const h=[...t[0].querySelectorAll('thead th')].map(x=>x.textContent.trim());const h2=[...t[1].querySelectorAll('thead th')].map(x=>x.textContent.trim());return h.length===16&&h[13]==='Total'&&h[14]==='Média'&&h[15]==='Previsão'&&h2.length===16&&!h2.includes('Previsão')&&[...t[0].querySelectorAll('col')].map(c=>c.style.width).join()===[...t[1].querySelectorAll('col')].map(c=>c.style.width).join()}));
   t('D14','vista Ano: fora das contas numa linha por categoria (entradas − saídas), sem coluna "Entradas ano"',await ev(()=>!/Entradas ano/.test(document.querySelector('#desCats').innerText)&&/entradas − saídas/.test(document.querySelector('#desCats').innerText)));
   await p.click('#perMode [data-m="mes"]');
 
@@ -142,11 +142,11 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
 
   console.log('v0.7s');
   const x61=await ev(()=>{P.m='mes';P.d=new Date(2026,8,1);perLabel();document.querySelector('[data-tab="des"]').click();render();
-    const cats=[...document.querySelectorAll('#desCats table.dgrid')[0].querySelectorAll('tr.gc')],abertas=cats.every(tr=>tr.classList.contains('open')),msel=document.querySelectorAll('#desCats table.dgrid')[0].querySelectorAll('thead th.msel').length===1&&/SET\/26/.test(document.querySelector('#desCats thead th.msel').textContent);
+    const cats=[...document.querySelectorAll('#desCats .dgw table.dgrid')[0].querySelectorAll('tr.gc')],abertas=cats.every(tr=>tr.classList.contains('open')),msel=document.querySelectorAll('#desCats table.dgrid')[0].querySelectorAll('thead th.msel').length===1&&/SET\/26/.test(document.querySelector('#desCats thead th.msel').textContent);
     const k=[...document.querySelectorAll('#desKpis .kpi .l')].map(x=>x.textContent);
     const g=document.querySelector('#desCats tr.gc');g.click();const fechou=!document.querySelector('#desCats tr.gc').classList.contains('open');document.querySelector('#desCats tr.gc').click();
     const ok0=!document.querySelector('#desCats input.pv')&&!!document.querySelector('#desCats tr.gr .pvro');
-    const cc=[...document.querySelectorAll('#desCats table.dgrid')[0].querySelectorAll('tr.gr td.clk')].find(td=>!/^-/.test(td.textContent));const kk=cc.dataset.dgo.split('|');const kp=kk[1]+'›'+kk[2];const yv=+mesesGrelha()[0].slice(0,4);PVW(yv)[kp]=0.01;render();const over=!!document.querySelector('#desCats td.over');delete PVW(yv)[kp];render();
+    const cc=[...document.querySelectorAll('#desCats .dgw table.dgrid')[0].querySelectorAll('tr.gr td.clk')].find(td=>!/^-/.test(td.textContent));const kk=cc.dataset.dgo.split('|');const kp=kk[1]+'›'+kk[2];const yv=+mesesGrelha()[0].slice(0,4);PVW(yv)[kp]=0.01;render();const over=!!document.querySelector('#desCats td.over');delete PVW(yv)[kp];render();
     const c=document.querySelector('#desCats td.clk[data-dgo]');const dg=c.dataset.dgo;c.click();const pop=!document.querySelector('#dgPop').hidden&&document.querySelectorAll('#dgPop [data-dgmov]').length>0;document.querySelector('#dgPop [data-dgox]').click();const foiExt=document.querySelector('#tab-ext').classList.contains('on')&&$('#fCat').vals.includes(dg.split('|')[1]);limpaFiltros();document.querySelector('[data-tab="des"]').click();
     return {ok:cats.length>0&&abertas&&msel&&k.includes('Saídas')&&getComputedStyle(document.querySelector('#desKpis .kpi')).textAlign==='center'&&fechou&&ok0&&over&&foiExt&&pop,abertas,msel,fechou,ok0,over,foiExt,pop,dg}});
   t('D94','primeiro mês do ano das Despesas escolhido nas Definições; Extratos sem colunas Data valor e Saldo',await ev(()=>new Promise(ok=>{window.postMessage({tipo:'fp-mes1',mes:8},'*');setTimeout(()=>{const h=document.querySelector('#desCats table.dgrid thead th:nth-child(2)').textContent;window.postMessage({tipo:'fp-mes1',mes:0},'*');
@@ -172,7 +172,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const ci=+ct.dataset.ctipo,c=DB.cats[ci];ct.value='ex';ct.dispatchEvent(new Event('change',{bubbles:true}));const todas=c.refs.every(r=>DB.refTipo[c.nome+'›'+r]==='ex');
     const foraSem=[...document.querySelectorAll('#desCats details.cat')].filter(d=>eFora(d.dataset.c)).every(d=>!d.querySelector('[data-rtipo]'));
     const m=DB.mov.find(x=>x.valor<0&&x.cat&&x.ref&&!eFora(x.cat));const k0=m.cat+'›'+m.ref;DB.refTipo[k0]='vn';DES.edit=false;DES.grp='tipo';render();
-    const gs=[...document.querySelectorAll('#desCats table.dgrid')[0].querySelectorAll('tr.gc')].map(x=>x.textContent);const grp=gs.some(x=>/Variáveis não essenciais/.test(x));
+    const gs=[...document.querySelectorAll('#desCats .dgw table.dgrid')[0].querySelectorAll('tr.gc')].map(x=>x.textContent);const grp=gs.some(x=>/Variáveis não essenciais/.test(x));
     DES.grp='cat';document.querySelector('[data-tab="home"]').click();render();const dn=/Extras/.test(document.querySelector('#homeDonutTipo').textContent);
     fpTipos.grava(fpTipos.lista().filter(t=>t.id!=='vn'),{vn:'ve'});const remap=DB.refTipo[k0]==='ve'&&!DB.tiposDesp.some(t=>t.id==='vn');
     const cn=DB.cats[0].nome;renomeiaCat(0,'CasaX');const ren=DB.refTipo['CasaX›Renda']!=null||!DB.cats[0].refs.includes('Renda');renomeiaCat(0,cn);
@@ -544,13 +544,13 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D119','Previsto vs real com traço fixo (azul; vermelho se passar), reembolso com "Sugerir mais" e pesquisa por categoria/quem, ligação sem "Reembolso de" e com a data, botão para voltar, agregado a roxo',z119.ok,z119);
   const z120=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
     await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db();w.go('des');w.render();await W(100);const c=d.querySelector('#desCats td.clk[data-dgo]');c.click();await W(50);
-    const pop=d.querySelector('#dgPop'),tr=pop.querySelector('[data-dgmov]'),miniOk=!pop.hidden&&!!tr&&tr.children.length===3;tr.click();await W(300);const foi=pop.hidden&&d.querySelector('#tab-ext').classList.contains('on');
+    const pop=d.querySelector('#dgPop'),tr=pop.querySelector('[data-dgmov]'),miniOk=!pop.hidden&&!!tr&&tr.children.length===4;tr.click();await W(300);const foi=pop.hidden&&d.querySelector('#tab-ext').classList.contains('on');
     d.querySelector('#perMode [data-m="ano"]').click();await W(50);const out=db.mov.filter(m=>m.valor<0&&m.cat).sort((a,b)=>a.dm<b.dm?-1:1)[0];const rb={id:'mRbY',k:'rby',man:true,banco:'Dinheiro',conta:'',saldo:null,det:'',ord:0,c:'',dm:out.dm.slice(0,8)+'28',dv:out.dm,desc:'DEVOL Y',valor:1,cat:out.cat,ref:out.ref,catSrc:'manual',quem:'',quemMan:false,obs:'',reemb:w.eval('chave')(out)};
     db.mov.push(rb);w.render();w.extMostraId('mRbY');w.render();const lk=d.querySelector('#extTable tr[data-id="mRbY"] [data-golk]');lk.click();await W(300);
     const ano=d.querySelector('#perMode [data-m="ano"]').classList.contains('on'),vb=!d.querySelector('#voltaBt').hidden;d.querySelector('#voltaBt').click();await W(200);
     const sh=d.querySelector('#mReemb .sheet');w.abreReemb(rb);const h1=sh.offsetHeight;d.querySelector('#rbTodas').click();const h2=sh.offsetHeight;d.querySelector('#mReemb').hidden=true;
     d.querySelector('#perMode [data-m="mes"]').click();await w.fpCtx.apagaEx();w.go('home');ok({ok:miniOk&&foi&&ano&&vb&&h1===h2,miniOk,foi,ano,vb,h1,h2})}));
-  t('D120','Despesas: valor abre mini janela com os movimentos (data, descrição, valor) que levam aos Extratos; ir para a despesa mantém a vista Ano e mostra o botão de voltar; janela do reembolso com tamanho fixo',z120.ok,z120);
+  t('D120','Despesas: valor abre mini janela com os movimentos (data, descrição, quem é, valor) que levam aos Extratos; ir para a despesa mantém a vista Ano e mostra o botão de voltar; janela do reembolso com tamanho fixo',z120.ok,z120);
   const z121=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
     await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),chave=w.eval('chave');const desp=db.mov.find(m=>m.valor<0&&/EDP/.test(m.desc)&&m.dm.slice(5,7)!==db.mov[db.mov.length-1].dm.slice(5,7));
     const mA=desp.dm.slice(0,7),last=db.mov.map(m=>m.dm).sort().pop(),mB=last.slice(0,7);
@@ -573,6 +573,12 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     let toastNF=false;const o=w.toast;w.toast=m=>{if(/não encontrado/.test(m))toastNF=true};if(tr)tr.click();await W(300);w.toast=o;const foi=!toastNF&&!!d.querySelector('#extTable tr.parte[data-pid="mSpQ#0"]');
     await w.fpCtx.apagaEx();w.go('home');ok({ok:soRef&&txt&&dataReal&&foi,soRef,vis,txt,dataReal,foi})}));
   t('D122','Extratos: filtros de categoria/referência e pesquisa olham para as linhas dos movimentos divididos (só aparecem as que batem); mini janela das Despesas com a data do extrato e reembolsos que abrem o movimento',z122.ok,z122);
+  const z123=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);w.go('ext');w.render();await W(50);const ro=!d.querySelector('#extTable input[data-f="quem"]')&&!!d.querySelector('#extTable td.c-quem .quem-ro');
+    w.go('des');w.render();await W(50);const h=d.querySelector('#desCats .dghead');const fixo=!!h&&w.getComputedStyle(h).position==='sticky'&&!h.nextElementSibling.querySelector('thead');
+    d.querySelector('#desCats td.clk[data-dgo]').click();await W(50);const qm=d.querySelectorAll('#dgPop [data-dgmov] td').length>=4&&!!d.querySelector('#dgPop td.qm');d.querySelector('#dgPop').hidden=true;
+    await w.fpCtx.apagaEx();w.go('home');ok({ok:ro&&fixo&&qm,ro,fixo,qm})}));
+  t('D123','Despesas com títulos fixos que acompanham; mini janela com "Quem é"; nos Extratos "Quem é" só de leitura (vem das Pessoas)',z123.ok,z123);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

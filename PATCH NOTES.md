@@ -154,10 +154,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D120 **Ir para a despesa** mantém a vista: em Ano fica Ano (no ano da despesa); em Intervalo fica se a data cabe; senão vai para o mês. O botão "↩ Voltar ao reembolso" aparece também a partir das linhas de um movimento dividido (e as linhas divididas mostram "↩ descrição" com a data ao passar o rato). A **janela do reembolso** tem altura fixa (a lista desliza por dentro).
 - D121 **Reembolso ligado (↩) conta na data da despesa original** — também cada linha de um movimento dividido — em todas as contas: Início (caixas, gráficos, previsto vs real, 🧮), Despesas (grelha, médias, mini janela), Previsões (anos anteriores, "média do ano anterior"). Nos Extratos e no saldo por banco o movimento fica na data real em que o dinheiro entrou. Reembolsos sem ligação contam na data em que entraram. (Internamente `expandeC` desloca `dm` e guarda a data real em `dm0`; a chave do movimento usa sempre a data real.)
 - D122 **Extratos e movimentos divididos**: os filtros de categoria/referência e a pesquisa de texto olham para **cada linha** do movimento dividido (descrição, categoria, referência, observações e a despesa do reembolso); o movimento aparece aberto só com as linhas que batem e os totais do cabeçalho contam só essas linhas. Se a pesquisa bater na descrição do próprio movimento, mostra todas as linhas. **Mini janela das Despesas**: a data é a do extrato (a conta continua na data da despesa, D121; ↩ e explicação ao passar o rato); clicar num reembolso abre o movimento (antes dava "Movimento não encontrado").
+- D123 **"Quem é" nos Extratos só de leitura**: preenche-se só pelas regras de Pessoas (⚙ Regras e pessoas); na lista e na edição em massa não se escreve (os movimentos em dinheiro adicionados à mão continuam a ter o campo). **Despesas**: títulos da grelha numa barra fixa que acompanha o scroll (como nas Previsões). **Mini janela**: coluna "Quem é" (numa linha de movimento dividido, o do movimento original).
 
 ---
 
 ## Histórico
+
+### v0.10n — 03/10/2026
+- Despesas com títulos fixos, "Quem é" na mini janela, "Quem é" só de leitura nos Extratos (D123).
 
 ### v0.10m — 03/10/2026
 - Filtros e pesquisa nos movimentos divididos; mini janela com a data do extrato e ligação certa dos reembolsos (D122).

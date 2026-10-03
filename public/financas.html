@@ -327,9 +327,10 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
   #extTable td.c-det{grid-column:2/5;font-size:12px!important}#extTable td.c-det:empty{display:none}#extTable td.c-bk{grid-column:2/3;font-size:12px;color:var(--mu)}#extTable td.acts{grid-column:3/5;justify-self:end;white-space:nowrap}
   #extTable tr.parte{display:flex;flex-wrap:wrap;gap:6px;padding:6px 0 6px 34px}#extTable tr.parte>td{padding:0;border:0}#extTable tr.parte>td:empty{display:none}#extTable tr.mais,#extTable tr.fim{display:block}#extTable tr.mais>td,#extTable tr.fim>td{display:block}
   .extbar{position:static}.exban .tx,.exban .t2{display:none}.exban{flex-wrap:nowrap}.exban{padding:6px 10px;margin-top:6px}}
-.dgpop{position:fixed;z-index:70;width:min(420px,calc(100vw - 20px));max-height:min(420px,70vh);display:flex;flex-direction:column;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.22);font-size:13px}.dgpop[hidden]{display:none}
+.quem-ro{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+.dgpop{position:fixed;z-index:70;width:min(500px,calc(100vw - 20px));max-height:min(420px,70vh);display:flex;flex-direction:column;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.22);font-size:13px}.dgpop[hidden]{display:none}
 .dgpop .dh{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--bd)}.dgpop .dh b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dgpop .dh button{border:0;background:none;color:var(--mu);cursor:pointer;font-size:15px}
-.dgpop .dl{overflow:auto;flex:1}.dgpop table{width:100%;border-collapse:collapse}.dgpop td{padding:6px 12px;border-bottom:1px solid var(--soft)}.dgpop tr.clk{cursor:pointer}.dgpop tr.clk:hover td{background:var(--ac2)}.dgpop td.dsc{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dgpop .dl{overflow:auto;flex:1}.dgpop table{width:100%;border-collapse:collapse}.dgpop td{padding:6px 12px;border-bottom:1px solid var(--soft)}.dgpop tr.clk{cursor:pointer}.dgpop tr.clk:hover td{background:var(--ac2)}.dgpop td.qm{color:var(--mu);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dgpop td.dsc{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dgpop .df{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--bd)}.dgpop .df span{flex:1;color:var(--mu)}
 .voltabt{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:60;border:0;border-radius:999px;background:var(--ac);color:#fff;font:700 14px system-ui,sans-serif;padding:10px 18px;box-shadow:0 8px 22px rgba(0,0,0,.25);cursor:pointer}.voltabt[hidden]{display:none}
 .exban{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 0;padding:9px 14px;border:1px dashed var(--ac);border-radius:12px;background:var(--ac2);font-size:13.5px}.exban .r{margin-left:auto;display:flex;gap:6px}.exban[hidden]{display:none}
@@ -414,7 +415,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
       </div>
       <div class="bulk" id="bulk" hidden><b id="bkN"></b>
         <select id="bkCat" aria-label="Categoria"></select><select id="bkRef" aria-label="Referência" disabled><option value="">(manter referência)</option></select>
-        <input id="bkQuem" list="dlQuem" placeholder="Quem é (manter)" aria-label="Quem é"><input id="bkObs" placeholder="Observações (manter)" aria-label="Observações">
+        <input id="bkQuem" hidden aria-hidden="true"><input id="bkObs" placeholder="Observações (manter)" aria-label="Observações">
         <button class="btn sm pri" id="bkApl" type="button">Aplicar</button><span class="sp"></span><button class="btn sm" id="bkDel" type="button">🗑 Apagar</button><button class="btn sm" id="bkClr" type="button">Limpar seleção</button></div>
       <div class="exthead" id="extHead"></div></div>
       <div class="tw" id="extTable"></div>
@@ -548,7 +549,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.10m'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10n'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1043,7 +1044,7 @@ function extLinha(m){const {LG,RK,DS}=EXT.ctx,cm=m.cat?corMovC(m.cat,m.ref):'',t
     <td class="c-ref"><select class="ed${m.cat&&!m.ref?' unc':''}" data-f="ref"${m.cat?'':' disabled'}>${refOpts(m.cat,m.ref)}</select></td>`}
     <td class="muted c-det" style="white-space:normal;min-width:130px;font-size:12.5px">${(x=>x?`<span class="lk ok" data-gorend="${x.r.id}" title="Ir para o rendimento: ${esc(x.r.entidade||'')} · ${esc(x.r.desc||'')}">🔗 ${x.c==='v'?'Subsídio':'Rendimento'} ${esc(mesTxt(x.r.mes))}</span>`:(m.reemb&&RK.get(m.reemb)?`<span class="lk ok" data-golk="${esc(m.reemb)}" title="${fmtD(RK.get(m.reemb).dm)}">↩ ${esc(nomeMov(RK.get(m.reemb)))}</span>`:esc(m.det)))(LG.get(chave(m)))}</td>
     <td class="c-obs"><input class="ed obs" data-f="obs" value="${esc(m.obs)}" placeholder="Observações…" aria-label="Observações"></td>
-    <td class="c-quem"><input class="ed" data-f="quem" list="dlQuem" placeholder="Quem é" aria-label="Quem é" value="${esc(m.quem)}" style="width:110px"></td>
+    <td class="c-quem"><span class="quem-ro" title="${m.quem?esc(m.quem)+' — definido pelas regras de Pessoas':'Definido pelas regras de Pessoas'}">${esc(m.quem||'')}</span></td>
     <td class="c-bk">${m.man?'<span class="bk-din" title="Movimento adicionado à mão">💵 Dinheiro</span>':esc(m.banco)}</td><td class="acts"><span class="sl">${m.valor>0&&!LG.get(chave(m))&&!(m.partes&&m.partes.length)?`<button class="btn ic sm" data-reemb="${m.id}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"><button class="btn ic sm" data-split="${m.id}" title="Dividir em várias linhas">✂</button></span><span class="sl">${m.man?`<button class="btn ic sm" data-edit="${m.id}" title="Editar movimento">✏</button>`:''}</span><span class="sl"><button class="btn ic sm" data-del="${m.id}" title="Apagar movimento">🗑</button></span></td></tr>${m.partes&&m.partes.length&&(SPOPEN.has(m.id)||(EXT.pv&&EXT.pv.has(m.id)))?m.partes.map((p,i)=>EXT.pv&&EXT.pv.has(m.id)&&!EXT.pv.get(m.id).has(i)?'':`<tr class="parte" data-pid="${m.id}#${i}"><td></td><td></td><td class="desc">↳ ${esc(p.desc||'parte '+(i+1))}</td><td class="num">${val(p.valor)}</td><td>${p.cat?esc(p.cat):'<span class="tag wait">Por categorizar</span>'}</td><td>${esc(p.ref||'—')}</td><td class="muted" style="white-space:normal;font-size:12px">${p.reemb&&RK.get(p.reemb)?`<span class="lk ok" data-golk="${esc(p.reemb)}" title="${fmtD(RK.get(p.reemb).dm)}">↩ ${esc(nomeMov(RK.get(p.reemb)))}</span>`:''}</td><td><input class="obs pobs" data-pobs="${m.id}#${i}" value="${esc(p.obs||'')}" placeholder="…" aria-label="Observações da linha"></td><td colspan="2"></td><td class="acts"><span class="sl">${p.valor>0?`<button class="btn ic sm" data-reembp="${m.id}#${i}" title="É um reembolso? Escolher a despesa original">↩</button>`:''}</span><span class="sl"></span><span class="sl"></span><span class="sl"></span></td></tr>`).join(''):''}`}
 const extMaisTr=()=>EXT.rows.length>EXT.n?`<tr class="mais" id="extMais"><td colspan="11">A mostrar ${EXT.n} de ${EXT.rows.length} · <button type="button" class="btn sm" data-extmais>Mostrar mais ${Math.min(EXT_PASSO,EXT.rows.length-EXT.n)}</button></td></tr>`:'';
 function extMais(ate){const tb=$('#extTable tbody');if(!tb)return;const n0=EXT.n;EXT.n=Math.min(EXT.rows.length,Math.max(EXT.n+EXT_PASSO,ate||0));if(EXT.n===n0)return;
@@ -1302,11 +1303,12 @@ function renderDesGrelha(norm_,fora,saiP,entP,prv,prvC){$('#desCats').closest('.
   const tn=totM(norm_,false),tnt=tn.reduce((s,v)=>s+v,0),tpv=norm_.reduce((s,x)=>s+prvC(x.c),0);
   const tf=totM(fora,true),tft=tf.reduce((s,v)=>s+v,0);
   $('#desCats').innerHTML=`<h4 class="des-t">Despesas <small>entram nas contas · ${lab(ms[0])} a ${lab(ms[11])} · média sobre ${nMes} ${nMes>1?'meses':'mês'} com movimentos</small></h4>
-    <div class="tw dgw"><table class="t dgrid">${hd(false)}<tbody>${DES.grp==='tipo'?[...DB.tiposDesp,null].map(blocoTipo).join(''):norm_.map(x=>bloco(x,false)).join('')}
+    <div class="exthead pvhead dghead"><table class="t dgrid">${hd(false)}</table></div><div class="tw dgw"><table class="t dgrid">${cols}<tbody>${DES.grp==='tipo'?[...DB.tiposDesp,null].map(blocoTipo).join(''):norm_.map(x=>bloco(x,false)).join('')}
     <tr class="tot"><td class="nm">Total das despesas</td>${tn.map((v,i)=>`<td class="num${ms[i]===sel?' msel':''}${tpv&&v>tpv+.004?' over':''}">${Math.abs(v)>.004?E(v):'–'}</td>`).join('')}<td class="num">${E(tnt)}</td><td class="num">${E(tnt/nMes)}</td><td class="num">${E(tpv)}</td></tr></tbody></table></div>`
     +(fora.length?`<h4 class="des-t fora">Não entram nas contas <small>${fora.map(x=>esc(x.c.nome)).join(', ')} · entradas − saídas por mês</small></h4>
-    <div class="tw dgw"><table class="t dgrid">${hd(true)}<tbody>${fora.map(x=>bloco(x,true)).join('')}
+    <div class="exthead pvhead dghead"><table class="t dgrid">${hd(true)}</table></div><div class="tw dgw"><table class="t dgrid">${cols}<tbody>${fora.map(x=>bloco(x,true)).join('')}
     <tr class="tot"><td class="nm">Total</td>${tf.map((v,i)=>`<td class="num${ms[i]===sel?' msel':''}">${Math.abs(v)>.004?val(v):'–'}</td>`).join('')}<td class="num">${val(tft)}</td><td class="num">${val(tft/nMes)}</td><td></td></tr></tbody></table></div>`:'');
+  $$('#desCats .dghead').forEach(h=>{const b=h.nextElementSibling;b.addEventListener('scroll',()=>{h.scrollLeft=b.scrollLeft},{passive:true})}); // v0.10n: títulos fixos que acompanham
 }
 function renderDesAno(norm_,fora,saiP,entP,prv,prvC){
   const y=P.d.getFullYear(),ms=MESES.map((_,i)=>`${y}-${pad(i+1)}`),doAno=expandeC(DB.mov).filter(m=>m.dm.startsWith(y+'-'));
@@ -1682,7 +1684,7 @@ function abreDgo(td,spec){const [k,c,r]=spec.split('|'),ms=mesesGrelha(),pop=$('
   const L=expandeC(DB.mov).filter(m=>m.cat===c&&(r==='*'||(r===''?!m.ref:m.ref===r))&&(k==='ANO'?(m.dm.slice(0,7)>=ms[0]&&m.dm.slice(0,7)<=ms[11]):m.dm.startsWith(k))).sort((a,b)=>(a.dm0||a.dm)<(b.dm0||b.dm)?-1:(a.dm0||a.dm)>(b.dm0||b.dm)?1:0);
   const tot=L.reduce((s,m)=>s+m.valor,0),per=k==='ANO'?anoTxt(new Date(+ms[0].slice(0,4),+ms[0].slice(5,7)-1,1)):`${MESES[+k.slice(5)-1]} ${k.slice(0,4)}`;
   pop.innerHTML=`<div class="dh"><b title="${esc(c)}${r!=='*'?' › '+esc(r||'(sem referência)'):''}">${esc(c)}${r!=='*'?' › '+esc(r||'(sem referência)'):''} <small class="muted">· ${esc(per)}</small></b><button type="button" data-dgfecha aria-label="Fechar">✕</button></div>
-    <div class="dl"><table><tbody>${L.map(m=>`<tr class="clk" data-dgmov="${esc(chave(m))}" title="Ver nos Extratos"><td style="white-space:nowrap"${m.dm0?` title="Reembolso: conta em ${fmtD(m.dm)} (data da despesa)"`:''}>${fmtD(m.dm0||m.dm)}${m.dm0?' ↩':''}</td><td class="dsc">${esc(m.pdesc||m.desc)}</td><td class="num">${val(m.valor)}</td></tr>`).join('')||'<tr><td class="muted">Sem movimentos</td></tr>'}</tbody></table></div>
+    <div class="dl"><table><tbody>${L.map(m=>`<tr class="clk" data-dgmov="${esc(chave(m))}" title="Ver nos Extratos"><td style="white-space:nowrap"${m.dm0?` title="Reembolso: conta em ${fmtD(m.dm)} (data da despesa)"`:''}>${fmtD(m.dm0||m.dm)}${m.dm0?' ↩':''}</td><td class="dsc">${esc(m.pdesc||m.desc)}</td><td class="qm" title="Quem é">${esc(m.quem||'')}</td><td class="num">${val(m.valor)}</td></tr>`).join('')||'<tr><td class="muted">Sem movimentos</td></tr>'}</tbody></table></div>
     <div class="df"><span>${L.length} movimento${L.length===1?'':'s'} · ${val(tot)}</span><button class="btn sm" type="button" data-dgox="${esc(spec)}">Ver todos nos Extratos →</button></div>`;
   pop.hidden=false;DG_T=Date.now();const R=td.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight;let x=Math.min(innerWidth-pw-10,Math.max(10,R.left+R.width/2-pw/2)),y=R.bottom+6;if(y+ph>innerHeight-8)y=Math.max(8,R.top-ph-6);pop.style.left=x+'px';pop.style.top=y+'px'}
 document.addEventListener('click',e=>{const pop=$('#dgPop');if(pop.hidden)return;const m=e.target.closest('[data-dgmov]');if(m){pop.hidden=true;irMovimento(m.dataset.dgmov);return}
