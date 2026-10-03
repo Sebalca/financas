@@ -103,7 +103,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D78 Um reembolso ligado mostra na Descrição "↩ nome da despesa original" (a descrição do extrato fica no tooltip) e a pesquisa encontra-o pelos dois nomes. (v0.8e)
 - D20b Janela do reembolso: mostra em destaque descrição, valor, data e quem; por defeito as saídas (todas as categorias) do próprio dia ou do anterior mais próximo, com valor maior que o reembolso; "Mostrar todas" com pesquisa; despesa sem categoria → escolher categoria/referência na hora (aplica-se às duas).
 - D17 Despesas: **Saídas** (antes "Real") = saídas − reembolsos; nas linhas chama-se **Total** (colunas Entradas e Saídas ao lado). (atualizada v0.7s)
-- D61 Na grelha das Despesas: valor do mês a vermelho quando passa a previsão da referência; clicar num valor abre os Extratos filtrados por esse mês e categoria/referência, e clicar no Total abre os Extratos do ano; "Só com valores" esconde linhas sem movimentos nem previsão; caixas de cima como no Início. (atualizada v0.8m)
+- D61 Na grelha das Despesas: valor do mês a vermelho quando passa a previsão da referência; clicar num valor (mês ou Total) abre uma **mini janela** com os movimentos desse valor (data, descrição, valor); clicar num movimento leva-o aos Extratos e "Ver todos nos Extratos" abre os Extratos filtrados (mês, ou ano no Total); "Só com valores" esconde linhas sem movimentos nem previsão; caixas de cima como no Início. (atualizada v0.10k)
 - D16 Nos Extratos, entradas têm o botão ↩ para escolher a despesa original (fica com a mesma categoria/referência e ligação ↩).
 - D14 Vista Ano, tabela "Não entram nas contas": uma linha por categoria com o saldo (entradas − saídas) por mês, Total e Média/mês; sem coluna "Entradas ano".
 - Modo "✏ Editar" (nomes, ordem ↑↓, apagar, adicionar); "Abrir todas / Fechar todas".
@@ -151,10 +151,15 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D117 **Recibos**: além do modelo antigo, lê o modelo **PRIMAVERA** (colunas Remunerações | Descontos, valores com espaço nos milhares "1 020,00", linha "Total" e "Total Pago ( EUR )", NIF da empresa no cabeçalho) e só dá "totais conferem" se o total das remunerações e o total pago baterem. **Recibo não reconhecido** (ou totais que não conferem): explica e oferece "📨 Enviar recibo tipo (anónimo)" — feito no browser: palavras típicas do recibo, códigos (R01, D02) e datas mantidos; nomes, empresas e outros textos → X; algarismos ao acaso; abre a sugestão para a pessoa ver antes de enviar. O PDF nunca sai do browser.
 - D118 **Recibos (mais modelos)**: modelo "RECIBO DE REMUNERAÇÕES" (Cód. | Remunerações | Tempos | Valor unitário | Valor remuneração; Descontos | Incidências | Valor do desconto; Valor ilíquido / Descontos / Valor líquido a receber; mês "Março / 25"). Original e duplicado **um por cima do outro** → usa só o de cima; lado a lado só quando "Duplicado" está à altura de "Original". PRIMAVERA: linhas com valor 0,00 na coluna Faltas não contam e a descrição é lida mesmo desalinhada do título.
 - D119 **Previsto vs real** (Início): o traço do previsto fica sempre no mesmo sítio (≈91% da barra) em todas as linhas; a barra é real ÷ previsto até ao traço, **azul** até ao previsto e **vermelha** quando o ultrapassa (passa o traço); sem previsto, barra cinzenta cheia. **Reembolso**: pesquisa sempre visível (descrição, valor, categoria, referência, quem é); "＋ Sugerir mais" junta as saídas de valor **igual ou maior** de mais um mês para trás a cada clique. **Ir para a despesa** (↩ nos Detalhes): fica logo abaixo das barras fixas e aparece "↩ Voltar ao reembolso" (20 s), que repõe filtros, período e a linha. Mensagens de importação de extratos e recibos com "✕ Limpar". **Agregado**: com um agregado escolhido, os botões/destaques das Finanças e da barra de cima ficam roxos (#7b1fa2).
+- D120 **Ir para a despesa** mantém a vista: em Ano fica Ano (no ano da despesa); em Intervalo fica se a data cabe; senão vai para o mês. O botão "↩ Voltar ao reembolso" aparece também a partir das linhas de um movimento dividido (e as linhas divididas mostram "↩ descrição" com a data ao passar o rato). A **janela do reembolso** tem altura fixa (a lista desliza por dentro).
 
 ---
 
 ## Histórico
+
+### v0.10k — 03/10/2026
+- Despesas: mini janela com os movimentos de cada valor (D61 atualizada).
+- Reembolso: vista Ano mantida, voltar também a partir de linhas divididas, data nas linhas divididas, janela de tamanho fixo (D120).
 
 ### v0.10j — 03/10/2026
 - Previsto vs real com traço fixo, reembolso (sugerir mais, pesquisa, voltar, texto e data), limpar mensagens de importação, roxo no agregado (D119, D19 atualizada).
