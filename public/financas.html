@@ -332,6 +332,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 .dgpop .dh{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--bd)}.dgpop .dh b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dgpop .dh button{border:0;background:none;color:var(--mu);cursor:pointer;font-size:15px}
 .dgpop .dl{overflow:auto;flex:1}.dgpop table{width:100%;border-collapse:collapse}.dgpop td{padding:6px 12px;border-bottom:1px solid var(--soft)}.dgpop tr.clk{cursor:pointer}.dgpop tr.clk:hover td{background:var(--ac2)}.dgpop td.qm{color:var(--mu);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dgpop td.dsc{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dgpop .df{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--bd)}.dgpop .df span{flex:1;color:var(--mu)}
+.mcpop .mcrow{flex-wrap:nowrap;align-items:center}.mcpop .mcrow [data-mcset]{flex:1}.mcpop .mcrow .pago{font-weight:800;text-decoration:underline}
 .mcd{cursor:pointer}.mcd:hover{text-decoration:underline dotted}.mcx{color:var(--ac);font-weight:700}
 .semDup .dupw{display:none}
 .dupw{color:var(--warn);font-size:11px;margin-left:2px}
@@ -547,7 +548,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
  <div class="tw" id="rbList"></div></div></div></div>
 <div class="modal" id="mSplit" hidden><div class="sheet wide"><div class="mh"><h3 style="flex:1">Dividir movimento</h3><span class="spinfo"><button class="mx" type="button" id="spInfo" aria-label="Ajuda" title="Como funciona" aria-expanded="false">ⓘ</button><span class="spbal" id="spAjuda" role="tooltip" hidden>Divida o valor por várias categorias: escreva as outras linhas e a 1.ª fica com o resto (valor original − outras linhas). Nas contas passam a contar as linhas. Numa entrada, cada linha pode ser reembolso de uma despesa (↩).</span></span><button class="mx" type="button" data-close="mSplit" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd">
  <p id="spDesc"></p>
- <div class="tw"><table class="t"><thead><tr><th class="num">Valor</th><th>Categoria</th><th>Referência</th><th>Descrição</th><th></th></tr></thead><tbody id="spRows"></tbody><tfoot id="spFoot"><tr><td class="num"><button class="btn sm" id="spAdd" type="button">＋ Linha</button></td><td colspan="4"><span id="spSoma" class="note" style="margin:0"></span></td></tr></tfoot></table></div>
+ <div class="tw"><table class="t"><thead><tr><th title="Mês em que esta linha conta nas Despesas, Início e Previsões (nos Extratos fica a data do banco)">Mês de conta</th><th class="num">Valor</th><th>Categoria</th><th>Referência</th><th>Descrição</th><th></th></tr></thead><tbody id="spRows"></tbody><tfoot id="spFoot"><tr><td></td><td class="num"><button class="btn sm" id="spAdd" type="button">＋ Linha</button></td><td colspan="4"><span id="spSoma" class="note" style="margin:0"></span></td></tr></tfoot></table></div>
  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px"><span style="flex:1"></span>
   <button class="btn" id="spDesfaz" type="button">Desfazer divisão</button><button class="btn pri" id="spOk" type="button">Guardar</button></div>
 </div></div></div>
@@ -555,7 +556,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.10q'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10r'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -639,7 +640,7 @@ function expandeC(l){const X=expande(l),K=mapaChaves(),LG=ligados(),ef=m=>{const
   return X.map(m=>{let dm=m.dm;if(!m.mc&&m.reemb&&m.valor>0){const o=K.get(m.reemb);if(o&&o.dm)dm=ef(o)}else dm=ef(m);return dm!==m.dm?{...m,dm0:m.dm,dm}:m})}
 function mapaChaves(){const r=new Map(DB.mov.map(x=>[chave(x),x]));expande(DB.mov).forEach(x=>{if(x.parte!=null)r.set(chave(x),x)});return r}
 const nomeMov=o=>{if(o.parte==null)return o.desc;const pai=o.pai||DB.mov.find(x=>x.id===o.id.split('#')[0]),p=pai&&pai.partes&&pai.partes[o.parte];return `${o.desc} (${p&&p.desc||'parte '+(o.parte+1)})`};
-const expande=l=>l.flatMap(m=>Array.isArray(m.partes)&&m.partes.length?m.partes.map((p,i)=>({...m,id:m.id+'#'+i,valor:p.valor,cat:p.cat||'',ref:p.ref||'',obs:p.obs||'',pdesc:p.desc||'',catSrc:'manual',partes:null,reemb:p.reemb||'',parte:i,k:(m.k||chave(m))+'#'+i})):[m]);
+const expande=l=>l.flatMap(m=>Array.isArray(m.partes)&&m.partes.length?m.partes.map((p,i)=>({...m,mc:p.mc||m.mc||'',id:m.id+'#'+i,valor:p.valor,cat:p.cat||'',ref:p.ref||'',obs:p.obs||'',pdesc:p.desc||'',catSrc:'manual',partes:null,reemb:p.reemb||'',parte:i,k:(m.k||chave(m))+'#'+i})):[m]);
 const contaInicio=m=>!isInterna(m)&&!(m.cat&&eFora(m.cat)&&!(m.cat===REND&&m.valor>0)); // das fora das contas só contam as entradas de Rendimentos
 const isUnc=m=>Array.isArray(m.partes)&&m.partes.length?m.partes.some(p=>!p.cat||!p.ref):(!m.cat||!m.ref);
 const isInterna=m=>(m.cat==='Banco'&&INTERNAS.includes(m.ref))||m.cat==='Poupanças'; // movimentos entre contas (incl. Dinheiro): não contam como entrada/saída
@@ -1441,7 +1442,10 @@ addEventListener('scroll',fixaCab,{passive:true});addEventListener('resize',()=>
 
 /* ================= dividir um movimento em várias linhas (total = valor original) ================= */
 let SP=null;
-function spLinha(p){const rk=p&&p.reemb||'',ro=rk?mapaChaves().get(rk):null;return `<tr data-reemb="${esc(rk)}" data-obs="${esc(p&&p.obs||'')}"><td class="num"><input class="pv" data-spv value="${p&&p.valor?Math.abs(p.valor).toFixed(2).replace('.',','):''}" placeholder="0,00" inputmode="decimal" style="width:100px"></td>
+/* v0.10r: cada linha do movimento dividido pode ter o seu mês de conta (vazio = o do movimento) */
+function spMes(p){const m0=SP?SP.dm.slice(0,7):'',v=p&&p.mc||'';if(!m0)return '';const op=[];for(let n=-12;n<=12;n++)op.push(mesSoma(m0,n));if(v&&!op.includes(v))op.push(v);
+  return `<select data-spm title="Mês de conta desta linha" style="width:auto"><option value="">${MES3[+m0.slice(5)-1]} ${m0.slice(2,4)} (pago)</option>${op.filter(x=>x!==m0).map(x=>`<option value="${x}"${x===v?' selected':''}>${MES3[+x.slice(5)-1]} ${x.slice(2,4)}</option>`).join('')}</select>`}
+function spLinha(p){const rk=p&&p.reemb||'',ro=rk?mapaChaves().get(rk):null;return `<tr data-reemb="${esc(rk)}" data-obs="${esc(p&&p.obs||'')}"><td>${spMes(p)}</td><td class="num"><input class="pv" data-spv value="${p&&p.valor?Math.abs(p.valor).toFixed(2).replace('.',','):''}" placeholder="0,00" inputmode="decimal" style="width:100px"></td>
   <td><select data-spc>${catOpts(p?p.cat:'')}</select></td><td><select data-spr>${refOpts(p?p.cat:'',p?p.ref:'')}</select></td>
   <td><input data-spo value="${esc(p&&p.desc||'')}" placeholder="Descrição da linha" style="width:100%;min-width:140px;border:1px solid var(--bd);border-radius:7px;background:var(--soft);padding:4px 6px"><div class="sprb">${ro?'↩ Reembolso de '+esc(nomeMov(ro)):''}</div></td>
   <td style="white-space:nowrap">${SP&&SP.valor>0?`<button class="btn ic sm${rk?' on':''}" data-spreemb type="button" title="É um reembolso? Escolher a despesa original">↩</button> `:''}<button class="btn ic sm" data-spdel type="button" title="Tirar linha">🗑</button></td></tr>`}
@@ -1460,7 +1464,7 @@ $('#spRows').addEventListener('input',e=>{if(e.target.matches('[data-spv]'))spSo
 $('#spRows').addEventListener('change',e=>{if(e.target.matches('[data-spc]')){const tr=e.target.closest('tr');tr.querySelector('[data-spr]').innerHTML=refOpts(e.target.value,'');spTiraReemb(tr)}});
 function spTiraReemb(tr){if(!tr.dataset.reemb)return;tr.dataset.reemb='';tr.querySelector('.sprb').textContent='';const b=tr.querySelector('[data-spreemb]');if(b)b.classList.remove('on')}
 $('#spOk').addEventListener('click',()=>{if(!SP||Math.abs(spSoma())>=.005)return;trk('dividir',{partes:(SP.partes||[]).length});const sg=SP.valor<0?-1:1;
-  const ps=$$('#spRows tr').map(tr=>{const p={valor:r2(sg*spVal(tr.querySelector('[data-spv]').value)),cat:tr.querySelector('[data-spc]').value,ref:tr.querySelector('[data-spr]').value,desc:tr.querySelector('[data-spo]').value.trim(),obs:tr.dataset.obs||''};if(tr.dataset.reemb&&sg>0)p.reemb=tr.dataset.reemb;return p}).filter(p=>p.valor);
+  const ps=$$('#spRows tr').map(tr=>{const p={valor:r2(sg*spVal(tr.querySelector('[data-spv]').value)),cat:tr.querySelector('[data-spc]').value,ref:tr.querySelector('[data-spr]').value,desc:tr.querySelector('[data-spo]').value.trim(),obs:tr.dataset.obs||''};{const mc=(tr.querySelector('[data-spm]')||{}).value;if(mc)p.mc=mc}if(tr.dataset.reemb&&sg>0)p.reemb=tr.dataset.reemb;return p}).filter(p=>p.valor);
   if(ps.length<2){toast('Precisa de pelo menos 2 linhas com valor');return}
   SP.partes=ps;SP.cat='';SP.ref='';SP.catSrc='manual';SP.u=Date.now();$('#mSplit').hidden=true;SP=null;save();render();toast(`Movimento dividido em ${ps.length} linhas`)});
 $('#spDesfaz').addEventListener('click',()=>{if(!SP)return;const p0=SP.partes[0]||{};SP.partes=null;SP.cat=p0.cat||'';SP.ref=p0.ref||'';SP.u=Date.now();$('#mSplit').hidden=true;SP=null;save();render();toast('Divisão desfeita')});
@@ -1711,17 +1715,17 @@ function abreDgo(td,spec){const [k,c,r]=spec.split('|'),ms=mesesGrelha(),pop=$('
 document.addEventListener('click',e=>{const pop=$('#dgPop');if(pop.hidden||e.target.closest('[data-mc],#mcPop'))return;const m=e.target.closest('[data-dgmov]');if(m){pop.hidden=true;irMovimento(m.dataset.dgmov);return}
   if(e.target.closest('[data-dgfecha]')||(!e.target.closest('#dgPop')&&!e.target.closest('[data-dgo]')))pop.hidden=true},true);
 addEventListener('keydown',e=>{if(e.key==='Escape')$('#dgPop').hidden=true});addEventListener('scroll',()=>{if(Date.now()-DG_T>400)$('#dgPop').hidden=true},{passive:true});
-let MCID=null;
-function abreMC(id,el){const m=DB.mov.find(x=>x.id===id);if(!m)return;MCID=id;const pop=$('#mcPop'),m0=m.dm.slice(0,7),auto=mesConta({...m,mc:''},ligados()),atual=m.mc||(auto&&auto.mes)||m0;
-  const op=[-2,-1,0,1,2].map(n=>mesSoma(m0,n));
+let MCID=null,MC_OFF=0,MC_EL=null;
+function abreMC(id,el,manter){if(!manter)MC_OFF=0;MC_EL=el;const m=DB.mov.find(x=>x.id===id);if(!m)return;MCID=id;const pop=$('#mcPop'),m0=m.dm.slice(0,7),auto=mesConta({...m,mc:''},ligados()),atual=m.mc||(auto&&auto.mes)||m0;
+  const op=[-1,0,1].map(n=>mesSoma(m0,n+MC_OFF)); // v0.10r: mês pago, anterior e seguinte; ‹ › para ver mais
   pop.innerHTML=`<div class="dh"><b>📅 Mês de conta</b><button type="button" data-mcx aria-label="Fechar">✕</button></div><div class="mb"><div><b>${esc(m.desc)}</b> · ${fmtD(m.dm)} · ${val(m.valor)}</div>
     <div class="muted">Em que mês conta nas Despesas, Início e Previsões. Nos Extratos fica sempre na data do banco.</div>
-    <div class="row">${op.map(x=>`<button class="btn sm${x===atual?' on':''}" type="button" data-mcset="${x}">${MES3[+x.slice(5)-1]} ${x.slice(2,4)}</button>`).join('')}</div>
+    <div class="row mcrow"><button class="btn sm" type="button" data-mcnav="-1" aria-label="Meses anteriores" title="Meses anteriores">‹</button>${op.map(x=>`<button class="btn sm${x===atual?' on':''}${x===m0?' pago':''}" type="button" data-mcset="${x}" title="${x===m0?'Mês em que foi pago':''}">${MES3[+x.slice(5)-1]} ${x.slice(2,4)}</button>`).join('')}<button class="btn sm" type="button" data-mcnav="1" aria-label="Meses seguintes" title="Meses seguintes">›</button></div>
     ${auto&&!m.mc?`<div class="muted">Automático: ${esc(mesTxt(auto.mes))} (${auto.por==='recibo'?'mês do recibo':'dia de corte da referência'}).</div>`:''}
     ${m.mc?`<div><button class="btn sm" type="button" data-mcset="">↺ Repor automático (${esc(mesTxt((auto&&auto.mes)||m0))})</button></div>`:''}</div>`;
   pop.hidden=false;DG_T=Date.now();const R=el.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight;let x=Math.min(innerWidth-pw-10,Math.max(10,R.right-pw)),y=R.bottom+6;if(y+ph>innerHeight-8)y=Math.max(8,R.top-ph-6);pop.style.left=x+'px';pop.style.top=y+'px'}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-mc]');if(b){e.stopPropagation();abreMC(b.dataset.mc,b);return}
-  const pop=$('#mcPop');if(pop.hidden)return;const s=e.target.closest('[data-mcset]');
+  const pop=$('#mcPop');if(pop.hidden)return;const nv=e.target.closest('[data-mcnav]');if(nv){MC_OFF+=+nv.dataset.mcnav;abreMC(MCID,MC_EL,true);return}const s=e.target.closest('[data-mcset]');
   if(s){const m=DB.mov.find(x=>x.id===MCID);if(m){const v=s.dataset.mcset,auto=mesConta({...m,mc:''},ligados()),base=(auto&&auto.mes)||m.dm.slice(0,7);if(!v||v===base)delete m.mc;else m.mc=v;m.u=Date.now();trk('mes_conta',{origem:'mao'});save();render();toast(m.mc?`Conta em ${mesTxt(m.mc)}`:'Mês de conta automático')}pop.hidden=true;return}
   if(e.target.closest('[data-mcx]')||!e.target.closest('#mcPop'))pop.hidden=true},true);
 addEventListener('keydown',e=>{if(e.key==='Escape')$('#mcPop').hidden=true});

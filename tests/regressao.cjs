@@ -595,12 +595,21 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const sal=db.mov.find(m=>/SALARIO/.test(m.desc));sal.cat='Rendimentos';sal.ref='Salário';const mr=w.mesSoma(sal.dm.slice(0,7),-1);db.rend.push({id:'rMC',tipo:'rec',mes:mr,data:mr+'-28',entidade:'Empresa Exemplo',bruto:1720,irs:0,ss:0,outros:0,vale:0,liquido:1720,linhas:[],descontos:[],lk:{t:chave(sal)},lkMan:{t:true},u:Date.now()});
     const recibo=mesDe(sal.id)===mr;db.rend=db.rend.filter(r=>r.id!=='rMC');
     const e2=edp[2];w.verMes(e2.dm);w.go('ext');w.limpaFiltros();w.render();await W(50);d.querySelector(`#extTable tr[data-id="${e2.id}"] td.c-dt[data-mc]`).click();await W(50);
-    const alvo=w.mesSoma(e2.dm.slice(0,7),1);d.querySelector(`#mcPop [data-mcset="${alvo}"]`).click();await W(50);const mao=e2.mc===alvo&&mesDe(e2.id)===alvo&&!!d.querySelector(`#extTable tr[data-id="${e2.id}"] td.c-dt.mcx`)&&!d.querySelector('#extTable .mcbt')&&e2.dm.slice(0,7)!==alvo;
+    const nb=d.querySelectorAll('#mcPop [data-mcset]').length;d.querySelector('#mcPop [data-mcnav="1"]').click();await W(30);const alvo=w.mesSoma(e2.dm.slice(0,7),2);const nav=nb===3&&!!d.querySelector(`#mcPop [data-mcset="${alvo}"]`);d.querySelector(`#mcPop [data-mcset="${alvo}"]`).click();await W(50);const mao=nav&&e2.mc===alvo&&mesDe(e2.id)===alvo&&!!d.querySelector(`#extTable tr[data-id="${e2.id}"] td.c-dt.mcx`)&&!d.querySelector('#extTable .mcbt')&&e2.dm.slice(0,7)!==alvo;
     w.render();d.querySelector(`#extTable tr[data-id="${e2.id}"] [data-mc]`).click();await W(50);d.querySelector('#mcPop [data-mcset=""]').click();const repos=!e2.mc;
     e2.mc=w.mesSoma(e2.dm.slice(0,7),-1);w.verMes(e2.dm);w.go('des');w.render();await W(50);const aviso=!!d.querySelector('#desCats .dupw');d.querySelector('#desCats td.clk[data-dgo]').click();await W(50);const dc=d.querySelector('#dgPop td.mcd[data-mc]');dc.click();await W(50);const miniData=!d.querySelector('#mcPop').hidden&&!d.querySelector('#dgPop').hidden;d.querySelector('#mcPop').hidden=true;d.querySelector('#dgPop').hidden=true;
     window.postMessage({tipo:'x'},'*');w.postMessage({tipo:'fp-dupw',on:false},'*');await W(50);const desliga=w.getComputedStyle(d.querySelector('#desCats .dupw')).display==='none';w.postMessage({tipo:'fp-dupw',on:true},'*');await W(30);delete e2.mc;
     await w.fpCtx.apagaEx();w.go('home');ok({ok:corte&&recibo&&mao&&repos&&aviso&&miniData&&desliga,corte,recibo,mao,repos,aviso,miniData,desliga})}));
   t('D125','mês de conta: dia de corte da referência (anterior/seguinte), mês do recibo ligado, escolha à mão ao clicar na data (Extratos e mini janela; data a cor se mudou), repor, aviso de dois pagamentos no mesmo mês (desligável); Extratos na data real',z125.ok,z125);
+  const z126=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),mesSoma=w.eval('mesSoma');const m=db.mov.find(x=>x.valor<-40&&!x.partes);w.abreSplit(m);await W(50);
+    const sel=d.querySelector('#spRows tr [data-spm]'),temSel=!!sel&&d.querySelector('#mSplit thead th').textContent.includes('Mês');
+    if(d.querySelectorAll('#spRows tr').length<2)d.querySelector('#spAdd').click();const trs=d.querySelectorAll('#spRows tr');const v=Math.abs(m.valor);
+    trs[1].querySelector('[data-spv]').value='10,00';trs[1].querySelector('[data-spv]').dispatchEvent(new Event('input',{bubbles:true}));const alvo=mesSoma(m.dm.slice(0,7),-1);trs[1].querySelector('[data-spm]').value=alvo;
+    trs[1].querySelector('[data-spc]').value=m.cat||'Outros';trs[0].querySelector('[data-spv]').value=(v-10).toFixed(2).replace('.',',');trs[0].querySelector('[data-spv]').dispatchEvent(new Event('input',{bubbles:true}));await W(30);d.querySelector('#spOk').click();await W(50);
+    const guardou=m.partes&&m.partes[1].mc===alvo,X=w.expandeC(db.mov),p1=X.find(x=>x.id===m.id+'#1'),p0=X.find(x=>x.id===m.id+'#0');const conta=!!p1&&p1.dm.slice(0,7)===alvo&&p0.dm.slice(0,7)===m.dm.slice(0,7);
+    await w.fpCtx.apagaEx();w.go('home');ok({ok:temSel&&guardou&&conta,temSel,guardou,conta})}));
+  t('D126','dividir movimento: cada linha tem à esquerda o seu mês de conta (vazio = o do pagamento)',z126.ok,z126);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
