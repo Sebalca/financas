@@ -222,6 +222,7 @@ body.ctxAgr{--ac:#7b1fa2;--ac2:#f3e5f5}
         <label class="sw2"><input type="checkbox" data-cor="des"> <span>Pintar as linhas nas Despesas</span></label>
         <label class="sw2" style="cursor:default"><span style="flex:none">Extratos: pintar a</span><select id="optPint" style="max-width:220px"><option value="caixa">caixa da categoria</option><option value="linha">linha inteira</option><option value="">(não pintar)</option></select></label>
       </div>
+      <label class="sw2"><input type="checkbox" id="optDupw"> <span>Mostrar os avisos <b>⚠</b> de pagamentos repetidos no mesmo mês (Despesas)</span></label>
       <label class="sw2"><input type="checkbox" id="optInf"> <span>Mostrar a ajuda <b>ⓘ</b> nas caixas e nas colunas</span></label>
       <label class="sw2"><input type="checkbox" id="optCalc"> <span>Mostrar o ícone 🧮 <b>Como foi calculado</b> nas caixas (Início, Despesas, Rendimentos)</span></label>
     </section>
@@ -463,6 +464,8 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
     const envia=n=>{try{localStorage.setItem('fp_cores',JSON.stringify(n))}catch(e){}const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-cores',cores:n},'*')};
     document.querySelectorAll('#optCores [data-cor]').forEach(c=>{c.checked=!!o[c.dataset.cor];c.addEventListener('change',()=>{const n=le();n[c.dataset.cor]=c.checked?1:0;envia(n)})});
     $('optPint').value=o.pint;$('optPint').addEventListener('change',()=>{const n=le();n.pint=$('optPint').value;envia(n)})}
+  $('optDupw').checked=(()=>{try{return localStorage.getItem('fp_dupw')!=='0'}catch(e){return true}})();
+  $('optDupw').addEventListener('change',e=>{try{localStorage.setItem('fp_dupw',e.target.checked?'1':'0')}catch(x){}const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-dupw',on:e.target.checked},'*')});
   $('optInf').checked=(()=>{try{return localStorage.getItem('fp_inf')!=='0'}catch(e){return true}})();
   $('optInf').addEventListener('change',e=>{try{localStorage.setItem('fp_inf',e.target.checked?'1':'0')}catch(x){}const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-inf',on:e.target.checked},'*')});
   $('optCalc').addEventListener('change',e=>{try{localStorage.setItem('fp_calc',e.target.checked?'1':'0')}catch(x){}enviaCalc()});
@@ -782,6 +785,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.10q',d:'04/10/2026',n:['Opção nas Definições para esconder os avisos ⚠ das Despesas'],a:['Mês de conta: clique na data do movimento (nos Extratos e na mini janela das Despesas); as datas que contam noutro mês aparecem a cor']},
  {v:'0.10p',d:'04/10/2026',n:['Mês de conta: escolha em que mês conta um movimento (📅 junto à data), sem mudar a data do extrato','Dia de corte por referência (Despesas › Editar): ex. o salário que entra no fim do mês conta no seguinte','Salário ligado a um recibo conta no mês do recibo','Aviso ⚠ quando um pagamento mensal aparece duas vezes no mesmo mês'],a:[]},
  {v:'0.10o',d:'03/10/2026',n:['Rendimentos: as entradas do extrato ainda sem recibo aparecem com “recibo por ligar” e saem quando ligar o recibo','Filtros no Resumo anual: com recibo / só extrato e ligados / por ligar'],a:[]},
  {v:'0.10n',d:'03/10/2026',n:[],a:['Despesas: os títulos das colunas acompanham ao descer','Mini janela das Despesas mostra também “Quem é”','Extratos: “Quem é” passa a vir só das regras de Pessoas']},
