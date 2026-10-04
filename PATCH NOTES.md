@@ -156,10 +156,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D122 **Extratos e movimentos divididos**: os filtros de categoria/referência e a pesquisa de texto olham para **cada linha** do movimento dividido (descrição, categoria, referência, observações e a despesa do reembolso); o movimento aparece aberto só com as linhas que batem e os totais do cabeçalho contam só essas linhas. Se a pesquisa bater na descrição do próprio movimento, mostra todas as linhas. **Mini janela das Despesas**: a data é a do extrato (a conta continua na data da despesa, D121; ↩ e explicação ao passar o rato); clicar num reembolso abre o movimento (antes dava "Movimento não encontrado").
 - D123 **"Quem é" nos Extratos só de leitura**: preenche-se só pelas regras de Pessoas (⚙ Regras e pessoas); na lista e na edição em massa não se escreve (os movimentos em dinheiro adicionados à mão continuam a ter o campo). **Despesas**: títulos da grelha numa barra fixa que acompanha o scroll (como nas Previsões). **Mini janela**: coluna "Quem é" (numa linha de movimento dividido, o do movimento original).
 - D124 **Rendimentos e extrato**: as entradas dos Extratos na categoria Rendimentos que **não estão ligadas** a um recibo/rendimento aparecem no Resumo anual (etiqueta "extrato", "⚠ recibo por ligar", clicável para o movimento) e contam no **Líquido** (não no bruto, IRS, SS nem ordenado). Quando um recibo/rendimento as liga (🔗), a linha do extrato sai e fica a do recibo. Filtros no Resumo anual: **Origem** (todas / com recibo ou rendimento / só extrato) e **Ligação** (ligados e por ligar / só ligados / só por ligar), além da entidade.
+- D125 **Mês de conta**: cada movimento conta num mês (Início, Despesas, Previsões, Rendimentos do extrato) que pode não ser o da data do banco; nos Extratos e saldos fica sempre a data real. Por ordem: (1) **à mão** — 📅 junto à data nos Extratos ou em cada linha da mini janela das Despesas (2 meses antes/depois; "Repor automático"); etiqueta "→ mês" na data (cheia = à mão); (2) **reembolso ligado** → mês da despesa (D121); (3) **ligado a um recibo** → mês do recibo; (4) **dia de corte da referência** em Despesas › ✏ Editar (até o dia X → mês anterior; a partir do dia Y → mês seguinte). Nas Despesas, ⚠ numa referência mensal com 2+ pagamentos num mês e nenhum num mês ao lado. Vale igual para os agregados (dados de cada contexto; os dias de corte copiam-se ao criar o agregado).
 
 ---
 
 ## Histórico
+
+### v0.10p — 04/10/2026
+- Mês de conta: à mão, pelo recibo, por dia de corte da referência, aviso de pagamentos duplicados (D125). Coluna Data dos Extratos um pouco mais larga para o 📅.
 
 ### v0.10o — 03/10/2026
 - Rendimentos do extrato sem recibo na aba Rendimentos, com filtros de origem e ligação (D124).
