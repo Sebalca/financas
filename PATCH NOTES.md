@@ -118,7 +118,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 
 **Início**
 - D30 Caixas "Despesas por categoria" (clicável → Extratos filtrados) e "Rendimentos".
-- D64 Início: 4 caixas na mesma linha — Despesas por categoria, Despesas por referência, Rendimentos e Rendimentos por tipo. As de rendimentos vêm do **extrato** (entradas da categoria Rendimentos): Rendimentos por entidade, Por tipo pela referência (Salário, Prémios, Subsídios…); o que está ligado a um recibo aparece com ✓ e cor cheia, o resto esbatido "por confirmar". (v0.7t)
+- D64 Início: por omissão 4 caixas estreitas seguidas (numa linha no ecrã largo) — Despesas por categoria, Despesas por referência, Rendimentos e Rendimentos por tipo. As de rendimentos vêm do **extrato** (entradas da categoria Rendimentos): Rendimentos por entidade, Por tipo pela referência (Salário, Prémios, Subsídios…); o que está ligado a um recibo aparece com ✓ e cor cheia, o resto esbatido "por confirmar". (v0.7t; atualizada v0.10s: a disposição pode ser mudada em ✏ Editar, D127)
 - D37 As 4 caixas do Início têm título e valor maiores e centrados; o texto explicativo só aparece ao passar o rato.
 - D38 Clicar em Entradas/Saídas do Início abre os Extratos com o filtro Só entradas/Só saídas.
 - D31 "Por categorizar" mostra só as descrições mais frequentes (⚡ criar regra); "Categorizar →" abre os Extratos filtrados.
@@ -157,10 +157,16 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D123 **"Quem é" nos Extratos só de leitura**: preenche-se só pelas regras de Pessoas (⚙ Regras e pessoas); na lista e na edição em massa não se escreve (os movimentos em dinheiro adicionados à mão continuam a ter o campo). **Despesas**: títulos da grelha numa barra fixa que acompanha o scroll (como nas Previsões). **Mini janela**: coluna "Quem é" (numa linha de movimento dividido, o do movimento original).
 - D124 **Rendimentos e extrato**: as entradas dos Extratos na categoria Rendimentos que **não estão ligadas** a um recibo/rendimento aparecem no Resumo anual (etiqueta "extrato", "⚠ recibo por ligar", clicável para o movimento) e contam no **Líquido** (não no bruto, IRS, SS nem ordenado). Quando um recibo/rendimento as liga (🔗), a linha do extrato sai e fica a do recibo. Filtros no Resumo anual: **Origem** (todas / com recibo ou rendimento / só extrato) e **Ligação** (ligados e por ligar / só ligados / só por ligar), além da entidade.
 - D125 **Mês de conta**: cada movimento conta num mês (Início, Despesas, Previsões, Rendimentos do extrato) que pode não ser o da data do banco; nos Extratos e saldos fica sempre a data real. Por ordem: (1) **à mão** — clicar na **data** nos Extratos ou na mini janela das Despesas abre a janela do mês (mês do pagamento, o anterior e o seguinte, com ‹ › para andar mais meses; "Repor automático"); as datas de movimentos que contam noutro mês aparecem **a cor** (sem ícone; o mês está no texto ao passar o rato); na mini janela, clicar no resto da linha vai para o movimento; (2) **reembolso ligado** → mês da despesa (D121); (3) **ligado a um recibo** → mês do recibo; em **Dividir movimento** cada linha tem à esquerda o seu mês de conta (vazio = o do pagamento); (4) **dia de corte da referência** em Despesas › ✏ Editar (até o dia X → mês anterior; a partir do dia Y → mês seguinte). Nas Despesas, ⚠ numa referência mensal com 2+ pagamentos num mês e nenhum num mês ao lado — pode desligar-se em Definições › Geral. Vale igual para os agregados. (atualizada v0.10r)
+- D127 **Início personalizável** (✏ Editar): cada caixa pode ser escondida/mostrada (＋ nas "Caixas escondidas"), mudada de ordem (arrastar pela pega ⠿, ou ◀ ▶) e ser **estreita** (¼) ou **larga** (½); no telemóvel ocupa sempre a largura toda. Os KPIs e os Primeiros passos ficam fixos no topo. A disposição e as escolhas dos gráficos ficam **na conta de cada pessoa** (`user_site_data`, site `financas`, chave `inicio`; cópia em `fp_inicio` no browser) — iguais em todos os dispositivos e nos agregados, cada membro com a sua. "↺ Repor" volta à disposição de origem. Caixas **Despesas por categoria / por referência por mês**: linhas dos 12 meses do ano (saídas − reembolsos, com o mês de conta, D121/D125), uma por categoria/referência escolhida (sem escolha: as 3 maiores do ano), o **previsto** por mês a tracejado da mesma cor; meses futuros sem ponto.
 
 ---
 
 ## Histórico
+
+### v0.10s — 04/10/2026
+- Início: botão ✏ Editar para esconder/mostrar, arrastar e alargar/estreitar as caixas, guardado na conta de cada pessoa (D127; D64 atualizada).
+- Novas caixas: Despesas por categoria e por referência, em linhas pelos meses do ano, com o previsto a tracejado.
+- Versão v0.10r guardada no GitHub no ramo `backup/v0.10r`.
 
 ### v0.10r — 04/10/2026
 - Mês de conta: janela com 3 meses e setas ‹ ›; mês de conta por linha ao dividir um movimento (D125 atualizada).

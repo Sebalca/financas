@@ -348,6 +348,18 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:60}
 #toast.on{opacity:1}
 @media (max-width:640px){.top{padding:8px 0 4px}.top h1{font-size:17px}.top p{display:none}.nav span{min-width:110px;font-size:13px}.kpi .v{font-size:20px}}
+/* v0.10s: Início personalizável — caixas numa grelha de 4 colunas (estreita = 1, larga = 2) */
+.hgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:start}.hgrid>.card{margin:0}.hgrid>.cx-w{grid-column:span 2}.hgrid>.cxh{display:none}
+@media (max-width:1300px){.hgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:760px){.hgrid{grid-template-columns:1fr}.hgrid>.cx-w{grid-column:auto}}
+.hgrid>.cx-n .donut{flex-direction:column;align-items:stretch}.hgrid>.cx-n .donut svg{align-self:center}
+.hgrid .ms .msp{left:auto;right:0}.hgrid h3 .ms{min-width:150px;max-width:230px}
+.hedbar{display:flex;align-items:center;gap:10px;margin:-4px 0 10px}.hedbar .r{margin-left:auto;display:flex;gap:6px}.hedtx{display:none;font-size:13px;color:var(--mu)}
+.hadd[hidden],#homeRepor[hidden]{display:none}.hed .hedtx{display:block}.hed #homeEd{background:var(--ac);color:#fff;border-color:var(--ac)}
+.hadd{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 12px;padding:10px 12px;border:1px dashed var(--bd);border-radius:var(--r);font-size:13px;color:var(--mu)}
+.hed .hgrid>.card{position:relative;padding-top:50px;outline:2px dashed color-mix(in srgb,var(--ac) 55%,transparent);outline-offset:-2px}.hed .hgrid>.card>*:not(.cxed){pointer-events:none;opacity:.75}
+.hgrid .cxed{display:none}.hed .hgrid .cxed{position:absolute;left:8px;right:8px;top:8px;display:flex;gap:6px;align-items:center;z-index:5}.cxed .btn{padding:3px 9px}.cxed .cxpega{cursor:grab;touch-action:none;font-size:17px;line-height:1}.cxed .cxx{margin-left:auto}
+.hgrid>.card.cxdrag{opacity:.55;outline-style:solid}body.cxarr,body.cxarr *{cursor:grabbing!important;user-select:none}
+.lnc svg{width:100%;height:auto;display:block}.lnc .leg{flex-wrap:wrap}.lnc .leg .pv{display:inline-block;width:16px;border-top:2px dashed var(--mu);margin-right:5px;vertical-align:3px}
 </style>
 </head>
 <body>
@@ -380,23 +392,21 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
   <section class="panel on" id="tab-home">
     <div class="card pp" id="homePP" hidden></div>
     <div class="kpis" id="homeKpis"></div>
-    <div class="grid3">
-      <div class="card"><h3>Entradas e saídas por mês <small id="barsSub"></small><span class="r"><span class="seg mini" id="barsVista"><button type="button" class="on" data-v="s">Simples</button><button type="button" data-v="d">Detalhado</button></span></span></h3><div class="bars" id="homeBars"></div></div>
-      <div class="card"><h3>Saldo por banco</h3><ul class="banks" id="homeBanks"></ul></div>
-    </div>
-    <div class="grid4">
-      <div class="card"><h3>Despesas por categoria <small>no período</small><span class="r"><span class="seg mini" data-dpct="homeDonut"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeDonut"></div></div>
-      <div class="card"><h3>Despesas por referência <small>no período</small><span class="r"><span class="seg mini" data-dpct="homeDonutRef"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeDonutRef"></div></div>
-      <div class="card"><h3>Rendimentos <small>do extrato · ✓ com recibo</small><span class="r"><span class="seg mini" data-dpct="homeRend"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span><button class="btn sm" data-go="ren">Ver →</button></span></h3><div id="homeRend"></div></div>
-      <div class="card"><h3>Rendimentos por tipo <small>do extrato</small><span class="r"><span class="seg mini" data-dpct="homeRendTipo"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeRendTipo"></div></div>
-    </div>
-    <div class="gtp">
-      <div class="card"><h3>Despesas por tipo <small>no período</small><span class="r"><span class="seg mini" data-dpct="homeDonutTipo"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeDonutTipo"></div></div>
-      <div class="card"><h3>Previsto vs real <small>despesas</small><span class="r"><button class="btn sm" data-go="des">Ver despesas →</button></span></h3><div class="tw" id="homeBudget"></div></div>
-    </div>
-    <div class="grid2">
-      <div class="card"><h3>Últimos movimentos<span class="r"><button class="btn sm" data-go="ext">Ver extratos →</button></span></h3><div class="tw" id="homeLast"></div></div>
-      <div class="card"><h3>Por categorizar <span class="tag wait" id="homeUncCnt">0</span><span class="r"><button class="btn sm" data-gounc>Categorizar →</button></span></h3><div class="tw" id="homeUnc" style="max-height:460px;overflow:auto"></div></div>
+    <div class="hedbar"><span class="hedtx">✏ <b>A editar o Início</b> — arraste as caixas pela pega ⠿ (ou use ◀ ▶), mude a largura ou esconda-as. Fica guardado na sua conta.</span><span class="r"><button type="button" class="btn sm" id="homeRepor" hidden title="Voltar à disposição de origem">↺ Repor</button><button type="button" class="btn sm" id="homeEd" title="Mostrar, esconder, mudar a ordem e a largura das caixas">✏ Editar</button></span></div>
+    <div class="hadd" id="homeAdd" hidden></div>
+    <div class="hgrid" id="homeGrid">
+      <div class="card" data-cx="bars"><h3>Entradas e saídas por mês <small id="barsSub"></small><span class="r"><span class="seg mini" id="barsVista"><button type="button" class="on" data-v="s">Simples</button><button type="button" data-v="d">Detalhado</button></span></span></h3><div class="bars" id="homeBars"></div></div>
+      <div class="card" data-cx="banks"><h3>Saldo por banco</h3><ul class="banks" id="homeBanks"></ul></div>
+      <div class="card" data-cx="donutTipo"><h3>Despesas por tipo <small>no período</small><span class="r"><span class="seg mini" data-dpct="homeDonutTipo"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeDonutTipo"></div></div>
+      <div class="card" data-cx="donut"><h3>Despesas por categoria <small>no período</small><span class="r"><span class="seg mini" data-dpct="homeDonut"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeDonut"></div></div>
+      <div class="card" data-cx="donutRef"><h3>Despesas por referência <small>no período</small><span class="r"><span class="seg mini" data-dpct="homeDonutRef"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeDonutRef"></div></div>
+      <div class="card" data-cx="rend"><h3>Rendimentos <small>do extrato · ✓ com recibo</small><span class="r"><span class="seg mini" data-dpct="homeRend"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span><button class="btn sm" data-go="ren">Ver →</button></span></h3><div id="homeRend"></div></div>
+      <div class="card" data-cx="rendTipo"><h3>Rendimentos por tipo <small>do extrato</small><span class="r"><span class="seg mini" data-dpct="homeRendTipo"><button type="button" data-v="">€</button><button type="button" data-v="1">%</button></span></span></h3><div id="homeRendTipo"></div></div>
+      <div class="card" data-cx="budget"><h3>Previsto vs real <small>despesas</small><span class="r"><button class="btn sm" data-go="des">Ver despesas →</button></span></h3><div class="tw" id="homeBudget"></div></div>
+      <div class="card" data-cx="unc"><h3>Por categorizar <span class="tag wait" id="homeUncCnt">0</span><span class="r"><button class="btn sm" data-gounc>Categorizar →</button></span></h3><div class="tw" id="homeUnc" style="max-height:460px;overflow:auto"></div></div>
+      <div class="card" data-cx="lnCat"><h3>Despesas por categoria <small>por mês · ano</small><span class="r"><div class="ms" id="lnCatSel" data-ph="As 3 maiores" aria-label="Categorias do gráfico"></div></span></h3><div id="homeLnCat"></div></div>
+      <div class="card" data-cx="lnRef"><h3>Despesas por referência <small>por mês · ano</small><span class="r"><div class="ms" id="lnRefSel" data-ph="As 3 maiores" aria-label="Referências do gráfico"></div></span></h3><div id="homeLnRef"></div></div>
+      <div class="card" data-cx="last"><h3>Últimos movimentos<span class="r"><button class="btn sm" data-go="ext">Ver extratos →</button></span></h3><div class="tw" id="homeLast"></div></div>
     </div>
   </section>
 
@@ -556,7 +566,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.10r'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.10s'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -968,6 +978,12 @@ function msPinta(el){const b=el.querySelector('.msb');if(!b)return;const n=el.va
 document.addEventListener('click',e=>{if(!e.target.closest('.ms'))$$('.ms .msp').forEach(x=>x.hidden=true)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.ms .msp').forEach(x=>x.hidden=true)});
 $$('.ms').forEach(msInit);
+const HL_DEF={o:['bars','banks','donutTipo','donut','donutRef','rend','rendTipo','budget','unc','lnCat','lnRef','last'],w:{bars:'w',budget:'w',unc:'w',lnCat:'w',lnRef:'w',last:'w'}};
+const hlUid=()=>{try{const u=window.parent!==window&&window.parent.financasUser;return u&&u.id||''}catch(e){return ''}};
+const hlNorm=x=>{x=x&&typeof x==='object'?x:{};const ids=HL_DEF.o,o=(Array.isArray(x.o)?x.o:[]).filter((k,i,a)=>ids.includes(k)&&a.indexOf(k)===i);ids.forEach(k=>{if(!o.includes(k))o.push(k)});
+  const w={...HL_DEF.w};Object.entries(x.w||{}).forEach(([k,v])=>{if(ids.includes(k)&&(v==='w'||v==='n'))w[k]=v});const ar=a=>Array.isArray(a)?a.filter(v=>typeof v==='string'):[];
+  return {o,h:ar(x.h).filter(k=>ids.includes(k)),w,lc:ar(x.lc),lr:ar(x.lr)}};
+let HL=(()=>{try{const c=JSON.parse(localStorage.getItem('fp_inicio')||'null');if(c&&(c.uid||'')===hlUid())return hlNorm(c)}catch(e){}return hlNorm({})})();
 let CALC_ON=true,ORDEM='';try{CALC_ON=localStorage.getItem('fp_calc')!=='0';ORDEM=localStorage.getItem('fp_ordem')||''}catch(e){}
 const CALC={};let CALC_ID=null;
 function motivoFora(m){if(isInterna(m))return m.cat==='Poupanças'?`Entre contas — Poupanças${m.ref?' › '+m.ref:''}`:`Entre contas — Banco › ${m.ref}`;
@@ -1037,6 +1053,13 @@ function bars(data,det){const W=1000,H=170,pl=44,pb=20,pt=6,tot=d=>det?[d.e.redu
   const lg=det?[...leg].map(([l,c])=>`<span><i style="background:${c}"></i>${esc(l)}</span>`).join('')+'<span class="muted">· barra da esquerda = entradas, da direita = saídas</span>'
     :'<span><i style="background:var(--c1)"></i>Entradas</span><span><i style="background:var(--c2)"></i>Saídas</span>';
   return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg><div class="leg">${lg}</div>`}
+function linhas(lab,ss,vazio){if(!ss.length||!ss.some(x=>x.v.some(v=>v>.004)||x.p))return `<div class="empty"><b>Sem dados</b>${vazio}</div>`;
+  const W=1000,H=200,pl=48,pr=10,pb=22,pt=8,n=lab.length,mx=Math.max(1,...ss.flatMap(x=>x.v.concat(x.p||[])).filter(v=>v!=null))*1.1,X=i=>pl+(W-pl-pr)*(i+.5)/n,Y=v=>H-pb-v/mx*(H-pb-pt);
+  let g='';for(let i=0;i<=4;i++){const v=mx/4*i;g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--bd)"/><text x="${pl-6}" y="${Y(v)+3}" text-anchor="end" font-size="9" fill="var(--mu)">${milhar(Math.round(v).toLocaleString('pt-PT',{useGrouping:'always'}))}</text>`}
+  lab.forEach((l,i)=>g+=`<text x="${X(i)}" y="${H-6}" text-anchor="middle" font-size="10" fill="var(--mu)">${l}</text>`);
+  ss.forEach(x=>{if(x.p)g+=`<polyline fill="none" stroke="${x.c}" stroke-width="2" stroke-dasharray="6 5" opacity=".7" points="${x.p.map((v,i)=>X(i)+','+Y(v)).join(' ')}"><title>${esc(x.t||x.l)} · previsto ${E(x.p[0])}/mês</title></polyline>`;
+    g+=`<polyline fill="none" stroke="${x.c}" stroke-width="2.5" stroke-linejoin="round" points="${x.v.map((v,i)=>v==null?'':X(i)+','+Y(v)).join(' ').trim()}"/>`+x.v.map((v,i)=>v==null?'':`<circle cx="${X(i)}" cy="${Y(v)}" r="3.5" fill="${x.c}"><title>${esc(x.t||x.l)} · ${lab[i]}: ${E(v)}${x.p?` (previsto ${E(x.p[i])})`:''}</title></circle>`).join('')});
+  return `<div class="lnc"><svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg><div class="leg">${ss.map(x=>`<span title="${esc(x.t||x.l)}"><i style="background:${x.c}"></i>${esc(x.l)}</span>`).join('')}${ss.some(x=>x.p)?'<span><i class="pv"></i>previsto</span>':''}</div></div>`}
 function mesesGraf(){const ref=P.m==='int'&&P.fim?new Date(+P.fim.slice(0,4),+P.fim.slice(5,7)-1,1):P.d,a=anoIni(ref),out=[];for(let i=0;i<12;i++){const d=new Date(a.getFullYear(),a.getMonth()+i,1);out.push([d.getFullYear(),d.getMonth()])}return out}
 const EXT_COLS=[['<input type="checkbox" id="selAll" aria-label="Selecionar todos">','ck'],['Data'],['Descrição'],['Valor','num'],['Categoria'],['Referência'],['Detalhes'],['Observações'],['Quem é'],['Banco'],['']];
 const EXT_W=[30,132,null,110,215,205,200,185,130,120,152]; // larguras fixas (px); a Descrição fica com o resto
@@ -1139,6 +1162,18 @@ function render(){
   $('#homeBudget').innerHTML=resumo.length?`<table class="t pvr"><thead><tr><th>Categoria</th><th class="num">Real / previsto</th><th style="width:55%"></th></tr></thead><tbody>${resumo.map(({c,p,r})=>{const mx=Math.max(p*1.1,r)||1,over=p>0&&r>p+.004,cor=over?'var(--c2)':p?corCat(c.nome):'var(--c8)';
     const F=100/1.1,w=p?Math.min(100,Math.max(0,r/p*F)):100,cb=p?(over?'var(--c2)':'var(--ac)'):'var(--c8)'; // v0.10j: traço do previsto fixo; a barra passa-o quando o real ultrapassa
     return `<tr><td><i class="dot" style="background:${corCat(c.nome)}"></i>${esc(c.nome)}</td><td class="num${over?' neg':''}">${E(r)} <span class="muted">/ ${p?E(p):'—'}</span></td><td><div class="pvbar" title="${over?`Acima do previsto em ${E(r-p)}`:p?`Faltam ${E(p-r)} para o previsto`:'Sem previsão'}"><i style="width:${w}%;background:${cb}"></i>${p?`<b style="left:${F}%"></b>`:''}</div></td></tr>`}).join('')}</tbody></table>`:'<div class="empty"><b>Sem valores no período</b></div>';
+  /* v0.10s: gráficos de linhas do ano (saídas − reembolsos por mês) + previsto a tracejado */
+  {const MG=mesesGraf(),yPv=MG[0][0],PM=MG.map(([y,m])=>`${y}-${pad(m+1)}`),lab=MG.map(([y,m])=>MES3[m]);
+   const serie=f=>{const v=PM.map(()=>0);allX.forEach(x=>{if(!contaInicio(x)||!f(x))return;const i=PM.indexOf(x.dm.slice(0,7));if(i>=0)v[i]-=x.valor});const hj=new Date().toISOString().slice(0,7);return v.map((x,i)=>PM[i]>hj?null:Math.max(0,r2(x)))};
+   const top3=(ks,f)=>ks.map(k=>[k,serie(m=>f(m,k)).reduce((a,b)=>a+b,0)]).filter(x=>x[1]>.004).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+   const cs=DB.cats.filter(c=>!eFora(c.nome)),fc=(m,k)=>m.cat===k;
+   $('#lnCatSel').setOpts(cs.map(c=>[c.nome,c.nome]));$('#lnCatSel').value=HL.lc.filter(v=>cs.some(c=>c.nome===v)).join(MS_SEP);
+   const sc=HL.lc.filter(v=>cs.some(c=>c.nome===v)),selC=sc.length?sc:top3(cs.map(c=>c.nome),fc);
+   $('#homeLnCat').innerHTML=linhas(lab,selC.map(n=>{const c=cs.find(x=>x.nome===n),pv=c.refs.reduce((s,r)=>s+pvK(yPv,n+'›'+r),0);return {l:n,c:corCat(n),v:serie(m=>fc(m,n)),p:pv?PM.map(()=>pv):null}}),'Sem despesas nestas categorias no ano.');
+   const rks=cs.flatMap(c=>c.refs.map(r=>c.nome+'›'+r)),fr=(m,k)=>m.cat+'›'+m.ref===k;
+   $('#lnRefSel').setOpts(cs.flatMap(c=>c.refs.length?[[c.nome+'›',c.nome,'g x'],...c.refs.map(r=>[c.nome+'›'+r,r,'sub'])]:[]));$('#lnRefSel').value=HL.lr.filter(v=>rks.includes(v)).join(MS_SEP);
+   const sr=HL.lr.filter(v=>rks.includes(v)),selR=sr.length?sr:top3(rks,fr),dup=new Set(selR.map(k=>corRefG(...k.split('›')))).size<selR.length;
+   $('#homeLnRef').innerHTML=linhas(lab,selR.map((k,i)=>{const [c,r]=k.split('›'),pv=pvK(yPv,k);return {l:r,t:c+' › '+r,c:dup?CORES[(i*3+1)%CORES.length]:corRefG(c,r),v:serie(m=>fr(m,k)),p:pv?PM.map(()=>pv):null}}),'Sem despesas nestas referências no ano.')}
   const last=ordena(per).slice(0,8);
   $('#homeLast').innerHTML=last.length?`<table class="t"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor</th><th>Categoria</th></tr></thead><tbody>${last.map(m=>`<tr><td>${fmtD(m.dm)}</td><td class="desc">${esc(m.desc)}</td><td class="num">${val(m.valor)}</td><td>${m.cat?`<span class="tag">${esc(m.cat)}${m.ref?' · '+esc(m.ref):''}</span>`:'<span class="tag wait">Por categorizar</span>'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty"><b>Sem movimentos no período</b></div>';
   $('#homeUncCnt').textContent=unc.length;
@@ -2121,6 +2156,46 @@ function mostraDica(){$$('.dicaAlvo').forEach(x=>x.classList.remove('dicaAlvo'))
     b.style.left=Math.min(innerWidth-bw-10,Math.max(10,r.left+Math.min(r.width,300)/2-bw/2))+'px';b.style.top=y+'px'})}
 $('#dica').addEventListener('click',e=>{const b=e.target.closest('[data-dc]');if(!b)return;if(b.dataset.dc==='off'){lsS('fp_dicas','0');fechaDica();toast('Dicas desligadas — pode voltar a ligá-las em Definições')}else{DQ.i++;mostraDica()}});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&DQ)fechaDica()});
+/* v0.10s: Início personalizável — ordem, largura e caixas escondidas; guardado na conta da pessoa (user_site_data, site financas, chave "inicio") */
+const hlCard=k=>document.querySelector(`#homeGrid>[data-cx="${k}"]`),hlNome=k=>{const h=hlCard(k).querySelector('h3');return [...h.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').trim()};
+function hlAplica(){const G=$('#homeGrid');if(!G)return;
+  HL.o.forEach(k=>{const c=hlCard(k);if(!c)return;G.appendChild(c);const w=HL.w[k]==='w';c.classList.toggle('cx-w',w);c.classList.toggle('cx-n',!w);c.classList.toggle('cxh',HL.h.includes(k));
+    let e=c.querySelector(':scope>.cxed');if(!e){e=document.createElement('div');e.className='cxed';c.prepend(e)}
+    e.innerHTML=`<button type="button" class="btn sm cxpega" title="Arrastar para mudar a ordem" aria-label="Arrastar">⠿</button><button type="button" class="btn sm" data-hlm="-1" title="Para trás" aria-label="Para trás">◀</button><button type="button" class="btn sm" data-hlm="1" title="Para a frente" aria-label="Para a frente">▶</button><button type="button" class="btn sm" data-hlw title="Mudar a largura (no telemóvel ocupa sempre a largura toda)">⇔ ${w?'Estreitar':'Alargar'}</button><button type="button" class="btn sm cxx" data-hlx title="Esconder esta caixa">✕ Esconder</button>`});
+  const A=$('#homeAdd'),hid=HL.o.filter(k=>HL.h.includes(k));A.hidden=!$('#tab-home').classList.contains('hed');
+  A.innerHTML=hid.length?'<span>Caixas escondidas:</span>'+hid.map(k=>`<button type="button" class="btn sm" data-hladd="${k}">＋ ${esc(hlNome(k))}</button>`).join(''):'<span>Todas as caixas estão visíveis. Para esconder uma, use ✕ Esconder.</span>'}
+let HL_T=null;
+function hlGrava(){const uid=hlUid();try{localStorage.setItem('fp_inicio',JSON.stringify({...HL,uid}))}catch(e){}
+  clearTimeout(HL_T);HL_T=setTimeout(async()=>{try{const P_=window.parent,u=P_.financasUser,c=P_.plataforma;if(!u||!c||!c.from)return;
+    const {error}=await c.from('user_site_data').upsert({user_id:u.id,site_id:'financas',chave:'inicio',valor:{...HL,atualizado:new Date().toISOString()}},{onConflict:'user_id,site_id,chave'});if(error)throw error}catch(e){toast('Não foi possível guardar a disposição do Início na conta')}},700)}
+let HL_U='';
+async function hlCarrega(){const uid=hlUid();if(!uid||uid===HL_U)return;HL_U=uid;
+  try{const c=window.parent.plataforma;if(!c||!c.from)return;const {data,error}=await c.from('user_site_data').select('valor').eq('user_id',uid).eq('site_id','financas').eq('chave','inicio').maybeSingle();if(error)throw error;
+    HL=hlNorm(data&&data.valor);try{localStorage.setItem('fp_inicio',JSON.stringify({...HL,uid}))}catch(e){}hlAplica();if(abaAtiva()==='home')render()}catch(e){HL_U=''}}
+const hlOrdemDom=()=>{HL.o=[...$$('#homeGrid>[data-cx]')].map(c=>c.dataset.cx)};
+function hlEditar(on){const T=$('#tab-home');on=on==null?!T.classList.contains('hed'):on;const era=T.classList.contains('hed');T.classList.toggle('hed',on);
+  $('#homeEd').textContent=on?'✓ Concluir':'✏ Editar';$('#homeRepor').hidden=!on;$$('.ms .msp').forEach(x=>x.hidden=true);hlAplica();if(era&&!on)trk('inicio',{acao:'editar',escondidas:HL.h.length,largas:Object.values(HL.w).filter(v=>v==='w').length})}
+$('#homeEd').addEventListener('click',()=>hlEditar());
+$('#homeRepor').addEventListener('click',()=>{HL={...hlNorm({}),lc:HL.lc,lr:HL.lr};hlGrava();hlAplica();render()});
+$('#homeAdd').addEventListener('click',e=>{const b=e.target.closest('[data-hladd]');if(!b)return;HL.h=HL.h.filter(k=>k!==b.dataset.hladd);hlGrava();hlAplica();render()});
+$('#homeGrid').addEventListener('click',e=>{const b=e.target.closest('.cxed [data-hlm],.cxed [data-hlw],.cxed [data-hlx]');if(!b)return;const k=b.closest('[data-cx]').dataset.cx;
+  if(b.dataset.hlm){const vis=HL.o.filter(x=>!HL.h.includes(x)),i=vis.indexOf(k),j=i+ +b.dataset.hlm;if(j<0||j>=vis.length)return;const o=HL.o.filter(x=>x!==k),t=o.indexOf(vis[j]);o.splice(+b.dataset.hlm>0?t+1:t,0,k);HL.o=o}
+  else if(b.hasAttribute('data-hlw'))HL.w[k]=HL.w[k]==='w'?'n':'w';
+  else HL.h=[...new Set([...HL.h,k])];
+  hlGrava();hlAplica();if(!b.dataset.hlm)render()});
+/* arrastar (rato e toque) pela pega ⠿ */
+$('#homeGrid').addEventListener('pointerdown',e=>{const h=e.target.closest('.cxpega');if(!h)return;e.preventDefault();const C=h.closest('[data-cx]'),G=$('#homeGrid');C.classList.add('cxdrag');document.body.classList.add('cxarr');
+  const mv=ev=>{const el=document.elementFromPoint(ev.clientX,ev.clientY),T=el&&el.closest('#homeGrid>[data-cx]');
+      if(ev.clientY<50)scrollBy(0,-14);else if(ev.clientY>innerHeight-50)scrollBy(0,14);
+      if(!T||T===C)return;const cs=[...G.children];cs.indexOf(C)<cs.indexOf(T)?T.after(C):T.before(C)},
+    up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);C.classList.remove('cxdrag');document.body.classList.remove('cxarr');hlOrdemDom();hlGrava();hlAplica()};
+  addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',up)});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#tab-home').classList.contains('hed'))hlEditar(false)});
+$('#lnCatSel').addEventListener('change',()=>{HL.lc=$('#lnCatSel').vals.slice();hlGrava();render()});
+$('#lnRefSel').addEventListener('change',()=>{HL.lr=$('#lnRefSel').vals.slice();hlGrava();render()});
+hlAplica();
+addEventListener('message',e=>{if(e.data&&e.data.tipo==='financas-sessao')setTimeout(hlCarrega,0)});[0,1500,4000].forEach(t=>setTimeout(hlCarrega,t));
+window.fpInicio={get:()=>JSON.parse(JSON.stringify(HL)),editar:hlEditar,repor:()=>$('#homeRepor').click()};
 /* ajuda ⓘ: nas caixas (texto aqui) e nas colunas com explicação (th com title) */
 const INF={homeBars:'Entradas e saídas de cada mês do ano (o ano começa no mês escolhido em Definições). Movimentos entre contas e poupanças não contam. "Detalhado" divide as barras por categoria.',
   homeBanks:'Saldo de cada conta no fim do período, pelo último saldo do extrato. "Dinheiro" junta os levantamentos e os gastos em dinheiro registados à mão.',
@@ -2130,6 +2205,8 @@ const INF={homeBars:'Entradas e saídas de cada mês do ano (o ano começa no m�
   homeRendTipo:'Rendimentos por referência: salário, subsídios, prémios, rendas…',
   homeDonutTipo:'Despesas agrupadas pelo tipo de cada referência (fixas ou variáveis, essenciais ou não, extras). O tipo muda-se em Despesas › ✏ Editar.',
   homeBudget:'Por categoria: o que gastou (barra) e o previsto para o período (risco). Vermelho = acima do previsto. O previsto escreve-se nas Previsões.',
+  homeLnCat:'Saídas − reembolsos de cada mês do ano, por categoria. Escolha as categorias no botão ao lado (sem escolha mostra as 3 maiores). A tracejado: o previsto por mês.',
+  homeLnRef:'Saídas − reembolsos de cada mês do ano, por referência. Escolha as referências no botão ao lado (sem escolha mostra as 3 maiores). A tracejado: o previsto por mês.',
   homeLast:'Os movimentos mais recentes do período, de todas as contas.',
   homeUnc:'Movimentos do período ainda sem categoria. ⚡ cria uma regra que categoriza estes e os próximos com a mesma descrição.',
   drop:'Ficheiros CSV/Excel exportados do homebanking. São lidos no browser e só os movimentos ficam guardados. Os repetidos não entram duas vezes e os saldos são verificados.',

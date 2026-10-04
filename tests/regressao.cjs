@@ -208,7 +208,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   console.log('v0.7t');
   const y64=await ev(()=>{P.m='mes';P.d=new Date(2026,8,1);perLabel();document.querySelector('[data-tab="home"]').click();
     const m={id:'mR64',k:'r64',man:true,banco:'Dinheiro',conta:'',dm:'2026-09-25',dv:'2026-09-25',desc:'PAGAMENTO XPTO',valor:123,saldo:null,cat:'Rendimentos',ref:'Prémios',catSrc:'manual',det:'',obs:'',quem:'',ord:0};DB.mov.push(m);render();
-    const cards=[...document.querySelectorAll('#tab-home .grid4 > .card')].length,li=[...document.querySelectorAll('#homeRend li')].map(x=>x.textContent),lt=[...document.querySelectorAll('#homeRendTipo li')].map(x=>x.textContent);
+    const cards=['donut','donutRef','rend','rendTipo'].filter(k=>document.querySelector(`#homeGrid>[data-cx="${k}"].cx-n`)).length,li=[...document.querySelectorAll('#homeRend li')].map(x=>x.textContent),lt=[...document.querySelectorAll('#homeRendTipo li')].map(x=>x.textContent);
     const semRec=li.some(t=>/por confirmar/.test(t));
     DB.rend.push({id:'rT',tipo:'pon',data:m.dm,entidade:'Empresa Teste',desc:'teste',liquido:m.valor,bruto:m.valor,lk:{t:chave(m)},lkMan:{t:true}});render();
     const li2=[...document.querySelectorAll('#homeRend li')].map(x=>x.textContent);DB.rend=DB.rend.filter(r=>r.id!=='rT');DB.mov=DB.mov.filter(x=>x.id!=='mR64');render();
@@ -610,6 +610,22 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const guardou=m.partes&&m.partes[1].mc===alvo,X=w.expandeC(db.mov),p1=X.find(x=>x.id===m.id+'#1'),p0=X.find(x=>x.id===m.id+'#0');const conta=!!p1&&p1.dm.slice(0,7)===alvo&&p0.dm.slice(0,7)===m.dm.slice(0,7);
     await w.fpCtx.apagaEx();w.go('home');ok({ok:temSel&&guardou&&conta,temSel,guardou,conta})}));
   t('D126','dividir movimento: cada linha tem à esquerda o seu mês de conta (vazio = o do pagamento)',z126.ok,z126);
+  console.log('v0.10s');
+  const z127=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    w.go('home');await w.fpCtx.exemplo();await W(300);const G=d.querySelector('#homeGrid'),ids=()=>[...G.children].map(c=>c.dataset.cx).filter(Boolean);
+    const temEd=!!d.querySelector('#homeEd')&&getComputedStyle(d.querySelector('[data-cx="bars"] .cxed')).display==='none';
+    w.fpInicio.editar(true);await W(30);const vis=getComputedStyle(d.querySelector('[data-cx="bars"] .cxed')).display!=='none';
+    d.querySelector('[data-cx="banks"] [data-hlx]').click();d.querySelector('[data-cx="donut"] [data-hlw]').click();d.querySelector('[data-cx="last"] [data-hlm="-1"]').click();await W(30);
+    const L=w.fpInicio.get(),esc=getComputedStyle(d.querySelector('[data-cx="banks"]')).display==='none'&&!!d.querySelector('#homeAdd [data-hladd="banks"]'),larga=d.querySelector('[data-cx="donut"]').classList.contains('cx-w');
+    const ordem=ids().indexOf('last')<ids().indexOf('lnRef'),guard=JSON.parse(localStorage.getItem('fp_inicio')).h.includes('banks');
+    d.querySelector('#homeAdd [data-hladd="banks"]').click();w.fpInicio.editar(false);
+    const lnC=!!d.querySelector('#homeLnCat .lnc svg polyline')&&!!d.querySelector('#lnCatSel .msb'),lnR=!!d.querySelector('#homeLnRef .lnc svg polyline');
+    const cs=w.fpCtx.db().cats.filter(c=>['Alimentação','Casa'].includes(c.nome)).map(c=>c.nome);d.querySelector('#lnCatSel').value=cs.join('\u0001');d.querySelector('#lnCatSel').dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+    const leg=d.querySelector('#homeLnCat .leg').textContent,sel=w.fpInicio.get().lc.length===2&&cs.every(c=>leg.includes(c));
+    w.fpInicio.repor();const rep_=JSON.stringify(w.fpInicio.get().o)===JSON.stringify(ids())&&!d.querySelector('[data-cx="donut"]').classList.contains('cx-w');
+    await w.fpCtx.apagaEx();w.go('home');
+    ok({ok:temEd&&vis&&esc&&larga&&ordem&&guard&&lnC&&lnR&&sel&&rep_,temEd,vis,esc,larga,ordem,guard,lnC,lnR,sel,rep_,L}) }));
+  t('D127','Início: ✏ Editar esconde/mostra, alarga/estreita e reordena as caixas (guardado); gráficos de linhas do ano por categoria e por referência',z127.ok,z127);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
