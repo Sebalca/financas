@@ -639,6 +639,23 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     delete db.refCorte['Rendimentos›Salário'];db.rend=db.rend.filter(r=>r.id!=='rE1');await w.fpCtx.apagaEx();w.go('home');
     ok({ok:junta&&cab&&dataOk&&pop,junta,cab,dataOk,pop,ops,th:th.slice(0,2),dt:dt&&[dt.textContent,dt.className,real]})}));
   t('D128','Rendimentos: nomes das entidades juntam-se; coluna Data (paga a cor se noutro mês); títulos fixos; janela do mês de conta diz "Refere-se a … · pago a …"',z128.ok,z128);
+  console.log('v0.11');
+  const z129=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms));location.hash='#financas';await W(300);const f=document.querySelector('iframe[data-id="financas"]'),w=f.contentWindow;
+    const nav=()=>document.querySelector('#setNav [data-s="emp"]');
+    FPAgr._set({id:'u2'},[],[],false);FPPer.pinta();const semPerm=nav().hidden&&!/Empresas/.test(document.querySelector('#fCtx').textContent);
+    FPAgr._set({id:'u2'},[],[],true);const comPerm=!nav().hidden&&!!document.querySelector('#empNovo')&&!document.querySelector('#agrBox #empNovo');
+    const G=[{id:'g9',nome:'Família Teste',tipo:'agregado',dono:true,apagar_em:null,membros:[],convites:[]},{id:'e1',nome:'Empresa Teste',tipo:'empresa',dono:true,apagar_em:null,membros:[],convites:[]}];
+    FPAgr._set({id:'u2'},G,[],true);FPPer.pinta();const el=document.querySelector('#fCtx');
+    const sel=!!el.querySelector('[data-cx="g9"]')&&!el.querySelector('[data-cx="e1"]')&&!!el.querySelector('[data-cxemp]');
+    const caixas=/Família Teste/.test(document.querySelector('#agrBox').innerHTML)&&!/Empresa Teste/.test(document.querySelector('#agrBox').innerHTML)&&/Empresa Teste/.test(document.querySelector('#empBox').innerHTML);
+    el.querySelector('[data-cxemp]').click();await W(50);const pop=document.querySelector('#empPop'),abre=!pop.hidden&&!!pop.querySelector('[data-cx="e1"]');
+    pop.querySelector('[data-cx="e1"]').click();await W(400);const c=w.fpCtx.atual(),emp=c.t==='a'&&c.id==='e1'&&c.emp===true&&localStorage.getItem('fp_ctx_emp')==='1';
+    await W(600);const cor=document.body.classList.contains('ctxEmp')&&!document.body.classList.contains('ctxAgr')&&w.document.documentElement.classList.contains('ctxEmp')&&/🏢 Empresa Teste/.test(el.textContent);
+    const b=w.baseEmpresa(),nomes=b.cats.map(x=>x.nome),base=['Fornecedores','Pessoal','Impostos','Sócios','Rendimentos'].every(n=>nomes.includes(n))&&!nomes.includes('Lazer')&&w.eval('eFora')('Sócios');
+    el.querySelector('[data-cx="g9"]').click();await W(400);await W(600);const agr=!w.fpCtx.atual().emp&&document.body.classList.contains('ctxAgr')&&!document.body.classList.contains('ctxEmp');
+    el.querySelector('[data-cx=""]').click();await W(400);FPAgr._set({id:'u2'},[],[],false);FPPer.pinta();FPAgr._set(null,[],[]);
+    ok({ok:semPerm&&comPerm&&sel&&caixas&&abre&&emp&&cor&&base&&agr,semPerm,comPerm,sel,caixas,abre,emp,cor,base,agr})}));
+  t('D129','Empresas: secção só com permissão ou empresa; botão 🏢 Empresas com lista no seletor; contexto a amarelo torrado; empresa nova com categorias de empresa',z129.ok,z129);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

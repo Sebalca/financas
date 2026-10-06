@@ -26,6 +26,9 @@
 html:root.ctxAgr{--ac:#7b1fa2;--ac2:#f3e5f5}
 @media (prefers-color-scheme:dark){html:root.ctxAgr:not([data-theme=light]){--ac:#ce93d8;--ac2:#33203d}}
 html:root.ctxAgr[data-theme=dark]{--ac:#ce93d8;--ac2:#33203d}
+html:root.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
+@media (prefers-color-scheme:dark){html:root.ctxEmp:not([data-theme=light]){--ac:#f0b347;--ac2:#3a2c12}}
+html:root.ctxEmp[data-theme=dark]{--ac:#f0b347;--ac2:#3a2c12}
 html{zoom:.9}
 *{box-sizing:border-box}
 html{overflow-y:scroll;scrollbar-gutter:stable}
@@ -569,7 +572,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.10t'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.11'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -584,11 +587,11 @@ const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 /* ================= categorias e regras pré-definidas ================= */
 /* v0.9a: tipos de despesa (editáveis em Definições › Tipos de despesa); cada referência tem um tipo (DB.refTipo['cat›ref']=id) */
 const TIPOS_BASE=[['fe','Fixas essenciais','#64b5f6'],['fn','Fixas não essenciais','#9575cd'],['ve','Variáveis essenciais','#4db6ac'],['vn','Variáveis não essenciais','#ffb74d'],['ex','Extras','#e57373']];
-const TIPO_SUG={fe:['Renda','Eletricidade / gás','Água','Internet','Telemóvel','Seguro, IUC, Inspeção Carro','Seguro, IUC, Inspeção Mota','Seguro','Contabilista','Comisões','Seguros','IRS','Comissões CGD','Outras Comissões','Outros - Seguros/Impostos'],
+const TIPO_SUG={fe:['Salários','Segurança Social','Seguro de acidentes de trabalho','Internet / telefone','Software / subscrições','Renting / leasing','Seguro / IUC','Comissões bancárias','Prestação de empréstimo','Juros','Renda','Eletricidade / gás','Água','Internet','Telemóvel','Seguro, IUC, Inspeção Carro','Seguro, IUC, Inspeção Mota','Seguro','Contabilista','Comisões','Seguros','IRS','Comissões CGD','Outras Comissões','Outros - Seguros/Impostos'],
   fn:['Empregada','Cozinheira','Exercício fisico','Subscrições','Software'],
-  ve:['Manutenção','Outros - Casa','Supermercado','Refeições casa','Refeições Trabalho','Combustível','Combustível Carro','Combustível Mota','Via verde / Portagens','Oficina Carro','Oficina Mota','Outros - Transporte','Farmácia','Consultas / Exames','Tratamentos','Outros - Saúde'],
+  ve:['Mercadorias / matérias-primas','Subcontratos','Material de escritório','Portagens / Via Verde','Manutenção / oficina','Limpeza','IVA','Retenções na fonte (IRS)','Imposto do selo','Subsídio de alimentação','Manutenção','Outros - Casa','Supermercado','Refeições casa','Refeições Trabalho','Combustível','Combustível Carro','Combustível Mota','Via verde / Portagens','Oficina Carro','Oficina Mota','Outros - Transporte','Farmácia','Consultas / Exames','Tratamentos','Outros - Saúde'],
   vn:['Almoço / Jantar fora','Uber eats','Refeições extra fora','Outros - Alimentação','Cinema / Atividades / Espetác.','Jogos','Outros - Lazer','Uber / Taxi / Outros','Vestuário / calçado','Apostas'],
-  ex:['Equipamentos - Casa','Equipamentos','Férias / viagens','Multas','Prendas','Ofertas','Formações','Equipamentos - Trabalho']};
+  ex:['Publicidade','Advogado / consultoria','Formação','Ajudas de custo','IRC / pagamentos por conta','Outros impostos','Outros - Serviços','Outros - Fornecedores','Equipamentos - Casa','Equipamentos','Férias / viagens','Multas','Prendas','Ofertas','Formações','Equipamentos - Trabalho']};
 const CATS_BASE=[
  ['Casa',['Renda','Eletricidade / gás','Água','Internet','Telemóvel','Manutenção','Empregada','Cozinheira','Equipamentos - Casa','Outros - Casa']],
  ['Alimentação',['Supermercado','Refeições casa','Almoço / Jantar fora','Refeições Trabalho','Uber eats','Refeições extra fora','Outros - Alimentação']],
@@ -665,7 +668,7 @@ const KEY='financas_v1';
 const trk=(t,d)=>{try{if(window.parent!==window&&window.parent.FPTrack)window.parent.FPTrack.log(t,d||{})}catch(e){}};
 {let nErr=0;addEventListener('error',e=>{if(++nErr<=20)trk('erro_js',{msg:String(e.message||'').slice(0,200),src:String(e.filename||'').split('/').pop()+':'+(e.lineno||0),onde:'financas'})})}
 /* v0.9d: contexto dos dados — Pessoal (financas_dados) ou um Agregado (agregado_dados); cada um com a sua cópia neste browser */
-let CTX={t:'p'};try{const c=localStorage.getItem('fp_ctx');if(c==='__ex'){if(localStorage.getItem(KEY+'_ex'))CTX={t:'x'}}else if(c)CTX={t:'a',id:c}}catch(e){}
+let CTX={t:'p'};try{const c=localStorage.getItem('fp_ctx');if(c==='__ex'){if(localStorage.getItem(KEY+'_ex'))CTX={t:'x'}}else if(c)CTX={t:'a',id:c,emp:localStorage.getItem('fp_ctx_emp')==='1'}}catch(e){}
 /* v0.10a: t:'x' = conta 🧪 Exemplo — dados fictícios, só neste browser (nunca vão para a conta) */
 const KEYC=()=>CTX.t==='a'?KEY+'_agr_'+CTX.id:CTX.t==='x'?KEY+'_ex':KEY;
 function fresh(){return {refSo:{},esp:null,ver:2,mov:[],imports:[],rend:[],seq:0,cats:null,regras:null,pessoas:[],prev:{},del:[],delM:[],rep:{},updatedAt:0,syncedAt:0,remoteAt:'',owner:''}}
@@ -676,7 +679,7 @@ function normaliza(d){d={...fresh(),...d};
   if(!d.rbMil){d.rbMil=1;[['PAGAMENTO CARTAO','contem','','Banco','Troca entre contas'],['VIS PAGAMENTO','inicio','','Banco','Troca entre contas'],['LEV ATM','inicio','s','Banco','Levantamentos']].forEach((r,i)=>{if(!d.regras.some(x=>String(x.txt||'').toUpperCase().trim()===r[0]))d.regras.splice(1+i,0,{...novaRegraBase(r,'m'+i)})})} // v0.8j: regras do Millennium
   if(!d.pessoas)d.pessoas=[];if(!d.prev)d.prev={};if(!Array.isArray(d.rend))d.rend=[];if(!d.refSo||typeof d.refSo!=='object')d.refSo={};if(!d.refCorte||typeof d.refCorte!=='object')d.refCorte={};if(!d.entNome||typeof d.entNome!=='object')d.entNome={};if(!d.corCat||typeof d.corCat!=='object')d.corCat={};if(!d.corRef||typeof d.corRef!=='object')d.corRef={};
   if(!Array.isArray(d.tiposDesp))d.tiposDesp=TIPOS_BASE.map(([id,nome,cor])=>({id,nome,cor}));
-  if(!d.refTipo||typeof d.refTipo!=='object'){d.refTipo={};const fora=['Banco','Por tratar','Investimentos','Empresas','Rendimentos','Poupanças'];
+  if(!d.refTipo||typeof d.refTipo!=='object'){d.refTipo={};const fora=['Banco','Por tratar','Investimentos','Empresas','Rendimentos','Poupanças','Sócios'];
     d.cats.filter(c=>!fora.includes(c.nome)).forEach(c=>c.refs.forEach(r=>{const id=Object.keys(TIPO_SUG).find(t=>TIPO_SUG[t].includes(r));if(id&&d.tiposDesp.some(t=>t.id===id))d.refTipo[c.nome+'›'+r]=id}))}
   if(!Array.isArray(d.esp)){d.esp=[{id:'so',nome:'Só este movimento',tipo:'para',refs:Object.keys(d.refSo).filter(k=>d.refSo[k])},
     {id:'transf',nome:'Transferências',tipo:'de',refs:['Por tratar›Transferência','Por tratar›Transferência rec','Por tratar›Transferência pag']}]} // v0.8d: regras especiais com nome
@@ -1226,7 +1229,7 @@ function render(){
 let soValores=false;
 let DPCT=new Set();try{DPCT=new Set(JSON.parse(localStorage.getItem('fp_dpct')||'[]'))}catch(e){}
 const DES={edit:false,open:new Set(),fech:new Set(),grp:'cat'};try{DES.grp=localStorage.getItem('fp_desgrp')==='tipo'?'tipo':'cat'}catch(e){}let UNCV='freq',BARSV='s',RENDV='ent';
-const FORA=['Banco','Por tratar','Investimentos','Empresas','Rendimentos','Poupanças'];
+const FORA=['Banco','Por tratar','Investimentos','Empresas','Rendimentos','Poupanças','Sócios'];
 const eFora=n=>FORA.includes(n);
 function desNome(txt,attr,bold){return DES.edit?`<input class="nm" ${attr} value="${esc(txt)}"${bold?' style="font-weight:700"':''}>`:`<span${bold?' style="font-weight:700"':''}>${esc(txt)}</span>`}
 function desSetas(tipo,idx){return DES.edit?`<span class="ord"><button class="btn ic sm" data-${tipo}="${idx}|-1" title="Subir">↑</button><button class="btn ic sm" data-${tipo}="${idx}|1" title="Descer">↓</button></span>`:''}
@@ -2084,8 +2087,8 @@ async function carregaConta(u){if(CTX.t==='x'){setSt(SY.st);return}setSt('busy')
     if(DB.owner&&DB.owner!==dono()){DB=normaliza(fresh())} // cache de outra conta/agregado neste browser
     const r=await lerRemoto();
     const temLocal=DB.mov.length>0||DB.pessoas.length>0||Object.keys(DB.prev).length>0||Object.keys(DB.prevAno||{}).length>0;
-    if(!r&&CTX.t==='a'){ // agregado novo: começa com as categorias e regras da conta pessoal
-      if(!DB.mov.length){const b=basePessoal();DB=normaliza({...fresh(),...b});aplicaRegras()}DB.owner=dono();DB.updatedAt=Date.now();saveLocal();render();await enviar();return}
+    if(!r&&CTX.t==='a'){ // agregado novo: começa com as categorias e regras da conta pessoal; empresa nova: categorias de empresa
+      if(!DB.mov.length){const b=CTX.emp?baseEmpresa():basePessoal();DB=normaliza({...fresh(),...b});aplicaRegras()}DB.owner=dono();DB.updatedAt=Date.now();saveLocal();render();await enviar();return}
     if(!r){ // primeira vez nesta conta: os dados do browser passam para a conta
       DB.owner=u.id;DB.updatedAt=Date.now();saveLocal();await enviar();
       if(temLocal)toast(`Dados deste browser guardados na conta (${DB.mov.length} movimentos)`);return}
@@ -2099,17 +2102,38 @@ async function carregaConta(u){if(CTX.t==='x'){setSt(SY.st);return}setSt('busy')
   }catch(e){console.warn('sync',e);setSt('erro')}
 }
 const CFG_K=['cats','regras','esp','tiposDesp','refTipo','refCorte','corCat','refSo','poupCat','rendCat','rendSNF','rbMil','ver'];
+/* v0.11: empresa nova — categorias e regras próprias */
+const CATS_EMP=[
+ ['Fornecedores',['Mercadorias / matérias-primas','Subcontratos','Material de escritório','Equipamentos','Outros - Fornecedores']],
+ ['Pessoal',['Salários','Segurança Social','Subsídio de alimentação','Seguro de acidentes de trabalho','Formação','Ajudas de custo']],
+ ['Instalações',['Renda','Eletricidade / gás','Água','Internet / telefone','Manutenção','Limpeza']],
+ ['Serviços',['Contabilista','Software / subscrições','Publicidade','Advogado / consultoria','Seguros','Outros - Serviços']],
+ ['Viaturas',['Combustível','Portagens / Via Verde','Manutenção / oficina','Seguro / IUC','Renting / leasing']],
+ ['Impostos',['IVA','IRC / pagamentos por conta','Retenções na fonte (IRS)','Imposto do selo','Outros impostos']],
+ ['Financiamento',['Comissões bancárias','Juros','Prestação de empréstimo']],
+ ['Banco',['Troca entre contas','Levantamentos','Depósitos']],
+ ['Sócios',['Entradas de capital','Suprimentos','Lucros distribuídos']],
+ ['Por tratar',['Por tratar','Transferência','Transferência pag','Transferência rec','Por confirmar']],
+ ['Rendimentos',['Vendas / serviços prestados','Subsídios','Juros recebidos','Reembolsos','Outros - Rendimentos']]];
+const REGRAS_EMP=[['TRF CXD','inicio','','Banco','Troca entre contas'],['PAGAMENTO CARTAO','contem','','Banco','Troca entre contas'],['VIS PAGAMENTO','inicio','','Banco','Troca entre contas'],
+ ['LEV ATM','inicio','s','Banco','Levantamentos'],['LEVANTAMENTO','contem','s','Banco','Levantamentos'],
+ ['COMISSAO','contem','s','Financiamento','Comissões bancárias'],['MANUT CONTA','contem','s','Financiamento','Comissões bancárias'],['IMPOSTO DO SELO','contem','s','Impostos','Imposto do selo'],
+ ['SEGURANCA SOCIAL','contem','s','Pessoal','Segurança Social'],['SEG SOCIAL','contem','s','Pessoal','Segurança Social'],['AUTORIDADE TRIBUTARIA','contem','s','Impostos','Outros impostos'],
+ ['VIA VERDE','contem','s','Viaturas','Portagens / Via Verde'],['BRISA','contem','s','Viaturas','Portagens / Via Verde'],
+ ['GALP','contem','s','Viaturas','Combustível'],['REPSOL','contem','s','Viaturas','Combustível'],['PRIO','palavra','s','Viaturas','Combustível'],['CEPSA','contem','s','Viaturas','Combustível'],['BP','palavra','s','Viaturas','Combustível'],
+ ['TFI','inicio','e','Por tratar','Transferência rec'],['TRF','inicio','s','Por tratar','Transferência pag'],['TRF','inicio','e','Por tratar','Transferência rec']];
+function baseEmpresa(){return {cats:CATS_EMP.map(([n,r])=>({id:uid('c'),nome:n,refs:r.slice()})),regras:REGRAS_EMP.map((r,i)=>novaRegraBase(r,'e'+i)),poupCat:true,rendCat:true,rendSNF:true,rbMil:1,ver:2}}
 function basePessoal(){let p=null;try{p=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}if(!p)return {};p=normaliza(p);
   const o={};CFG_K.forEach(k=>{if(p[k]!==undefined)o[k]=JSON.parse(JSON.stringify(p[k]))});return o}
 let TROCA=Promise.resolve();
-function trocaCtx(novo,semConta){const id=novo&&novo.t==='a'?String(novo.id):'';const n=id?{t:'a',id,nome:novo.nome||''}:{t:novo&&novo.t==='x'?'x':'p'};
-  if(n.t===CTX.t&&(n.id||'')===(CTX.id||'')){if(n.nome)CTX.nome=n.nome;return TROCA}
+function trocaCtx(novo,semConta){const id=novo&&novo.t==='a'?String(novo.id):'';const n=id?{t:'a',id,nome:novo.nome||'',emp:!!novo.emp}:{t:novo&&novo.t==='x'?'x':'p'};
+  if(n.t===CTX.t&&(n.id||'')===(CTX.id||'')){if(n.nome)CTX.nome=n.nome;if(n.t==='a'){CTX.emp=n.emp;try{localStorage.setItem('fp_ctx_emp',n.emp?'1':'0')}catch(e){}}return TROCA}
   TROCA=TROCA.then(async()=>{clearTimeout(SY.t);
     if(SY.user&&!semConta&&DB.updatedAt>(DB.syncedAt||0)){try{while(SY.busy)await new Promise(r=>setTimeout(r,100));await enviar()}catch(e){}}
-    saveLocal();CTX=n;try{if(n.t==='a')localStorage.setItem('fp_ctx',n.id);else if(n.t==='x')localStorage.setItem('fp_ctx','__ex');else localStorage.removeItem('fp_ctx')}catch(e){}
+    saveLocal();CTX=n;try{localStorage.setItem('fp_ctx_emp',n.emp?'1':'0');if(n.t==='a')localStorage.setItem('fp_ctx',n.id);else if(n.t==='x')localStorage.setItem('fp_ctx','__ex');else localStorage.removeItem('fp_ctx')}catch(e){}
     let j=null;try{j=JSON.parse(localStorage.getItem(KEYC())||'null')}catch(e){}DB=normaliza(j&&Array.isArray(j.mov)?j:fresh());
     SEL.clear();try{limpaFiltros()}catch(e){}RV++;render();avisaPer();
-    setSt(SY.user?SY.st:'local');if(SY.user&&!semConta)await carregaConta(SY.user);toast(n.t==='a'?`👪 ${n.nome||'Agregado'}`:n.t==='x'?'🧪 Exemplo':'👤 Pessoal');try{window.parent.FPCtx.pinta()}catch(e){}});return TROCA}
+    setSt(SY.user?SY.st:'local');if(SY.user&&!semConta)await carregaConta(SY.user);toast(n.t==='a'?(n.emp?`🏢 ${n.nome||'Empresa'}`:`👪 ${n.nome||'Agregado'}`):n.t==='x'?'🧪 Exemplo':'👤 Pessoal');try{window.parent.FPCtx.pinta()}catch(e){}});return TROCA}
 /* v0.10a: conta 🧪 Exemplo — movimentos fictícios gerados aqui; as categorias e regras vêm da conta pessoal */
 const temEx=()=>{try{return !!localStorage.getItem(KEY+'_ex')}catch(e){return false}};
 function exMov(){const H=new Date(),out=[];let seq=0,saldo=1850;const ini=new Date(H.getFullYear(),H.getMonth()-3,1);
@@ -2240,7 +2264,7 @@ document.addEventListener('click',e=>{const p=$('#infPop'),b=e.target.closest('.
   p.textContent=txt;p.hidden=false;const r=b.getBoundingClientRect(),pw=p.offsetWidth;p.style.left=Math.min(innerWidth-pw-10,Math.max(10,r.left-20))+'px';const ph=p.offsetHeight;p.style.top=(r.bottom+6+ph>innerHeight-8?Math.max(8,r.top-ph-6):r.bottom+6)+'px'},true);
 addEventListener('scroll',()=>{const p=$('#infPop');if(p&&!p.hidden)p.hidden=true},{passive:true});
 $('#impRes').addEventListener('click',e=>{const b=e.target.closest('[data-amostra]');if(b)window.fpAmostra(b.dataset.amostra)});
-{const pc=()=>document.documentElement.classList.toggle('ctxAgr',CTX.t==='a');pc();setInterval(pc,500)}
+{const pc=()=>{document.documentElement.classList.toggle('ctxAgr',CTX.t==='a'&&!CTX.emp);document.documentElement.classList.toggle('ctxEmp',CTX.t==='a'&&!!CTX.emp)};pc();setInterval(pc,500)}
 $('#voltaBt').addEventListener('click',volta);
 window.fpCtx={atual:()=>({...CTX}),muda:(c)=>trocaCtx(c),db:()=>DB,temEx,
   exemplo:async()=>{const n=criaEx();trk('exemplo',{acao:'criar'});await trocaCtx({t:'x'});const h=new Date();P.m='mes';P.d=new Date(h.getFullYear(),h.getMonth()-1,1);$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel();render();avisaPer();return n},apagaEx};

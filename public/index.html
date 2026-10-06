@@ -128,6 +128,15 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 body.ctxAgr{--ac:#7b1fa2;--ac2:#f3e5f5}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) body.ctxAgr{--ac:#ce93d8;--ac2:#33203d}}
 :root[data-theme=dark] body.ctxAgr{--ac:#ce93d8;--ac2:#33203d}
+/* v0.11: empresas a amarelo torrado */
+body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) body.ctxEmp{--ac:#f0b347;--ac2:#3a2c12}}
+:root[data-theme=dark] body.ctxEmp{--ac:#f0b347;--ac2:#3a2c12}
+.big nav.sn button[data-s="emp"].on{background:#fdf1dc;color:#b45309}
+.big section[data-s="emp"] .opt:not(.danger){background:#b45309;border-color:#b45309;color:#fff}.big section[data-s="emp"] .opt:not(.danger):hover{background:#92400e;border-color:#92400e}.big section[data-s="emp"] .opt.danger{border-color:#b45309}
+.ctxsel .ctxemp{position:relative}.ctxsel button.emp.on{background:#b45309;color:#fff}
+.emppop{position:fixed;z-index:60;background:var(--card);border:1px solid var(--bd);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:6px;min-width:200px}.emppop[hidden]{display:none}
+.emppop button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:7px;font:600 13px system-ui,sans-serif;color:var(--tx);cursor:pointer}.emppop button:hover{background:var(--bg)}.emppop button.on{color:#b45309;background:#fdf1dc}
 .big nav.sn button[data-s="agr"].on{background:#f3e5f5;color:#7b1fa2}
 #mSet .big{height:min(600px,88vh)}
 .sw2{display:flex!important;flex-direction:row;gap:10px;align-items:center;cursor:pointer;padding:6px 0;text-align:left}.sw2 input{width:18px!important;height:18px;flex:none;margin:0;accent-color:var(--ac)}.sw2 span{flex:1}
@@ -175,7 +184,7 @@ body.ctxAgr{--ac:#7b1fa2;--ac2:#f3e5f5}
   <div class="brand"><img class="logo" src="img/logo-64.png" width="24" height="24" alt="">Finanças <span>Pessoais</span></div>
   <nav id="tabs" role="tablist"></nav>
   <div class="sp"></div>
-  <div class="ctxsel" id="fCtx" hidden role="group" aria-label="Dados: pessoal ou agregado"></div>
+  <div class="ctxsel" id="fCtx" hidden role="group" aria-label="Dados: pessoal, agregado ou empresa"></div><div class="emppop" id="empPop" hidden role="menu"></div>
   <div class="sp"></div>
   <div class="fper" id="fPer" hidden aria-label="Período das Finanças">
     <button type="button" class="sy" id="pSync"></button>
@@ -205,7 +214,7 @@ body.ctxAgr{--ac:#7b1fa2;--ac2:#f3e5f5}
 <div class="mod" id="mSet" hidden><div class="box big" role="dialog" aria-label="Definições">
   <div class="bh"><h2>Definições</h2><button class="bx" data-fecha="mSet" type="button" aria-label="Fechar">✕</button></div>
   <div class="bb"><nav class="sn" id="setNav">
-    <button data-s="tema" type="button">⚙ Geral</button><button data-s="tipos" type="button">🏷 Tipos de despesa</button><button data-s="agr" type="button">👪 Agregado familiar<span class="bdg" id="bdgAgr" hidden></span></button><button data-s="conta" type="button">👤 Conta</button><button data-s="perfil" type="button">🧾 Perfil financeiro</button><button data-s="backup" type="button">💾 Cópia de segurança</button>
+    <button data-s="tema" type="button">⚙ Geral</button><button data-s="tipos" type="button">🏷 Tipos de despesa</button><button data-s="agr" type="button">👪 Agregado familiar<span class="bdg" id="bdgAgr" hidden></span></button><button data-s="emp" type="button" hidden>🏢 Empresas<span class="bdg" id="bdgEmp" hidden></span></button><button data-s="conta" type="button">👤 Conta</button><button data-s="perfil" type="button">🧾 Perfil financeiro</button><button data-s="backup" type="button">💾 Cópia de segurança</button>
     <button data-s="apagar" type="button">🗑 Apagar dados</button><button data-s="onb" type="button">🧭 Onboarding</button>
     <button data-s="ajuda" type="button">❓ FAQs<span class="bdg" id="bdgFaq2" hidden></span></button><button data-s="sugestao" type="button">💬 Enviar sugestão<span class="bdg" id="bdgSug2" hidden></span></button></nav>
   <div class="sc" id="setSc">
@@ -230,6 +239,8 @@ body.ctxAgr{--ac:#7b1fa2;--ac2:#f3e5f5}
       <div id="tiposL"></div><div class="grp"><button class="opt" id="tipoAdd" type="button">＋ Novo tipo</button></div><div class="note2" id="tiposMsg"></div></section>
     <section data-s="agr" hidden><h3>Agregado familiar</h3><p>Um agregado é uma conta de Finanças <b>partilhada</b> com outras pessoas (por exemplo, a família). A sua conta pessoal continua privada — só entra no agregado o que for lá registado.</p>
       <div id="agrBox"></div><div class="note2" id="agrMsg"></div></section>
+    <section data-s="emp" hidden><h3>Empresas</h3><p>Uma empresa é uma conta de Finanças <b>separada</b> da pessoal, com categorias de empresa (fornecedores, pessoal, impostos…). Pode convidar outras pessoas (sócio, contabilista). A sua conta pessoal continua privada.</p>
+      <div id="empBox"></div><div class="note2" id="empMsg"></div></section>
     <section data-s="perfil" hidden><h3>Perfil financeiro</h3><p>Informação opcional que ajuda nas contas (por exemplo, no IRS e nas sugestões). É <b>privada</b>: fica só na sua conta pessoal e não é partilhada com agregados.</p>
       <div id="pfBox"><div class="pfg">
         <label>Data de nascimento<input type="date" id="pfNasc" data-pf="nasc"></label>
@@ -698,73 +709,90 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
 </script>
 <script>
 /* ===== Novidades: aparece uma vez por versão nova (não na primeira visita). Atualizar NOVIDADES a cada versão (ver CLAUDE.md). ===== */
-const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=null,L=[],C=[],ocupado=false,MSG='',OK=false;
+const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=null,L=[],C=[],ocupado=false,MSG='',OK=false,PODE=false;const MSGS={agr:'',emp:''};let QUAL='agr';
   const sb=()=>window.plataforma&&window.plataforma.rpc?window.plataforma:null;
   const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const dt=d=>new Date(d).toLocaleDateString('pt-PT');
   const rpc=async(f,a)=>{const c=sb();if(!c)throw new Error('sem ligação');const {data,error}=await c.rpc(f,a||{});if(error)throw error;
-    if(/^agregado_(criar|convidar|responder|sair|remover|apagar|restaurar)$/.test(f))FPTrack.log(f,f==='agregado_convidar'?{resultado:data}:f==='agregado_responder'?{aceitou:!!a.p_aceitar}:{});return data};
-  const msg=(t,err)=>{MSG=t||'';const m=$('agrMsg');if(m){m.textContent=MSG;m.style.color=err?'var(--c2,#c62828)':''}};
-  async function carrega(){if(!U){try{U=window.financasUser||null}catch(e){}}if(!U||!sb()){L=[];C=[];OK=!U;pinta();try{FPCtx.valida()}catch(e){}return}
-    try{const [a,b]=await Promise.all([rpc('meus_agregados',{p_site:SITE}),rpc('meus_convites',{p_site:SITE})]);L=a||[];C=b||[];OK=true}catch(e){msg('Não foi possível carregar o agregado.',1)}pinta();try{FPCtx.valida()}catch(e){}}
-  function badge(){const b=$('bdgAgr');if(b){b.hidden=!C.length;b.textContent=C.length}}
-  function pinta(){badge();const box=$('agrBox');if(!box)return;
-    if(!U){box.innerHTML='<p class="note2">Entre na sua conta para criar um agregado ou aceitar um convite.</p>';return}
-    const conv=C.length?`<div class="agr-c"><h4>📨 Convites recebidos</h4><ul class="agr-l">${C.map(c=>`<li><span><b>${esc(c.de_nome)}</b> <small>(${esc(c.de_email)})</small> convidou-o para <b>${esc(c.agregado)}</b></span><button class="opt" type="button" data-cresp="${c.id}|0">Recusar</button><button class="opt" type="button" data-cresp="${c.id}|1">Aceitar</button></li>`).join('')}</ul></div>`:'';
+    if(/^(agregado|empresa)_(criar|convidar|responder|sair|remover|apagar|restaurar)$/.test(f))FPTrack.log(f,f==='agregado_convidar'?{resultado:data}:f==='agregado_responder'?{aceitou:!!a.p_aceitar}:{});return data};
+  const msg=(t,err,q)=>{q=q||QUAL;MSGS[q]=t||'';const m=$(q==='emp'?'empMsg':'agrMsg');if(m){m.textContent=MSGS[q];m.style.color=err?'var(--c2,#c62828)':''}};
+  async function carrega(){if(!U){try{U=window.financasUser||null}catch(e){}}if(!U||!sb()){L=[];C=[];PODE=false;OK=!U;pinta();try{FPCtx.valida()}catch(e){}return}
+    try{const [a,b]=await Promise.all([rpc('meus_agregados',{p_site:SITE}),rpc('meus_convites',{p_site:SITE})]);L=a||[];C=b||[];OK=true}catch(e){msg('Não foi possível carregar o agregado.',1,'agr')}
+    try{PODE=!!(await rpc('tem_permissao',{p_site:SITE,p_perm:'criar_empresa'}))}catch(e){PODE=false}pinta();try{FPCtx.valida()}catch(e){}}
+  const eEmp=x=>x&&x.tipo==='empresa';
+  function badge(){const ca=C.filter(c=>!eEmp(c)).length,ce=C.filter(eEmp).length,b=$('bdgAgr'),be=$('bdgEmp');if(b){b.hidden=!ca;b.textContent=ca}if(be){be.hidden=!ce;be.textContent=ce}
+    const nav=document.querySelectorAll('#setNav [data-s="emp"]'),ver=PODE||L.some(eEmp)||ce>0;nav.forEach(x=>x.hidden=!ver)}
+  function pinta(){badge();caixa('agr');caixa('emp')}
+  function caixa(q){const box=$(q==='emp'?'empBox':'agrBox');if(!box)return;const E_=q==='emp',W=E_?'empresa':'agregado',IC=E_?'🏢':'👪',LL=L.filter(g=>eEmp(g)===E_),CC=C.filter(c=>eEmp(c)===E_);
+    if(!U){box.innerHTML=`<p class="note2">Entre na sua conta para ${E_?'ver as suas empresas':'criar um agregado'} ou aceitar um convite.</p>`;return}
+    const conv=CC.length?`<div class="agr-c"><h4>📨 Convites recebidos</h4><ul class="agr-l">${CC.map(c=>`<li><span><b>${esc(c.de_nome)}</b> <small>(${esc(c.de_email)})</small> convidou-o para <b>${esc(c.agregado)}</b></span><button class="opt" type="button" data-cresp="${c.id}|0">Recusar</button><button class="opt" type="button" data-cresp="${c.id}|1">Aceitar</button></li>`).join('')}</ul></div>`:'';
     const card=g=>{if(g.apagar_em)return `<div class="agr-c"><h4>🗑 ${esc(g.nome)} <span class="agr-pap">apagado</span></h4><p class="note2">Fica guardado até <b>${dt(g.apagar_em)}</b> e depois é apagado de vez, com os dados. Os membros já não têm acesso.</p><div class="grp"><button class="opt" type="button" data-arest="${g.id}">↺ Restaurar</button></div></div>`;
-      const eu=g.membros.find(m=>m.eu);
-      return `<div class="agr-c" data-ag="${g.id}"><h4>👪 ${g.dono?`<input class="tpn" value="${esc(g.nome)}" data-anome="${g.id}" aria-label="Nome do agregado" style="max-width:280px">`:esc(g.nome)} <span class="agr-pap">${g.dono?'dono':'membro'}</span></h4>
+      return `<div class="agr-c" data-ag="${g.id}"><h4>${IC} ${g.dono?`<input class="tpn" value="${esc(g.nome)}" data-anome="${g.id}" aria-label="Nome do ${W}" style="max-width:280px">`:esc(g.nome)} <span class="agr-pap">${g.dono?'dono':'membro'}</span></h4>
         <div class="agr-t">Membros</div><ul class="agr-l">${g.membros.map(m=>`<li><span><b>${esc(m.nome)}</b>${m.eu?' <small>(eu)</small>':''} <small>${esc(m.email)}</small></span><span class="agr-pap">${m.papel==='dono'?'dono':'editor'}</span>${g.dono&&!m.eu?`<button class="opt danger" type="button" data-arem="${g.id}|${m.user_id}" data-nm="${esc(m.nome)}">Remover</button>`:''}</li>`).join('')}</ul>
         ${g.dono?`${g.convites.length?`<div class="agr-t">Convites por aceitar</div><ul class="agr-l">${g.convites.map(c=>`<li><span>${esc(c.email)} <small>desde ${dt(c.created_at)}</small></span><button class="opt" type="button" data-acanc="${c.id}">Cancelar</button></li>`).join('')}</ul>`:''}
           <div class="agr-t">Convidar</div><form class="agr-f" data-aconv="${g.id}"><input type="email" required placeholder="email da pessoa" aria-label="Email a convidar"><button class="opt" type="submit">＋ Convidar</button></form>
-          <div class="grp" style="margin-top:12px"><button class="opt danger" type="button" data-aapag="${g.id}" data-nm="${esc(g.nome)}">🗑 Apagar agregado</button></div>`
-        :`<div class="grp" style="margin-top:12px"><button class="opt danger" type="button" data-asair="${g.id}" data-nm="${esc(g.nome)}">Sair do agregado</button></div>`}</div>`};
-    const temDono=L.some(g=>g.dono);
-    box.innerHTML=conv+L.map(card).join('')+(temDono?'':`<div class="agr-c"><h4>＋ Criar agregado</h4><form class="agr-f" id="agrNovo"><input required maxlength="80" placeholder="Nome (ex.: Família Silva)" aria-label="Nome do agregado"><button class="opt" type="submit">Criar</button></form><p class="note2">Fica como dono: pode convidar pessoas pelo email, remover membros e apagar o agregado.</p></div>`)
-      +(L.some(g=>!g.apagar_em)?'<p class="note2">Use o seletor <b>👤 Pessoal / 👪 agregado</b> na barra de cima para trabalhar nos dados do agregado.</p>':'');
-    msg(MSG)}
+          <div class="grp" style="margin-top:12px"><button class="opt danger" type="button" data-aapag="${g.id}" data-nm="${esc(g.nome)}">🗑 Apagar ${W}</button></div>`
+        :`<div class="grp" style="margin-top:12px"><button class="opt danger" type="button" data-asair="${g.id}" data-nm="${esc(g.nome)}">Sair d${E_?'a':'o'} ${W}</button></div>`}</div>`};
+    const criar=E_?(PODE?`<div class="agr-c"><h4>＋ Criar empresa</h4><form class="agr-f" id="empNovo"><input required maxlength="80" placeholder="Nome (ex.: Discovercasa)" aria-label="Nome da empresa"><button class="opt" type="submit">Criar</button></form><p class="note2">Fica como dono: pode convidar pessoas pelo email, remover membros e apagar a empresa. Começa com categorias de empresa (pode mudá-las nas Despesas).</p></div>`:'')
+      :(LL.some(g=>g.dono)?'':`<div class="agr-c"><h4>＋ Criar agregado</h4><form class="agr-f" id="agrNovo"><input required maxlength="80" placeholder="Nome (ex.: Família Silva)" aria-label="Nome do agregado"><button class="opt" type="submit">Criar</button></form><p class="note2">Fica como dono: pode convidar pessoas pelo email, remover membros e apagar o agregado.</p></div>`);
+    box.innerHTML=conv+LL.map(card).join('')+criar
+      +(LL.some(g=>!g.apagar_em)?(E_?'<p class="note2">Use o botão <b>🏢 Empresas</b> na barra de cima para trabalhar nos dados de uma empresa.</p>':'<p class="note2">Use o seletor <b>👤 Pessoal / 👪 agregado</b> na barra de cima para trabalhar nos dados do agregado.</p>'):'');
+    msg(MSGS[q],0,q)}
   const faz=async(f,ok)=>{if(ocupado)return;ocupado=true;msg('A guardar…');try{const r=await f();msg(typeof ok==='function'?ok(r):ok||'')}catch(e){msg('Erro: '+((e&&e.message)||'não foi possível concluir'),1)}ocupado=false;await carrega()};
+  const pal=()=>QUAL==='emp'?{w:'empresa',a:'a',d:'da'}:{w:'agregado',a:'o',d:'do'};
   const RES={ok:e=>`✓ Convite enviado a ${e}. A pessoa vê o convite quando entrar nas Finanças.`,sem_conta:e=>`Não existe nenhuma conta com o email ${e}. A pessoa tem de criar conta primeiro (no futuro será enviado um email de convite).`,
-    ja_membro:e=>`${e} já é membro deste agregado.`,ja_convidado:e=>`${e} já tem um convite por aceitar.`,proprio:()=>'Não se pode convidar a si próprio.',limite:()=>'Limite de convites por dia atingido. Tente amanhã.'};
-  function liga(){const box=$('agrBox');if(!box)return;
+    ja_membro:e=>`${e} já é membro ${QUAL==='emp'?'desta empresa':'deste agregado'}.`,ja_convidado:e=>`${e} já tem um convite por aceitar.`,proprio:()=>'Não se pode convidar a si próprio.',limite:()=>'Limite de convites por dia atingido. Tente amanhã.'};
+  function liga(){['agrBox','empBox'].forEach(id=>{const box=$(id);if(!box)return;const Q=id==='empBox'?'emp':'agr';box.addEventListener('focusin',()=>{QUAL=Q});box.addEventListener('pointerdown',()=>{QUAL=Q});
     box.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
-      if(f.id==='agrNovo'){const n=f.querySelector('input').value.trim();if(n)faz(()=>rpc('agregado_criar',{p_site:SITE,p_nome:n}),'✓ Agregado criado. Já pode convidar pessoas.');return}
+      QUAL=Q;if(f.id==='agrNovo'){const n=f.querySelector('input').value.trim();if(n)faz(()=>rpc('agregado_criar',{p_site:SITE,p_nome:n}),'✓ Agregado criado. Já pode convidar pessoas.');return}
+      if(f.id==='empNovo'){const n=f.querySelector('input').value.trim();if(n)faz(()=>rpc('empresa_criar',{p_site:SITE,p_nome:n}),'✓ Empresa criada. Escolha-a no botão 🏢 Empresas, na barra de cima.');return}
       if(f.dataset.aconv){const em=f.querySelector('input').value.trim().toLowerCase();if(!em)return;
         faz(()=>rpc('agregado_convidar',{p_agregado:f.dataset.aconv,p_email:em}),r=>{const t=(RES[r]||RES.ok)(em);if(r==='sem_conta')alert(t);return t})}});
-    box.addEventListener('change',e=>{const d=e.target.dataset;if(d.anome){const n=e.target.value.trim();if(n)faz(()=>rpc('agregado_renomear',{p_agregado:d.anome,p_nome:n}),'✓ Nome guardado.')}});
-    box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.type==='submit')return;const d=b.dataset;
+    box.addEventListener('change',e=>{QUAL=Q;const d=e.target.dataset;if(d.anome){const n=e.target.value.trim();if(n)faz(()=>rpc('agregado_renomear',{p_agregado:d.anome,p_nome:n}),'✓ Nome guardado.')}});
+    box.addEventListener('click',e=>{QUAL=Q;const b=e.target.closest('button');if(!b||b.type==='submit')return;const d=b.dataset;const P_=pal();
       if(d.cresp){const [id,s]=d.cresp.split('|');responde(id,s==='1');return}
       if(d.acanc){faz(()=>rpc('agregado_cancelar_convite',{p_convite:d.acanc}),'Convite cancelado.');return}
-      if(d.arem){const [g,u]=d.arem.split('|');if(confirm(`Remover ${d.nm} do agregado? Deixa de ter acesso aos dados do agregado.`))faz(()=>rpc('agregado_remover',{p_agregado:g,p_user:u}),'Membro removido.');return}
-      if(d.asair){if(confirm(`Sair do agregado "${d.nm}"? Deixa de ter acesso aos dados dele.`))faz(()=>rpc('agregado_sair',{p_agregado:d.asair}),'Saiu do agregado.');return}
-      if(d.aapag){if(confirm(`Apagar o agregado "${d.nm}"?\n\nOs membros deixam de ter acesso. Fica guardado 30 dias (pode restaurar) e depois é apagado de vez, com os dados.`))faz(()=>rpc('agregado_apagar',{p_agregado:d.aapag}),r=>`Agregado apagado. Pode restaurá-lo até ${dt(r)}.`);return}
-      if(d.arest){faz(()=>rpc('agregado_restaurar',{p_agregado:d.arest}),'✓ Agregado restaurado.');return}});
-    document.querySelectorAll('#setNav [data-s="agr"]').forEach(b=>b.addEventListener('click',()=>{msg('');carrega()}));
+      if(d.arem){const [g,u]=d.arem.split('|');if(confirm(`Remover ${d.nm} ${P_.d} ${P_.w}? Deixa de ter acesso aos dados ${P_.d} ${P_.w}.`))faz(()=>rpc('agregado_remover',{p_agregado:g,p_user:u}),'Membro removido.');return}
+      if(d.asair){if(confirm(`Sair ${P_.d} ${P_.w} "${d.nm}"? Deixa de ter acesso aos dados.`))faz(()=>rpc('agregado_sair',{p_agregado:d.asair}),`Saiu ${P_.d} ${P_.w}.`);return}
+      if(d.aapag){if(confirm(`Apagar ${P_.a} ${P_.w} "${d.nm}"?\n\nOs membros deixam de ter acesso. Fica guardad${P_.a} 30 dias (pode restaurar) e depois é apagad${P_.a} de vez, com os dados.`))faz(()=>rpc('agregado_apagar',{p_agregado:d.aapag}),r=>`${P_.w[0].toUpperCase()+P_.w.slice(1)} apagad${P_.a}. Pode restaurá-l${P_.a} até ${dt(r)}.`);return}
+      if(d.arest){faz(()=>rpc('agregado_restaurar',{p_agregado:d.arest}),`✓ ${P_.w[0].toUpperCase()+P_.w.slice(1)} restaurad${P_.a}.`);return}})});
+    document.querySelectorAll('#setNav [data-s="agr"],#setNav [data-s="emp"]').forEach(b=>b.addEventListener('click',()=>{QUAL=b.dataset.s;msg('');carrega()}));
     $('convSim').addEventListener('click',()=>{const c=C[0];if(c)responde(c.id,true,true)});
     $('convNao').addEventListener('click',()=>{const c=C[0];if(c)responde(c.id,false,true)});
     $('convDepois').addEventListener('click',()=>{const c=C[0];if(c)try{sessionStorage.setItem('fp_conv_depois_'+c.id,'1')}catch(e){}$('mConv').hidden=true;popup()})}
   async function responde(id,sim,doPopup){if(ocupado)return;ocupado=true;
-    try{await rpc('agregado_responder',{p_convite:id,p_aceitar:sim});msg(sim?'✓ Convite aceite. Já é membro do agregado.':'Convite recusado.')}catch(e){msg('Erro: '+((e&&e.message)||'não foi possível responder'),1)}
+    const cv=C.find(x=>x.id===id);QUAL=eEmp(cv)?'emp':'agr';try{await rpc('agregado_responder',{p_convite:id,p_aceitar:sim});msg(sim?`✓ Convite aceite. Já é membro ${eEmp(cv)?'da empresa':'do agregado'}.`:'Convite recusado.')}catch(e){msg('Erro: '+((e&&e.message)||'não foi possível responder'),1)}
     ocupado=false;if(doPopup)$('mConv').hidden=true;await carrega();if(doPopup)popup()}
   function popup(){const c=C.find(x=>{try{return !sessionStorage.getItem('fp_conv_depois_'+x.id)}catch(e){return true}});if(!c)return;C=[c,...C.filter(x=>x!==c)];
-    $('convTxt').innerHTML=`<p><b>${esc(c.de_nome)}</b> (${esc(c.de_email)}) convidou-o para o agregado <b>${esc(c.agregado)}</b>.</p><p>Ao aceitar, passa a ver e a editar as Finanças partilhadas desse agregado. A sua conta pessoal continua privada.</p>`;$('mConv').hidden=false}
+    const ee=eEmp(c);$('convTit').textContent=ee?'🏢 Convite para uma empresa':'👪 Convite para um agregado';$('convTxt').innerHTML=`<p><b>${esc(c.de_nome)}</b> (${esc(c.de_email)}) convidou-o para ${ee?'a empresa':'o agregado'} <b>${esc(c.agregado)}</b>.</p><p>Ao aceitar, passa a ver e a editar as Finanças partilhadas ${ee?'dessa empresa':'desse agregado'}. A sua conta pessoal continua privada.</p>`;$('mConv').hidden=false}
   async function sessao(u){U=u||null;MSG='';await carrega();if(U)popup()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   /* a sessão pode chegar antes de este script correr (FPAgr ainda não existia): apanha-a aqui */
   [0,1500,4000].forEach(t=>setTimeout(()=>{let u=null;try{u=window.financasUser||null}catch(e){}if(u&&(!U||U.id!==u.id))sessao(u)},t));
-  return {sessao,carrega,_set:(u,l,c)=>{U=u;L=l;C=c;OK=true;pinta();try{FPCtx.valida()}catch(e){}},popup,ativos:()=>L.filter(g=>!g.apagar_em),pronto:()=>OK}})();
+  return {sessao,carrega,_set:(u,l,c,pode)=>{U=u;L=l;C=c;PODE=!!pode;OK=true;pinta();try{FPCtx.valida()}catch(e){}},popup,ativos:()=>L.filter(g=>!g.apagar_em),pronto:()=>OK}})();
 /* v0.9d: seletor Pessoal / Agregado no meio da barra — só para quem tem ou está num agregado, e só no separador Finanças */
 const FPCtx=(()=>{const $=id=>document.getElementById(id);let pend=true;
   const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const win=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.contentWindow&&f.contentWindow.fpCtx?f:null}catch(e){return null}};
-  function pinta(){const f=win(),el=$('fCtx');if(pend)valida(true);const L=FPAgr.ativos(),ex=!!f&&f.contentWindow.fpCtx.temEx&&f.contentWindow.fpCtx.temEx();const mostra=!!f&&f.classList.contains('on')&&(L.length>0||ex);document.body.classList.toggle('comctx',mostra);try{document.body.classList.toggle('ctxAgr',!!f&&f.contentWindow.fpCtx.atual().t==='a')}catch(e){}if(!mostra){el.hidden=true;return}
-    const c=f.contentWindow.fpCtx.atual();el.hidden=false;
-    el.innerHTML=`<button type="button" data-cx="" class="${c.t==='p'?'on':''}" title="Os seus dados pessoais (privados)">👤 Pessoal</button>`+L.map(g=>`<button type="button" data-cx="${esc(g.id)}" class="${c.t==='a'&&c.id===g.id?'on':''}" title="Dados partilhados do agregado ${esc(g.nome)}">👪 ${esc(g.nome)}</button>`).join('')+(ex?`<button type="button" data-cx="__ex" class="${c.t==='x'?'on':''}" title="Conta de exemplo: dados fictícios, só neste browser">🧪 Exemplo</button>`:'')}
+  const eEmp=g=>g&&g.tipo==='empresa';
+  function pinta(){const f=win(),el=$('fCtx');if(pend)valida(true);const L=FPAgr.ativos(),LA=L.filter(g=>!eEmp(g)),LE=L.filter(eEmp),ex=!!f&&f.contentWindow.fpCtx.temEx&&f.contentWindow.fpCtx.temEx();const mostra=!!f&&f.classList.contains('on')&&(L.length>0||ex);document.body.classList.toggle('comctx',mostra);
+    let c={t:'p'};try{c=f?f.contentWindow.fpCtx.atual():c}catch(e){}const ge=c.t==='a'?LE.find(g=>g.id===c.id):null;
+    document.body.classList.toggle('ctxAgr',c.t==='a'&&!ge);document.body.classList.toggle('ctxEmp',!!ge);if(!mostra){el.hidden=true;$('empPop').hidden=true;return}
+    el.hidden=false;
+    el.innerHTML=`<button type="button" data-cx="" class="${c.t==='p'?'on':''}" title="Os seus dados pessoais (privados)">👤 Pessoal</button>`+LA.map(g=>`<button type="button" data-cx="${esc(g.id)}" class="${c.t==='a'&&c.id===g.id?'on':''}" title="Dados partilhados do agregado ${esc(g.nome)}">👪 ${esc(g.nome)}</button>`).join('')
+      +(LE.length?`<button type="button" data-cxemp class="emp${ge?' on':''}" aria-haspopup="menu" title="Escolher uma empresa">🏢 ${ge?esc(ge.nome):'Empresas'} ▾</button>`:'')
+      +(ex?`<button type="button" data-cx="__ex" class="${c.t==='x'?'on':''}" title="Conta de exemplo: dados fictícios, só neste browser">🧪 Exemplo</button>`:'');
+    $('empPop').innerHTML=LE.map(g=>`<button type="button" role="menuitem" data-cx="${esc(g.id)}" class="${ge&&ge.id===g.id?'on':''}">🏢 ${esc(g.nome)}</button>`).join('')}
   function valida(dePinta){const f=win();if(!f||!FPAgr.pronto()){pend=true;return}pend=false;const w=f.contentWindow.fpCtx,c=w.atual(),L=FPAgr.ativos();
-    if(c.t==='a'){const g=L.find(x=>x.id===c.id);if(!g)w.muda({t:'p'}).then(pinta);else if(c.nome!==g.nome)w.muda({t:'a',id:g.id,nome:g.nome})}
+    if(c.t==='a'){const g=L.find(x=>x.id===c.id);if(!g)w.muda({t:'p'}).then(pinta);else if(c.nome!==g.nome||!!c.emp!==eEmp(g))w.muda({t:'a',id:g.id,nome:g.nome,emp:eEmp(g)})}
     if(!dePinta)pinta()}
-  $('fCtx').addEventListener('click',e=>{const b=e.target.closest('button[data-cx]'),f=win();if(!b||!f)return;const id=b.dataset.cx,g=FPAgr.ativos().find(x=>x.id===id);
-    f.contentWindow.fpCtx.muda(id==='__ex'?{t:'x'}:id&&g?{t:'a',id,nome:g.nome}:{t:'p'}).then(pinta);pinta()});
+  const escolhe=id=>{const f=win();if(!f)return;const g=FPAgr.ativos().find(x=>x.id===id);$('empPop').hidden=true;
+    f.contentWindow.fpCtx.muda(id==='__ex'?{t:'x'}:id&&g?{t:'a',id,nome:g.nome,emp:eEmp(g)}:{t:'p'}).then(pinta);pinta()};
+  $('fCtx').addEventListener('click',e=>{const be=e.target.closest('button[data-cxemp]');if(be){const p=$('empPop');if(!p.hidden){p.hidden=true;return}const r=be.getBoundingClientRect();p.hidden=false;p.style.top=(r.bottom+4)+'px';p.style.left=Math.max(8,Math.min(innerWidth-p.offsetWidth-8,r.left))+'px';e.stopPropagation();return}
+    const b=e.target.closest('button[data-cx]');if(!b)return;escolhe(b.dataset.cx)});
+  $('empPop').addEventListener('click',e=>{const b=e.target.closest('button[data-cx]');if(b)escolhe(b.dataset.cx)});
+  document.addEventListener('click',e=>{if(!e.target.closest('#empPop,[data-cxemp]'))$('empPop').hidden=true});
+  addEventListener('keydown',e=>{if(e.key==='Escape')$('empPop').hidden=true});
   return {pinta,valida}})();
 window.FPCtx=FPCtx;
 const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementById(id),esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -785,6 +813,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.11',d:'06/10/2026',n:['Empresas (para já só por convite): contas de empresa separadas da pessoal, com categorias próprias (Definições › 🏢 Empresas)','Botão 🏢 Empresas na barra de cima para escolher a empresa — tudo fica a amarelo torrado'],a:[]},
  {v:'0.10t',d:'06/10/2026',n:['Rendimentos: 🏢 Entidades para dar nomes e juntar entidades iguais (ex. “Dualperi” e “DUALPERI, LDA”)','Rendimentos: coluna Data com o dia em que foi pago'],a:['Rendimentos: cada linha fica no mês a que se refere e os títulos ficam fixos ao descer','Extratos: a janela do mês de conta diz a que mês se refere e quando foi pago']},
  {v:'0.10s',d:'04/10/2026',n:['Início personalizável: ✏ Editar para esconder, arrastar e alargar as caixas — fica guardado na sua conta','Gráficos de linhas do ano por categoria e por referência, com o previsto a tracejado'],a:[]},
  {v:'0.10r',d:'04/10/2026',n:['Dividir movimento: cada linha pode contar num mês diferente'],a:['Mês de conta: mostra o mês do pagamento, o anterior e o seguinte, com setas para ver mais']},

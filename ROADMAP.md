@@ -55,7 +55,8 @@ Ordem sugerida: do mais fácil (reaproveita o que já existe) para o mais comple
 - ⬜ **v1.1 — Previsões (parte 2)** — rendimentos previstos, datas/periodicidade, saldo previsto no fim do mês/ano, avisos antes de pagamentos grandes (a parte das despesas previstas vem na v0.9b).
 - ⬜ **v1.2 — Análise (Saúde financeira)** — taxa de poupança, fixas vs variáveis, fundo de emergência, evolução do saldo, comparação com o ano anterior, conselhos e relatório mensal/anual.
 - ⬜ **v1.3 — Ligação ao Simulador** — usar os rendimentos reais no Simulador (Pessoas/Unipessoal) e guardar os dados do Simulador na conta.
-- ⬜ **v1.4 — Aba Empresas** — contas e movimentos de empresa separados dos pessoais (mesmos extratos/regras), resultados da empresa e ligação ao que passa para a conta pessoal (salário, dividendos).
+- 🟡 **v1.4 — Aba Empresas** — contas e movimentos de empresa separados dos pessoais (mesmos extratos/regras), resultados da empresa e ligação ao que passa para a conta pessoal (salário, dividendos).
+  - ✅ Base adiantada na **v0.11** (06/10/2026): empresas como contas partilhadas (convites), botão 🏢 Empresas, cor amarelo torrado, categorias de empresa; criar empresas só com permissão no Supabase. Falta: resultados da empresa, IVA/IRC, ligação à conta pessoal.
 - ⬜ **v1.5 — Ligação entre contas (utilizadores)**
   - Usar regras de outros utilizadores (partilhar/importar um conjunto de regras).
   - Linhas do extrato partilhadas com outros utilizadores (ex.: despesas da casa divididas), com permissões explícitas.
