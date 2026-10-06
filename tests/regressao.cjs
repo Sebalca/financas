@@ -559,7 +559,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     w.verMes(desp.dm);w.go('des');w.render();await W(50);const cell=k=>{const c=d.querySelector(`#desCats td.clk[data-dgo="${k}|${desp.cat}|${desp.ref}"]`);return c?c.textContent:''};
     const vA=cell(mA),vB=cell(mB);const esperado=(-desp.valor-20).toFixed(2).replace('.',',')+' €';
     d.querySelector(`#desCats td.clk[data-dgo="${mA}|${desp.cat}|${desp.ref}"]`).click();await W(50);const mini=/↩/.test(d.querySelector('#dgPop').textContent)&&/mês A/.test(d.querySelector('#dgPop').textContent);d.querySelector('#dgPop').hidden=true;
-    await w.fpCtx.apagaEx();w.go('home');ok({ok:vA.replace(/\s/g,'')===esperado.replace(/\s/g,'')&&!vB&&mini,vA,vB,esperado,mini,mA,mB})}));
+    await w.fpCtx.apagaEx();w.go('home');const bOut=db.mov.filter(m=>m.id!=='mSpR'&&m.dm.startsWith(mB)&&m.cat===desp.cat&&m.ref===desp.ref).reduce((t,m)=>t-m.valor,0),vBok=bOut?vB.replace(/\s/g,'')===(bOut.toFixed(2).replace('.',',')+'€'):!vB;ok({ok:vA.replace(/\s/g,'')===esperado.replace(/\s/g,'')&&vBok&&mini,vA,vB,bOut,esperado,mini,mA,mB})}));
   t('D121','reembolso ligado (também linha de movimento dividido) conta na data da despesa original, não na data em que o dinheiro entrou',z121.ok,z121);
   const z122=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
     await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),chave=w.eval('chave');const desp=db.mov.find(m=>m.valor<0&&/EDP/.test(m.desc));const last=db.mov.map(m=>m.dm).sort().pop();
@@ -626,6 +626,19 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     await w.fpCtx.apagaEx();w.go('home');
     ok({ok:temEd&&vis&&esc&&larga&&ordem&&guard&&lnC&&lnR&&sel&&rep_,temEd,vis,esc,larga,ordem,guard,lnC,lnR,sel,rep_,L}) }));
   t('D127','Início: ✏ Editar esconde/mostra, alarga/estreita e reordena as caixas (guardado); gráficos de linhas do ano por categoria e por referência',z127.ok,z127);
+  console.log('v0.10t');
+  const z128=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),sal=db.mov.filter(m=>m.valor>500).slice(0,1)[0];sal.cat='Rendimentos';sal.ref='Salário';sal.quem='Empresa Um';
+    db.rend.push({id:'rE1',tipo:'pon',data:sal.dm,entidade:'EMPRESA UM, LDA',desc:'teste',liquido:10,bruto:10});db.refCorte['Rendimentos›Salário']={ant:31};
+    w.verMes(sal.dm);w.go('ren');w.eval('P').m='ano';w.render();d.querySelector('#raEntN').click();await W(30);
+    const inp=[...d.querySelectorAll('#entLista [data-entn]')].find(i=>i.dataset.entn==='EMPRESA UM, LDA');inp.value='Empresa Um';inp.dispatchEvent(new Event('change',{bubbles:true}));d.querySelector('#mEnt').hidden=true;
+    d.querySelector('#raAbrir').click();await W(30);const ops=[...d.querySelectorAll('#raEnt option')].map(o=>o.textContent),junta=ops.filter(o=>o==='Empresa Um').length===1&&!ops.includes('EMPRESA UM, LDA');
+    const th=[...d.querySelectorAll('#renAno .rahead th')].map(x=>x.textContent),cab=th[0]==='Mês'&&th[1]==='Data'&&!d.querySelector('#renAno .raw thead');
+    const real=w.eval('fmtD')(sal.dm),x=[...d.querySelectorAll('#renAno tr.ra-x')].find(t=>t.children[1].textContent===real),dt=x&&x.children[1],dataOk=!!dt&&dt.classList.contains('mcx');
+    w.go('ext');w.render();await W(30);w.abreMC(sal.id,d.body);const txt=d.querySelector('#mcPop').textContent,pop=/Refere-se a/.test(txt)&&txt.includes('pago a '+real);d.querySelector('#mcPop').hidden=true;
+    delete db.refCorte['Rendimentos›Salário'];db.rend=db.rend.filter(r=>r.id!=='rE1');await w.fpCtx.apagaEx();w.go('home');
+    ok({ok:junta&&cab&&dataOk&&pop,junta,cab,dataOk,pop,ops,th:th.slice(0,2),dt:dt&&[dt.textContent,dt.className,real]})}));
+  t('D128','Rendimentos: nomes das entidades juntam-se; coluna Data (paga a cor se noutro mês); títulos fixos; janela do mês de conta diz "Refere-se a … · pago a …"',z128.ok,z128);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
