@@ -33,9 +33,9 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 @media (max-width:520px){.bar{gap:6px;padding:0 10px;height:44px}.brand{font-size:13px}nav a{padding:0 8px;font-size:13px}}
 .sp{flex:1}
 .fper{display:flex;align-items:center;gap:8px;flex:none}.fper[hidden],.fper [hidden]{display:none!important}
-.fper .sy{border:1px solid var(--bd);background:var(--card);border-radius:999px;padding:4px 10px;font:12px system-ui,sans-serif;color:var(--mu);cursor:pointer;white-space:nowrap;max-width:230px;overflow:hidden;text-overflow:ellipsis}
-.fper .sy.ok{color:#15803d}.fper .sy.erro{color:#c2410c}.fper .sy.busy{color:var(--ac)}
-@media (max-width:1750px){body.comctx .fper .sy{display:none}}
+/* v0.11a: estado da gravação no menu, por baixo do email */
+.menu .hd .sy{display:block;border:0;background:none;padding:2px 0 0;font:12px system-ui,sans-serif;color:var(--mu);cursor:pointer;text-align:left;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.menu .hd .sy[hidden]{display:none}
+.menu .hd .sy.ok{color:#15803d}.menu .hd .sy.erro{color:#c2410c}.menu .hd .sy.busy{color:var(--ac)}
 .ctxsel{display:inline-flex;border:1px solid var(--bd);border-radius:9px;overflow:hidden;flex:none}.ctxsel[hidden]{display:none!important}.ctxsel button{border:0;background:var(--card);padding:5px 12px;font:600 12.5px system-ui,sans-serif;color:var(--mu);cursor:pointer;white-space:nowrap;max-width:170px;overflow:hidden;text-overflow:ellipsis}.ctxsel button+button{border-left:1px solid var(--bd)}.ctxsel button.on{background:#7b1fa2;color:#fff}.ctxsel button.on[data-cx=""]{background:var(--ac)}
 .fper .sg{display:inline-flex;border:1px solid var(--bd);border-radius:9px;overflow:hidden}.fper .sg button{border:0;background:var(--card);padding:5px 10px;font:600 12.5px system-ui,sans-serif;color:var(--mu);cursor:pointer}.fper .sg button.on{background:var(--ac);color:#fff}
 .fper .nv{display:inline-flex;align-items:center;border:1px solid var(--bd);border-radius:9px;background:var(--card)}.fper .nv button{border:0;background:none;width:28px;height:30px;cursor:pointer;color:var(--mu);font-size:15px}
@@ -46,7 +46,7 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .pcal .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.pcal button{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;cursor:pointer;font:inherit}
 .pcal .ch button{width:30px;height:30px}.pcal .ca{width:100%;padding:7px 0;margin-bottom:8px}.pcal .cm{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.pcal .cm button{padding:7px 0;position:relative}
 .pcal .cm button.dt::after{content:'';position:absolute;bottom:3px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#16a34a}.pcal button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-@media (max-width:1150px){.fper .sy{display:none}}@media (max-width:760px){.fper .sg button{padding:5px 7px}.fper .nv .lb{min-width:96px;font-size:12.5px}.fper .hj{padding:5px 8px}}
+@media (max-width:760px){.fper .sg button{padding:5px 7px}.fper .nv .lb{min-width:96px;font-size:12.5px}.fper .hj{padding:5px 8px}}
 .acc{flex:none;display:flex;align-items:center;gap:8px}
 .bdg{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#dc2626;color:#fff;font:700 11px system-ui,sans-serif;margin-left:6px}.bdg[hidden]{display:none}
 .mbtn{position:relative}.mbtn .bdg{position:absolute;top:-5px;right:-5px;margin:0;box-shadow:0 0 0 2px var(--card)}
@@ -187,7 +187,6 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
   <div class="ctxsel" id="fCtx" hidden role="group" aria-label="Dados: pessoal, agregado ou empresa"></div><div class="emppop" id="empPop" hidden role="menu"></div>
   <div class="sp"></div>
   <div class="fper" id="fPer" hidden aria-label="Período das Finanças">
-    <button type="button" class="sy" id="pSync"></button>
     <div class="sg" id="pMode"><button type="button" data-m="mes">Mês</button><button type="button" data-m="ano">Ano</button><button type="button" data-m="int">Intervalo</button></div>
     <div class="nv" id="pNav"><button type="button" data-d="-1" aria-label="Anterior">‹</button><span class="lb" id="pLbl" role="button" tabindex="0" title="Escolher mês ou ano"></span><button type="button" data-d="1" aria-label="Seguinte">›</button></div>
     <div class="rg" id="pRng" hidden><input type="date" id="pIni" aria-label="Início"> a <input type="date" id="pFim" aria-label="Fim"></div>
@@ -197,7 +196,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
 </div>
 <div class="pcal" id="pCal" hidden></div>
 <div class="menu" id="menu" role="menu" hidden>
-  <div class="hd"><div class="av" id="mAv">?</div><div style="min-width:0;flex:1"><b id="mMail">Sem sessão</b><small id="mSub">Os dados ficam só neste dispositivo</small></div><span class="ver" id="mVer" title="Versão da aplicação"></span></div>
+  <div class="hd"><div class="av" id="mAv">?</div><div style="min-width:0;flex:1"><b id="mMail">Sem sessão</b><small id="mSub">Os dados ficam só neste dispositivo</small><button type="button" class="sy" id="pSync" hidden></button></div><span class="ver" id="mVer" title="Versão da aplicação"></span></div>
   <button class="it" id="miEntrar" type="button"><span class="ic">🔑</span>Entrar / criar conta</button>
   <button class="it" data-set="tema" type="button"><span class="ic">⚙️</span>Definições</button>
   <a class="it" id="miAdm" href="admin.html" target="_blank" rel="noopener" hidden><span class="ic">📊</span>Estatísticas (admin)</a>
@@ -664,7 +663,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pwv]');if(
 window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const api=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.classList.contains('on')&&f.contentWindow.fpPer||null}catch(e){return null}};
   let CY=0;
-  function pinta(){const a=api();$('fPer').hidden=!a;if(!a){$('pCal').hidden=true;try{FPCtx.pinta()}catch(x){}return}const e=a.estado();
+  function pinta(){const a=api();$('fPer').hidden=!a;$('pSync').hidden=!a;$('mSub').hidden=!!a;if(!a){$('pCal').hidden=true;try{FPCtx.pinta()}catch(x){}return}const e=a.estado();
     [...$('pMode').children].forEach(b=>b.classList.toggle('on',b.dataset.m===e.m));$('pNav').hidden=e.m==='int';$('pRng').hidden=e.m!=='int';
     $('pLbl').textContent=e.lbl;$('pIni').value=e.ini||'';$('pFim').value=e.fim||'';
     $('pHoje').classList.toggle('atual',e.atual);$('pHoje').title=e.atual?'Já está no período atual':(e.m==='ano'?'Ir para o ano atual':e.m==='int'?'Do dia 1 deste mês até hoje':'Ir para o mês atual');
@@ -813,6 +812,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.11a',d:'07/10/2026',n:['Rendimentos: 🗂 Recibos importados — ver e apagar os recibos carregados'],a:['“Guardado na conta” passa para o menu, por baixo do email','Extratos: “Quem é” volta a poder escrever-se na lista; os reembolsos mantêm a descrição do extrato','Rendimentos: cada mês ordenado pela data de pagamento']},
  {v:'0.11',d:'06/10/2026',n:['Empresas (para já só por convite): contas de empresa separadas da pessoal, com categorias próprias (Definições › 🏢 Empresas)','Botão 🏢 Empresas na barra de cima para escolher a empresa — tudo fica a amarelo torrado'],a:[]},
  {v:'0.10t',d:'06/10/2026',n:['Rendimentos: 🏢 Entidades para dar nomes e juntar entidades iguais (ex. “Dualperi” e “DUALPERI, LDA”)','Rendimentos: coluna Data com o dia em que foi pago'],a:['Rendimentos: cada linha fica no mês a que se refere e os títulos ficam fixos ao descer','Extratos: a janela do mês de conta diz a que mês se refere e quando foi pago']},
  {v:'0.10s',d:'04/10/2026',n:['Início personalizável: ✏ Editar para esconder, arrastar e alargar as caixas — fica guardado na sua conta','Gráficos de linhas do ano por categoria e por referência, com o previsto a tracejado'],a:[]},

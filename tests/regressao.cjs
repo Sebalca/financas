@@ -265,8 +265,8 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const sr2=tr().querySelector('[data-f="ref"]');sr2.value='Internet';sr2.dispatchEvent(new Event('change',{bubbles:true}));const pergunta=!document.querySelector('#mNovaRegra').hidden;document.querySelector('#mNovaRegra').hidden=true;
     return semPergunta&&pergunta&&m.cat==='Casa'&&m.catSrc==='manual'}));
 
-  t('D78','reembolso ligado mostra na Descrição o nome da despesa original (e pesquisa por ele)',await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();const m=DB.mov.find(x=>x.id==='mRb');const o=mapaChaves().get(m.reemb);
-    const tr=document.querySelector('#extTable tr[data-id="mRb"]');const ok1=!!tr&&tr.querySelector('td.desc').textContent.includes(nomeMov(o))&&/DEVOLUCAO AMIGO/.test(tr.querySelector('td.desc').title);
+  t('D78','reembolso ligado mantém a descrição do extrato (a despesa original no rato) e a pesquisa encontra-o pelos dois nomes',await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();const m=DB.mov.find(x=>x.id==='mRb');const o=mapaChaves().get(m.reemb);
+    const tr=document.querySelector('#extTable tr[data-id="mRb"]');const ok1=!!tr&&tr.querySelector('td.desc').textContent==='DEVOLUCAO AMIGO'&&tr.querySelector('td.desc').title.includes(nomeMov(o));
     document.querySelector('#fQ').value=o.desc.split(' ')[0];render();const ok2=!!document.querySelector('#extTable tr[data-id="mRb"]');limpaFiltros();render();return ok1&&ok2}));
 
   const z83=await ev(()=>{const n0=DB.mov.length;for(let k=0;k<350;k++)DB.mov.push({id:'big'+k,k:'big'+k,man:true,banco:'Dinheiro',conta:'',dm:'2026-09-'+String(1+k%28).padStart(2,'0'),dv:'2026-09-01',desc:'MOV '+k,valor:-1,saldo:null,cat:'',ref:'',catSrc:'',det:'',obs:'',quem:'',ord:k,c:k});
@@ -574,11 +574,12 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     await w.fpCtx.apagaEx();w.go('home');ok({ok:soRef&&txt&&dataReal&&foi,soRef,vis,txt,dataReal,foi})}));
   t('D122','Extratos: filtros de categoria/referência e pesquisa olham para as linhas dos movimentos divididos (só aparecem as que batem); mini janela das Despesas com a data do extrato e reembolsos que abrem o movimento',z122.ok,z122);
   const z123=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
-    await w.fpCtx.exemplo();await W(300);w.go('ext');w.render();await W(50);const ro=!d.querySelector('#extTable input[data-f="quem"]')&&!!d.querySelector('#extTable td.c-quem .quem-ro');
+    await w.fpCtx.exemplo();await W(300);w.go('ext');w.render();await W(50);const qi=d.querySelector('#extTable input[data-f="quem"]'),mid=qi&&qi.closest('tr').dataset.id;if(qi){qi.value='Pessoa Teste';qi.dispatchEvent(new Event('change',{bubbles:true}))}await W(30);
+    const mq=w.fpCtx.db().mov.find(x=>x.id===mid);w.aplicaPessoas();const ro=!!mq&&mq.quem==='Pessoa Teste'&&mq.quemMan===true&&!d.querySelector('#bkQuem').hidden;
     w.go('des');w.render();await W(50);const h=d.querySelector('#desCats .dghead');const fixo=!!h&&w.getComputedStyle(h).position==='sticky'&&!h.nextElementSibling.querySelector('thead');
     d.querySelector('#desCats td.clk[data-dgo]').click();await W(50);const qm=d.querySelectorAll('#dgPop [data-dgmov] td').length>=4&&!!d.querySelector('#dgPop td.qm');d.querySelector('#dgPop').hidden=true;
     await w.fpCtx.apagaEx();w.go('home');ok({ok:ro&&fixo&&qm,ro,fixo,qm})}));
-  t('D123','Despesas com títulos fixos que acompanham; mini janela com "Quem é"; nos Extratos "Quem é" só de leitura (vem das Pessoas)',z123.ok,z123);
+  t('D123','Despesas com títulos fixos que acompanham; mini janela com "Quem é"; nos Extratos "Quem é" escreve-se na lista (à mão fica, as regras não o mudam)',z123.ok,z123);
   const z124=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
     await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),chave=w.eval('chave');const sal=db.mov.filter(m=>/SALARIO/.test(m.desc));sal.forEach(m=>{m.cat='Rendimentos';m.ref='Salário';m.catSrc='manual'});
     const m0=sal[sal.length-1];w.verMes(m0.dm);w.go('ren');d.querySelectorAll('#renAno tr.ra-m').forEach(tr=>tr.click());w.render();await W(50);
@@ -656,6 +657,21 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     el.querySelector('[data-cx=""]').click();await W(400);FPAgr._set({id:'u2'},[],[],false);FPPer.pinta();FPAgr._set(null,[],[]);
     ok({ok:semPerm&&comPerm&&sel&&caixas&&abre&&emp&&cor&&base&&agr,semPerm,comPerm,sel,caixas,abre,emp,cor,base,agr})}));
   t('D129','Empresas: secção só com permissão ou empresa; botão 🏢 Empresas com lista no seletor; contexto a amarelo torrado; empresa nova com categorias de empresa',z129.ok,z129);
+  console.log('v0.11a');
+  const z130=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),chave=w.eval('chave');
+    const menu=!!document.querySelector('#menu #pSync')&&!document.querySelector('#fPer #pSync');
+    const desp=db.mov.find(m=>m.valor<0),mk=(id,dm,desc,valor)=>({id,k:id,man:true,banco:'Dinheiro',conta:'',saldo:null,det:'',ord:0,dm,dv:dm,desc,valor,cat:'',ref:'',catSrc:'manual',quem:'',quemMan:false,obs:''});
+    const ent=mk('mR130',desp.dm,'DEVOLUCAO TESTE 130',5);ent.cat=desp.cat||'Outros';ent.ref=desp.ref||'Prendas';ent.reemb=chave(desp);db.mov.push(ent,mk('mS1',desp.dm.slice(0,8)+'20','SAL B',800),mk('mS2',desp.dm.slice(0,8)+'03','SAL A',700));
+    w.verMes(ent.dm);w.go('ext');w.render();await W(50);const td=d.querySelector(`#extTable tr[data-id="${ent.id}"] td.desc`),desc=!!td&&td.textContent===ent.desc&&!/↩/.test(td.textContent);
+    const m1=db.mov.filter(m=>m.id==='mS1'||m.id==='mS2');m1.forEach(m=>{m.cat='Rendimentos';m.ref='Salário'});m1[0].quem='Zé';m1[1].quem='Ana';
+    const ms=m1.map(m=>m.dm).sort();db.rend.push({id:'rR1',tipo:'rec',mes:ent.dm.slice(0,7),entidade:'Aaa Primeiro',desc:'recibo',ficheiro:'teste.pdf',em:new Date().toISOString(),liquido:1,bruto:1,lk:{},lkMan:{}});
+    w.go('ren');w.render();d.querySelector('#raAbrir').click();await W(50);const rows=[...d.querySelectorAll('#renAno tr.ra-d')].filter(t=>t.querySelector('td:nth-child(2)'));
+    const datas=rows.filter(t=>t.classList.contains('ra-x')).map(t=>t.children[1].textContent),ord=datas.join()===datas.slice().sort((a,b)=>a.split('/').reverse().join().localeCompare(b.split('/').reverse().join())).join()&&/recibo/.test(rows[rows.length-1].textContent);
+    d.querySelector('#raImps').click();await W(30);const lista=!d.querySelector('#mRecImps').hidden&&/teste\.pdf/.test(d.querySelector('#recImpsList').textContent);
+    d.querySelector('#recImpsList [data-rendel="rR1"]').click();await W(50);const apagou=!db.rend.some(r=>r.id==='rR1')&&!/teste\.pdf/.test(d.querySelector('#recImpsList').textContent);d.querySelector('#mRecImps').hidden=true;
+    await w.fpCtx.apagaEx();w.go('home');ok({ok:menu&&desc&&ord&&lista&&apagou,menu,desc,ord,lista,apagou,datas})}));
+  t('D130','Estado da gravação no menu (por baixo do email); reembolso mantém a descrição do extrato; Rendimentos por data de pagamento; 🗂 Recibos importados com apagar',z130.ok,z130);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
