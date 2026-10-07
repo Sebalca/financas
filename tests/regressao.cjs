@@ -672,6 +672,27 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     d.querySelector('#recImpsList [data-rendel="rR1"]').click();await W(50);const apagou=!db.rend.some(r=>r.id==='rR1')&&!/teste\.pdf/.test(d.querySelector('#recImpsList').textContent);d.querySelector('#mRecImps').hidden=true;
     await w.fpCtx.apagaEx();w.go('home');ok({ok:menu&&desc&&ord&&lista&&apagou,menu,desc,ord,lista,apagou,datas})}));
   t('D130','Estado da gravação no menu (por baixo do email); reembolso mantém a descrição do extrato; Rendimentos por data de pagamento; 🗂 Recibos importados com apagar',z130.ok,z130);
+  console.log('v0.11b');
+  const z131=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),velho=window.plataforma,ch=[];let ADMv=false;
+    const T={sugestoes:[{id:'s1',site_id:'financas',user_id:'u7',tipo:'Ideia',texto:'A minha ideia',email:null,por_ler:false,por_ler_user:true,fechada:false,ultima_em:new Date().toISOString(),created_at:new Date().toISOString()}],
+      sugestao_mensagens:[{id:'m1',sugestao_id:'s1',de_admin:true,texto:'Obrigado, vamos ver!',created_at:new Date().toISOString()}],faq_perguntas:[]};
+    const q=t=>{const f=[];const o={select:()=>o,eq:(k,v)=>{f.push([k,v]);return o},order:()=>o,limit:()=>o,delete:()=>o,update:()=>o,
+      then:(res,rej)=>{const d=(T[t]||[]).filter(r=>f.every(([k,v])=>r[k]===v||(r[k]===undefined&&k==='site_id')));return Promise.resolve({data:d,count:d.length,error:null}).then(res,rej)}};return o};
+    window.plataforma={from:q,rpc:async(f,a)=>{ch.push(f);if(f==='e_admin_site')return {data:ADMv};if(f==='sugestao_lida'){T.sugestoes[0].por_ler_user=false;return {data:null}}
+      if(f==='sugestao_responder'){T.sugestao_mensagens.push({id:'m'+Date.now(),sugestao_id:a.p_sugestao,de_admin:ADMv,texto:a.p_texto,created_at:new Date().toISOString()});return {data:'x',error:null}}
+      if(f==='sugestao_fechar'){T.sugestoes[0].fechada=a.p_fechar;return {data:null,error:null}}return {data:null}}};
+    await FPAdm.sessao({id:'u7',email:'u7@exemplo.pt'});const notif=!document.querySelector('#bdgMenu').hidden&&document.querySelector('#bdgMenu').textContent==='1';
+    document.querySelector('[data-set="sugestao"]').click();await W(150);const tabMin=!document.querySelector('#sgTabs').hidden&&!document.querySelector('#sgMin').hidden&&/nova resposta/.test(document.querySelector('#sgMin').textContent)&&document.querySelector('#sgTabs [data-st="rec"]').hidden;
+    document.querySelector('#sgMin [data-sgo]').click();await W(150);const conv=/Obrigado, vamos ver!/.test(document.querySelector('#sgConv').textContent)&&ch.includes('sugestao_lida')&&!!document.querySelector('#cvTxt');
+    document.querySelector('#cvTxt').value='Boa, obrigado';document.querySelector('[data-cvenv]').click();await W(150);const resp=ch.includes('sugestao_responder')&&/Boa, obrigado/.test(document.querySelector('#sgConv').textContent);
+    const limpa=document.querySelector('#bdgMenu').hidden;
+    T.sugestoes[0].fechada=true;document.querySelector('[data-cvback]').click();await W(150);document.querySelector('#sgMin [data-sgo]').click();await W(150);const fech=!document.querySelector('#cvTxt')&&/Conversa terminada/.test(document.querySelector('#sgConv').textContent);
+    T.sugestoes[0].fechada=false;T.sugestoes[0].por_ler=true;ADMv=true;await FPAdm.sessao({id:'u1',email:'adm@exemplo.pt'});document.querySelector('#mSet').hidden=true;document.querySelector('[data-set="sugestao"]').click();await W(100);
+    document.querySelector('#sgTabs [data-st="rec"]').click();await W(150);const rec=!document.querySelector('#sgTabs [data-st="rec"]').hidden&&/nova/.test(document.querySelector('#sgAdm').textContent);
+    document.querySelector('#sgAdm [data-sgo]').click();await W(150);document.querySelector('[data-cvfecha="1"]').click();await W(150);const term=ch.includes('sugestao_fechar')&&T.sugestoes[0].fechada&&!!document.querySelector('[data-cvfecha="0"]');
+    window.plataforma=velho;await FPAdm.sessao(null);document.querySelector('#mSet').hidden=true;
+    ok({ok:notif&&tabMin&&conv&&resp&&limpa&&fech&&rec&&term,notif,tabMin,conv,resp,limpa,fech,rec,term})}));
+  t('D131','Sugestões em conversa: "As minhas" com respostas, responder, notificação até abrir; admin abre, responde e termina/reabre',z131.ok,z131);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

@@ -75,7 +75,12 @@ nav a.on{color:var(--ac);border-bottom-color:var(--ac)}
 .fq-tabs{display:flex;gap:4px;margin-bottom:10px}.fq-tabs button{border:0;background:none;color:var(--mu);font:700 13px system-ui,sans-serif;padding:6px 10px;border-radius:8px;cursor:pointer}.fq-tabs button.on{background:var(--ac2);color:var(--ac)}
 .fq textarea,.adm textarea{width:100%;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);padding:8px 10px;font:14px system-ui,sans-serif;resize:vertical}
 .mq{border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin-bottom:6px;font-size:13px}.mq .st{font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--bg);color:var(--mu)}.mq .st.r{background:#dcfce7;color:#166534}
-.adm .it2{border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:10px}.adm .q{font-weight:700;font-size:14px;margin-bottom:4px}.adm .meta{font-size:11.5px;color:var(--mu);margin-bottom:6px}
+.adm .it2{border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+/* v0.11b: sugestões em conversa */
+.adm .it2.clk{cursor:pointer}.adm .it2.clk:hover{border-color:var(--ac)}.adm .it2 .pv{font-size:13px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cv{display:flex;flex-direction:column;gap:8px;max-height:min(52vh,460px);overflow:auto;padding:4px 2px 8px}.cv .bb{max-width:82%;border-radius:12px;padding:8px 11px;font-size:13.5px;white-space:pre-wrap;background:var(--bg);border:1px solid var(--bd);align-self:flex-start}
+.cv .bb.eu{align-self:flex-end;background:var(--ac2);border-color:transparent}.cv .bb .bm{font-size:11px;color:var(--mu);margin-bottom:3px;white-space:normal}
+.cvh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.cvh b{flex:1}.cvf{display:flex;gap:8px;align-items:flex-end;margin-top:8px}.cvf textarea{flex:1;min-height:60px}.cvx{font-size:12.5px;color:var(--mu);text-align:center;padding:6px;border:1px dashed var(--bd);border-radius:10px;margin-top:6px}.adm .q{font-weight:700;font-size:14px;margin-bottom:4px}.adm .meta{font-size:11.5px;color:var(--mu);margin-bottom:6px}
 .adm .rw{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}.adm input[type=text]{flex:1;min-width:160px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);padding:6px 8px;font:13px system-ui,sans-serif}
 .adm .rw label{font-size:12.5px;color:var(--mu);display:flex;gap:5px;align-items:center;margin:0}
 .acc[hidden],.who[hidden],.bt[hidden]{display:none}
@@ -271,8 +276,8 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
       <div id="fqMinhas" hidden></div>
       <div id="fqAdm" class="adm" hidden></div></section>
     <section data-s="sugestao" hidden><h3>Enviar sugestão</h3>
-      <div class="fq-tabs" id="sgTabs" hidden><button type="button" data-st="env" class="on">✏ Enviar</button><button type="button" data-st="rec">📥 Recebidas<span class="bdg" id="bdgSug3" hidden></span></button></div>
-      <div id="sgAdm" class="adm" hidden></div><div id="sgEnv"><p>Ideias, problemas ou dúvidas — seguem diretamente para quem desenvolve o site.</p>
+      <div class="fq-tabs" id="sgTabs" hidden><button type="button" data-st="env" class="on">✏ Enviar</button><button type="button" data-st="min">💬 As minhas<span class="bdg" id="bdgSug4" hidden></span></button><button type="button" data-st="rec" hidden>📥 Recebidas<span class="bdg" id="bdgSug3" hidden></span></button></div>
+      <div id="sgAdm" class="adm" hidden></div><div id="sgMin" class="adm" hidden></div><div id="sgConv" class="adm" hidden></div><div id="sgEnv"><p>Ideias, problemas ou dúvidas — seguem diretamente para quem desenvolve o site.</p>
       <div class="grp" id="sgTipo"><button class="opt on" data-v="Ideia" type="button">💡 Ideia</button><button class="opt" data-v="Problema" type="button">🐞 Problema</button><button class="opt" data-v="Outro" type="button">💬 Outro</button></div>
       <textarea id="sgTxt" rows="6" maxlength="4000" placeholder="Escreva a sua sugestão…" style="margin-top:8px"></textarea>
       <input id="sgSite" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px" placeholder="site">
@@ -812,6 +817,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.11b',d:'07/10/2026',n:['Sugestões: veja as suas em “💬 As minhas” e converse com quem desenvolve o site','Aviso no Menu quando há respostas por abrir'],a:[]},
  {v:'0.11a',d:'07/10/2026',n:['Rendimentos: 🗂 Recibos importados — ver e apagar os recibos carregados'],a:['“Guardado na conta” passa para o menu, por baixo do email','Extratos: “Quem é” volta a poder escrever-se na lista; os reembolsos mantêm a descrição do extrato','Rendimentos: cada mês ordenado pela data de pagamento']},
  {v:'0.11',d:'06/10/2026',n:['Empresas (para já só por convite): contas de empresa separadas da pessoal, com categorias próprias (Definições › 🏢 Empresas)','Botão 🏢 Empresas na barra de cima para escolher a empresa — tudo fica a amarelo torrado'],a:[]},
  {v:'0.10t',d:'06/10/2026',n:['Rendimentos: 🏢 Entidades para dar nomes e juntar entidades iguais (ex. “Dualperi” e “DUALPERI, LDA”)','Rendimentos: coluna Data com o dia em que foi pago'],a:['Rendimentos: cada linha fica no mês a que se refere e os títulos ficam fixos ao descer','Extratos: a janela do mês de conta diz a que mês se refere e quando foi pago']},
@@ -936,32 +942,61 @@ const FPFaq=(function(){const $=id=>document.getElementById(id),SITE='financas';
 </script>
 <script>
 /* ===== Sinais para o admin do site (só quem está em site_admins): perguntas novas nos FAQs e sugestões por ler. Atualiza ao abrir o site. ===== */
-const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';let ADM=false,NF=0,NS=0;
+const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';let ADM=false,NF=0,NS=0,NU=0,U=null;
   const sb=()=>window.plataforma&&window.plataforma.from?window.plataforma:null;
   const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  function pinta(){const set=(ids,n)=>ids.forEach(id=>{const e=$(id);if(e){e.hidden=!ADM||!n;e.textContent=n>99?'99+':n}});set(['bdgFaq','bdgFaq2'],NF);set(['bdgSug','bdgSug2','bdgSug3'],NS);
-    const t=NF+NS,m=$('bdgMenu');m.hidden=!ADM||!t;m.textContent=t>99?'99+':t;m.title=`${NF} pergunta(s) nova(s) · ${NS} sugestão(ões) por ler`}
-  async function conta(){const c=sb();if(!c||!ADM)return pinta();
-    try{const a=await c.from('faq_perguntas').select('id',{count:'exact',head:true}).eq('site_id',SITE).eq('estado','nova');NF=a.count||0;
+  function pinta(){const nf=ADM?NF:0,ns=ADM?NS:0,set=(ids,n)=>ids.forEach(id=>{const e=$(id);if(e){e.hidden=!n;e.textContent=n>99?'99+':n}});set(['bdgFaq','bdgFaq2'],nf);set(['bdgSug','bdgSug2'],ns+NU);set(['bdgSug3'],ns);set(['bdgSug4'],NU);
+    const t=nf+ns+NU,m=$('bdgMenu');m.hidden=!t;m.textContent=t>99?'99+':t;m.title=[ADM?`${NF} pergunta(s) nova(s) · ${NS} sugestão(ões) com mensagens por ler`:'',NU?`${NU} resposta(s) às suas sugestões por abrir`:''].filter(Boolean).join(' · ')}
+  async function conta(){const c=sb();if(!c||!U){NU=0;return pinta()}
+    try{const d=await c.from('sugestoes').select('id',{count:'exact',head:true}).eq('site_id',SITE).eq('user_id',U.id).eq('por_ler_user',true);NU=d.count||0}catch(e){}
+    if(ADM)try{const a=await c.from('faq_perguntas').select('id',{count:'exact',head:true}).eq('site_id',SITE).eq('estado','nova');NF=a.count||0;
       const b=await c.from('sugestoes').select('id',{count:'exact',head:true}).eq('site_id',SITE).eq('por_ler',true);NS=b.count||0}catch(e){}pinta()}
-  async function sessao(u){ADM=false;NF=NS=0;const c=sb();if(u&&c){try{const r=await c.rpc('e_admin_site',{s:SITE});ADM=!!r.data}catch(e){}}try{$('miAdm').hidden=!ADM}catch(e){}if(ADM)await conta();else pinta()}
-  let SG=[],SGN=100,SGF='todas';
-  function sgTab(t){[...$('sgTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.st===t));$('sgEnv').hidden=t!=='env';$('sgAdm').hidden=t!=='rec';if(t==='rec')recebidas()}
-  function abreSug(){$('sgTabs').hidden=!ADM;sgTab('env')}
+  async function sessao(u){U=u||null;ADM=false;NF=NS=NU=0;const c=sb();if(u&&c){try{const r=await c.rpc('e_admin_site',{s:SITE});ADM=!!r.data}catch(e){}}try{$('miAdm').hidden=!ADM}catch(e){}await conta()}
+  setInterval(()=>{if(U&&!document.hidden)conta()},60000);
+  let SG=[],SGN=100,SGF='todas',MS=[],CV=null;const dh=d=>new Date(d).toLocaleString('pt-PT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  function sgTab(t){[...$('sgTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.st===t||(t==='conv'&&!!CV&&b.dataset.st===CV.de)));$('sgEnv').hidden=t!=='env';$('sgAdm').hidden=t!=='rec';$('sgMin').hidden=t!=='min';$('sgConv').hidden=t!=='conv';
+    if(t==='rec')recebidas();if(t==='min')minhas()}
+  function abreSug(){$('sgTabs').hidden=!U;$('sgTabs').querySelector('[data-st="rec"]').hidden=!ADM;sgTab(NU&&U?'min':'env');conta()}
   async function recebidas(){const c=sb();if(!ADM||!c)return;$('sgAdm').innerHTML='<p class="note2">A carregar…</p>';
-    const {data,error}=await c.from('sugestoes').select('id,tipo,texto,email,separador,versao,por_ler,created_at').eq('site_id',SITE).order('created_at',{ascending:false}).limit(1000);
-    if(error){$('sgAdm').innerHTML='<p class="note2">Não foi possível carregar.</p>';return}SG=data||[];SGN=100;pintaRec();
-    if(SG.some(x=>x.por_ler)){try{await c.from('sugestoes').update({por_ler:false}).eq('site_id',SITE).eq('por_ler',true)}catch(e){}}NS=0;pinta()}
+    const {data,error}=await c.from('sugestoes').select('id,user_id,tipo,texto,email,separador,versao,por_ler,fechada,ultima_em,created_at').eq('site_id',SITE).order('ultima_em',{ascending:false}).limit(1000);
+    if(error){$('sgAdm').innerHTML='<p class="note2">Não foi possível carregar.</p>';return}SG=data||[];SGN=100;pintaRec()}
   function pintaRec(){const tipos=['todas',...new Set(SG.map(x=>x.tipo))],l=SG.filter(x=>SGF==='todas'||x.tipo===SGF);
     $('sgAdm').innerHTML=`<div class="fq-lb">${tipos.map(t=>`<button type="button" data-sgf="${esc(t)}" class="${SGF===t?'on':''}">${t==='todas'?'Todas':esc(t)} ${t==='todas'?SG.length:SG.filter(x=>x.tipo===t).length}</button>`).join('')}</div>`
-      +(l.length?l.slice(0,SGN).map(x=>`<div class="it2" data-sid="${x.id}"><div class="meta">${x.por_ler?'<span class="bdg" style="margin:0 6px 0 0">nova</span>':''}<b>${esc(x.tipo)}</b> · ${new Date(x.created_at).toLocaleString('pt-PT')}${x.separador?' · '+esc(x.separador):''}${x.versao?' · v'+esc(x.versao):''}${x.email?' · '+esc(x.email):''}<button class="bt" type="button" data-sgdel style="float:right;padding:2px 8px" title="Apagar">🗑</button></div><div style="white-space:pre-wrap;font-size:13.5px">${esc(x.texto)}</div></div>`).join('')
+      +(l.length?l.slice(0,SGN).map(x=>`<div class="it2 clk" data-sid="${x.id}" data-sgo="rec" title="Abrir a conversa"><div class="meta">${x.por_ler?'<span class="bdg" style="margin:0 6px 0 0">nova</span>':''}${x.fechada?'🔒 ':''}<b>${esc(x.tipo)}</b> · ${dh(x.created_at)}${x.separador?' · '+esc(x.separador):''}${x.versao?' · v'+esc(x.versao):''}${x.email?' · '+esc(x.email):''}${x.user_id?'':' · sem conta'}<button class="bt" type="button" data-sgdel style="float:right;padding:2px 8px" title="Apagar">🗑</button></div><div class="pv">${esc(x.texto)}</div></div>`).join('')
         +(l.length>SGN?`<div style="text-align:center"><button class="bt" type="button" data-sgmais>Mostrar mais</button></div>`:''):'<p class="note2">Ainda não há sugestões.</p>')}
+  async function minhas(){const c=sb();if(!U||!c){$('sgMin').innerHTML='<p class="note2">Entre na sua conta para ver as suas sugestões.</p>';return}$('sgMin').innerHTML='<p class="note2">A carregar…</p>';
+    const {data,error}=await c.from('sugestoes').select('id,user_id,tipo,texto,por_ler_user,fechada,ultima_em,created_at').eq('site_id',SITE).eq('user_id',U.id).order('ultima_em',{ascending:false}).limit(200);
+    if(error){$('sgMin').innerHTML='<p class="note2">Não foi possível carregar.</p>';return}MS=data||[];
+    $('sgMin').innerHTML=MS.length?MS.map(x=>`<div class="it2 clk" data-sid="${x.id}" data-sgo="min" title="Abrir a conversa"><div class="meta">${x.por_ler_user?'<span class="bdg" style="margin:0 6px 0 0">nova resposta</span>':''}${x.fechada?'🔒 terminada · ':''}<b>${esc(x.tipo)}</b> · ${dh(x.created_at)}</div><div class="pv">${esc(x.texto)}</div></div>`).join('')
+      :'<p class="note2">Ainda não enviou sugestões (ou foram enviadas sem sessão iniciada).</p>'}
+  async function abreConv(id,de){const c=sb();if(!c)return;const s=(de==='rec'?SG:MS).find(x=>x.id===id);if(!s)return;CV={id,de,s};sgTab('conv');$('sgConv').innerHTML='<p class="note2">A carregar…</p>';
+    const {data,error}=await c.from('sugestao_mensagens').select('id,de_admin,texto,created_at').eq('sugestao_id',id).order('created_at',{ascending:true});
+    if(error){$('sgConv').innerHTML='<p class="note2">Não foi possível carregar a conversa.</p>';return}pintaConv(data||[]);
+    if(de==='rec'?s.por_ler:s.por_ler_user){try{await c.rpc('sugestao_lida',{p_sugestao:id})}catch(e){}if(de==='rec')s.por_ler=false;else s.por_ler_user=false;conta()}}
+  function pintaConv(ms){const {s,de}=CV,adm=de==='rec',eu=m=>adm?m.de_admin:!m.de_admin,quem=m=>m.de_admin?'Equipa do site':(adm?(s.email||'Utilizador'):'Eu');
+    const fechada=s.fechada,podeEsc=adm?!!s.user_id:!fechada;
+    $('sgConv').innerHTML=`<div class="cvh"><button class="bt" type="button" data-cvback>← Voltar</button><b>${esc(s.tipo)} · ${dh(s.created_at)}</b>${adm?`<button class="bt" type="button" data-cvfecha="${fechada?0:1}" title="${fechada?'A pessoa volta a poder responder':'A pessoa deixa de poder responder (pode reabrir)'}">${fechada?'🔓 Reabrir':'🔒 Terminar conversa'}</button>`:''}</div>
+      <div class="cv" id="cvL"><div class="bb${adm?'':' eu'}"><div class="bm">${adm?esc(s.email||'Utilizador'):'Eu'} · ${dh(s.created_at)}</div>${esc(s.texto)}</div>${ms.map(m=>`<div class="bb${eu(m)?' eu':''}"><div class="bm">${esc(quem(m))} · ${dh(m.created_at)}</div>${esc(m.texto)}</div>`).join('')}</div>
+      ${fechada?'<div class="cvx">🔒 Conversa terminada'+(adm?' — a pessoa já não pode responder.':'. Para outro assunto, envie uma nova sugestão.')+'</div>':''}
+      ${adm&&!s.user_id?'<div class="cvx">Enviada sem conta: a pessoa não vê respostas aqui'+(s.email?' (responda por email).':'.')+'</div>':''}
+      ${podeEsc?`<div class="cvf"><textarea id="cvTxt" maxlength="4000" placeholder="Escreva a resposta…"></textarea><button class="opt" type="button" data-cvenv>Enviar</button></div><div class="note2" id="cvMsg"></div>`:''}`;
+    const L=$('cvL');if(L)L.scrollTop=L.scrollHeight}
   $('sgTabs').addEventListener('click',e=>{const b=e.target.closest('[data-st]');if(b)sgTab(b.dataset.st)});
-  $('sgAdm').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
-    if(b.dataset.sgf!=null){SGF=b.dataset.sgf;pintaRec();return}
-    if('sgmais' in b.dataset){SGN+=100;pintaRec();return}
-    if('sgdel' in b.dataset){const id=b.closest('[data-sid]').dataset.sid;if(!confirm('Apagar esta sugestão?'))return;const {error}=await sb().from('sugestoes').delete().eq('id',id);if(!error){SG=SG.filter(x=>x.id!==id);pintaRec()}}});
+  const cliqueLista=async e=>{const b=e.target.closest('button');
+    if(b){if(b.dataset.sgf!=null){SGF=b.dataset.sgf;pintaRec();return}
+      if('sgmais' in b.dataset){SGN+=100;pintaRec();return}
+      if('sgdel' in b.dataset){e.stopPropagation();const id=b.closest('[data-sid]').dataset.sid;if(!confirm('Apagar esta sugestão (e a conversa)?'))return;const {error}=await sb().from('sugestoes').delete().eq('id',id);if(!error){SG=SG.filter(x=>x.id!==id);pintaRec();conta()}return}}
+    const it=e.target.closest('[data-sgo]');if(it)abreConv(it.dataset.sid,it.dataset.sgo)};
+  $('sgAdm').addEventListener('click',cliqueLista);$('sgMin').addEventListener('click',cliqueLista);
+  $('sgConv').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b||!CV)return;const c=sb();
+    if('cvback' in b.dataset){sgTab(CV.de);return}
+    if(b.dataset.cvfecha!=null){const f=b.dataset.cvfecha==='1';try{const {error}=await c.rpc('sugestao_fechar',{p_sugestao:CV.id,p_fechar:f});if(error)throw error;CV.s.fechada=f;abreConv(CV.id,CV.de)}catch(x){alert('Não foi possível: '+(x.message||x))}return}
+    if('cvenv' in b.dataset){const t=$('cvTxt').value.trim();if(!t)return;b.disabled=true;$('cvMsg').textContent='A enviar…';
+      const {error}=await c.rpc('sugestao_responder',{p_sugestao:CV.id,p_texto:t});b.disabled=false;
+      if(error){$('cvMsg').textContent=/terminada/.test(error.message)?'A conversa foi terminada.':/limite/.test(error.message)?'Atingiu o limite de mensagens por hora.':'Não foi possível enviar.';return}
+      try{FPTrack.log('sugestao_resposta',{admin:CV.de==='rec'})}catch(x){}CV.s.ultima_em=new Date().toISOString();abreConv(CV.id,CV.de)}});
   document.querySelectorAll('[data-set="sugestao"],#setNav [data-s="sugestao"]').forEach(b=>b.addEventListener('click',()=>setTimeout(abreSug,0)));
+  window.FPSugChat={abre:abreConv,tab:sgTab,_st:(u,adm,sg,ms)=>{U=u;ADM=adm;if(sg)SG=sg;if(ms)MS=ms}};
   return {sessao,conta,e:()=>ADM}})();
 </script>
 </body>
