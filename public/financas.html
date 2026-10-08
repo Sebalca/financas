@@ -582,7 +582,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.11h'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.12'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1951,6 +1951,10 @@ $('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==
 
 /* ================= eventos ================= */
 function limpaFiltros(){['#fQ','#fBanco','#fCat','#fRef','#fQuem','#fTipo','#fCart'].forEach(i=>$(i).value='')}
+/* v0.12: limites definidos pelo admin (n.º de categorias e de referências por pessoa); vêm da página principal */
+let LIM={};try{LIM=(window.parent!==window&&window.parent.FP_LIM)||{}}catch(e){}addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-lim')LIM=e.data.lim||{}});
+function limAtingido(t){const lim=+LIM[t];if(!lim)return false;const n=t==='cats'?DB.cats.length:DB.cats.reduce((s,c)=>s+c.refs.length,0);
+  if(n>=lim){toast(t==='cats'?`Atingiu o limite de ${lim} categorias`:`Atingiu o limite de ${lim} referências`);return true}return false}
 /* v0.11g: ao voltar a uma aba pela barra das abas, volta ao sítio onde estava (Definições › Geral pode desligar) */
 const SCR={};let SCRL=true;try{SCRL=localStorage.getItem('fp_scroll')!=='0'}catch(e){}addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-scroll')SCRL=!!e.data.on});
 function go(tab,keep,mem){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;if(muda)trk('aba',{aba:tab});if(muda)SCR[abaAtiva()]=scrollY;const vol=mem&&SCRL&&muda&&SCR[tab]>0?SCR[tab]:null;
@@ -1962,7 +1966,7 @@ document.addEventListener('click',e=>{
   if(d.edit){abreMov(DB.mov.find(x=>x.id===d.edit));return}
   if(d.cmv){e.preventDefault();const [i,dd]=d.cmv.split('|').map(Number);if(moveArr(DB.cats,i,dd)){save();render()}return}
   if(d.rmv){const [ci,ri,dd]=d.rmv.split('|').map(Number);if(moveArr(DB.cats[ci].refs,ri,dd)){save();render()}return}
-  if(d.cadd){const n=prompt('Nome da nova categoria:');if(!n||!n.trim())return;if(DB.cats.some(c=>c.nome===n.trim()))return toast('Já existe');const i=DB.cats.findIndex(c=>eFora(c.nome));DB.cats.splice(i<0?DB.cats.length:i,0,{id:uid('c'),nome:n.trim(),refs:[]});save();render();return}
+  if(d.cadd){if(limAtingido('cats'))return;const n=prompt('Nome da nova categoria:');if(!n||!n.trim())return;if(DB.cats.some(c=>c.nome===n.trim()))return toast('Já existe');const i=DB.cats.findIndex(c=>eFora(c.nome));DB.cats.splice(i<0?DB.cats.length:i,0,{id:uid('c'),nome:n.trim(),refs:[]});save();render();return}
   if(d.pvusa){const Y=prevAno(),k=d.pvusa;let t=0;expandeC(DB.mov).forEach(m=>{if(m.cat+'›'+m.ref===k&&anoDe(m.dm)===Y-1)t-=m.valor});const o=PVW(Y);if(t/12>.004)o[k]=Math.round(t/12*100)/100;else delete o[k];save();render();return}
   if(d.corq!=null){e.preventDefault();const p=$('#corPop'),n=d.corq,eR=n.startsWith('r:'),ro=eR?corRefO(n.slice(2)):null,cur=eR?(ro?ro.c:''):corEsc(n);p.innerHTML=PALETA.map(c=>`<button type="button" data-corset="${c}" class="${c===cur?'on':''}" style="background:color-mix(in srgb,${c} 45%,transparent)" title="${c}"></button>`).join('')+(eR?`<label><input type="checkbox" id="corExt"${ro&&ro.ext?' checked':''}> Pintar só nos Extratos (não pinta as Despesas)</label>`:'')+`<button type="button" class="sem" data-corset="">Sem cor${eR?' (usa a da categoria)':''}</button>`;p.dataset.n=n;const r=t.getBoundingClientRect();p.style.left=Math.min(innerWidth-220,r.left)+'px';p.style.top=(r.bottom+6)+'px';p.hidden=false;return}
   if(d.corset!=null){const n=$('#corPop').dataset.n;if(n.startsWith('r:')){const k=n.slice(2);DB.corRef=DB.corRef||{};if(d.corset)DB.corRef[k]={c:d.corset,...($('#corExt')&&$('#corExt').checked?{ext:1}:{})};else delete DB.corRef[k]}else{DB.corCat=DB.corCat||{};if(d.corset)DB.corCat[n]=d.corset;else delete DB.corCat[n]}$('#corPop').hidden=true;save();render();return}
@@ -2010,7 +2014,7 @@ document.addEventListener('click',e=>{
   if('rgdel' in d){const i=+t.closest('tr').dataset.ri;if(confirm(`Apagar a regra "${DB.regras[i].txt}"?`)){DB.regras.splice(i,1);regrasMudaram()}return}
   if(d.padd){const nome=t.closest('tr').querySelector('[data-pnome]').value.trim();if(!nome){toast('Escreva o nome da pessoa');return}DB.pessoas.push({id:uid('p'),match:d.padd,pessoa:nome});pessoasMudaram();toast(`${d.padd} → ${nome}`);return}
   if(d.pdel){DB.pessoas.splice(+d.pdel,1);pessoasMudaram();return}
-  if(d.radd){if(!DES.edit&&!e.target.closest('#desCats'))return;const ci=+d.radd,n=prompt('Nome da nova referência:');if(n&&n.trim()){if(DB.cats[ci].refs.includes(n.trim()))return toast('Já existe');DB.cats[ci].refs.push(n.trim());save();render()}return}
+  if(d.radd){if(!DES.edit&&!e.target.closest('#desCats'))return;if(limAtingido('refs'))return;const ci=+d.radd,n=prompt('Nome da nova referência:');if(n&&n.trim()){if(DB.cats[ci].refs.includes(n.trim()))return toast('Já existe');DB.cats[ci].refs.push(n.trim());save();render()}return}
   if(d.rdel){const [ci,ri]=d.rdel.split('|').map(Number),c=DB.cats[ci],r=c.refs[ri],n=DB.mov.filter(m=>m.cat===c.nome&&m.ref===r).length;
     if(confirm(`Apagar a referência "${r}"?${n?` ${n} movimento(s) ficam sem referência.`:''}`)){c.refs.splice(ri,1);DB.mov.forEach(m=>{if(m.cat===c.nome&&m.ref===r)m.ref=''});prevObjs().forEach(o=>delete o[c.nome+'›'+r]);delete DB.refSo[c.nome+'›'+r];save();render()}return}
   if(d.cdel){const c=DB.cats[+d.cdel],n=DB.mov.filter(m=>m.cat===c.nome).length;

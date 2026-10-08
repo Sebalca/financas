@@ -757,6 +757,30 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const fc=d.querySelector('#fCart');fc.value='Banco Exemplo|1234';fc.dispatchEvent(new Event('change',{bubbles:true}));await W(50);const filt=d.querySelectorAll('#extTable tr[data-id]').length===1&&!fc.hidden;
     w.limpaFiltros();await w.fpCtx.apagaEx();w.go('home');ok({ok:abriu&&acB&&manOk&&totOk&&det&&filt,abriu,acB,manOk,totOk,det,filt})}));
   t('D136','Saldo por banco: ✏ acertar saldo (vale o mais recente), ＋ Conta sem extrato no total; 💳 Cartões com nome nos Detalhes e filtro "Cartão"',z136.ok,z136);
+  console.log('v0.12');
+  {const mock=E=>{window.__ch=[];const q=()=>{const o={select:()=>o,eq:()=>o,order:()=>o,limit:()=>o,then:res=>Promise.resolve({data:[],count:0}).then(res)};return o};
+     window.plataforma={from:q,rpc:async(f,a)=>{window.__ch.push([f,a]);if(f==='e_admin_site')return {data:true};if(f==='fin_estado')return {data:E};if(f==='admin_cfg')return {data:{registos_abertos:true,limites:{sug_dia:10,faq_dia:10,cats:40,refs:300},excecoes:[],bloqueios:[],avisos:[],novos:[{email:'novo@exemplo.pt',created_at:new Date().toISOString()}]}};return {data:f.startsWith('admin_')&&f!=='admin_cfg_gravar'&&f!=='admin_novos_vistos'&&f!=='admin_aviso_apagar'?'ok':null}}};
+     window.financasUser={id:'u1',email:'adm@exemplo.pt'};window.Auth={onChange(){},getSession:()=>Promise.resolve({user:window.financasUser})}};
+   const pg=async(E,url)=>{const p2=await b.newPage();p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());await p2.addInitScript(mock,E);await p2.goto(U+url);await p2.waitForTimeout(900);return p2};
+   let p2=await pg({bloqueado:true,motivo:'teste',limites:{},avisos:[],novos:0},'/index.html?teste=1');
+   const bloq=await p2.evaluate(()=>!document.querySelector('#bloq').hidden&&/bloqueada/.test(document.querySelector('#bloq').textContent)&&/teste/.test(document.querySelector('#bqTx').textContent));await p2.close();
+   p2=await pg({bloqueado:false,registos_fechados:true,limites:{},avisos:[],novos:0},'/index.html?teste=1');
+   const fech=await p2.evaluate(()=>!document.querySelector('#bloq').hidden&&/Registos fechados/.test(document.querySelector('#bloq').textContent));await p2.close();
+   p2=await pg({bloqueado:false,registos_fechados:false,limites:{cats:2,refs:500},avisos:[{id:'a1',texto:'Olá a todos',privado:false},{id:'a2',texto:'Só para si',privado:true}],novos:3},'/index.html?teste=1');
+   const r137=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const av1=!document.querySelector('#mAviso').hidden&&/Olá a todos/.test(document.querySelector('#avTx').textContent);
+     document.querySelector('#avOk').click();await W(50);const av2=/Só para si/.test(document.querySelector('#avTx').textContent)&&/Mensagem para si/.test(document.querySelector('#avTit').textContent);document.querySelector('#avOk').click();await W(80);
+     const lidos=window.__ch.filter(x=>x[0]==='fin_aviso_lido').length===2&&document.querySelector('#mAviso').hidden;
+     const novos=!document.querySelector('#bdgAdm').hidden&&document.querySelector('#bdgAdm').textContent==='3';
+     location.hash='#financas';await W(400);const w=document.querySelector('iframe[data-id="financas"]').contentWindow;let pr=0;w.prompt=()=>{pr++;return null};
+     const lim=w.limAtingido('cats')&&!w.limAtingido('refs');return {av1,av2,lidos,novos,lim}});await p2.close();
+   p2=await pg({},'/admin.html');
+   const adm=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));document.querySelector('#btDef').click();await W(200);const ui=!!document.querySelector('#dReg')&&/novo@exemplo\.pt/.test(document.querySelector('#app').textContent)&&/\(1\)/.test(document.querySelector('#defN').textContent);
+     document.querySelector('#bqE').value='mau@exemplo.pt';document.querySelector('#bqOk').click();await W(150);const bq=window.__ch.some(x=>x[0]==='admin_bloquear'&&x[1].p_email==='mau@exemplo.pt'&&x[1].p_bloquear===true);
+     document.querySelector('#dReg').checked=false;document.querySelector('[data-lim="cats"]').value='25';document.querySelector('#dGrava').click();await W(150);const gr=window.__ch.some(x=>x[0]==='admin_cfg_gravar'&&x[1].p_registos===false&&x[1].p_limites.cats===25);
+     document.querySelector('#avT').value='Manutenção às 22h';document.querySelector('#avOk').click();await W(150);const av=window.__ch.some(x=>x[0]==='admin_aviso'&&x[1].p_email===null&&/Manutenção/.test(x[1].p_texto));
+     return {ui,bq,gr,av}});await p2.close();
+   const ok137=bloq&&fech&&Object.values(r137).every(Boolean)&&Object.values(adm).every(Boolean);
+   t('D137','Admin: bloquear conta (não entra), registos fechados, avisos geral/privado (uma vez), aviso de contas novas, limites de categorias/referências; painel ⚙ Definições grava no servidor',ok137,{bloq,fech,r137,adm})}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

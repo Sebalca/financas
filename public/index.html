@@ -204,7 +204,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
   <div class="hd"><div class="av" id="mAv">?</div><div style="min-width:0;flex:1"><b id="mMail">Sem sessão</b><small id="mSub">Os dados ficam só neste dispositivo</small><button type="button" class="sy" id="pSync" hidden></button></div><span class="ver" id="mVer" title="Versão da aplicação"></span></div>
   <button class="it" id="miEntrar" type="button"><span class="ic">🔑</span>Entrar / criar conta</button>
   <button class="it" data-set="tema" type="button"><span class="ic">⚙️</span>Definições</button>
-  <a class="it" id="miAdm" href="admin.html" target="_blank" rel="noopener" hidden><span class="ic">📊</span>Estatísticas (admin)</a>
+  <a class="it" id="miAdm" href="admin.html" target="_blank" rel="noopener" hidden><span class="ic">📊</span>Estatísticas (admin)<span class="bdg" id="bdgAdm" hidden title="Contas novas"></span></a>
   <button class="it" id="miPlano" type="button"><span class="ic">⭐</span>Plano<span class="rt">Grátis</span></button>
   <button class="it" id="miOnb" type="button"><span class="ic">🧭</span>Visita guiada</button>
   <button class="it" id="miNov" type="button"><span class="ic">🆕</span>Novidades</button>
@@ -299,6 +299,10 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
   <div class="row" style="justify-content:flex-end"><button class="bt pri" id="novOk" type="button" style="flex:none">Ok, percebi</button></div></div></div>
 <div class="mod" id="mConv" hidden><div class="box" role="dialog" aria-labelledby="convTit"><h2 id="convTit">👪 Convite para um agregado</h2><div id="convTxt"></div>
   <div class="row"><button class="bt" id="convNao" type="button">Recusar</button><button class="bt" id="convDepois" type="button">Mais tarde</button><button class="bt pri" id="convSim" type="button">Aceitar</button></div></div></div>
+<div class="mod" id="mAviso" hidden><div class="box" role="dialog" aria-labelledby="avTit"><h2 id="avTit">📢 Aviso</h2><div id="avTx" style="white-space:pre-wrap"></div>
+  <div class="row"><button class="bt pri" id="avOk" type="button">OK</button></div></div></div>
+<div class="gate" id="bloq" hidden role="dialog" aria-labelledby="bqT"><div class="gbox"><img src="img/logo-64.png" width="56" height="56" alt=""><h2 id="bqT"></h2><p id="bqTx"></p>
+  <div class="gbt"><button class="bt" type="button" id="bqSair">Sair da conta</button></div></div></div>
 <div id="tour" hidden><div id="tourBlock"></div><div id="tourSpot"></div><div id="tourBub" role="dialog" aria-live="polite"></div></div>
 <div class="gate" id="gate" hidden role="dialog" aria-label="Entrar nas Finanças Pessoais"><div class="gbox"><img src="img/logo-64.png" width="56" height="56" alt=""><h2>Finanças Pessoais</h2>
   <p>Junte os extratos dos bancos, os recibos e as despesas num só sítio. Os seus dados ficam guardados na sua conta, protegidos, e só você os vê.</p>
@@ -632,7 +636,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pwv]');if(
     if(/different from the old/i.test(m))return 'A nova palavra-passe tem de ser diferente da anterior.';
     return m||'Não foi possível concluir. Tente novamente.';};
   function mostrar(user){
-    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);try{FPFaq.sessao(user)}catch(e){}try{FPAdm.sessao(user||null)}catch(e){}try{FPNov.verifica(user||null)}catch(e){}try{FPAgr.sessao(user||null)}catch(e){}try{FPTrack.sessao(user||null)}catch(e){}
+    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);try{FPFaq.sessao(user)}catch(e){}try{FPAdm.sessao(user||null)}catch(e){}try{FPEst.sessao(user||null)}catch(e){}try{FPNov.verifica(user||null)}catch(e){}try{FPAgr.sessao(user||null)}catch(e){}try{FPTrack.sessao(user||null)}catch(e){}
     window.financasUser=user||null; // disponível para os separadores (window.parent.financasUser)
     if(!TESTE)gate.hidden=on;
     document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'financas-sessao',user:user?{id:user.id,email:user.email}:null},'*')}catch(e){}});
@@ -820,6 +824,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.12',d:'08/10/2026',n:['Avisos da equipa do site aparecem numa janela quando entra'],a:[]},
  {v:'0.11h',d:'08/10/2026',n:['Saldo por banco: ✏ acertar o saldo de uma conta (a partir daí soma os movimentos) e ＋ Conta para contas sem extrato','Extratos: 💳 Cartões — dê nome a cada cartão e filtre por cartão'],a:[]},
  {v:'0.11g',d:'08/10/2026',n:['Ao voltar a uma aba, a página continua no sítio onde estava (pode desligar em Definições › Geral)'],a:[]},
  {v:'0.11f',d:'08/10/2026',n:[],a:['Correções pequenas']},
@@ -951,11 +956,12 @@ const FPFaq=(function(){const $=id=>document.getElementById(id),SITE='financas';
 </script>
 <script>
 /* ===== Sinais para o admin do site (só quem está em site_admins): perguntas novas nos FAQs e sugestões por ler. Atualiza ao abrir o site. ===== */
-const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';let ADM=false,NF=0,NS=0,NU=0,U=null;
+const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';let ADM=false,NF=0,NS=0,NU=0,NN=0,U=null;
   const sb=()=>window.plataforma&&window.plataforma.from?window.plataforma:null;
   const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function pinta(){const nf=ADM?NF:0,ns=ADM?NS:0,set=(ids,n)=>ids.forEach(id=>{const e=$(id);if(e){e.hidden=!n;e.textContent=n>99?'99+':n}});set(['bdgFaq','bdgFaq2'],nf);set(['bdgSug','bdgSug2'],ns+NU);set(['bdgSug3'],ns);set(['bdgSug4'],NU);
-    const t=nf+ns+NU,m=$('bdgMenu');m.hidden=!t;m.textContent=t>99?'99+':t;m.title=[ADM?`${NF} pergunta(s) nova(s) · ${NS} sugestão(ões) com mensagens por ler`:'',NU?`${NU} resposta(s) às suas sugestões por abrir`:''].filter(Boolean).join(' · ')}
+    const nn=ADM?NN:0,t=nf+ns+NU+nn,m=$('bdgMenu');m.hidden=!t;m.textContent=t>99?'99+':t;m.title=[ADM?`${NF} pergunta(s) nova(s) · ${NS} sugestão(ões) com mensagens por ler${NN?` · ${NN} conta(s) nova(s)`:''}`:'',NU?`${NU} resposta(s) às suas sugestões por abrir`:''].filter(Boolean).join(' · ');
+    set(['bdgAdm'],nn)}
   async function conta(){const c=sb();if(!c||!U){NU=0;return pinta()}
     try{const d=await c.from('sugestoes').select('id',{count:'exact',head:true}).eq('site_id',SITE).eq('user_id',U.id).eq('por_ler_user',true);NU=d.count||0}catch(e){}
     if(ADM)try{const a=await c.from('faq_perguntas').select('id',{count:'exact',head:true}).eq('site_id',SITE).eq('estado','nova');NF=a.count||0;
@@ -1015,7 +1021,23 @@ const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';
   window.FPSugChat={abre:abreConv,tab:sgTab,_st:(u,adm,sg,ms)=>{U=u;ADM=adm;if(sg)SG=sg;if(ms)MS=ms}};
   /* v0.11f: a sessão pode chegar antes de este script existir (o mostrar() da conta corre mais cedo) — apanha-a aqui, senão o admin não aparece */
   [0,1500,4000].forEach(t=>setTimeout(()=>{let u=null;try{u=window.financasUser||null}catch(e){}if(u&&(!U||U.id!==u.id))sessao(u)},t));
-  return {sessao,conta,e:()=>ADM}})();
+  return {sessao,conta,e:()=>ADM,novos:n=>{NN=+n||0;pinta()}}})();
+/* v0.12: estado da conta nas Finanças (definido pelo admin) — bloqueio, registos fechados, limites, avisos e contas novas (admin) */
+const FPEst=(function(){const $=id=>document.getElementById(id),SITE='financas';let U=null,AV=[];
+  const env=lim=>document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'fp-lim',lim},'*')}catch(e){}});
+  async function sessao(u){U=u||null;$('bloq').hidden=true;$('mAviso').hidden=true;AV=[];if(!U)return;const c=window.plataforma;if(!c||!c.rpc)return;
+    let E=null;try{const r=await c.rpc('fin_estado',{p_site:SITE});if(r.error)throw r.error;E=r.data||{}}catch(e){return}if(!U||U.id!==u.id)return;
+    window.FP_LIM=E.limites||{};env(window.FP_LIM);try{FPAdm.novos(E.novos||0)}catch(e){}
+    if(E.bloqueado||E.registos_fechados){$('bqT').textContent=E.bloqueado?'🔒 Conta bloqueada':'Registos fechados';
+      $('bqTx').textContent=E.bloqueado?`A sua conta (${U.email||''}) está bloqueada nas Finanças Pessoais.${E.motivo?' Motivo: '+E.motivo:''}`:'De momento não estamos a aceitar contas novas nas Finanças Pessoais. Tente mais tarde.';
+      $('bloq').hidden=false;try{FPTrack.log(E.bloqueado?'conta_bloqueada':'registos_fechados',{})}catch(e){}return}
+    AV=(E.avisos||[]).slice();mostra()}
+  function mostra(){const a=AV[0];if(!a){$('mAviso').hidden=true;return}$('avTit').textContent=a.privado?'📩 Mensagem para si':'📢 Aviso';$('avTx').textContent=a.texto;$('mAviso').hidden=false}
+  $('avOk').addEventListener('click',async()=>{const a=AV.shift();mostra();if(a)try{await window.plataforma.rpc('fin_aviso_lido',{p_aviso:a.id})}catch(e){}});
+  $('bqSair').addEventListener('click',()=>{$('bloq').hidden=true;window.sairConta&&window.sairConta()});
+  [0,1500,4000].forEach(t=>setTimeout(()=>{let u=null;try{u=window.financasUser||null}catch(e){}if(u&&(!U||U.id!==u.id))sessao(u)},t));
+  return {sessao}})();
+window.FPEst=FPEst;
 </script>
 </body>
 </html>

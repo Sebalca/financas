@@ -167,10 +167,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D134 (v0.11f) Os módulos da página principal que dependem da sessão (admin, agregado, novidades) apanham a sessão que já exista quando o script deles corre (o `mostrar()` da conta pode correr antes de eles existirem). Sem isto o admin às vezes não via o link das Estatísticas nem as Sugestões recebidas.
 - D135 (v0.11g) Ao **voltar a uma aba pela barra das abas**, a página continua no sítio onde estava (cada aba guarda a sua posição; os Extratos mantêm as linhas já carregadas). Ir para uma aba por um atalho (ex.: "Ver nos Extratos") abre no início, como antes. Desliga-se em **Definições › Geral** ("Ao voltar a uma aba, continuar no mesmo sítio"; `fp_scroll`). Ligado por defeito.
 - D136 (v0.11h) **Acertar saldo** na caixa "Saldo por banco" do Início: cada conta tem ✏ (valor + dia; `DB.saldoAc[chave]={v,d}`); o saldo mostrado = esse valor + os movimentos da conta depois desse dia, até ao fim do período. Numa conta com extrato vale o **mais recente** entre o acerto e o último saldo do extrato. Dinheiro e Poupanças (por referência) também se acertam. **＋ Conta** cria contas sem extrato (`DB.contasMan`; ex.: Revolut, mealheiro) que entram no total com o último acerto. **💳 Cartões** (Extratos): os cartões reconhecem-se pelos 4 dígitos na descrição/detalhes ("COMPRA 2937", "cartão 2937"), por banco; cada um pode ter um nome (`DB.cartoes`), que aparece nos Detalhes, e há o filtro **Cartão** (com "Sem cartão") quando há cartões.
+- D137 (v0.12) **Painel admin › ⚙ Definições** (só Finanças; tudo verificado no servidor, `010_admin_definicoes.sql`): **aceitar contas novas** sim/não (fechado: quem ainda não usa as Finanças vê "Registos fechados" e o servidor não deixa criar dados); **limites** gerais (sugestões/dia, perguntas FAQ/dia, n.º de categorias, n.º de referências; por defeito 10/10/40/300) com **exceções por pessoa**; sugestões e perguntas limitadas no servidor, categorias/referências na app; **bloquear conta** (com motivo): não entra nas Finanças (ecrã "Conta bloqueada") e o servidor não lhe dá os dados (política restritiva em `financas_dados`/`agregado_dados`); os dados ficam guardados; **avisos** gerais ou para um email, mostrados uma vez numa janela (contagem de quem já leu; apagar = deixa de aparecer); **contas novas**: número no Menu do admin e no botão ⚙ Definições até "Marcar como vistas". Nada se apaga das tabelas (desbloquear/apagar aviso marcam colunas).
 
 ---
 
 ## Histórico
+
+### v0.12 — 08/10/2026
+- Painel admin com ⚙ Definições: registos abertos/fechados, limites (gerais e por pessoa), bloquear contas, avisos gerais/privados, aviso de contas novas (D137).
 
 ### v0.11h — 08/10/2026
 - Acertar saldo por conta e contas sem extrato no "Saldo por banco"; 💳 Cartões com nome e filtro nos Extratos (D136).

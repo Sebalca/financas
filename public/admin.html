@@ -24,6 +24,7 @@ main{max-width:1400px;margin:0 auto;padding:16px}
 .muted{color:var(--mu)}.msg{padding:40px 16px;text-align:center;color:var(--mu)}.err{color:var(--neg)}
 svg text{fill:var(--mu);font-size:10px}
 .login{max-width:340px;margin:60px auto;display:grid;gap:8px}.login h2{margin:0 0 6px}
+.def label.ln{display:flex;gap:8px;align-items:center;margin:6px 0}.def .fr{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin:8px 0}.def .fr label{display:grid;gap:3px;font-size:12px;color:var(--mu)}.def .fr input{width:110px}.def .fr input.w{width:240px}.def textarea{width:100%;min-height:70px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px;font:inherit;color:var(--tx)}.def .ok{color:var(--ok)}
 .fun .row{display:grid;grid-template-columns:200px 1fr 90px;gap:10px;align-items:center;margin:6px 0}.fun .row .bar{height:14px}
 </style>
 <script>(function(){let t='';try{t=localStorage.getItem('fp_tema')||''}catch(e){}if(t)document.documentElement.dataset.theme=t})();</script>
@@ -34,6 +35,7 @@ svg text{fill:var(--mu);font-size:10px}
   <select id="fSite" aria-label="Site"><option value="">Todos os sites</option></select>
   <select id="fDias" aria-label="Período"><option value="7">7 dias</option><option value="30" selected>30 dias</option><option value="90">90 dias</option><option value="365">12 meses</option></select>
   <a class="bt" id="umami" href="https://cloud.umami.is" target="_blank" rel="noopener" title="Visitantes anónimos (Umami)">Visitantes ↗</a>
+  <button class="bt" id="btDef" type="button" title="Definições das Finanças: registos, limites, bloqueios, avisos">⚙ Definições<span id="defN"></span></button>
   <button class="bt" id="btAtual" type="button">↻ Atualizar</button>
   <a class="bt" href="index.html">← Site</a>
 </header>
@@ -101,9 +103,47 @@ async function carrega(){const c=window.plataforma;if(!c||!c.rpc){$('app').inner
 function login(){$('app').innerHTML=`<form class="card login" id="fl"><h2>Entrar</h2><p class="muted" style="margin:0">Página só para administradores.</p><input type="email" id="le" placeholder="Email" required autocomplete="email"><input type="password" id="lp" placeholder="Palavra-passe" required autocomplete="current-password"><button class="bt pri" type="submit">Entrar</button><div id="lm" class="err"></div></form>`;
   $('fl').addEventListener('submit',async e=>{e.preventDefault();$('lm').textContent='';const {error}=await Auth.signIn($('le').value.trim(),$('lp').value);if(error)$('lm').textContent='Email ou palavra-passe incorretos.'})}
 
-$('fSite').addEventListener('change',carrega);$('fDias').addEventListener('change',carrega);$('btAtual').addEventListener('click',carrega);
+/* v0.12: Definições das Finanças (só admin; tudo verificado no servidor pelas funções admin_*) */
+const SITE_F='financas',LBL={sug_dia:'Sugestões por dia',faq_dia:'Perguntas FAQ por dia',cats:'Categorias por pessoa',refs:'Referências por pessoa'};let MODO='est',CFG=null;
+const rpc=async(f,a)=>{const {data,error}=await window.plataforma.rpc(f,a);if(error)throw error;return data};
+async function defs(){$('app').innerHTML='<div class="msg">A carregar…</div>';try{CFG=await rpc('admin_cfg',{p_site:SITE_F})}catch(e){$('app').innerHTML=`<div class="msg err">${/admin/.test(e.message)?'Esta página é só para administradores.':'Erro: '+esc(e.message)}</div>`;return}pintaDef()}
+function pintaDef(){const L=CFG.limites||{},dh=d=>new Date(d).toLocaleString('pt-PT'),ks=Object.keys(LBL);$('defN').textContent=CFG.novos.length?` (${CFG.novos.length})`:'';
+  $('app').innerHTML=`<div class="grid g2 def">
+  <div class="card"><h2>Contas e limites <small>Finanças</small></h2>
+    <label class="ln"><input type="checkbox" id="dReg"${CFG.registos_abertos?' checked':''}> Aceitar contas novas nas Finanças</label>
+    <p class="muted" style="margin:2px 0 8px;font-size:12px">Desligado: quem ainda não usa as Finanças vê "Registos fechados" (quem já tem dados continua a entrar).</p>
+    <div class="fr">${ks.map(k=>`<label>${LBL[k]}<input type="number" min="0" data-lim="${k}" value="${L[k]??''}"></label>`).join('')}</div>
+    <button class="bt pri" id="dGrava" type="button">Guardar</button> <span id="dMsg" class="muted"></span></div>
+  <div class="card"><h2>Limites por pessoa <small>exceções aos gerais</small></h2>
+    ${CFG.excecoes.length?`<div class="tw"><table><tr><th>Email</th>${ks.map(k=>`<th class="n">${LBL[k]}</th>`).join('')}<th></th></tr>${CFG.excecoes.map(x=>`<tr><td>${esc(x.email)}</td>${ks.map(k=>`<td class="n">${x.limites[k]??'—'}</td>`).join('')}<td><button class="bt" type="button" data-exrem="${esc(x.email)}">Remover</button></td></tr>`).join('')}</table></div>`:'<p class="muted">Sem exceções.</p>'}
+    <div class="fr"><label>Email<input class="w" id="exE" type="email" placeholder="email da pessoa"></label>${ks.map(k=>`<label>${LBL[k]}<input type="number" min="0" data-exl="${k}" placeholder="geral"></label>`).join('')}<button class="bt pri" id="exOk" type="button">Guardar exceção</button></div><span id="exMsg" class="muted"></span></div>
+  <div class="card"><h2>Contas bloqueadas <small>não entram nas Finanças</small></h2>
+    ${CFG.bloqueios.length?`<div class="tw"><table><tr><th>Email</th><th>Motivo</th><th>Desde</th><th></th></tr>${CFG.bloqueios.map(x=>`<tr><td>${esc(x.email)}</td><td>${esc(x.motivo||'—')}</td><td>${dh(x.created_at)}</td><td><button class="bt" type="button" data-desb="${esc(x.email)}">Desbloquear</button></td></tr>`).join('')}</table></div>`:'<p class="muted">Nenhuma conta bloqueada.</p>'}
+    <div class="fr"><label>Email<input class="w" id="bqE" type="email" placeholder="email da conta"></label><label>Motivo (a pessoa vê)<input class="w" id="bqM" maxlength="300" placeholder="opcional"></label><button class="bt pri" id="bqOk" type="button">Bloquear</button></div><span id="bqMsg" class="muted"></span></div>
+  <div class="card"><h2>Avisos <small>aparecem uma vez numa janela</small></h2>
+    <div class="fr"><label>Para<input class="w" id="avE" type="email" placeholder="vazio = todos"></label></div><textarea id="avT" maxlength="2000" placeholder="Texto do aviso…"></textarea>
+    <p><button class="bt pri" id="avOk" type="button">Enviar aviso</button> <span id="avMsg" class="muted"></span></p>
+    ${CFG.avisos.length?`<div class="tw"><table><tr><th>Quando</th><th>Para</th><th>Texto</th><th class="n">Lido por</th><th></th></tr>${CFG.avisos.map(a=>`<tr><td>${dh(a.created_at)}</td><td>${esc(a.email||'Todos')}</td><td style="white-space:normal">${esc(a.texto)}</td><td class="n">${a.lidos}</td><td><button class="bt" type="button" data-avdel="${a.id}" title="Apagar (quem ainda não viu deixa de ver)">🗑</button></td></tr>`).join('')}</table></div>`:''}</div>
+  <div class="card"><h2>Contas novas <small>desde a última vez que marcou como vistas</small></h2>
+    ${CFG.novos.length?`<div class="tw"><table><tr><th>Email</th><th>Criada em</th></tr>${CFG.novos.map(x=>`<tr><td>${esc(x.email)}</td><td>${dh(x.created_at)}</td></tr>`).join('')}</table></div><p><button class="bt" id="nvOk" type="button">✓ Marcar como vistas</button></p>`:'<p class="muted">Sem contas novas.</p>'}</div>
+  </div>`}
+const RES={sem_conta:'Não existe nenhuma conta com esse email.',proprio:'Não se pode bloquear a si próprio.'};
+const msgr=(id,t,ok)=>{const m=$(id);if(m){m.textContent=t;m.className=ok?'ok':'err'}};
+document.addEventListener('click',async e=>{if(MODO!=='def')return;const b=e.target.closest('button');if(!b)return;
+  try{
+    if(b.id==='dGrava'){const lim={};document.querySelectorAll('[data-lim]').forEach(i=>{if(i.value!=='')lim[i.dataset.lim]=+i.value});await rpc('admin_cfg_gravar',{p_site:SITE_F,p_registos:$('dReg').checked,p_limites:lim});await defs();msgr('dMsg','✓ Guardado',1);return}
+    if(b.id==='exOk'){const lim={};document.querySelectorAll('[data-exl]').forEach(i=>{if(i.value!=='')lim[i.dataset.exl]=+i.value});const r=await rpc('admin_limite_user',{p_site:SITE_F,p_email:$('exE').value,p_limites:lim});if(r!=='ok'){msgr('exMsg',RES[r]||r);return}await defs();msgr('exMsg','✓ Guardado',1);return}
+    if(b.dataset.exrem){await rpc('admin_limite_user',{p_site:SITE_F,p_email:b.dataset.exrem,p_limites:{}});await defs();return}
+    if(b.id==='bqOk'){const em=$('bqE').value.trim();if(!em)return;if(!confirm(`Bloquear ${em} nas Finanças? Deixa de conseguir entrar (os dados ficam guardados).`))return;const r=await rpc('admin_bloquear',{p_site:SITE_F,p_email:em,p_bloquear:true,p_motivo:$('bqM').value});if(r!=='ok'){msgr('bqMsg',RES[r]||r);return}await defs();msgr('bqMsg','✓ Conta bloqueada',1);return}
+    if(b.dataset.desb){await rpc('admin_bloquear',{p_site:SITE_F,p_email:b.dataset.desb,p_bloquear:false,p_motivo:null});await defs();return}
+    if(b.id==='avOk'){const t=$('avT').value.trim();if(!t)return;const em=$('avE').value.trim();if(!confirm(em?`Enviar este aviso a ${em}?`:'Enviar este aviso a TODOS os utilizadores das Finanças?'))return;const r=await rpc('admin_aviso',{p_site:SITE_F,p_email:em||null,p_texto:t});if(r!=='ok'){msgr('avMsg',RES[r]||r);return}await defs();msgr('avMsg','✓ Aviso enviado',1);return}
+    if(b.dataset.avdel){if(!confirm('Apagar este aviso?'))return;await rpc('admin_aviso_apagar',{p_site:SITE_F,p_aviso:b.dataset.avdel});await defs();return}
+    if(b.id==='nvOk'){await rpc('admin_novos_vistos',{p_site:SITE_F});await defs();return}
+  }catch(x){alert('Não foi possível: '+(x.message||x))}});
+$('btDef').addEventListener('click',()=>{MODO=MODO==='def'?'est':'def';$('btDef').classList.toggle('pri',MODO==='def');MODO==='def'?defs():carrega()});
+$('fSite').addEventListener('change',()=>{MODO='est';$('btDef').classList.remove('pri');carrega()});$('fDias').addEventListener('change',()=>{MODO='est';$('btDef').classList.remove('pri');carrega()});$('btAtual').addEventListener('click',()=>MODO==='def'?defs():carrega());
 if(!window.Auth){$('app').innerHTML='<div class="msg err">Não foi possível carregar o sistema de contas.</div>'}
-else{let ultimo=null;const vê=u=>{const id=u?u.id:null;if(id===ultimo)return;ultimo=id;u?carrega():login()};Auth.onChange((ev,s)=>vê(s&&s.user));Auth.getSession().then(s=>vê(s&&s.user))}
+else{let ultimo=null;const vê=u=>{const id=u?u.id:null;if(id===ultimo)return;ultimo=id;if(u){carrega();rpc('admin_cfg',{p_site:SITE_F}).then(c=>{$('defN').textContent=c.novos.length?` (${c.novos.length})`:''}).catch(()=>{})}else login()};Auth.onChange((ev,s)=>vê(s&&s.user));Auth.getSession().then(s=>vê(s&&s.user))}
 </script>
 </body>
 </html>
