@@ -237,6 +237,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
       </div>
       <label class="sw2"><input type="checkbox" id="optDupw"> <span>Mostrar os avisos <b>⚠</b> de pagamentos repetidos no mesmo mês (Despesas)</span></label>
       <label class="sw2"><input type="checkbox" id="optInf"> <span>Mostrar a ajuda <b>ⓘ</b> nas caixas e nas colunas</span></label>
+      <label class="sw2"><input type="checkbox" id="optScroll"> <span>Ao voltar a uma aba, continuar no mesmo sítio da página (em vez de voltar ao início)</span></label>
       <label class="sw2"><input type="checkbox" id="optCalc"> <span>Mostrar o ícone 🧮 <b>Como foi calculado</b> nas caixas (Início, Despesas, Rendimentos)</span></label>
     </section>
     <section data-s="tipos" hidden><h3>Tipos de despesa</h3><p>Cada referência das Despesas tem um tipo, que se escolhe em Despesas › Editar. Aqui pode criar tipos, mudar o nome, a cor e a ordem, ou apagá-los. Ficam guardados com os seus dados (na conta, se tiver sessão).</p>
@@ -482,6 +483,8 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
   $('optDupw').checked=(()=>{try{return localStorage.getItem('fp_dupw')!=='0'}catch(e){return true}})();
   $('optDupw').addEventListener('change',e=>{try{localStorage.setItem('fp_dupw',e.target.checked?'1':'0')}catch(x){}const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-dupw',on:e.target.checked},'*')});
   $('optInf').checked=(()=>{try{return localStorage.getItem('fp_inf')!=='0'}catch(e){return true}})();
+  $('optScroll').checked=(()=>{try{return localStorage.getItem('fp_scroll')!=='0'}catch(e){return true}})();
+  $('optScroll').addEventListener('change',e=>{try{localStorage.setItem('fp_scroll',e.target.checked?'1':'0')}catch(x){}const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-scroll',on:e.target.checked},'*')});
   $('optInf').addEventListener('change',e=>{try{localStorage.setItem('fp_inf',e.target.checked?'1':'0')}catch(x){}const f=document.querySelector('iframe[data-id="financas"]');if(f&&f.contentWindow)f.contentWindow.postMessage({tipo:'fp-inf',on:e.target.checked},'*')});
   $('optCalc').addEventListener('change',e=>{try{localStorage.setItem('fp_calc',e.target.checked?'1':'0')}catch(x){}enviaCalc()});
   $('setOnb').onclick=()=>{$('mSet').hidden=true;FPOnb.abre()};
@@ -817,6 +820,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.11g',d:'08/10/2026',n:['Ao voltar a uma aba, a página continua no sítio onde estava (pode desligar em Definições › Geral)'],a:[]},
  {v:'0.11f',d:'08/10/2026',n:[],a:['Correções pequenas']},
  {v:'0.11e',d:'08/10/2026',n:[],a:['Despesas: a média divide sempre pelos meses já fechados do ano (ex.: em outubro, janeiro a setembro ÷ 9)']},
  {v:'0.11d',d:'08/10/2026',n:[],a:['Despesas e Previsões: a média mensal só conta os meses já fechados (até ao mês anterior)','Já pode criar conta e recuperar a palavra-passe por email']},

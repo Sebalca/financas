@@ -70,7 +70,7 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D79 Sugestões (Definições › Enviar sugestão): tipo (Ideia/Problema/Outro), texto, email só se o utilizador marcar; vão para um Google Sheet através de uma Aplicação Web do Apps Script (`tools/sugestoes-apps-script.gs`). O URL /exec só permite acrescentar linhas (não é credencial); campo-armadilha anti-robôs e limite por minuto.
 
 - D83 Extratos: mostram 100 linhas de cada vez; ao chegar ao fundo juntam mais 100 (também há o botão "Mostrar mais"). Totais, filtros e "selecionar tudo" contam todas as linhas; ir para um movimento mostra as linhas necessárias.
-- D88 Ao sair dos Extratos, a tabela volta às 100 primeiras linhas (não fica com as linhas abertas antes).
+- D88 Ao sair dos Extratos, a tabela volta às 100 primeiras linhas (não fica com as linhas abertas antes) — só com a memória da posição desligada (D135); ligada, mantém as linhas para voltar ao mesmo sítio. (atualizada v0.11g)
 - D84 Só se desenha a aba aberta; as outras desenham-se quando se abrem.
 
 - D90 Millennium BCP (Excel "Saldos e movimentos", detetado sozinho): conta à ordem → "Millennium" (com o n.º da conta, saldos validados e saldo final = saldo contabilístico); conta cartão → "Millennium Cartão" (sem saldo; montantes com o sinal trocado para compras ficarem negativas). Prefixos limpos: "COMPRA 1234 X" → "X" (Detalhes "Compra · cartão 1234"), "CRED" → Crédito, "DD" → Débito direto, "TRF P/ X" / "TRF. P/O X" → "TRF X" (transferência enviada/recebida, mantém Pessoas), "LEV ATM" → Levantamento.
@@ -165,10 +165,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D132 (v0.11c) **Santander** (Excel "Movimentos_DO", detetado pelo cabeçalho Data da operação / Descrição da Conta / Montante; saldos validados; "TRF.IMED. P/" e "TRF CRED SEPA+ DE" limpos e sem a referência final) e **ActivoBank** (PDF "Extrato combinado", lido no browser com o pdf.js, todas as páginas; linhas "M.DD M.DD descritivo valor saldo", ano do "EXTRATO DE"; débito/crédito pela variação do saldo — o que também resolve os milhares com espaço; descrições limpas como no Millennium, incluindo MB WAY). O importador aceita .pdf; um PDF que não seja do ActivoBank dá "não reconhecido" com a amostra anónima. Testes só com extratos fictícios (`santander_teste.xlsx`, `activobank_teste.pdf`).
 - D133 (v0.11d) **Médias só com meses fechados**: na grelha das Despesas e nas Previsões a Média = soma dos meses já fechados (até ao mês anterior ao atual) ÷ **n.º de meses fechados**, tenham ou não extratos (em outubro, com o ano a começar em janeiro: Jan–Set ÷ 9); o mês atual conta no Total mas não na média; ano já fechado ÷ 12; ano que ainda não começou sem média (—). (atualizada v0.11e) **Sugestões (admin)**: três abas — **📥 Recebidas** (sem resposta ou a última mensagem é da pessoa), **💬 Em aberto** (a última mensagem é do admin) e **✅ Concluídas** (terminadas); responder passa para Em aberto, uma mensagem da pessoa volta a Recebidas, terminar passa para Concluídas; a **classificação** (Ideia/Problema/Outro) muda-se na conversa (`sugestoes.ultima_de_admin`, `009_sugestoes_estado.sql`). Perguntas novas nas FAQs contam no aviso do Menu do admin (D85), atualizado de minuto a minuto.
 - D134 (v0.11f) Os módulos da página principal que dependem da sessão (admin, agregado, novidades) apanham a sessão que já exista quando o script deles corre (o `mostrar()` da conta pode correr antes de eles existirem). Sem isto o admin às vezes não via o link das Estatísticas nem as Sugestões recebidas.
+- D135 (v0.11g) Ao **voltar a uma aba pela barra das abas**, a página continua no sítio onde estava (cada aba guarda a sua posição; os Extratos mantêm as linhas já carregadas). Ir para uma aba por um atalho (ex.: "Ver nos Extratos") abre no início, como antes. Desliga-se em **Definições › Geral** ("Ao voltar a uma aba, continuar no mesmo sítio"; `fp_scroll`). Ligado por defeito.
 
 ---
 
 ## Histórico
+
+### v0.11g — 08/10/2026
+- Ao voltar a uma aba continua no mesmo sítio, com opção em Definições › Geral (D135).
 
 ### v0.11f — 08/10/2026
 - Correção: o admin às vezes não era reconhecido ao abrir o site (sem link das Estatísticas nem Sugestões recebidas) (D134).

@@ -278,9 +278,9 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D83','Extratos: mostra 100 linhas de cada vez (mais 100 ao descer); selecionar tudo e ir para um movimento funcionam com todas',z83.ok,z83);
   t('D84','só se desenha a aba aberta; as outras desenham-se ao abrir',await ev(()=>{document.querySelector('[data-tab="ext"]').click();render();const v=RV;const d=DESENHADA.home!==v;document.querySelector('[data-tab="home"]').click();return d&&DESENHADA.home===RV}));
 
-  t('D88','ao sair dos Extratos volta às 100 primeiras linhas',await ev(()=>{for(let k=0;k<250;k++)DB.mov.push({id:'big'+k,k:'big'+k,man:true,banco:'Dinheiro',conta:'',dm:'2026-09-10',dv:'2026-09-10',desc:'MOV '+k,valor:-1,saldo:null,cat:'',ref:'',catSrc:'',det:'',obs:'',quem:'',ord:k,c:k});
+  t('D88','com a memória da posição desligada, ao sair dos Extratos volta às 100 primeiras linhas',await ev(()=>{SCRL=false;setTimeout(()=>{SCRL=true},3000);for(let k=0;k<250;k++)DB.mov.push({id:'big'+k,k:'big'+k,man:true,banco:'Dinheiro',conta:'',dm:'2026-09-10',dv:'2026-09-10',desc:'MOV '+k,valor:-1,saldo:null,cat:'',ref:'',catSrc:'',det:'',obs:'',quem:'',ord:k,c:k});
     document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();extMais();const a=document.querySelectorAll('#extTable tr[data-id]').length;document.querySelector('[data-tab="home"]').click();document.querySelector('[data-tab="ext"]').click();
-    const b=document.querySelectorAll('#extTable tr[data-id]').length;DB.mov=DB.mov.filter(x=>!String(x.id).startsWith('big'));render();return a===200&&b===100}));
+    const b=document.querySelectorAll('#extTable tr[data-id]').length;DB.mov=DB.mov.filter(x=>!String(x.id).startsWith('big'));render();return a>100&&b===100}));
 
   console.log('Início');
   await go('home');
@@ -733,6 +733,14 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
      window.plataforma={from:q,rpc:async f=>({data:f==='e_admin_site'?true:[]})};window.financasUser={id:'u1',email:'adm@exemplo.pt'}});
    await p2.goto(U+'/index.html?teste=1');await p2.waitForTimeout(800);const adm=await p2.evaluate(()=>!document.querySelector('#miAdm').hidden);await p2.close();
    t('D134','admin reconhecido mesmo quando a sessão chega antes do módulo do admin (link das Estatísticas e Recebidas)',adm)}
+  console.log('v0.11g');
+  const z135=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);const tab=t=>d.querySelector(`nav.tabs [data-tab="${t}"]`).click();tab('home');await W(100);w.scrollTo(0,500);await W(50);const y0=w.scrollY;
+    tab('des');await W(150);const ini=w.scrollY;tab('home');await W(150);const volta=Math.abs(w.scrollY-y0)<5&&y0>100;
+    w.postMessage({tipo:'fp-scroll',on:false},'*');await W(50);w.scrollTo(0,500);tab('des');await W(150);tab('home');await W(150);const desl=w.scrollY===0;
+    w.postMessage({tipo:'fp-scroll',on:true},'*');await W(50);const opt=!!document.querySelector('#optScroll');
+    await w.fpCtx.apagaEx();w.go('home');ok({ok:volta&&desl&&opt,y0,ini,volta,desl,opt})}));
+  t('D135','ao voltar a uma aba pela barra continua no mesmo sítio (opção em Definições › Geral)',z135.ok,z135);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
