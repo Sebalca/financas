@@ -707,7 +707,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const th=[...d.querySelectorAll('#desCats .dghead thead th')].map(x=>x.textContent.trim()),MS={JAN:1,FEV:2,MAR:3,ABR:4,MAI:5,JUN:6,JUL:7,AGO:8,SET:9,OUT:10,NOV:11,DEZ:12};
     const ks=th.slice(1,13).map(t=>{const [m,y]=t.split('/');return `20${y}-${String(MS[m]).padStart(2,'0')}`}),hj=w.eval('hoje')().slice(0,7);
     const tr=[...d.querySelectorAll('#desCats tr.tot')][0],cs=[...tr.querySelectorAll('td')].map(x=>x.textContent.trim()),num=t=>t==='–'||!t?null:+t.replace(/[^\d,-]/g,'').replace(',','.');
-    const v=cs.slice(1,13).map(num),fe=ks.map((k,i)=>k<hj&&v[i]!=null),n=fe.filter(Boolean).length,esp=n?v.reduce((s,x,i)=>s+(fe[i]?x:0),0)/n:0,med=num(cs[14]);
+    const v=cs.slice(1,13).map(num),fe=ks.map(k=>k<hj),n=fe.filter(Boolean).length,esp=n?v.reduce((s,x,i)=>s+(fe[i]?(x||0):0),0)/n:0,med=num(cs[14]);
     const desp=Math.abs(med-esp)<0.02&&/meses? fechados?|mês fechado/.test(d.querySelector('#desCats h4').textContent);
     w.go('prev');w.render();await W(50);const prev=/meses já fechados/.test(d.querySelector('#prevNota').textContent);
     await w.fpCtx.apagaEx();w.go('home');
@@ -726,7 +726,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const move=document.querySelector('#sgTabs [data-st="abe"]').classList.contains('on')&&/a/.test([...document.querySelectorAll('#sgAdm [data-sgo]')].map(x=>x.dataset.sid).join());
     window.plataforma=velho;await FPAdm.sessao(null);document.querySelector('#mSet').hidden=true;
     ok({ok:desp&&prev&&faq&&tabs&&sep&&tipo&&move,desp,med,esp,prev,faq,tabs,sep,lr,la,lc,tipo,move})}));
-  t('D133','Médias só com meses fechados (Despesas e Previsões); sugestões do admin em Recebidas / Em aberto / Concluídas com classificação editável; aviso de perguntas FAQ',z133.ok,z133);
+  t('D133','Médias = meses fechados ÷ n.º de meses fechados (Despesas e Previsões); sugestões do admin em Recebidas / Em aberto / Concluídas com classificação editável; aviso de perguntas FAQ',z133.ok,z133);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
