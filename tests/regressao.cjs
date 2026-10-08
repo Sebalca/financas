@@ -727,6 +727,12 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     window.plataforma=velho;await FPAdm.sessao(null);document.querySelector('#mSet').hidden=true;
     ok({ok:desp&&prev&&faq&&tabs&&sep&&tipo&&move,desp,med,esp,prev,faq,tabs,sep,lr,la,lc,tipo,move})}));
   t('D133','Médias = meses fechados ÷ n.º de meses fechados (Despesas e Previsões); sugestões do admin em Recebidas / Em aberto / Concluídas com classificação editável; aviso de perguntas FAQ',z133.ok,z133);
+  console.log('v0.11f');
+  {const p2=await b.newPage();await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.addInitScript(()=>{const q=()=>{const o={select:()=>o,eq:()=>o,order:()=>o,limit:()=>o,then:res=>Promise.resolve({data:[],count:0}).then(res)};return o};
+     window.plataforma={from:q,rpc:async f=>({data:f==='e_admin_site'?true:[]})};window.financasUser={id:'u1',email:'adm@exemplo.pt'}});
+   await p2.goto(U+'/index.html?teste=1');await p2.waitForTimeout(800);const adm=await p2.evaluate(()=>!document.querySelector('#miAdm').hidden);await p2.close();
+   t('D134','admin reconhecido mesmo quando a sessão chega antes do módulo do admin (link das Estatísticas e Recebidas)',adm)}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

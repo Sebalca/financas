@@ -817,6 +817,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.11f',d:'08/10/2026',n:[],a:['Correções pequenas']},
  {v:'0.11e',d:'08/10/2026',n:[],a:['Despesas: a média divide sempre pelos meses já fechados do ano (ex.: em outubro, janeiro a setembro ÷ 9)']},
  {v:'0.11d',d:'08/10/2026',n:[],a:['Despesas e Previsões: a média mensal só conta os meses já fechados (até ao mês anterior)','Já pode criar conta e recuperar a palavra-passe por email']},
  {v:'0.11c',d:'08/10/2026',n:['Extratos do Santander (Excel) e do ActivoBank (PDF)'],a:[]},
@@ -1007,6 +1008,8 @@ const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';
     const {error}=await sb().from('sugestoes').update({tipo:v}).eq('id',CV.id);if(error){alert('Não foi possível mudar a classificação.');sel.value=CV.s.tipo;return}CV.s.tipo=v});
   document.querySelectorAll('[data-set="sugestao"],#setNav [data-s="sugestao"]').forEach(b=>b.addEventListener('click',()=>setTimeout(abreSug,0)));
   window.FPSugChat={abre:abreConv,tab:sgTab,_st:(u,adm,sg,ms)=>{U=u;ADM=adm;if(sg)SG=sg;if(ms)MS=ms}};
+  /* v0.11f: a sessão pode chegar antes de este script existir (o mostrar() da conta corre mais cedo) — apanha-a aqui, senão o admin não aparece */
+  [0,1500,4000].forEach(t=>setTimeout(()=>{let u=null;try{u=window.financasUser||null}catch(e){}if(u&&(!U||U.id!==u.id))sessao(u)},t));
   return {sessao,conta,e:()=>ADM}})();
 </script>
 </body>
