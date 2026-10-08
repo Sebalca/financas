@@ -693,6 +693,14 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     window.plataforma=velho;await FPAdm.sessao(null);document.querySelector('#mSet').hidden=true;
     ok({ok:notif&&tabMin&&conv&&resp&&limpa&&fech&&rec&&term,notif,tabMin,conv,resp,limpa,fech,rec,term})}));
   t('D131','Sugestões em conversa: "As minhas" com respostas, responder, notificação até abrir; admin abre, responde e termina/reabre',z131.ok,z131);
+  console.log('v0.11c');
+  {const fr=p.frames().find(f=>f.url().includes('financas.html'));await fr.evaluate(async()=>{await fpCtx.exemplo();go('ext')});await p.waitForTimeout(300);
+   await fr.setInputFiles('#fExt',[path.join(FX,'santander_teste.xlsx'),path.join(FX,'activobank_teste.pdf')]);await p.waitForTimeout(2500);
+   const z132=await fr.evaluate(async()=>{const s=DB.mov.filter(m=>m.banco==='Santander'),a=DB.mov.filter(m=>m.banco==='ActivoBank'),res=document.querySelector('#impRes').innerText;
+     const sOk=s.length===5&&s.some(m=>m.desc==='TRF EMPRESA FICTICIA LDA'&&m.valor===1000)&&s.some(m=>m.desc==='TRF LOJA EXEMPLO LDA'&&m.valor===-90);
+     const aOk=a.length===5&&a.every(m=>m.conta==='99999999999')&&a.some(m=>m.desc==='TRF EMPRESA TESTE, LDA'&&m.valor===1500&&m.dm==='2026-09-15'&&m.dv==='2026-09-14')&&a.some(m=>m.valor===-1000&&m.saldo===554.5)&&a.some(m=>m.desc==='MB WAY PESSOA EXEMPLO'&&m.valor===-20);
+     const val=(res.match(/saldos consistentes/g)||[]).length===2;await fpCtx.apagaEx();go('home');return {ok:sOk&&aOk&&val,sOk,aOk,val,res:res.slice(0,400),a:a.map(m=>[m.dm,m.desc,m.valor,m.saldo])}});
+   t('D132','importa Santander (Excel) e ActivoBank (PDF, várias páginas, milhares, débito/crédito pelo saldo)',z132.ok,z132)}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

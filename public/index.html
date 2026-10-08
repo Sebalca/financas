@@ -547,7 +547,7 @@ const FPOnb=(function(){const $=id=>document.getElementById(id);
     {g:'home',a:'home',el:'f:#homeBanks',t:'Saldo por banco',x:'Saldo de cada conta no fim do período, incluindo o <b>dinheiro</b> e as <b>poupanças</b> (clique para ver os movimentos).'},
     {g:'home',a:'home',el:'f:.grid4',t:'Despesas e rendimentos',x:'Despesas por <b>categoria</b> e por <b>referência</b>, e rendimentos por <b>entidade</b> e por <b>tipo</b>. Os rendimentos com recibo ligado aparecem com <b>✓</b>. Tudo é clicável.'},
     {g:'home',a:'home',el:'f:#homeUnc',t:'Por categorizar',x:'As descrições que ainda não têm categoria, das mais frequentes para as menos. Use <b>⚡</b> para criar uma regra de uma vez.'},
-    {g:'ext',a:'ext',el:'f:.drop',t:'Importar extratos',x:'Arraste o <b>CSV da CGD</b> ou o <b>Excel/CSV do cartão refeição</b> (vários de uma vez). Os saldos são verificados e os movimentos repetidos ou apagados não entram outra vez.'},
+    {g:'ext',a:'ext',el:'f:.drop',t:'Importar extratos',x:'Arraste os extratos do banco — <b>CGD</b>, <b>Millennium</b>, <b>BPI</b>, <b>Santander</b>, <b>ActivoBank</b> (PDF) ou o <b>cartão refeição</b> (vários de uma vez). Os saldos são verificados e os movimentos repetidos ou apagados não entram outra vez.'},
     {g:'ext',a:'ext',el:'f:#extBar',t:'Pesquisa e filtros',x:'Procure por texto ou por <b>data</b> (16/09, 09/2026). Filtre por tipo, categorias, referências, pessoas e bancos (<b>várias de uma vez</b>). “Limpar filtros” volta ao início.'},
     {g:'ext',a:'ext',el:'f:#extTable',t:'Movimentos',x:'Escolha <b>categoria</b> e <b>referência</b> em cada linha — o site propõe uma <b>regra</b> para os semelhantes. Escreva observações e “quem é”. Selecione várias linhas para editar em massa.'},
     {g:'ext',a:'ext',el:'f:#extTable td.acts',t:'Ações da linha',x:'<b>↩</b> marca uma entrada como reembolso de uma despesa (abate às saídas). <b>✂</b> divide um movimento por várias categorias. <b>✏</b> edita o dinheiro. <b>🗑</b> apaga (pode repor depois).'},
@@ -817,6 +817,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.11c',d:'08/10/2026',n:['Extratos do Santander (Excel) e do ActivoBank (PDF)'],a:[]},
  {v:'0.11b',d:'07/10/2026',n:['Sugestões: veja as suas em “💬 As minhas” e converse com quem desenvolve o site','Aviso no Menu quando há respostas por abrir'],a:[]},
  {v:'0.11a',d:'07/10/2026',n:['Rendimentos: 🗂 Recibos importados — ver e apagar os recibos carregados'],a:['“Guardado na conta” passa para o menu, por baixo do email','Extratos: “Quem é” volta a poder escrever-se na lista; os reembolsos mantêm a descrição do extrato','Rendimentos: cada mês ordenado pela data de pagamento']},
  {v:'0.11',d:'06/10/2026',n:['Empresas (para já só por convite): contas de empresa separadas da pessoal, com categorias próprias (Definições › 🏢 Empresas)','Botão 🏢 Empresas na barra de cima para escolher a empresa — tudo fica a amarelo torrado'],a:[]},

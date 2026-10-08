@@ -417,8 +417,8 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
   <section class="panel" id="tab-ext">
     <div class="card"><h3>Importar extrato</h3>
       <div class="upl">
-        <label class="drop" id="drop"><input type="file" id="fExt" accept=".csv,.txt,.xlsx,.xls" multiple hidden>
-          <span class="ico">📄</span><b class="dk">Arraste o extrato ou clique para escolher</b><b class="mb">Escolher extrato(s)</b><small>· CSV da CGD · Excel do Millennium (conta e cartão) · Excel do BPI · Excel/CSV do cartão refeição · vários de uma vez</small></label>
+        <label class="drop" id="drop"><input type="file" id="fExt" accept=".csv,.txt,.xlsx,.xls,.pdf" multiple hidden>
+          <span class="ico">📄</span><b class="dk">Arraste o extrato ou clique para escolher</b><b class="mb">Escolher extrato(s)</b><small>· CSV da CGD · Excel do Millennium (conta e cartão), BPI e Santander · PDF do ActivoBank · Excel/CSV do cartão refeição · vários de uma vez</small></label>
         <select id="bankSel" aria-label="Banco" title="Banco"><option value="">Banco: auto</option><option value="CGD">CGD</option><option value="__cartao">Cartão refeição</option></select>
       </div>
       <div id="impRes"></div>
@@ -573,7 +573,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.11b'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.11c'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -834,7 +834,9 @@ function limpaMillennium(d){d=String(d||'').replace(/\s+/g,' ').trim();let m;
   if((m=d.match(/^COMPRA (\d{4}) (.+)$/i)))return {desc:m[2],tipo:'Compra · cartão '+m[1]};
   if((m=d.match(/^CRED (\d{4}) (.+)$/i)))return {desc:m[2],tipo:'Crédito · cartão '+m[1]};
   if((m=d.match(/^DD (.+)$/i)))return {desc:m[1],tipo:'Débito direto'};
-  if((m=d.match(/^TRF\.? ?P\/O (.+)$/i)))return {desc:'TRF '+m[1],tipo:'Transferência recebida'};
+  if((m=d.match(/^TRF MB ?WAY P\/ ?(.+)$/i)))return {desc:'MB WAY '+m[1],tipo:'Transferência MB WAY enviada'};
+  if((m=d.match(/^TRF MB ?WAY DE (.+)$/i)))return {desc:'MB WAY '+m[1],tipo:'Transferência MB WAY recebida'};
+  if((m=d.match(/^(?:TRF\.?|TRANSFERENCIA) ?P\/O (.+)$/i)))return {desc:'TRF '+m[1],tipo:'Transferência recebida'};
   if((m=d.match(/^TRF P\/ ?(.+)$/i)))return {desc:'TRF '+m[1],tipo:'Transferência enviada'};
   if(/^LEV ATM/i.test(d))return {desc:d,tipo:'Levantamento'};
   return {desc:d,tipo:''}}
@@ -847,6 +849,44 @@ function leMillennium(linhas){const txt=r=>(r||[]).map(c=>String(c==null?'':c)).
   if(cartao)r.saldoFinal=null;
   else{const rs=linhas.slice(0,12).find(x=>/^saldo contabil/i.test(norm(String((x||[])[0]||''))));if(rs){const v=(rs.slice(1).find(c=>c!=null&&String(c).trim()!==''));if(v!=null)r.saldoFinal=r2(typeof v==='string'&&/^-?\d+(\.\d+)?$/.test(v.trim())?parseFloat(v):numX(v))}}
   return r}
+/* v0.11c: Santander (Excel "Movimentos_DO": Data da operação, Data valor, Descrição da Conta, Tipo, Montante, Moeda, Saldo contabilístico) */
+const eSantander=linhas=>linhas.slice(0,6).some(r=>{const n=(r||[]).map(c=>norm(String(c==null?'':c)));return n.some(x=>x.startsWith('data da operacao'))&&n.some(x=>x.startsWith('descricao da conta'))&&n.some(x=>x.startsWith('montante'))});
+function limpaSantander(d){d=String(d||'').replace(/\s+/g,' ').trim();let m;const sref=x=>x.replace(/-[A-Z]?\d{5,}$/,'').trim();
+  if((m=d.match(/^TRF\.? ?IMED\.? ?P\/ ?(.+)$/i)))return {desc:'TRF '+sref(m[1]),tipo:'Transferência enviada'};
+  if((m=d.match(/^TRF\.? ?IMED\.? ?DE (.+)$/i)))return {desc:'TRF '+sref(m[1]),tipo:'Transferência recebida'};
+  if((m=d.match(/^TRF\.? CRED SEPA\+? DE (.+)$/i)))return {desc:'TRF '+sref(m[1]),tipo:'Transferência recebida'};
+  if((m=d.match(/^TRF\.? (?:DEB )?SEPA\+? (?:P\/|PARA) (.+)$/i)))return {desc:'TRF '+sref(m[1]),tipo:'Transferência enviada'};
+  if((m=d.match(/^PAG SERVICOS (.+)$/i)))return {desc:'PAG SERVICOS '+m[1],tipo:'Pagamento de serviços'};
+  if((m=d.match(/^COMPRA (\d{4}) (.+)$/i)))return {desc:m[2],tipo:'Compra · cartão '+m[1]};
+  if((m=d.match(/^DD (.+)$/i)))return {desc:m[1],tipo:'Débito direto'};
+  return {desc:sref(d)||d,tipo:''}}
+function leSantander(linhas){const r=leGenerico(linhas,'','Santander');r.banco='Santander';r.conta='';
+  r.mov.forEach(m=>{const orig=m.desc0||m.desc,l=limpaSantander(orig);if(l.desc!==orig){m.desc0=orig;m.desc=l.desc}else if(!m.desc0)delete m.desc0;m.catBanco=l.tipo||m.catBanco||''});
+  return r}
+/* v0.11c: ActivoBank (PDF "Extrato combinado"): linhas "M.DD M.DD DESCRITIVO VALOR SALDO"; débito/crédito pela variação do saldo */
+async function linhasPDF(buf){await carrega('lib/pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc='lib/pdf.worker.min.js';
+  const doc=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise,out=[];
+  for(let p=1;p<=doc.numPages;p++){const pg=await doc.getPage(p),tc=await pg.getTextContent(),L=[];
+    tc.items.filter(i=>i.str&&i.str.trim()).forEach(i=>{const y=i.transform[5],x=i.transform[4];let l=L.find(z=>Math.abs(z.y-y)<2.5);if(!l){l={y,it:[]};L.push(l)}l.it.push({x,s:i.str.trim()})});
+    L.sort((a,b)=>b.y-a.y).forEach(l=>out.push(l.it.sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').replace(/\s+/g,' ').trim()))}
+  return out}
+const eActivo=L=>L.some(l=>/ACTVPTPL|activobank/i.test(l))&&L.some(l=>/^EXTRATO DE \d{4}\/\d{2}\/\d{2}/.test(l));
+function leActivo(L){const N=t=>+String(t).replace(/\s/g,''),fmt=v=>{const [i,d]=Math.abs(v).toFixed(2).split('.');return i.replace(/\B(?=(\d{3})+(?!\d))/g,' ')+'.'+d};
+  const SAL=/\s(-?\d{1,3}(?: \d{3})*\.\d{2})$/;let conta='',ini=null,y0=0,m0=1,saldo=null,fin=null;const mv=[];
+  L.forEach(l=>{let m;
+    if((m=l.match(/^CONTA .*?N\. ?(\d{6,})\b/)))conta=m[1];
+    if((m=l.match(/^EXTRATO DE (\d{4})\/(\d{2})\/(\d{2})/))){y0=+m[1];m0=+m[2];ini=`${m[1]}-${m[2]}-${m[3]}`}
+    if((m=l.match(/^(?:SALDO INICIAL|TRANSPORTE)\s+(-?\d{1,3}(?: \d{3})*\.\d{2})$/))){saldo=N(m[1]);return}
+    if((m=l.match(/^SALDO FINAL\s+(-?\d{1,3}(?: \d{3})*\.\d{2})$/))){fin=N(m[1]);return}
+    if(!(m=l.match(/^(\d{1,2})\.(\d{2}) (\d{1,2})\.(\d{2}) (.+)$/))||!y0)return;
+    const ds=(mm,dd)=>`${+mm<m0?y0+1:y0}-${pad(+mm)}-${dd}`,rest=m[5],sm=rest.match(SAL);if(!sm)return;
+    const sa=N(sm[1]);let semS=rest.slice(0,sm.index).trim(),valor=null,desc='';
+    if(saldo!=null){const v=r2(sa-saldo),t=fmt(v);if(semS.endsWith(' '+t)){valor=v;desc=semS.slice(0,-t.length).trim()}}
+    if(valor==null){const am=semS.match(/\s(\d{1,3}(?: \d{3})*\.\d{2})$/);if(!am)return;const a=N(am[1]);valor=saldo!=null&&sa<saldo?-a:a;desc=semS.slice(0,am.index).trim()}
+    const pf=limpaMillennium(desc);mv.push({dm:ds(m[1],m[2]),dv:ds(m[3],m[4]),desc:pf.desc,desc0:pf.desc!==desc?desc:undefined,valor:r2(valor),saldo:sa,catBanco:pf.tipo});saldo=sa});
+  if(!mv.length)throw new Error('O extrato do ActivoBank não tem movimentos.');
+  mv.reverse();mv.forEach((x,i)=>{x.ord=i;if(!x.desc0)delete x.desc0});const ds=mv.map(x=>x.dm).sort();
+  return {banco:'ActivoBank',conta,titular:'',inicio:ini&&ini<ds[0]?ini:ds[0],fim:ds[ds.length-1],mov:mv,saldoFinal:fin!=null?fin:mv[0].saldo,titulo:'ActivoBank'}}
 function nomeContaGen(titulo,fname){const forc=$('#bankSel').value;if(forc==='__cartao')return CARTAO;
   if(/alimenta|refei/i.test(norm(titulo+' '+fname)))return CARTAO;
   const n=prompt(`De que conta é o ficheiro "${fname}"?`,titulo||'');if(!n||!n.trim())throw new Error('Importação cancelada (sem nome de conta).');return n.trim()}
@@ -854,13 +894,13 @@ function nomeContaGen(titulo,fname){const forc=$('#bankSel').value;if(forc==='__
 /* ================= importação ================= */
 /* v0.10c: banco não suportado — amostra anónima (só a estrutura: datas mantidas, letras → X, algarismos ao acaso), enviada pelas Sugestões depois de a pessoa a ver */
 const FALHOU=new Map();
-const NAO_LIDO='<b>Extrato não reconhecido.</b> Envie-nos um exemplo para o passarmos a ler — é uma <b>amostra anónima</b>: os textos e os valores são trocados aqui no browser e vê tudo antes de enviar. Bancos lidos: <b>CGD</b> (CSV), <b>Millennium</b> e <b>BPI</b> (Excel) e <b>cartão refeição</b>.';
+const NAO_LIDO='<b>Extrato não reconhecido.</b> Envie-nos um exemplo para o passarmos a ler — é uma <b>amostra anónima</b>: os textos e os valores são trocados aqui no browser e vê tudo antes de enviar. Bancos lidos: <b>CGD</b> (CSV), <b>Millennium</b>, <b>BPI</b> e <b>Santander</b> (Excel), <b>ActivoBank</b> (PDF) e <b>cartão refeição</b>.';
 function anonimiza(linhas){const eData=c=>/^\s*(\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4}|\d{4}[-\/.]\d{1,2}[-\/.]\d{1,2})(\s+\d{1,2}:\d{2}(:\d{2})?)?\s*$/.test(c);
   const dig=x=>x.replace(/\d/g,()=>String(Math.floor(Math.random()*10))),let_=x=>x.replace(/[A-Za-zÀ-ÿ]/g,c=>c===c.toUpperCase()?'X':'x');
   const L=linhas.map(r=>(r||[]).map(c=>c==null?'':c instanceof Date?c.toISOString().slice(0,10):String(c)));const hi=L.findIndex(r=>r.some(eData)),cab=hi>0?hi-1:-1;
   return L.slice(0,hi<0?20:hi+15).map((r,i)=>r.map(c=>eData(c)?c:i===cab?dig(c):let_(dig(c))))}
 window.fpAmostra=async nome=>{const f=FALHOU.get(nome);if(!f)return;const ext=(f.name.split('.').pop()||'').toLowerCase(),buf=await f.arrayBuffer();let linhas,sep=';';
-  try{if(/^xlsx?$/.test(ext))linhas=(await lerExcel(buf)).linhas;else{const t=decode(buf),l=t.split(/\r?\n/).filter(x=>x.trim()).slice(0,60);sep=[';','\t',','].map(s=>[s,l.slice(0,10).reduce((n,x)=>n+x.split(s).length,0)]).sort((a,b)=>b[1]-a[1])[0][0];linhas=l.map(x=>x.split(sep))}}
+  try{if(/^xlsx?$/.test(ext))linhas=(await lerExcel(buf)).linhas;else if(ext==='pdf')linhas=(await linhasPDF(buf)).slice(0,80).map(l=>l.split(' '));else{const t=decode(buf),l=t.split(/\r?\n/).filter(x=>x.trim()).slice(0,60);sep=[';','\t',','].map(s=>[s,l.slice(0,10).reduce((n,x)=>n+x.split(s).length,0)]).sort((a,b)=>b[1]-a[1])[0][0];linhas=l.map(x=>x.split(sep))}}
   catch(e){toast('Não foi possível ler o ficheiro');return}
   const a=anonimiza(linhas).map(r=>r.join(sep==='\t'?' | ':sep)).join('\n').slice(0,3300);trk('amostra_banco',{ext});
   const txt=`Extrato não reconhecido — banco: (escreva aqui o nome do banco e o tipo de conta)\nFicheiro .${ext} · ${linhas.length} linhas\nAmostra anónima (letras trocadas por X, algarismos ao acaso, datas mantidas):\n${a}`;
@@ -871,9 +911,10 @@ async function importar(files){
   const res=[];
   for(const f of files){
     try{
-      if(!/\.(csv|txt|xlsx|xls)$/i.test(f.name))throw new Error('Formato não suportado — use CSV ou Excel.');
+      if(!/\.(csv|txt|xlsx|xls|pdf)$/i.test(f.name))throw new Error('Formato não suportado — use CSV, Excel ou PDF.');
       const buf=await f.arrayBuffer(),forc=$('#bankSel').value;let r,gen=false;
-      if(/\.xlsx?$/i.test(f.name)){const x=await lerExcel(buf);if(eMillennium(x.linhas))r=leMillennium(x.linhas);else if(eBPI(x.linhas))r=leBPI(x.linhas);else{gen=true;r=leGenerico(x.linhas,'',null);r.banco=nomeContaGen(r.titulo||x.titulo,f.name)}}
+      if(/\.pdf$/i.test(f.name)){const L=await linhasPDF(buf);if(eActivo(L))r=leActivo(L);else throw new Error('PDF não reconhecido — por agora só o extrato do ActivoBank.')}
+      else if(/\.xlsx?$/i.test(f.name)){const x=await lerExcel(buf);if(eMillennium(x.linhas))r=leMillennium(x.linhas);else if(eBPI(x.linhas))r=leBPI(x.linhas);else if(eSantander(x.linhas))r=leSantander(x.linhas);else{gen=true;r=leGenerico(x.linhas,'',null);r.banco=nomeContaGen(r.titulo||x.titulo,f.name)}}
       else{const t=decode(buf);const L=forc==='__cartao'?null:LEITORES.find(l=>forc?l.banco===forc:l.detect(t));
         if(L)r=L.parse(t);else{gen=true;const sep=(t.split('\n').find(l=>/descri/i.test(l))||'').split(';').length>2?';':',';
           const linhas=t.split(/\r?\n/).map(l=>l.split(sep).map(c=>c.replace(/^"|"$/g,'').trim()));r=leGenerico(linhas,'',null);r.banco=nomeContaGen(r.titulo,f.name)}}
