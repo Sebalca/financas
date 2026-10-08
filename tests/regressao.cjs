@@ -741,6 +741,22 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     w.postMessage({tipo:'fp-scroll',on:true},'*');await W(50);const opt=!!document.querySelector('#optScroll');
     await w.fpCtx.apagaEx();w.go('home');ok({ok:volta&&desl&&opt,y0,ini,volta,desl,opt})}));
   t('D135','ao voltar a uma aba pela barra continua no mesmo sítio (opção em Definições › Geral)',z135.ok,z135);
+  console.log('v0.11h');
+  const z136=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);const db=w.fpCtx.db(),P=w.eval('P');P.m='mes';P.d=new Date();w.go('home');w.render();await W(80);
+    const kB=Object.keys(db.mov.reduce((o,m)=>{if(m.saldo!=null)o[m.banco+'|'+m.conta]=1;return o},{}))[0],hj=w.eval('hoje')();
+    const li=k=>[...d.querySelectorAll('#homeBanks li')].find(x=>{const b=x.querySelector('[data-sac]');return b&&b.dataset.sac===k}),val=x=>x?x.querySelector('b').textContent.replace(/\s/g,''):'';
+    li(kB).querySelector('[data-sac]').click();await W(30);const abriu=!d.querySelector('#mSaldo').hidden;d.querySelector('#sacV').value='1000,00';d.querySelector('#sacD').value=hj;d.querySelector('#sacOk').click();await W(50);
+    const acB=val(li(kB))==='1000,00€'&&/acertado a/.test(li(kB).textContent);
+    d.querySelector('#bkAdd').click();await W(30);d.querySelector('#sacNome').value='Revolut Teste';d.querySelector('#sacV').value='420';d.querySelector('#sacOk').click();await W(50);
+    const man=db.contasMan.find(c=>c.nome==='Revolut Teste'),lm=man&&li('man|'+man.id),manOk=!!lm&&val(lm)==='420,00€'&&/Revolut Teste/.test(lm.textContent);
+    const tot=[...d.querySelectorAll('#homeBanks li.tot b')].pop(),soma=[...d.querySelectorAll('#homeBanks li:not(.tot) b')].reduce((s,b)=>s+(+b.textContent.replace(/[^\d,-]/g,'').replace(',','.')),0),totOk=!!tot&&Math.abs(+tot.textContent.replace(/[^\d,-]/g,'').replace(',','.')-soma)<0.02;
+    db.mov.push({id:'mCart1',k:'cart1',banco:'Banco Exemplo',conta:'0000',dm:hj,dv:hj,desc:'LOJA CARTAO',valor:-5,saldo:null,cat:'',ref:'',catSrc:'',det:'Compra · cartão 1234',obs:'',quem:'',ord:0,man:true});
+    w.go('ext');w.render();d.querySelector('#btCart').click();await W(30);const inp=d.querySelector('#cartLista [data-cartn="Banco Exemplo|1234"]');inp.value='Cartão Teste';inp.dispatchEvent(new Event('change',{bubbles:true}));d.querySelector('#mCart').hidden=true;await W(50);
+    const tr=d.querySelector('#extTable tr[data-id="mCart1"]'),det=!!tr&&/💳 Cartão Teste/.test(tr.textContent);
+    const fc=d.querySelector('#fCart');fc.value='Banco Exemplo|1234';fc.dispatchEvent(new Event('change',{bubbles:true}));await W(50);const filt=d.querySelectorAll('#extTable tr[data-id]').length===1&&!fc.hidden;
+    w.limpaFiltros();await w.fpCtx.apagaEx();w.go('home');ok({ok:abriu&&acB&&manOk&&totOk&&det&&filt,abriu,acB,manOk,totOk,det,filt})}));
+  t('D136','Saldo por banco: ✏ acertar saldo (vale o mais recente), ＋ Conta sem extrato no total; 💳 Cartões com nome nos Detalhes e filtro "Cartão"',z136.ok,z136);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

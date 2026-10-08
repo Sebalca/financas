@@ -166,10 +166,14 @@ Regras que o Sebastião pediu explicitamente. Antes de qualquer alteração ou n
 - D133 (v0.11d) **Médias só com meses fechados**: na grelha das Despesas e nas Previsões a Média = soma dos meses já fechados (até ao mês anterior ao atual) ÷ **n.º de meses fechados**, tenham ou não extratos (em outubro, com o ano a começar em janeiro: Jan–Set ÷ 9); o mês atual conta no Total mas não na média; ano já fechado ÷ 12; ano que ainda não começou sem média (—). (atualizada v0.11e) **Sugestões (admin)**: três abas — **📥 Recebidas** (sem resposta ou a última mensagem é da pessoa), **💬 Em aberto** (a última mensagem é do admin) e **✅ Concluídas** (terminadas); responder passa para Em aberto, uma mensagem da pessoa volta a Recebidas, terminar passa para Concluídas; a **classificação** (Ideia/Problema/Outro) muda-se na conversa (`sugestoes.ultima_de_admin`, `009_sugestoes_estado.sql`). Perguntas novas nas FAQs contam no aviso do Menu do admin (D85), atualizado de minuto a minuto.
 - D134 (v0.11f) Os módulos da página principal que dependem da sessão (admin, agregado, novidades) apanham a sessão que já exista quando o script deles corre (o `mostrar()` da conta pode correr antes de eles existirem). Sem isto o admin às vezes não via o link das Estatísticas nem as Sugestões recebidas.
 - D135 (v0.11g) Ao **voltar a uma aba pela barra das abas**, a página continua no sítio onde estava (cada aba guarda a sua posição; os Extratos mantêm as linhas já carregadas). Ir para uma aba por um atalho (ex.: "Ver nos Extratos") abre no início, como antes. Desliga-se em **Definições › Geral** ("Ao voltar a uma aba, continuar no mesmo sítio"; `fp_scroll`). Ligado por defeito.
+- D136 (v0.11h) **Acertar saldo** na caixa "Saldo por banco" do Início: cada conta tem ✏ (valor + dia; `DB.saldoAc[chave]={v,d}`); o saldo mostrado = esse valor + os movimentos da conta depois desse dia, até ao fim do período. Numa conta com extrato vale o **mais recente** entre o acerto e o último saldo do extrato. Dinheiro e Poupanças (por referência) também se acertam. **＋ Conta** cria contas sem extrato (`DB.contasMan`; ex.: Revolut, mealheiro) que entram no total com o último acerto. **💳 Cartões** (Extratos): os cartões reconhecem-se pelos 4 dígitos na descrição/detalhes ("COMPRA 2937", "cartão 2937"), por banco; cada um pode ter um nome (`DB.cartoes`), que aparece nos Detalhes, e há o filtro **Cartão** (com "Sem cartão") quando há cartões.
 
 ---
 
 ## Histórico
+
+### v0.11h — 08/10/2026
+- Acertar saldo por conta e contas sem extrato no "Saldo por banco"; 💳 Cartões com nome e filtro nos Extratos (D136).
 
 ### v0.11g — 08/10/2026
 - Ao voltar a uma aba continua no mesmo sítio, com opção em Definições › Geral (D135).
