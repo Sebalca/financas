@@ -573,7 +573,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.11c'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.11d'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1297,7 +1297,7 @@ function renderDespesas(per,k){
   $('#btPrevOnly').textContent=soValores?'Mostrar todas':'Só com valores';$('#btPrevOnly').style.display=DES.edit?'none':'';
   $('#btDesEdit').textContent=DES.edit?'✓ Concluir':'✏ Editar';$('#btDesEdit').classList.toggle('pri',DES.edit);
   $('#desNota').innerHTML=DES.edit?'Modo <b>Editar</b>: mude nomes, use ↑ ↓ para a ordem, 🗑 para apagar e ＋ para adicionar. Clique em <b>Concluir</b> no fim.'
-    :'Cada mês mostra as <b>saídas − reembolsos</b> (entradas com a mesma categoria e referência). <b>Média</b> = total ÷ meses com movimentos. A <b>Previsão</b> é mensal e escreve-se na aba <b>Previsões</b>; o valor do mês fica a vermelho quando a passa. Clique num valor ou num total para ver os movimentos. O primeiro mês do ano escolhe-se em Definições › Geral.';
+    :'Cada mês mostra as <b>saídas − reembolsos</b> (entradas com a mesma categoria e referência). <b>Média</b> = total dos meses já fechados (até ao mês anterior) ÷ esses meses com movimentos. A <b>Previsão</b> é mensal e escreve-se na aba <b>Previsões</b>; o valor do mês fica a vermelho quando a passa. Clique num valor ou num total para ver os movimentos. O primeiro mês do ano escolhe-se em Definições › Geral.';
   if(!DES.edit){renderDesGrelha(norm_,fora,saiP,entP,prv,prvC);return}
   renderDesEdit(norm_,fora);return;
   /* média mensal: últimos 12 meses até ao fim do período, a dividir pelos meses com movimentos */
@@ -1334,13 +1334,15 @@ const prevAno=()=>PREVY!=null?PREVY:anoIni(P.d).getFullYear();
 function renderPrev(){const Y=prevAno(),anos=[Y-2,Y-1,Y],cats=DB.cats.filter(c=>!eFora(c.nome)),pv=k=>pvK(Y,k),dono=PVde(Y);
   $('#pvAno').textContent=anoTxt(new Date(Y,MES1,1));$('#pvOnly').textContent=PVONLY?'Mostrar todas':'Só com valores';$('#pvOnly').classList.toggle('on',PVONLY);
   const hj=new Date(),yh=anoIni(hj).getFullYear(),div=y=>y<yh?12:y>yh?0:Math.max(1,(hj.getFullYear()-y)*12+hj.getMonth()-MES1+1);
-  const T={};expandeC(DB.mov).forEach(m=>{if(!m.cat||eFora(m.cat)||!m.ref)return;const y=anoDe(m.dm);if(!anos.includes(y))return;const k=m.cat+'›'+m.ref;(T[k]||(T[k]={}))[y]=((T[k]||{})[y]||0)-m.valor});
-  const tv=(k,y)=>(T[k]&&T[k][y])||0,md=(v,y)=>div(y)?v/div(y):0;
-  const cy=y=>`<td class="num bl">${Math.abs(y.t)>.004&&div(y.y)?E(y.m):'<span class="muted">—</span>'}</td><td class="num">${Math.abs(y.t)>.004?E(y.t):'<span class="muted">—</span>'}</td>`;
+  /* v0.11d: a média do ano atual usa só os meses fechados (até ao mês anterior ao atual) */
+  const hjM=hoje().slice(0,7),dA=y=>y===yh?div(y)-1:div(y);
+  const T={},TA={};expandeC(DB.mov).forEach(m=>{if(!m.cat||eFora(m.cat)||!m.ref)return;const y=anoDe(m.dm);if(!anos.includes(y))return;const k=m.cat+'›'+m.ref;(T[k]||(T[k]={}))[y]=((T[k]||{})[y]||0)-m.valor;if(m.dm.slice(0,7)<hjM)(TA[k]||(TA[k]={}))[y]=((TA[k]||{})[y]||0)-m.valor});
+  const tv=(k,y)=>(T[k]&&T[k][y])||0,ta=(k,y)=>(TA[k]&&TA[k][y])||0,mdK=(k,y)=>dA(y)>0?ta(k,y)/dA(y):0;
+  const cy=y=>`<td class="num bl">${Math.abs(y.t)>.004&&dA(y.y)>0?E(y.m):'<span class="muted">—</span>'}</td><td class="num">${Math.abs(y.t)>.004?E(y.t):'<span class="muted">—</span>'}</td>`;
   const linhas=[],porTipo={};let tot=0;
-  cats.forEach(c=>{const rs=c.refs.map(r=>{const k=c.nome+'›'+r,ys=anos.map(y=>({y,t:tv(k,y),m:md(tv(k,y),y)})),p=pv(k);return {r,k,ys,p}}).filter(x=>!PVONLY||x.p||x.ys.some(y=>Math.abs(y.t)>.004));
+  cats.forEach(c=>{const rs=c.refs.map(r=>{const k=c.nome+'›'+r,ys=anos.map(y=>({y,t:tv(k,y),m:mdK(k,y)})),p=pv(k);return {r,k,ys,p}}).filter(x=>!PVONLY||x.p||x.ys.some(y=>Math.abs(y.t)>.004));
     if(!rs.length)return;const sp=rs.reduce((s,x)=>s+x.p,0);tot+=sp;rs.forEach(x=>{const t=tipoDe(c.nome,x.r),id=t?t.id:'';porTipo[id]=(porTipo[id]||0)+x.p});
-    const sy=anos.map((y,i)=>{const t=rs.reduce((s,x)=>s+x.ys[i].t,0);return {y,t,m:md(t,y)}});
+    const sy=anos.map((y,i)=>{const t=rs.reduce((s,x)=>s+x.ys[i].t,0);return {y,t,m:rs.reduce((s,x)=>s+x.ys[i].m,0)}});
     linhas.push(`<tr class="gc"><td><i class="dot" style="background:${corCat(c.nome)}"></i><b>${esc(c.nome)}</b></td><td></td>${sy.map(cy).join('')}<td class="num bl"><b>${E(sp)}</b></td><td class="num"><b>${E(sp*12)}</b></td><td></td></tr>`);
     rs.forEach(({r,k,ys,p})=>{const t=tipoDe(c.nome,r),ant=ys[1];
       linhas.push(`<tr><td style="padding-left:24px" title="${esc(c.nome)} › ${esc(r)}">${esc(r)}</td><td class="tpn">${t?`<i class="dot" style="background:${t.cor}"></i>${esc(t.nome)}`:'—'}</td>${ys.map(cy).join('')}
@@ -1355,7 +1357,7 @@ function renderPrev(){const Y=prevAno(),anos=[Y-2,Y-1,Y],cats=DB.cats.filter(c=>
     <tr>${anos.map(()=>'<th class="num bl">Média/mês</th><th class="num">Total</th>').join('')}<th class="num bl">Média/mês</th><th class="num">Total ano</th><th></th></tr></thead></table></div>
     <div class="tw" id="prevTw"><table class="t prevt">${cg}<tbody>${linhas.join('')||'<tr><td colspan="11"><div class="empty"><b>Sem referências com valores</b></div></td></tr>'}</tbody></table></div>`;
   {const tw=$('#prevTw'),hd=$('#prevHead');tw.scrollLeft=sx;hd.scrollLeft=sx;tw.addEventListener('scroll',()=>{hd.scrollLeft=tw.scrollLeft},{passive:true})}
-  $('#prevNota').innerHTML=(dono!=null&&dono!==Y?`Este ano ainda não tem previsão própria: está a usar a de <b>${anoTxt(new Date(dono,MES1,1))}</b> (fica copiada ao alterar um valor). `:'')+`A média do ano atual divide pelos meses já passados (${div(yh)}); a dos anos anteriores divide por 12. A previsão guarda-se por ano.`}
+  $('#prevNota').innerHTML=(dono!=null&&dono!==Y?`Este ano ainda não tem previsão própria: está a usar a de <b>${anoTxt(new Date(dono,MES1,1))}</b> (fica copiada ao alterar um valor). `:'')+`A média do ano atual usa só os meses já fechados, até ao mês anterior (${Math.max(0,div(yh)-1)}); a dos anos anteriores divide por 12. A previsão guarda-se por ano.`}
 window.fpTipos={lista:()=>JSON.parse(JSON.stringify(DB.tiposDesp)),
   uso:()=>{const u={};Object.values(DB.refTipo).forEach(id=>u[id]=(u[id]||0)+1);return u},
   grava:(tipos,remap)=>{DB.tiposDesp=tipos.filter(t=>t&&t.id&&String(t.nome||'').trim()).map(t=>({id:String(t.id),nome:String(t.nome).trim(),cor:t.cor||'#90a4ae'}));
@@ -1371,6 +1373,8 @@ function renderDesEdit(norm_,fora){$('#desCats').closest('.card').classList.add(
     +(fora.length?`<h4 class="des-t fora">Não entram nas contas</h4>`+fora.map(x=>bloco(x,true)).join(''):'')}
 function renderDesGrelha(norm_,fora,saiP,entP,prv,prvC){$('#desCats').closest('.card').classList.remove('desedit');
   const ms=mesesGrelha(),X=expandeC(DB.mov).filter(m=>{const k=m.dm.slice(0,7);return k>=ms[0]&&k<=ms[11]}),porMes=ms.map(p=>X.filter(m=>m.dm.startsWith(p)));
+  /* v0.11d: média só com os meses já fechados (até ao mês anterior ao atual) que têm movimentos */
+  const hjM=hoje().slice(0,7),iA=ms.map((p,i)=>p<hjM&&porMes[i].length>0),nA=iA.filter(Boolean).length,mdA=v=>nA?v.reduce((s,x,i)=>s+(iA[i]?x:0),0)/nA:0;
   const nMes=Math.max(1,porMes.filter(l=>l.length).length),sel=P.m==='mes'?`${P.d.getFullYear()}-${pad(P.d.getMonth()+1)}`:'';
   const vM=(l,c,r,isF)=>isF?entP(l,c,r)-saiP(l,c,r):saiP(l,c,r)-entP(l,c,r);
   const lab=k=>`${MES3[+k.slice(5)-1].toUpperCase()}/${k.slice(2,4)}`;
@@ -1389,26 +1393,26 @@ function renderDesGrelha(norm_,fora,saiP,entP,prv,prvC){$('#desCats').closest('.
       if(soValores&&!pv&&!v.some(x=>Math.abs(x)>.004))return '';
       const tq=Math.abs(tt)>.004,ta=`data-dgo="ANO|${esc(c.nome)}|${esc(r)}" title="Ver os movimentos de ${esc(c.nome)} › ${esc(r||'(sem referência)')} neste ano"`;
       const ro=r&&corRefO(c.nome+'›'+r),tr_=COR.des&&ro&&!ro.ext?tintaC(ro.c,12):(tint?tinta(c.nome,7):'');
-      return `<tr class="gr"${tr_?` style="--tl:${tr_}"`:''}><td class="nm">${ro?`<i class="dot" style="background:${ro.c}"></i>`:''}${r?esc(r):'<span class="muted">(sem referência)</span>'}</td>${v.map((x,i)=>cel(x,ms[i],c.nome,r,pv,isF)).join('')}<td class="num tt${tq?' clk':''}" ${tq?ta:''}>${tq?(isF?val(tt):E(tt)):'0,00 €'}</td><td class="num tt">${tq?(isF?val(tt/nMes):E(tt/nMes)):'0,00 €'}</td><td class="num pvc">${isF||!r?'':`<span class="pvro" title="A previsão edita-se na aba Previsões">${pv?E(pv):'—'}</span>`}</td></tr>`}).join(''):'';
-    return `<tr class="gc${aberta?' open':''}" data-dtog="${esc(c.nome)}" title="${aberta?'Fechar':'Abrir'} ${esc(c.nome)}"${tint?` style="--tl:${tinta(c.nome,16)}"`:''}><td class="nm"><i class="dot" style="background:${corCat(c.nome)}"></i><b>${esc(c.nome)}</b></td>${vs.map((x,i)=>Math.abs(x)>.004?`<td class="num clk${ms[i]===sel?' msel':''}" data-dgo="${ms[i]}|${esc(c.nome)}|*" title="${esc(c.nome)} · ${lab(ms[i])} — ver movimentos">${isF?val(x):E(x)}</td>`:`<td class="num dim${ms[i]===sel?' msel':''}">–</td>`).join('')}<td class="num${Math.abs(t)>.004?' clk':''}" ${Math.abs(t)>.004?`data-dgo="ANO|${esc(c.nome)}|*" title="Ver os movimentos de ${esc(c.nome)} neste ano"`:''}><b>${isF?val(t):E(t)}</b></td><td class="num"><b>${isF?val(t/nMes):E(t/nMes)}</b></td><td class="num pvc">${isF?'':`<b>${E(pc)}</b>`}</td></tr>`+linhas};
+      return `<tr class="gr"${tr_?` style="--tl:${tr_}"`:''}><td class="nm">${ro?`<i class="dot" style="background:${ro.c}"></i>`:''}${r?esc(r):'<span class="muted">(sem referência)</span>'}</td>${v.map((x,i)=>cel(x,ms[i],c.nome,r,pv,isF)).join('')}<td class="num tt${tq?' clk':''}" ${tq?ta:''}>${tq?(isF?val(tt):E(tt)):'0,00 €'}</td><td class="num tt">${tq?(isF?val(mdA(v)):E(mdA(v))):'0,00 €'}</td><td class="num pvc">${isF||!r?'':`<span class="pvro" title="A previsão edita-se na aba Previsões">${pv?E(pv):'—'}</span>`}</td></tr>`}).join(''):'';
+    return `<tr class="gc${aberta?' open':''}" data-dtog="${esc(c.nome)}" title="${aberta?'Fechar':'Abrir'} ${esc(c.nome)}"${tint?` style="--tl:${tinta(c.nome,16)}"`:''}><td class="nm"><i class="dot" style="background:${corCat(c.nome)}"></i><b>${esc(c.nome)}</b></td>${vs.map((x,i)=>Math.abs(x)>.004?`<td class="num clk${ms[i]===sel?' msel':''}" data-dgo="${ms[i]}|${esc(c.nome)}|*" title="${esc(c.nome)} · ${lab(ms[i])} — ver movimentos">${isF?val(x):E(x)}</td>`:`<td class="num dim${ms[i]===sel?' msel':''}">–</td>`).join('')}<td class="num${Math.abs(t)>.004?' clk':''}" ${Math.abs(t)>.004?`data-dgo="ANO|${esc(c.nome)}|*" title="Ver os movimentos de ${esc(c.nome)} neste ano"`:''}><b>${isF?val(t):E(t)}</b></td><td class="num"><b>${isF?val(mdA(vs)):E(mdA(vs))}</b></td><td class="num pvc">${isF?'':`<b>${E(pc)}</b>`}</td></tr>`+linhas};
   const blocoTipo=t=>{const id=t?t.id:'',key='tipo:'+(id||'-'),aberta=!DES.fech.has(key),cor=t?t.cor:'var(--c8)';
     const refs=[];norm_.forEach(({c})=>{const rs=[...c.refs,...(porMes.some(l=>l.some(m=>m.cat===c.nome&&!m.ref))?['']:[])];rs.forEach(r=>{const tp=r?(DB.refTipo[c.nome+'›'+r]||''):'';if((DB.tiposDesp.some(x=>x.id===tp)?tp:'')===id)refs.push([c.nome,r])})});
     const lin=refs.map(([cn,r])=>{const v=porMes.map(l=>vM(l,cn,r,false)),pv=r?prv(cn,r):0;return {cn,r,v,pv,tt:v.reduce((s,x)=>s+x,0)}}).filter(x=>!soValores||x.pv||x.v.some(y=>Math.abs(y)>.004));
     if(!lin.length)return '';const vs=ms.map((_,i)=>lin.reduce((s,x)=>s+x.v[i],0)),tot=vs.reduce((s,v)=>s+v,0),pvt=lin.reduce((s,x)=>s+x.pv,0);
     const tl=COR.des&&t?` style="--tl:color-mix(in srgb,${t.cor} 16%,transparent)"`:'',tl2=COR.des&&t?` style="--tl:color-mix(in srgb,${t.cor} 7%,transparent)"`:'';
-    return `<tr class="gc${aberta?' open':''}" data-dtog="${esc(key)}" title="${aberta?'Fechar':'Abrir'}"${tl}><td class="nm"><i class="dot" style="background:${cor}"></i><b>${esc(t?t.nome:'Sem tipo')}</b></td>${vs.map((x,i)=>`<td class="num${ms[i]===sel?' msel':''}${Math.abs(x)>.004?'':' dim'}">${Math.abs(x)>.004?E(x):'–'}</td>`).join('')}<td class="num"><b>${E(tot)}</b></td><td class="num"><b>${E(tot/nMes)}</b></td><td class="num pvc"><b>${E(pvt)}</b></td></tr>`
-      +(aberta?lin.map(({cn,r,v,pv,tt})=>{const tq=Math.abs(tt)>.004;return `<tr class="gr"${tl2}><td class="nm" title="${esc(cn)} › ${esc(r||'(sem referência)')}">${r?esc(r):'<span class="muted">(sem referência)</span>'} <small class="muted">${esc(cn)}</small></td>${v.map((x,i)=>cel(x,ms[i],cn,r,pv,false)).join('')}<td class="num tt${tq?' clk':''}" ${tq?`data-dgo="ANO|${esc(cn)}|${esc(r)}" title="Ver os movimentos neste ano"`:''}>${tq?E(tt):'0,00 €'}</td><td class="num tt">${tq?E(tt/nMes):'0,00 €'}</td><td class="num pvc">${r?`<span class="pvro" title="A previsão edita-se na aba Previsões">${pv?E(pv):'—'}</span>`:''}</td></tr>`}).join(''):'')};
+    return `<tr class="gc${aberta?' open':''}" data-dtog="${esc(key)}" title="${aberta?'Fechar':'Abrir'}"${tl}><td class="nm"><i class="dot" style="background:${cor}"></i><b>${esc(t?t.nome:'Sem tipo')}</b></td>${vs.map((x,i)=>`<td class="num${ms[i]===sel?' msel':''}${Math.abs(x)>.004?'':' dim'}">${Math.abs(x)>.004?E(x):'–'}</td>`).join('')}<td class="num"><b>${E(tot)}</b></td><td class="num"><b>${E(mdA(vs))}</b></td><td class="num pvc"><b>${E(pvt)}</b></td></tr>`
+      +(aberta?lin.map(({cn,r,v,pv,tt})=>{const tq=Math.abs(tt)>.004;return `<tr class="gr"${tl2}><td class="nm" title="${esc(cn)} › ${esc(r||'(sem referência)')}">${r?esc(r):'<span class="muted">(sem referência)</span>'} <small class="muted">${esc(cn)}</small></td>${v.map((x,i)=>cel(x,ms[i],cn,r,pv,false)).join('')}<td class="num tt${tq?' clk':''}" ${tq?`data-dgo="ANO|${esc(cn)}|${esc(r)}" title="Ver os movimentos neste ano"`:''}>${tq?E(tt):'0,00 €'}</td><td class="num tt">${tq?E(mdA(v)):'0,00 €'}</td><td class="num pvc">${r?`<span class="pvro" title="A previsão edita-se na aba Previsões">${pv?E(pv):'—'}</span>`:''}</td></tr>`}).join(''):'')};
   const cols=`<colgroup><col style="width:190px">${ms.map(()=>'<col style="width:74px">').join('')}<col style="width:92px"><col style="width:84px"><col style="width:92px"></colgroup>`;
-  const hd=isF=>cols+`<thead><tr><th class="nm">${isF||DES.grp!=='tipo'?'Categoria':'Tipo · referência'}</th>${ms.map(k=>`<th class="num${k===sel?' msel':''}">${lab(k)}</th>`).join('')}<th class="num tt">Total</th><th class="num tt">Média</th><th class="num pvc">${isF?'':'Previsão'}</th></tr></thead>`;
+  const hd=isF=>cols+`<thead><tr><th class="nm">${isF||DES.grp!=='tipo'?'Categoria':'Tipo · referência'}</th>${ms.map(k=>`<th class="num${k===sel?' msel':''}">${lab(k)}</th>`).join('')}<th class="num tt">Total</th><th class="num tt" title="Média dos meses já fechados (até ao mês anterior ao atual) com movimentos">Média</th><th class="num pvc">${isF?'':'Previsão'}</th></tr></thead>`;
   const totM=(l,isF)=>ms.map((_,i)=>l.reduce((s,x)=>s+vM(porMes[i],x.c.nome,undefined,isF),0));
   const tn=totM(norm_,false),tnt=tn.reduce((s,v)=>s+v,0),tpv=norm_.reduce((s,x)=>s+prvC(x.c),0);
   const tf=totM(fora,true),tft=tf.reduce((s,v)=>s+v,0);
-  $('#desCats').innerHTML=`<h4 class="des-t">Despesas <small>entram nas contas · ${lab(ms[0])} a ${lab(ms[11])} · média sobre ${nMes} ${nMes>1?'meses':'mês'} com movimentos</small></h4>
+  $('#desCats').innerHTML=`<h4 class="des-t">Despesas <small>entram nas contas · ${lab(ms[0])} a ${lab(ms[11])} · média dos ${nA} ${nA===1?'mês fechado':'meses fechados'} com movimentos (até ao mês anterior)</small></h4>
     <div class="exthead pvhead dghead"><table class="t dgrid">${hd(false)}</table></div><div class="tw dgw"><table class="t dgrid">${cols}<tbody>${DES.grp==='tipo'?[...DB.tiposDesp,null].map(blocoTipo).join(''):norm_.map(x=>bloco(x,false)).join('')}
-    <tr class="tot"><td class="nm">Total das despesas</td>${tn.map((v,i)=>`<td class="num${ms[i]===sel?' msel':''}${tpv&&v>tpv+.004?' over':''}">${Math.abs(v)>.004?E(v):'–'}</td>`).join('')}<td class="num">${E(tnt)}</td><td class="num">${E(tnt/nMes)}</td><td class="num">${E(tpv)}</td></tr></tbody></table></div>`
+    <tr class="tot"><td class="nm">Total das despesas</td>${tn.map((v,i)=>`<td class="num${ms[i]===sel?' msel':''}${tpv&&v>tpv+.004?' over':''}">${Math.abs(v)>.004?E(v):'–'}</td>`).join('')}<td class="num">${E(tnt)}</td><td class="num">${E(mdA(tn))}</td><td class="num">${E(tpv)}</td></tr></tbody></table></div>`
     +(fora.length?`<h4 class="des-t fora">Não entram nas contas <small>${fora.map(x=>esc(x.c.nome)).join(', ')} · entradas − saídas por mês</small></h4>
     <div class="exthead pvhead dghead"><table class="t dgrid">${hd(true)}</table></div><div class="tw dgw"><table class="t dgrid">${cols}<tbody>${fora.map(x=>bloco(x,true)).join('')}
-    <tr class="tot"><td class="nm">Total</td>${tf.map((v,i)=>`<td class="num${ms[i]===sel?' msel':''}">${Math.abs(v)>.004?val(v):'–'}</td>`).join('')}<td class="num">${val(tft)}</td><td class="num">${val(tft/nMes)}</td><td></td></tr></tbody></table></div>`:'');
+    <tr class="tot"><td class="nm">Total</td>${tf.map((v,i)=>`<td class="num${ms[i]===sel?' msel':''}">${Math.abs(v)>.004?val(v):'–'}</td>`).join('')}<td class="num">${val(tft)}</td><td class="num">${val(mdA(tf))}</td><td></td></tr></tbody></table></div>`:'');
   $$('#desCats .dghead').forEach(h=>{const b=h.nextElementSibling;b.addEventListener('scroll',()=>{h.scrollLeft=b.scrollLeft},{passive:true})}); // v0.10n: títulos fixos que acompanham
 }
 function renderDesAno(norm_,fora,saiP,entP,prv,prvC){
@@ -2303,7 +2307,7 @@ const INF={homeBars:'Entradas e saídas de cada mês do ano (o ano começa no m�
   drop:'Ficheiros CSV/Excel exportados do homebanking. São lidos no browser e só os movimentos ficam guardados. Os repetidos não entram duas vezes e os saldos são verificados.',
   extTable:'Categoria e referência em cada linha; "Quem é" identifica a pessoa de uma transferência; "Obs." são notas suas. Marque várias linhas (caixa à esquerda) para editar em massa.',
   renAno:'Rendimentos de cada mês pela visão fiscal (recibos): bruto, descontos e líquido — para comparar com a declaração de IRS.',
-  desCats:'Saídas − reembolsos de cada referência no período, comparadas com o previsto. A média mensal usa os últimos 12 meses com movimentos.',
+  desCats:'Saídas − reembolsos de cada referência no período, comparadas com o previsto. A média só conta os meses já fechados (até ao mês anterior ao atual).',
   prevDes:'O previsto de cada referência por ano. Escreva a média por mês ou o total do ano; ao lado estão os 3 anos anteriores (total e média/mês).'};
 Object.entries(INF).forEach(([id,txt])=>{const el=document.getElementById(id),c=el&&el.closest('.card'),h=c&&c.querySelector('h3');if(!h||h.querySelector('.inf'))return;
   const i=document.createElement('button');i.type='button';i.className='inf';i.dataset.inf=txt;i.title=txt;i.setAttribute('aria-label','Ajuda');i.textContent='ⓘ';

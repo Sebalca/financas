@@ -276,7 +276,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
       <div id="fqMinhas" hidden></div>
       <div id="fqAdm" class="adm" hidden></div></section>
     <section data-s="sugestao" hidden><h3>Enviar sugestão</h3>
-      <div class="fq-tabs" id="sgTabs" hidden><button type="button" data-st="env" class="on">✏ Enviar</button><button type="button" data-st="min">💬 As minhas<span class="bdg" id="bdgSug4" hidden></span></button><button type="button" data-st="rec" hidden>📥 Recebidas<span class="bdg" id="bdgSug3" hidden></span></button></div>
+      <div class="fq-tabs" id="sgTabs" hidden><button type="button" data-st="env" class="on">✏ Enviar</button><button type="button" data-st="min">💬 As minhas<span class="bdg" id="bdgSug4" hidden></span></button><button type="button" data-st="rec" data-adm hidden>📥 Recebidas<span class="bdg" id="bdgSug3" hidden></span></button><button type="button" data-st="abe" data-adm hidden>💬 Em aberto</button><button type="button" data-st="conc" data-adm hidden>✅ Concluídas</button></div>
       <div id="sgAdm" class="adm" hidden></div><div id="sgMin" class="adm" hidden></div><div id="sgConv" class="adm" hidden></div><div id="sgEnv"><p>Ideias, problemas ou dúvidas — seguem diretamente para quem desenvolve o site.</p>
       <div class="grp" id="sgTipo"><button class="opt on" data-v="Ideia" type="button">💡 Ideia</button><button class="opt" data-v="Problema" type="button">🐞 Problema</button><button class="opt" data-v="Outro" type="button">💬 Outro</button></div>
       <textarea id="sgTxt" rows="6" maxlength="4000" placeholder="Escreva a sua sugestão…" style="margin-top:8px"></textarea>
@@ -817,6 +817,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.11d',d:'08/10/2026',n:[],a:['Despesas e Previsões: a média mensal só conta os meses já fechados (até ao mês anterior)','Já pode criar conta e recuperar a palavra-passe por email']},
  {v:'0.11c',d:'08/10/2026',n:['Extratos do Santander (Excel) e do ActivoBank (PDF)'],a:[]},
  {v:'0.11b',d:'07/10/2026',n:['Sugestões: veja as suas em “💬 As minhas” e converse com quem desenvolve o site','Aviso no Menu quando há respostas por abrir'],a:[]},
  {v:'0.11a',d:'07/10/2026',n:['Rendimentos: 🗂 Recibos importados — ver e apagar os recibos carregados'],a:['“Guardado na conta” passa para o menu, por baixo do email','Extratos: “Quem é” volta a poder escrever-se na lista; os reembolsos mantêm a descrição do extrato','Rendimentos: cada mês ordenado pela data de pagamento']},
@@ -955,16 +956,21 @@ const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';
   async function sessao(u){U=u||null;ADM=false;NF=NS=NU=0;const c=sb();if(u&&c){try{const r=await c.rpc('e_admin_site',{s:SITE});ADM=!!r.data}catch(e){}}try{$('miAdm').hidden=!ADM}catch(e){}await conta()}
   setInterval(()=>{if(U&&!document.hidden)conta()},60000);
   let SG=[],SGN=100,SGF='todas',MS=[],CV=null;const dh=d=>new Date(d).toLocaleString('pt-PT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  function sgTab(t){[...$('sgTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.st===t||(t==='conv'&&!!CV&&b.dataset.st===CV.de)));$('sgEnv').hidden=t!=='env';$('sgAdm').hidden=t!=='rec';$('sgMin').hidden=t!=='min';$('sgConv').hidden=t!=='conv';
-    if(t==='rec')recebidas();if(t==='min')minhas()}
-  function abreSug(){$('sgTabs').hidden=!U;$('sgTabs').querySelector('[data-st="rec"]').hidden=!ADM;sgTab(NU&&U?'min':'env');conta()}
+  /* v0.11d: admin — Recebidas (sem resposta / última mensagem da pessoa), Em aberto (última mensagem do admin), Concluídas (terminadas) */
+  const ADMT=['rec','abe','conc'],estado=x=>x.fechada?'conc':x.ultima_de_admin?'abe':'rec',TIPOS_SG=['Ideia','Problema','Outro'];let SGT='rec';
+  function sgTab(t){const tc=t==='conv'&&CV?(CV.de==='rec'?estado(CV.s):'min'):t;[...$('sgTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.st===tc));
+    const adm=ADMT.includes(t);$('sgEnv').hidden=t!=='env';$('sgAdm').hidden=!adm;$('sgMin').hidden=t!=='min';$('sgConv').hidden=t!=='conv';
+    if(adm){SGT=t;SGF='todas';recebidas()}if(t==='min')minhas()}
+  function abreSug(){$('sgTabs').hidden=!U;$$s('#sgTabs [data-adm]').forEach(b=>b.hidden=!ADM);sgTab(NU&&U?'min':'env');conta()}
+  const $$s=q=>[...document.querySelectorAll(q)];
   async function recebidas(){const c=sb();if(!ADM||!c)return;$('sgAdm').innerHTML='<p class="note2">A carregar…</p>';
-    const {data,error}=await c.from('sugestoes').select('id,user_id,tipo,texto,email,separador,versao,por_ler,fechada,ultima_em,created_at').eq('site_id',SITE).order('ultima_em',{ascending:false}).limit(1000);
+    const {data,error}=await c.from('sugestoes').select('id,user_id,tipo,texto,email,separador,versao,por_ler,fechada,ultima_de_admin,ultima_em,created_at').eq('site_id',SITE).order('ultima_em',{ascending:false}).limit(1000);
     if(error){$('sgAdm').innerHTML='<p class="note2">Não foi possível carregar.</p>';return}SG=data||[];SGN=100;pintaRec()}
-  function pintaRec(){const tipos=['todas',...new Set(SG.map(x=>x.tipo))],l=SG.filter(x=>SGF==='todas'||x.tipo===SGF);
-    $('sgAdm').innerHTML=`<div class="fq-lb">${tipos.map(t=>`<button type="button" data-sgf="${esc(t)}" class="${SGF===t?'on':''}">${t==='todas'?'Todas':esc(t)} ${t==='todas'?SG.length:SG.filter(x=>x.tipo===t).length}</button>`).join('')}</div>`
+  function pintaRec(){const E_=SG.filter(x=>estado(x)===SGT),tipos=['todas',...new Set(E_.map(x=>x.tipo))],l=E_.filter(x=>SGF==='todas'||x.tipo===SGF);
+    $$s('#sgTabs [data-adm]').forEach(b=>{const n=SG.filter(x=>estado(x)===b.dataset.st).length,sp=b.querySelector('.n');if(sp)sp.textContent=n?` ${n}`:'';else if(n)b.insertAdjacentHTML('beforeend',`<span class="n" style="color:var(--mu);font-weight:500"> ${n}</span>`)});
+    $('sgAdm').innerHTML=`<div class="fq-lb">${tipos.map(t=>`<button type="button" data-sgf="${esc(t)}" class="${SGF===t?'on':''}">${t==='todas'?'Todas':esc(t)} ${t==='todas'?E_.length:E_.filter(x=>x.tipo===t).length}</button>`).join('')}</div>`
       +(l.length?l.slice(0,SGN).map(x=>`<div class="it2 clk" data-sid="${x.id}" data-sgo="rec" title="Abrir a conversa"><div class="meta">${x.por_ler?'<span class="bdg" style="margin:0 6px 0 0">nova</span>':''}${x.fechada?'🔒 ':''}<b>${esc(x.tipo)}</b> · ${dh(x.created_at)}${x.separador?' · '+esc(x.separador):''}${x.versao?' · v'+esc(x.versao):''}${x.email?' · '+esc(x.email):''}${x.user_id?'':' · sem conta'}<button class="bt" type="button" data-sgdel style="float:right;padding:2px 8px" title="Apagar">🗑</button></div><div class="pv">${esc(x.texto)}</div></div>`).join('')
-        +(l.length>SGN?`<div style="text-align:center"><button class="bt" type="button" data-sgmais>Mostrar mais</button></div>`:''):'<p class="note2">Ainda não há sugestões.</p>')}
+        +(l.length>SGN?`<div style="text-align:center"><button class="bt" type="button" data-sgmais>Mostrar mais</button></div>`:''):`<p class="note2">${SGT==='rec'?'Nada por responder.':SGT==='abe'?'Nenhuma conversa à espera de resposta da pessoa.':'Ainda não há conversas concluídas.'}</p>`)}
   async function minhas(){const c=sb();if(!U||!c){$('sgMin').innerHTML='<p class="note2">Entre na sua conta para ver as suas sugestões.</p>';return}$('sgMin').innerHTML='<p class="note2">A carregar…</p>';
     const {data,error}=await c.from('sugestoes').select('id,user_id,tipo,texto,por_ler_user,fechada,ultima_em,created_at').eq('site_id',SITE).eq('user_id',U.id).order('ultima_em',{ascending:false}).limit(200);
     if(error){$('sgMin').innerHTML='<p class="note2">Não foi possível carregar.</p>';return}MS=data||[];
@@ -976,7 +982,7 @@ const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';
     if(de==='rec'?s.por_ler:s.por_ler_user){try{await c.rpc('sugestao_lida',{p_sugestao:id})}catch(e){}if(de==='rec')s.por_ler=false;else s.por_ler_user=false;conta()}}
   function pintaConv(ms){const {s,de}=CV,adm=de==='rec',eu=m=>adm?m.de_admin:!m.de_admin,quem=m=>m.de_admin?'Equipa do site':(adm?(s.email||'Utilizador'):'Eu');
     const fechada=s.fechada,podeEsc=adm?!!s.user_id:!fechada;
-    $('sgConv').innerHTML=`<div class="cvh"><button class="bt" type="button" data-cvback>← Voltar</button><b>${esc(s.tipo)} · ${dh(s.created_at)}</b>${adm?`<button class="bt" type="button" data-cvfecha="${fechada?0:1}" title="${fechada?'A pessoa volta a poder responder':'A pessoa deixa de poder responder (pode reabrir)'}">${fechada?'🔓 Reabrir':'🔒 Terminar conversa'}</button>`:''}</div>
+    $('sgConv').innerHTML=`<div class="cvh"><button class="bt" type="button" data-cvback>← Voltar</button><b>${adm?`<select data-cvtipo aria-label="Classificação" title="Mudar a classificação">${[...new Set([...TIPOS_SG,s.tipo])].map(t=>`<option${t===s.tipo?' selected':''}>${esc(t)}</option>`).join('')}</select>`:esc(s.tipo)} · ${dh(s.created_at)}</b>${adm?`<button class="bt" type="button" data-cvfecha="${fechada?0:1}" title="${fechada?'A pessoa volta a poder responder':'A pessoa deixa de poder responder (pode reabrir)'}">${fechada?'🔓 Reabrir':'🔒 Terminar conversa'}</button>`:''}</div>
       <div class="cv" id="cvL"><div class="bb${adm?'':' eu'}"><div class="bm">${adm?esc(s.email||'Utilizador'):'Eu'} · ${dh(s.created_at)}</div>${esc(s.texto)}</div>${ms.map(m=>`<div class="bb${eu(m)?' eu':''}"><div class="bm">${esc(quem(m))} · ${dh(m.created_at)}</div>${esc(m.texto)}</div>`).join('')}</div>
       ${fechada?'<div class="cvx">🔒 Conversa terminada'+(adm?' — a pessoa já não pode responder.':'. Para outro assunto, envie uma nova sugestão.')+'</div>':''}
       ${adm&&!s.user_id?'<div class="cvx">Enviada sem conta: a pessoa não vê respostas aqui'+(s.email?' (responda por email).':'.')+'</div>':''}
@@ -990,12 +996,14 @@ const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';
     const it=e.target.closest('[data-sgo]');if(it)abreConv(it.dataset.sid,it.dataset.sgo)};
   $('sgAdm').addEventListener('click',cliqueLista);$('sgMin').addEventListener('click',cliqueLista);
   $('sgConv').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b||!CV)return;const c=sb();
-    if('cvback' in b.dataset){sgTab(CV.de);return}
+    if('cvback' in b.dataset){sgTab(CV.de==='rec'?estado(CV.s):'min');return}
     if(b.dataset.cvfecha!=null){const f=b.dataset.cvfecha==='1';try{const {error}=await c.rpc('sugestao_fechar',{p_sugestao:CV.id,p_fechar:f});if(error)throw error;CV.s.fechada=f;abreConv(CV.id,CV.de)}catch(x){alert('Não foi possível: '+(x.message||x))}return}
     if('cvenv' in b.dataset){const t=$('cvTxt').value.trim();if(!t)return;b.disabled=true;$('cvMsg').textContent='A enviar…';
       const {error}=await c.rpc('sugestao_responder',{p_sugestao:CV.id,p_texto:t});b.disabled=false;
       if(error){$('cvMsg').textContent=/terminada/.test(error.message)?'A conversa foi terminada.':/limite/.test(error.message)?'Atingiu o limite de mensagens por hora.':'Não foi possível enviar.';return}
-      try{FPTrack.log('sugestao_resposta',{admin:CV.de==='rec'})}catch(x){}CV.s.ultima_em=new Date().toISOString();abreConv(CV.id,CV.de)}});
+      try{FPTrack.log('sugestao_resposta',{admin:CV.de==='rec'})}catch(x){}CV.s.ultima_em=new Date().toISOString();CV.s.ultima_de_admin=CV.de==='rec';abreConv(CV.id,CV.de)}});
+  $('sgConv').addEventListener('change',async e=>{const sel=e.target.closest('[data-cvtipo]');if(!sel||!CV)return;const v=sel.value;
+    const {error}=await sb().from('sugestoes').update({tipo:v}).eq('id',CV.id);if(error){alert('Não foi possível mudar a classificação.');sel.value=CV.s.tipo;return}CV.s.tipo=v});
   document.querySelectorAll('[data-set="sugestao"],#setNav [data-s="sugestao"]').forEach(b=>b.addEventListener('click',()=>setTimeout(abreSug,0)));
   window.FPSugChat={abre:abreConv,tab:sgTab,_st:(u,adm,sg,ms)=>{U=u;ADM=adm;if(sg)SG=sg;if(ms)MS=ms}};
   return {sessao,conta,e:()=>ADM}})();

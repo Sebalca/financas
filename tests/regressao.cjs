@@ -701,6 +701,32 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
      const aOk=a.length===5&&a.every(m=>m.conta==='99999999999')&&a.some(m=>m.desc==='TRF EMPRESA TESTE, LDA'&&m.valor===1500&&m.dm==='2026-09-15'&&m.dv==='2026-09-14')&&a.some(m=>m.valor===-1000&&m.saldo===554.5)&&a.some(m=>m.desc==='MB WAY PESSOA EXEMPLO'&&m.valor===-20);
      const val=(res.match(/saldos consistentes/g)||[]).length===2;await fpCtx.apagaEx();go('home');return {ok:sOk&&aOk&&val,sOk,aOk,val,res:res.slice(0,400),a:a.map(m=>[m.dm,m.desc,m.valor,m.saldo])}});
    t('D132','importa Santander (Excel) e ActivoBank (PDF, várias páginas, milhares, débito/crédito pelo saldo)',z132.ok,z132)}
+  console.log('v0.11d');
+  const z133=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),w=document.querySelector('iframe[data-id="financas"]').contentWindow,d=w.document;
+    await w.fpCtx.exemplo();await W(300);const P=w.eval('P');P.m='mes';P.d=new Date();w.go('des');w.render();await W(80);
+    const th=[...d.querySelectorAll('#desCats .dghead thead th')].map(x=>x.textContent.trim()),MS={JAN:1,FEV:2,MAR:3,ABR:4,MAI:5,JUN:6,JUL:7,AGO:8,SET:9,OUT:10,NOV:11,DEZ:12};
+    const ks=th.slice(1,13).map(t=>{const [m,y]=t.split('/');return `20${y}-${String(MS[m]).padStart(2,'0')}`}),hj=w.eval('hoje')().slice(0,7);
+    const tr=[...d.querySelectorAll('#desCats tr.tot')][0],cs=[...tr.querySelectorAll('td')].map(x=>x.textContent.trim()),num=t=>t==='–'||!t?null:+t.replace(/[^\d,-]/g,'').replace(',','.');
+    const v=cs.slice(1,13).map(num),fe=ks.map((k,i)=>k<hj&&v[i]!=null),n=fe.filter(Boolean).length,esp=n?v.reduce((s,x,i)=>s+(fe[i]?x:0),0)/n:0,med=num(cs[14]);
+    const desp=Math.abs(med-esp)<0.02&&/meses? fechados?|mês fechado/.test(d.querySelector('#desCats h4').textContent);
+    w.go('prev');w.render();await W(50);const prev=/meses já fechados/.test(d.querySelector('#prevNota').textContent);
+    await w.fpCtx.apagaEx();w.go('home');
+    const velho=window.plataforma,ch=[],agora=new Date().toISOString(),mk=(id,o)=>({id,site_id:'financas',user_id:'u7',tipo:'Ideia',texto:'Sug '+id,email:null,por_ler:false,por_ler_user:false,fechada:false,ultima_de_admin:false,ultima_em:agora,created_at:agora,...o});
+    const T={sugestoes:[mk('a',{por_ler:true}),mk('b',{ultima_de_admin:true}),mk('c',{fechada:true})],sugestao_mensagens:[],faq_perguntas:[{id:'f1',site_id:'financas',estado:'nova'}]};
+    const q=t=>{const f=[];let up=null;const o={select:()=>o,eq:(k,v)=>{f.push([k,v]);return o},order:()=>o,limit:()=>o,delete:()=>o,update:v=>{up=v;return o},
+      then:(res,rej)=>{const dd=(T[t]||[]).filter(r=>f.every(([k,v])=>r[k]===v));if(up){ch.push('update:'+JSON.stringify(up));dd.forEach(r=>Object.assign(r,up))}return Promise.resolve({data:dd,count:dd.length,error:null}).then(res,rej)}};return o};
+    window.plataforma={from:q,rpc:async(f,a)=>{ch.push(f);if(f==='e_admin_site')return {data:true};if(f==='sugestao_responder'){T.sugestao_mensagens.push({id:'m',sugestao_id:a.p_sugestao,de_admin:true,texto:a.p_texto,created_at:agora});return {error:null}}return {data:null,error:null}}};
+    await FPAdm.sessao({id:'u1',email:'adm@exemplo.pt'});const faq=!document.querySelector('#bdgMenu').hidden&&+document.querySelector('#bdgMenu').textContent>=2&&!document.querySelector('#bdgFaq').hidden;
+    document.querySelector('[data-set="sugestao"]').click();await W(100);const tabs=['rec','abe','conc'].every(t=>!document.querySelector(`#sgTabs [data-st="${t}"]`).hidden);
+    const lista=async t=>{document.querySelector(`#sgTabs [data-st="${t}"]`).click();await W(120);return [...document.querySelectorAll('#sgAdm [data-sgo]')].map(x=>x.dataset.sid).join()};
+    const lr=await lista('rec'),la=await lista('abe'),lc=await lista('conc'),sep=lr==='a'&&la==='b'&&lc==='c';
+    await lista('rec');document.querySelector('#sgAdm [data-sid="a"]').click();await W(150);const sel=document.querySelector('[data-cvtipo]');sel.value='Problema';sel.dispatchEvent(new Event('change',{bubbles:true}));await W(80);
+    const tipo=T.sugestoes[0].tipo==='Problema'&&ch.some(x=>/update:.*Problema/.test(x));
+    document.querySelector('#cvTxt').value='Resposta';document.querySelector('[data-cvenv]').click();await W(150);document.querySelector('[data-cvback]').click();await W(150);
+    const move=document.querySelector('#sgTabs [data-st="abe"]').classList.contains('on')&&/a/.test([...document.querySelectorAll('#sgAdm [data-sgo]')].map(x=>x.dataset.sid).join());
+    window.plataforma=velho;await FPAdm.sessao(null);document.querySelector('#mSet').hidden=true;
+    ok({ok:desp&&prev&&faq&&tabs&&sep&&tipo&&move,desp,med,esp,prev,faq,tabs,sep,lr,la,lc,tipo,move})}));
+  t('D133','Médias só com meses fechados (Despesas e Previsões); sugestões do admin em Recebidas / Em aberto / Concluídas com classificação editável; aviso de perguntas FAQ',z133.ok,z133);
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
