@@ -781,6 +781,27 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
      return {ui,bq,gr,av}});await p2.close();
    const ok137=bloq&&fech&&Object.values(r137).every(Boolean)&&Object.values(adm).every(Boolean);
    t('D137','Admin: bloquear conta (não entra), registos fechados, avisos geral/privado (uma vez), aviso de contas novas, limites de categorias/referências; painel ⚙ Definições grava no servidor',ok137,{bloq,fech,r137,adm})}
+  console.log('v0.13');
+  {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));await fpCtx.exemplo();await W(300);const hm=hoje().slice(0,7),o={};
+     [1,2,3].forEach(i=>DB.rend.push({id:'rx'+i,tipo:'pon',data:mAdd(hm,-i)+'-25',entidade:'Firma X',desc:'ordenado',liquido:i===2?1100:1000,bruto:1000,lk:{},lkMan:{}}));
+     go('prev');render();await W(50);o.vazio=/Ainda não há rendimentos previstos/.test(document.querySelector('#rpLista').textContent);
+     document.querySelector('#rpSug').click();await W(50);o.sug=DB.rendPrev.length===1&&DB.rendPrev[0].ent==='Firma X'&&DB.rendPrev[0].v===1000&&DB.rendPrev[0].ini<=mAdd(hm,-3);
+     document.querySelector('#rpAddP').click();await W(30);const x=DB.rendPrev[1],i=document.querySelector(`[data-rpid="${x.id}"] [data-rpf="v"]`);i.value='500';i.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+     o.pon=DB.rendPrev[1].v===500&&DB.rendPrev[1].per==='0';
+     o.per=[rpValor({v:10,per:'3',ini:'2026-01'},'2026-04'),rpValor({v:10,per:'3',ini:'2026-01'},'2026-05'),rpValor({v:10,per:'1',ini:'2026-01',fim:'2026-03'},'2026-04'),rpValor({v:10,per:'0',ini:'2026-02'},'2026-02')].join()==='10,0,0,10';
+     const g=document.querySelector('#rpGrid');o.grelha=!!g.querySelector('table')&&/Saldo nas contas no fim do mês/.test(g.textContent)&&/Saldo previsto no fim do ano/.test(document.querySelector('#rpKpis').textContent);
+     o.real=!!g.querySelector('td.okv')||!!g.querySelector('td.kov');
+     o.escondida=getComputedStyle(document.querySelector('[data-tab="emp"]')).display==='none';
+     CTX.t='a';CTX.emp=true;await W(700);o.visivel=getComputedStyle(document.querySelector('[data-tab="emp"]')).display!=='none';go('emp');await W(30);
+     const f=document.querySelector('#empFicha');o.ficha=['nipc','forma','cae','iva','irc','certV','notas'].every(k=>!!f.querySelector(`[data-ef="${k}"]`));o.semPrazos=/Sem prazos/.test(f.textContent);
+     const s=f.querySelector('[data-ef="iva"]');s.value='Normal — mensal';s.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+     const P=prazosEmp('2026-11-01','2026-11-30').map(x=>x.d+' '+x.nome);o.iva=P.includes('2026-11-20 Declaração periódica do IVA')&&P.includes('2026-11-25 Pagar o IVA');
+     o.fds=diaUtil(2026,9,10)==='2026-10-12'&&!!DB.empresa.desde;
+     const bt=document.querySelector('#empFicha [data-epf]');o.feito=!!bt;if(bt){const k=bt.dataset.epf;bt.click();await W(30);o.feito=!!DB.empresa.feito[k]}
+     CTX.t='p';CTX.emp=false;await W(700);o.volta=abaAtiva()==='home';return o});
+   t('D138','Previsões: rendimentos previstos (recorrentes/pontuais, ✨ sugerir) e saldo previsto mês a mês até ao fim do ano; aba 🏢 Empresa só nas empresas (ficha + prazos fiscais com ✓ Feito)',Object.values(r).every(Boolean)&&!er2.length,{r,er2});await p2.close()}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
