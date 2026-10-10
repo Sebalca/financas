@@ -830,6 +830,21 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     return o});
    const ok139=r.ordem==='card | pvTabs | card | rpCard'&&r.desVis&&r.renVis&&r.navNoSaldo&&r.barra==='none'&&/saude,chat,emp$/.test(r.tabs)&&r.chatEsc&&r.bdg==='1'&&r.chatVis&&/Olá equipa/.test(r.msg1)&&r.lido&&/cmsg eu:Bom dia/.test(r.env)&&r.ro&&r.edit&&r.filtro==='João ContabContabilista'&&r.cont===2;
    t('D139','Chat nos agregados/empresas (bolinha por ler, enviar, marca lido); Empresa no fim, ficha só de leitura com ✏ Editar e 📇 Contactos com pesquisa; Previsões: saldo em cima e abas Despesas | Rendimentos; sem barra vazia',ok139&&!er2.length,{r,er2});await p2.close()}
+  console.log('v0.15');
+  {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));await fpCtx.exemplo();await W(300);const o={};
+    go('des');render();await W(50);const gc=document.querySelector('table.dgrid tr.gc');o.desCor=getComputedStyle(gc.querySelector('td')).backgroundColor;
+    go('prev');render();await W(50);const g2=document.querySelector('#prevDes tr.gc');o.prevCor=getComputedStyle(g2.querySelector('td')).backgroundColor;
+    const n0=document.querySelectorAll('#prevDes tbody tr').length;document.querySelector('#pvTodos').click();await W(30);const n1=document.querySelectorAll('#prevDes tbody tr').length;
+    document.querySelector('#prevDes tr.gc').click();await W(30);const n2=document.querySelectorAll('#prevDes tbody tr').length;o.fecha=[n0,n1,n2,document.querySelector('#pvTodos').textContent].join();
+    const m0=document.querySelectorAll('#rpGrid tbody tr').length;document.querySelector('#rpTodos').click();await W(30);o.rp=[m0,document.querySelectorAll('#rpGrid tbody tr').length,document.querySelector('#rpTodos').textContent].join();
+    CTX.t='a';CTX.id='g1';CTX.nome='Família';await W(700);SY.user={id:'u',email:'seb@x.pt'};SY.sb={rpc:async()=>({data:[],error:null})};
+    go('chat');await W(100);document.querySelector('#notaAdd').click();await W(30);const t=document.querySelector('#notasL .ntit');t.value='Compras';t.dispatchEvent(new Event('change',{bubbles:true}));t.blur();
+    o.nota=JSON.stringify(DB.notas.map(n=>[n.tit,n.autor]));const cs=[...document.querySelectorAll('.chatg>.card')].map(c=>Math.round(c.getBoundingClientRect().left));o.cols=cs.join();
+    return o});
+   const [n0,n1,n2]=r.fecha.split(',').map(Number),ok140=/\/ 0\.18\)|, 0\.18\)/.test(r.desCor)&&r.desCor===r.prevCor&&n1<n0&&n2>n1&&r.rp.endsWith('Fechar tudo')&&r.nota==='[["Compras","seb"]]'&&+r.cols.split(',')[1]>600;
+   t('D140','Linha da categoria pintada nas Despesas e nas Despesas previstas; abrir/fechar tudo nas Despesas previstas e no Saldo previsto; Chat à direita com 📝 Notas partilhadas à esquerda',ok140&&!er2.length,{r,er2});await p2.close()}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
