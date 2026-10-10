@@ -794,7 +794,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
      const g=document.querySelector('#rpGrid');o.grelha=!!g.querySelector('table')&&/Saldo nas contas no fim do mês/.test(g.textContent)&&/Saldo previsto no fim do ano/.test(document.querySelector('#rpKpis').textContent);
      o.real=!!g.querySelector('td.okv')||!!g.querySelector('td.kov');
      o.escondida=getComputedStyle(document.querySelector('[data-tab="emp"]')).display==='none';
-     CTX.t='a';CTX.emp=true;await W(700);o.visivel=getComputedStyle(document.querySelector('[data-tab="emp"]')).display!=='none';go('emp');await W(30);
+     CTX.t='a';CTX.emp=true;await W(700);o.visivel=getComputedStyle(document.querySelector('[data-tab="emp"]')).display!=='none';go('emp');await W(30);document.querySelector('#empEd').click();await W(30);
      const f=document.querySelector('#empFicha');o.ficha=['nipc','forma','cae','iva','irc','certV','notas'].every(k=>!!f.querySelector(`[data-ef="${k}"]`));o.semPrazos=/Sem prazos/.test(f.textContent);
      const s=f.querySelector('[data-ef="iva"]');s.value='Normal — mensal';s.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
      const P=prazosEmp('2026-11-01','2026-11-30').map(x=>x.d+' '+x.nome);o.iva=P.includes('2026-11-20 Declaração periódica do IVA')&&P.includes('2026-11-25 Pagar o IVA');
@@ -802,6 +802,34 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
      const bt=document.querySelector('#empFicha [data-epf]');o.feito=!!bt;if(bt){const k=bt.dataset.epf;bt.click();await W(30);o.feito=!!DB.empresa.feito[k]}
      CTX.t='p';CTX.emp=false;await W(700);o.volta=abaAtiva()==='home';return o});
    t('D138','Previsões: rendimentos previstos (recorrentes/pontuais, ✨ sugerir) e saldo previsto mês a mês até ao fim do ano; aba 🏢 Empresa só nas empresas (ficha + prazos fiscais com ✓ Feito)',Object.values(r).every(Boolean)&&!er2.length,{r,er2});await p2.close()}
+  console.log('v0.14');
+  {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));await fpCtx.exemplo();await W(300);const o={};
+    go('prev');render();await W(50);o.ordem=[...document.querySelectorAll('#tab-prev > *')].map(e=>e.id||e.className).join(' | ');
+    o.desVis=!document.querySelector('[data-pvp="des"]').hidden&&document.querySelector('[data-pvp="ren"]').hidden;
+    document.querySelector('[data-pvt="ren"]').click();o.renVis=!document.querySelector('[data-pvp="ren"]').hidden&&document.querySelector('[data-pvp="des"]').hidden;
+    o.navNoSaldo=!!document.querySelector('#tab-prev .card:first-child #pvNav');
+    go('home');render();await W(30);o.barra=getComputedStyle(document.querySelector('#empPrazo')).display;
+    o.tabs=[...document.querySelectorAll('nav.tabs button')].map(b=>b.dataset.tab).join(',');
+    o.chatEsc=getComputedStyle(document.querySelector('[data-tab="chat"]')).display==='none';
+    CTX.t='a';CTX.emp=true;CTX.id='e1';CTX.nome='Teste Lda';await W(700);
+    const M=[];let lidos=0;SY.user={id:'u1',email:'a@b.pt'};SY.sb={rpc:async(f,a)=>{if(f==='chat_mensagens')return {data:M.filter(m=>!a.p_desde||m.created_at>a.p_desde),error:null};if(f==='chat_enviar'){M.push({id:'m'+M.length,texto:a.p_texto,created_at:new Date(Date.now()+M.length).toISOString(),eu:true,autor:'eu'});return {data:{},error:null}}if(f==='chat_lido'){lidos++;return {data:null,error:null}}return {data:null,error:null}}};
+    M.push({id:'x1',texto:'Olá equipa',created_at:new Date(Date.now()-60000).toISOString(),eu:false,autor:'Ana'});
+    window.FP_CHAT={e1:1};await W(1600);o.bdg=document.querySelector('#bdgChat').textContent;
+    o.chatVis=getComputedStyle(document.querySelector('[data-tab="chat"]')).display!=='none';
+    go('chat');await W(200);o.msg1=document.querySelector('#chatMsgs').textContent;o.lido=lidos>0;
+    document.querySelector('#chatTx').value='Bom dia';document.querySelector('#chatEnv').click();await W(200);o.env=[...document.querySelectorAll('#chatMsgs .cmsg')].map(x=>x.className+':'+x.querySelector('.ctx').textContent).join(' ; ');
+    go('emp');await W(30);o.ro=!document.querySelector('#empFicha [data-ef="nipc"]')&&!!document.querySelector('#empEd');
+    document.querySelector('#empEd').click();await W(30);o.edit=!!document.querySelector('#empFicha [data-ef="nipc"]');
+    document.querySelector('#ectAdd').click();await W(30);const i=document.querySelector('[data-ect="0|nome"]');i.value='João Contab';i.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+    const c=document.querySelector('[data-ect="0|cat"]');c.value='Contabilista';c.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+    document.querySelector('#ectAdd').click();await W(30);const i2=document.querySelector('[data-ect="1|nome"]');i2.value='Maria Cliente';i2.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+    document.querySelector('#empEd').click();await W(30);const q=document.querySelector('#ecQ');q.value='joao';q.dispatchEvent(new Event('input',{bubbles:true}));
+    o.filtro=[...document.querySelectorAll('#empCont tr[data-ecr]')].filter(t=>!t.hidden).map(t=>t.textContent).join('|');o.cont=DB.empresa.contactos.length;
+    return o});
+   const ok139=r.ordem==='card | pvTabs | card | rpCard'&&r.desVis&&r.renVis&&r.navNoSaldo&&r.barra==='none'&&/saude,chat,emp$/.test(r.tabs)&&r.chatEsc&&r.bdg==='1'&&r.chatVis&&/Olá equipa/.test(r.msg1)&&r.lido&&/cmsg eu:Bom dia/.test(r.env)&&r.ro&&r.edit&&r.filtro==='João ContabContabilista'&&r.cont===2;
+   t('D139','Chat nos agregados/empresas (bolinha por ler, enviar, marca lido); Empresa no fim, ficha só de leitura com ✏ Editar e 📇 Contactos com pesquisa; Previsões: saldo em cima e abas Despesas | Rendimentos; sem barra vazia',ok139&&!er2.length,{r,er2});await p2.close()}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

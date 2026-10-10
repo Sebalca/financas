@@ -178,6 +178,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
 /* v0.10c telemóvel: barra em duas linhas — separadores + menu; depois contas + período */
 @media (max-width:760px){.bar{flex-wrap:wrap;height:auto;row-gap:6px;column-gap:8px;padding:6px 10px;overflow:visible}.bar>.sp{display:none}.brand{order:0}#tabs{order:1;flex:1 1 calc(100% - 80px);height:34px}.fper .nv .lb{white-space:nowrap}.mbtn{order:2;margin-left:auto}
   .ctxsel{order:3;max-width:100%;overflow-x:auto;scrollbar-width:none}.ctxsel button{padding:5px 9px}.fper{order:4;flex:1 1 auto;justify-content:space-between;gap:6px}.fper .nv .lb{min-width:0;padding:4px 4px}}
+#fCtx .cdot,#empPop .cdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e53935;margin-left:6px;vertical-align:1px}
 </style>
 <script>
 /* tema claro/escuro partilhado por todos os separadores */
@@ -636,7 +637,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pwv]');if(
     if(/different from the old/i.test(m))return 'A nova palavra-passe tem de ser diferente da anterior.';
     return m||'Não foi possível concluir. Tente novamente.';};
   function mostrar(user){
-    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);try{FPFaq.sessao(user)}catch(e){}try{FPAdm.sessao(user||null)}catch(e){}try{FPEst.sessao(user||null)}catch(e){}try{FPNov.verifica(user||null)}catch(e){}try{FPAgr.sessao(user||null)}catch(e){}try{FPTrack.sessao(user||null)}catch(e){}
+    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);try{FPFaq.sessao(user)}catch(e){}try{FPAdm.sessao(user||null)}catch(e){}try{FPEst.sessao(user||null)}catch(e){}try{FPChat.sessao(user||null)}catch(e){}try{FPNov.verifica(user||null)}catch(e){}try{FPAgr.sessao(user||null)}catch(e){}try{FPTrack.sessao(user||null)}catch(e){}
     window.financasUser=user||null; // disponível para os separadores (window.parent.financasUser)
     if(!TESTE)gate.hidden=on;
     document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'financas-sessao',user:user?{id:user.id,email:user.email}:null},'*')}catch(e){}});
@@ -785,15 +786,15 @@ const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=
 const FPCtx=(()=>{const $=id=>document.getElementById(id);let pend=true;
   const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const win=()=>{const f=document.querySelector('iframe[data-id="financas"]');try{return f&&f.contentWindow&&f.contentWindow.fpCtx?f:null}catch(e){return null}};
-  const eEmp=g=>g&&g.tipo==='empresa';
+  const eEmp=g=>g&&g.tipo==='empresa',pl=g=>+((window.FP_CHAT||{})[g.id])>0; // v0.14: bolinha = mensagens por ler no chat
   function pinta(){const f=win(),el=$('fCtx');if(pend)valida(true);const L=FPAgr.ativos(),LA=L.filter(g=>!eEmp(g)),LE=L.filter(eEmp),ex=!!f&&f.contentWindow.fpCtx.temEx&&f.contentWindow.fpCtx.temEx();const mostra=!!f&&f.classList.contains('on')&&(L.length>0||ex);document.body.classList.toggle('comctx',mostra);
     let c={t:'p'};try{c=f?f.contentWindow.fpCtx.atual():c}catch(e){}const ge=c.t==='a'?LE.find(g=>g.id===c.id):null;
     document.body.classList.toggle('ctxAgr',c.t==='a'&&!ge);document.body.classList.toggle('ctxEmp',!!ge);if(!mostra){el.hidden=true;$('empPop').hidden=true;return}
     el.hidden=false;
-    el.innerHTML=`<button type="button" data-cx="" class="${c.t==='p'?'on':''}" title="Os seus dados pessoais (privados)">👤 Pessoal</button>`+LA.map(g=>`<button type="button" data-cx="${esc(g.id)}" class="${c.t==='a'&&c.id===g.id?'on':''}" title="Dados partilhados do agregado ${esc(g.nome)}">👪 ${esc(g.nome)}</button>`).join('')
-      +(LE.length?`<button type="button" data-cxemp class="emp${ge?' on':''}" aria-haspopup="menu" title="Escolher uma empresa">🏢 ${ge?esc(ge.nome):'Empresas'} ▾</button>`:'')
+    el.innerHTML=`<button type="button" data-cx="" class="${c.t==='p'?'on':''}" title="Os seus dados pessoais (privados)">👤 Pessoal</button>`+LA.map(g=>`<button type="button" data-cx="${esc(g.id)}" class="${c.t==='a'&&c.id===g.id?'on':''}" title="Dados partilhados do agregado ${esc(g.nome)}${pl(g)?' · mensagens por ler no chat':''}">👪 ${esc(g.nome)}${pl(g)?'<i class="cdot"></i>':''}</button>`).join('')
+      +(LE.length?`<button type="button" data-cxemp class="emp${ge?' on':''}" aria-haspopup="menu" title="Escolher uma empresa${LE.some(pl)?' · mensagens por ler no chat':''}">🏢 ${ge?esc(ge.nome):'Empresas'}${LE.some(pl)?'<i class="cdot"></i>':''} ▾</button>`:'')
       +(ex?`<button type="button" data-cx="__ex" class="${c.t==='x'?'on':''}" title="Conta de exemplo: dados fictícios, só neste browser">🧪 Exemplo</button>`:'');
-    $('empPop').innerHTML=LE.map(g=>`<button type="button" role="menuitem" data-cx="${esc(g.id)}" class="${ge&&ge.id===g.id?'on':''}">🏢 ${esc(g.nome)}</button>`).join('')}
+    $('empPop').innerHTML=LE.map(g=>`<button type="button" role="menuitem" data-cx="${esc(g.id)}" class="${ge&&ge.id===g.id?'on':''}">🏢 ${esc(g.nome)}${pl(g)?'<i class="cdot"></i>':''}</button>`).join('')}
   function valida(dePinta){const f=win();if(!f||!FPAgr.pronto()){pend=true;return}pend=false;const w=f.contentWindow.fpCtx,c=w.atual(),L=FPAgr.ativos();
     if(c.t==='a'){const g=L.find(x=>x.id===c.id);if(!g)w.muda({t:'p'}).then(pinta);else if(c.nome!==g.nome||!!c.emp!==eEmp(g))w.muda({t:'a',id:g.id,nome:g.nome,emp:eEmp(g)})}
     if(!dePinta)pinta()}
@@ -824,6 +825,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.14',d:'10/10/2026',n:['💬 Chat nos agregados e nas empresas, só para os membros, com bolinha quando há mensagens por ler','Empresas: 📇 Contactos (nome, categoria, telemóvel, email, morada e empresa) com pesquisa'],a:['Empresas: a ficha mostra-se arrumada e muda-se em ✏ Editar; a aba Empresa passou para o fim','Previsões: o saldo previsto fica em cima e por baixo há duas abas — Despesas previstas e Rendimentos previstos','Corrigida a barra vazia por baixo das abas']},
  {v:'0.13',d:'10/10/2026',n:['Previsões: rendimentos previstos — recorrentes (ordenado, rendas…) e pontuais (subsídios, prémios), com ✨ Sugerir a partir dos Rendimentos','Previsões: saldo previsto mês a mês e no fim do ano, a partir do saldo de hoje nas contas','Empresas: aba 🏢 Empresa com os dados da empresa (identificação, fiscal, sócios, contas bancárias, notas)','Empresas: prazos fiscais (IVA, salários, IRC…) com ✓ Feito e aviso do próximo prazo no Início'],a:[]},
  {v:'0.12',d:'08/10/2026',n:['Avisos da equipa do site aparecem numa janela quando entra'],a:[]},
  {v:'0.11h',d:'08/10/2026',n:['Saldo por banco: ✏ acertar o saldo de uma conta (a partir daí soma os movimentos) e ＋ Conta para contas sem extrato','Extratos: 💳 Cartões — dê nome a cada cartão e filtre por cartão'],a:[]},
@@ -1039,6 +1041,16 @@ const FPEst=(function(){const $=id=>document.getElementById(id),SITE='financas';
   [0,1500,4000].forEach(t=>setTimeout(()=>{let u=null;try{u=window.financasUser||null}catch(e){}if(u&&(!U||U.id!==u.id))sessao(u)},t));
   return {sessao}})();
 window.FPEst=FPEst;
+/* v0.14: chat dos agregados/empresas — mensagens por ler (bolinha no seletor e na aba Chat) */
+const FPChat=(function(){let U=null,T=null;window.FP_CHAT={};
+  const env=()=>document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'fp-chat'},'*')}catch(e){}});
+  async function atualiza(){if(!U)return;const c=window.plataforma;if(!c||!c.rpc)return;try{const r=await c.rpc('chat_por_ler',{p_site:'financas'});if(r.error)throw r.error;
+    const novo=r.data||{},muda=JSON.stringify(novo)!==JSON.stringify(window.FP_CHAT);window.FP_CHAT=novo;if(muda){try{FPCtx.pinta()}catch(e){}env()}}catch(e){}}
+  function sessao(u){U=u||null;clearInterval(T);T=null;if(!U){window.FP_CHAT={};try{FPCtx.pinta()}catch(e){}return}atualiza();T=setInterval(()=>{if(document.visibilityState==='visible')atualiza()},30000)}
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')atualiza()});
+  [0,1500,4000].forEach(t=>setTimeout(()=>{let u=null;try{u=window.financasUser||null}catch(e){}if(u&&(!U||U.id!==u.id))sessao(u)},t));
+  return {sessao,atualiza}})();
+window.FPChat=FPChat;
 </script>
 </body>
 </html>

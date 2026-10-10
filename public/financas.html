@@ -149,7 +149,15 @@ tr.ra-d td{background:var(--soft);font-size:12.5px}tr.ra-d td:first-child{paddin
 .pvnav{display:inline-flex;align-items:center;gap:6px;margin-right:6px}.pvnav button{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:6px;width:26px;height:26px;cursor:pointer}.pvnav b{min-width:150px;text-align:center}
 .pvsum{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.pvsum .ch{border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font-size:12.5px;display:flex;gap:8px;align-items:center}.pvsum .ch b{font-size:13.5px}.pvsum .ch.tot{background:var(--soft)}
 table.prevt{font-size:12.5px;table-layout:fixed;min-width:1150px}table.prevt th.yr{text-align:center;border-left:1px solid var(--bd)}table.prevt td.bl,table.prevt th.bl{border-left:1px solid var(--bd)}
-html:not(.ctxEmp) nav.tabs .tabemp{display:none}
+html:not(.ctxEmp) nav.tabs .tabemp{display:none}html:not(.ctxEmp):not(.ctxAgr) nav.tabs .tabchat{display:none}.empz[hidden]{display:none!important}
+.bdgc{display:inline-block;min-width:8px;height:16px;line-height:16px;padding:0 5px;border-radius:9px;background:#e53935;color:#fff;font-size:10.5px;font-weight:700;vertical-align:1px}.bdgc[hidden]{display:none}
+.pvtabs{margin:0 0 12px}.pvtabs button{border:0;background:var(--card);color:inherit;font:inherit;font-weight:600;padding:8px 16px;cursor:pointer}.pvtabs button.on{background:var(--ac);color:#fff}
+.ef.ro b{font-weight:600;font-size:14px;color:var(--tx);overflow-wrap:anywhere}.ef.ro b a{color:var(--ac)}td.mono{font-family:ui-monospace,monospace;font-size:12.5px}.eplist{margin:4px 0;padding-left:18px;font-size:13.5px}
+.ectop{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}.ectop input{flex:1;min-width:180px;max-width:320px}.ectop input,.ectop select{font:inherit;font-size:13.5px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 9px}.ect tr[hidden]{display:none}
+.chatc{display:flex;flex-direction:column}.chatm{height:min(58vh,560px);overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:10px;background:var(--soft);border-radius:10px;border:1px solid var(--bd)}
+.cmsg{max-width:min(76%,560px);align-self:flex-start;background:var(--card);border:1px solid var(--bd);border-radius:12px 12px 12px 4px;padding:6px 10px 4px;font-size:14px}.cmsg.eu{align-self:flex-end;background:var(--ac2);border-color:var(--ac);border-radius:12px 12px 4px 12px}
+.cmsg b{display:block;font-size:12px;color:var(--ac)}.cmsg .ctx{white-space:pre-wrap;overflow-wrap:anywhere}.cmsg small{display:block;text-align:right;font-size:10.5px;color:var(--mu)}.cdia{align-self:center;font-size:11.5px;color:var(--mu);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:1px 10px;margin:6px 0}
+.chatf{display:flex;gap:8px;margin-top:10px;align-items:flex-end}.chatf textarea{flex:1;resize:none;font:inherit;font-size:14px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 11px;min-height:40px;box-sizing:border-box}
 .empz{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--ac);background:var(--ac2);border-radius:12px;padding:9px 14px;margin:0 0 12px;font-size:13.5px}.empz .warn,.eft .warn{color:#c77700}
 #tab-emp h4.eg{margin:16px 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu)}#tab-emp h4.eg:first-of-type{margin-top:4px}
 .efg{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px 14px}.ef{display:grid;gap:3px;font-size:12px;color:var(--mu)}.ef.lg{grid-column:1/-1}.ef input,.ef select{font:inherit;font-size:14px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 8px;width:100%;box-sizing:border-box}
@@ -390,7 +398,6 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
   </div>
   <nav class="tabs" role="tablist">
     <button type="button" data-tab="home" class="on">Início</button>
-    <button type="button" data-tab="emp" class="tabemp">🏢 Empresa</button>
     <button type="button" data-tab="ext">Extratos <span class="n" data-cnt="ext"></span></button>
     <button type="button" data-tab="ren">Rendimentos</button>
     <button type="button" data-tab="des">Despesas</button>
@@ -398,6 +405,8 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
     <button type="button" data-tab="obj">Objetivos</button>
     <button type="button" data-tab="fat">Faturas</button>
     <button type="button" data-tab="saude">Saúde financeira</button>
+    <button type="button" data-tab="chat" class="tabchat">💬 Chat <span class="bdgc" id="bdgChat" hidden></span></button>
+    <button type="button" data-tab="emp" class="tabemp">🏢 Empresa</button>
   </nav>
   <div class="dgpop mcpop" id="mcPop" hidden role="dialog" aria-label="Mês de conta"></div><div class="dgpop" id="dgPop" hidden role="dialog" aria-label="Movimentos"></div><button class="voltabt" id="voltaBt" type="button" hidden>↩ Voltar ao reembolso</button><div class="dica" id="dica" hidden role="dialog" aria-label="Dica"></div><div class="infpop" id="infPop" hidden role="tooltip"></div>
   <div class="exban" id="exBan" hidden>🧪 <b>Conta de exemplo</b><span class="tx"> — movimentos fictícios, só neste browser, separados dos seus dados. Explore à vontade.</span><span class="r"><button class="btn sm" type="button" data-exb="p">👤 <span class="t2">Voltar ao </span>Pessoal</button><button class="btn sm" type="button" data-exb="x" title="Apagar a conta de exemplo">🗑 Apagar</button></span></div>
@@ -487,13 +496,19 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
   </section>
   <!-- ================= EMPRESA (v0.13, só no contexto de uma empresa) ================= -->
   <section class="panel" id="tab-emp"><div id="empFicha"></div></section>
+  <!-- ================= CHAT (v0.14, agregados e empresas) ================= -->
+  <section class="panel" id="tab-chat"><div class="card chatc"><h3>💬 Chat <small id="chatTit"></small><span class="r"><small class="muted">só os membros veem</small></span></h3>
+    <div class="empty" id="chatSem" hidden></div><p class="note err" id="chatErr" hidden></p>
+    <div id="chatBox" hidden><div class="chatm" id="chatMsgs" aria-live="polite"></div>
+      <div class="chatf"><textarea id="chatTx" rows="1" maxlength="2000" placeholder="Escreva uma mensagem… (Enter envia, Shift+Enter muda de linha)" aria-label="Mensagem"></textarea><button class="btn pri" type="button" id="chatEnv">Enviar</button></div></div></div></section>
   <section class="panel" id="tab-prev">
-    <div class="card" id="rpCard"><h3>Rendimentos previstos <small>recorrentes e pontuais · usados no saldo previsto</small><span class="r"><button class="btn sm" type="button" id="rpAddR">＋ Recorrente</button><button class="btn sm" type="button" id="rpAddP">＋ Pontual</button><button class="btn sm" type="button" id="rpSug" title="Procura nos Rendimentos as entidades que pagam todos os meses e propõe o valor típico">✨ Sugerir a partir dos Rendimentos</button></span></h3>
-      <div id="rpLista"></div></div>
-    <div class="card"><h3>Saldo previsto <small>rendimentos − despesas, mês a mês</small><span class="r"><span class="nav pvnav" id="rpNav"><button type="button" data-pvy="-1" aria-label="Ano anterior">‹</button><b id="rpAno"></b><button type="button" data-pvy="1" aria-label="Ano seguinte">›</button></span></span></h3>
+    <div class="card"><h3>Saldo previsto <small>rendimentos − despesas, mês a mês</small><span class="r"><span class="nav pvnav" id="pvNav"><button type="button" data-pvy="-1" aria-label="Ano anterior">‹</button><b id="pvAno"></b><button type="button" data-pvy="1" aria-label="Ano seguinte">›</button></span></span></h3>
       <div class="pvsum" id="rpKpis"></div><div id="rpGrid"></div><p class="note" id="rpNota"></p></div>
-    <div class="card"><h3>Despesas previstas <small>por referência · escreva a média por mês ou o total do ano · usada nas Despesas e no Início</small><span class="r"><span class="nav pvnav" id="pvNav"><button type="button" data-pvy="-1" aria-label="Ano anterior">‹</button><b id="pvAno"></b><button type="button" data-pvy="1" aria-label="Ano seguinte">›</button></span><button class="btn sm" type="button" id="pvOnly">Só com valores</button><button class="btn sm" type="button" id="pvUsar" title="Previsão = média mensal do ano anterior, em todas as referências">↺ Média do ano anterior em todas</button><button class="btn sm" type="button" id="pvLimpa">Limpar ano</button></span></h3>
+    <div class="seg pvtabs" id="pvTabs" role="tablist"><button type="button" data-pvt="des" class="on" role="tab">Despesas previstas</button><button type="button" data-pvt="ren" role="tab">Rendimentos previstos</button></div>
+    <div class="card" data-pvp="des"><h3>Despesas previstas <small>por referência · escreva a média por mês ou o total do ano · usada nas Despesas e no Início</small><span class="r"><button class="btn sm" type="button" id="pvOnly">Só com valores</button><button class="btn sm" type="button" id="pvUsar" title="Previsão = média mensal do ano anterior, em todas as referências">↺ Média do ano anterior em todas</button><button class="btn sm" type="button" id="pvLimpa">Limpar ano</button></span></h3>
       <div class="pvsum" id="prevTot"></div><div id="prevDes"></div><p class="note" id="prevNota"></p></div>
+    <div class="card" id="rpCard" data-pvp="ren" hidden><h3>Rendimentos previstos <small>recorrentes e pontuais · usados no saldo previsto</small><span class="r"><button class="btn sm" type="button" id="rpAddR">＋ Recorrente</button><button class="btn sm" type="button" id="rpAddP">＋ Pontual</button><button class="btn sm" type="button" id="rpSug" title="Procura nos Rendimentos as entidades que pagam todos os meses e propõe o valor típico">✨ Sugerir a partir dos Rendimentos</button></span></h3>
+      <div id="rpLista"></div></div>
   </section>
 
   <section class="panel" id="tab-des">
@@ -600,7 +615,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.13'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.14'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1310,6 +1325,7 @@ function render(){
   if(TAB==='des')renderDespesas(perX,k);
   if(TAB==='prev'){renderPrev();renderRendPrev()}
   if(TAB==='emp')renderEmp();
+  if(TAB==='chat')renderChat();
   if(CALC_ID&&!$('#calcPan').hidden)calcPinta();
 }
 
@@ -1420,7 +1436,6 @@ function rendReais(){const M={};DB.rend.concat(rendExt()).forEach(r=>{const p=r.
 function despReais(){const M={};expandeC(DB.mov).forEach(m=>{if(!contaInicio(m))return;if(m.valor<0||eReemb(m)){const p=m.dm.slice(0,7);M[p]=(M[p]||0)-m.valor}});return M}
 const despPrevMes=Y=>DB.cats.filter(c=>!eFora(c.nome)).reduce((s,c)=>s+c.refs.reduce((t,r)=>t+pvK(Y,c.nome+'›'+r),0),0);
 function renderRendPrev(){const Y=prevAno(),ms=mesesAno(Y),hm=hoje().slice(0,7),L=rpL(),RR=rendReais(),DR=despReais(),dp=despPrevMes(Y);
-  $('#rpAno').textContent=anoTxt(new Date(Y,MES1,1));
   const ents=uniq(entTodas().map(entN)).sort((a,b)=>a.localeCompare(b,'pt'));
   $('#rpLista').innerHTML=L.length?`<div class="tw"><table class="t rpt"><thead><tr><th>Entidade</th><th>Descrição</th><th class="num">Valor</th><th>Periodicidade</th><th>Desde / mês</th><th>Até</th><th title="Dia do mês em que costuma receber (só informativo)">Dia</th><th class="num" title="Quanto conta no ano escolhido">No ano</th><th></th></tr></thead><tbody>${L.map(x=>{const pon=x.per==='0',na=ms.reduce((s,p)=>s+rpValor(x,p),0);
     return `<tr data-rpid="${esc(x.id)}"><td><input data-rpf="ent" value="${esc(x.ent||'')}" list="dlRpEnt" placeholder="Entidade" aria-label="Entidade"></td><td><input data-rpf="desc" value="${esc(x.desc||'')}" placeholder="${pon?'ex.: Subsídio de Natal':'ex.: Ordenado'}" aria-label="Descrição"></td>
@@ -1467,7 +1482,7 @@ $('#rpLista').addEventListener('change',e=>{const i=e.target.closest('[data-rpf]
   if(f==='v')x.v=Math.abs(num(i.value));else if(f==='dia'){const d=parseInt(i.value,10);x.dia=d>=1&&d<=31?d:''}else{x[f]=i.value.trim();if(f==='per'&&x.per==='0')x.fim=''}
   trk('rend_prev',{});save();render()});
 $('#rpLista').addEventListener('click',e=>{const b=e.target.closest('[data-rpdel]');if(!b)return;const x=rpL().find(y=>y.id===b.dataset.rpdel);if(x&&(x.ent||+x.v)&&!confirm(`Apagar o rendimento previsto "${x.ent||x.desc}"?`))return;DB.rendPrev=rpL().filter(y=>y.id!==b.dataset.rpdel);save();render()});
-$('#rpNav').addEventListener('click',e=>{const b=e.target.closest('[data-pvy]');if(!b)return;PREVY=prevAno()+(+b.dataset.pvy);render()});
+$('#pvTabs').addEventListener('click',e=>{const b=e.target.closest('[data-pvt]');if(!b)return;$$('#pvTabs [data-pvt]').forEach(x=>x.classList.toggle('on',x===b));$$('#tab-prev [data-pvp]').forEach(c=>c.hidden=c.dataset.pvp!==b.dataset.pvt)}); // v0.14: Despesas | Rendimentos previstos
 
 /* ================= v0.13: aba Empresa (só no contexto de uma empresa) ================= */
 /* DB.empresa={f:{campo:valor},socios:[{nome,cargo,quota}],contas:[{banco,iban,obs}],feito:{chave:1},prazos:[{id,nome,per:'m'|'a',dia,mes}]} */
@@ -1504,45 +1519,99 @@ function proxPrazos(){const a0=isoD(new Date(Date.now()-60*864e5)),a=EMP().desde
 function renderEmpPrazo(){const el=$('#empPrazo');if(!el)return;if(!eEmp()){el.hidden=true;return}const L=proxPrazos().filter(x=>diasAte(x.d)<=30);
   if(!L.length){el.hidden=true;return}const x=L[0],at=L.filter(y=>y.d<hoje()).length;
   el.innerHTML=`<span>📅 <b>${at?'Prazo em atraso':'Próximo prazo'}:</b> ${esc(x.nome)} <small class="muted">(${esc(x.ref)})</small> — até ${fmtD(x.d)} · <b class="${diasAte(x.d)<0?'neg':diasAte(x.d)<=7?'warn':''}">${quandoTxt(x.d)}</b>${L.length>1?` <small class="muted">· mais ${L.length-1} por fazer até ${fmtD(L[L.length-1].d)}</small>`:''}</span><button class="btn sm" type="button" data-tab="emp">Ver prazos</button>`;el.hidden=false}
-function renderEmp(){const o=EMP(),f=o.f;
-  const campo=([k,l,t,ph,larga,op])=>{t=t||'txt';const v=f[k];
+/* v0.14: ficha só de leitura com ✏ Editar; contactos (nome, categoria, telemóvel, email, morada, empresa) */
+let EMPED=false;const CONT_CAT=['Cliente','Fornecedor','Contabilista','Banco','Parceiro','Trabalhador','Outro'];
+function renderEmp(){const o=EMP(),f=o.f,ed=EMPED;o.contactos=o.contactos||[];
+  const vTxt=([k,l,t,ph])=>{const v=f[k];if(t==='chk')return v?'Sim':'Não';if(!v)return '';if(t==='date')return fmtD(v);if(t==='email')return `<a href="mailto:${esc(v)}">${esc(v)}</a>`;if(t==='tel')return `<a href="tel:${esc(String(v).replace(/\s/g,''))}">${esc(v)}</a>`;if(k==='site')return `<a href="${/^https?:/i.test(v)?esc(v):'https://'+esc(v)}" target="_blank" rel="noopener">${esc(v)}</a>`;return esc(v)};
+  const campo=([k,l,t,ph,larga])=>{t=t||'txt';const v=f[k];
+    if(!ed){const x=vTxt([k,l,t,ph]);return `<div class="ef ro${larga?' lg':''}"><span>${l}</span><b>${x||'<i class="muted">—</i>'}</b></div>`}
     if(t==='chk')return `<label class="ef chk"><input type="checkbox" data-ef="${k}"${v?' checked':''}> ${l}</label>`;
     if(t==='sel')return `<label class="ef"><span>${l}</span><select data-ef="${k}">${ph.map(x=>`<option value="${esc(x)}"${x===(v||'')?' selected':''}>${x||'—'}</option>`).join('')}</select></label>`;
     return `<label class="ef${larga?' lg':''}"><span>${l}</span><input type="${t==='txt'?'text':t}" data-ef="${k}" value="${esc(v||'')}"${ph?` placeholder="${esc(ph)}"`:''}></label>`};
-  const nm=f.nome||f.denom||CTX.nome||'Empresa';
+  const nm=f.nome||f.denom||CTX.nome||'Empresa',vazia=!EMPKEYS.some(k=>f[k])&&!o.socios.length&&!o.contas.length&&!f.notas;
   const P=proxPrazos(),h=hoje(),F=o.feito,temReg=f.iva||f.irc||f.trab||f.saft||o.prazos.length||f.certV;
   const feitos=prazosEmp(isoD(new Date(Date.now()-60*864e5)),isoD(new Date(Date.now()+75*864e5))).filter(x=>F[x.k]);
-  $('#empFicha').innerHTML=`<div class="card"><h3>🏢 ${esc(nm)} <small>dados da empresa · partilhados com os membros da empresa</small></h3>
+  const q=o.socios.reduce((s,x)=>s+(+x.quota||0),0);
+  const socios=ed?(o.socios.length?`<div class="tw"><table class="t eft"><thead><tr><th>Nome</th><th>Cargo</th><th class="num">Quota (%)</th><th></th></tr></thead><tbody>${o.socios.map((s,i)=>`<tr><td><input data-es="${i}|nome" value="${esc(s.nome||'')}" placeholder="Nome"></td><td><select data-es="${i}|cargo">${['Sócio-gerente','Sócio','Gerente','Administrador','Outro'].map(c=>`<option${c===(s.cargo||'Sócio-gerente')?' selected':''}>${c}</option>`).join('')}</select></td><td class="num"><input class="pv" data-es="${i}|quota" value="${s.quota!=null&&s.quota!==''?String(s.quota).replace('.',','):''}" inputmode="decimal" placeholder="—"></td><td><button class="btn ic sm" type="button" data-esdel="${i}" title="Apagar">🗑</button></td></tr>`).join('')}</tbody></table></div>`:'')+'<button class="btn sm" type="button" id="esAdd">＋ Sócio / gerente</button>'
+    :(o.socios.length?`<div class="tw"><table class="t eft"><thead><tr><th>Nome</th><th>Cargo</th><th class="num">Quota</th></tr></thead><tbody>${o.socios.map(s=>`<tr><td>${esc(s.nome||'—')}</td><td>${esc(s.cargo||'')}</td><td class="num">${s.quota!==''&&s.quota!=null?(+s.quota).toLocaleString('pt-PT')+' %':'—'}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">—</p>');
+  const contas=ed?(o.contas.length?`<div class="tw"><table class="t eft"><thead><tr><th>Banco</th><th>IBAN</th><th>Notas</th><th></th></tr></thead><tbody>${o.contas.map((c,i)=>`<tr><td><input data-ecb="${i}|banco" value="${esc(c.banco||'')}" list="dlEmpBanco" placeholder="Banco"></td><td><input data-ecb="${i}|iban" value="${esc(c.iban||'')}" placeholder="PT50 …" style="min-width:230px"></td><td><input data-ecb="${i}|obs" value="${esc(c.obs||'')}" placeholder="ex.: conta à ordem"></td><td><button class="btn ic sm" type="button" data-ecdel="${i}" title="Apagar">🗑</button></td></tr>`).join('')}</tbody></table></div><datalist id="dlEmpBanco">${uniq(DB.mov.map(m=>m.banco)).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>`:'')+'<button class="btn sm" type="button" id="ecAdd">＋ Conta bancária</button>'
+    :(o.contas.length?`<div class="tw"><table class="t eft"><thead><tr><th>Banco</th><th>IBAN</th><th>Notas</th></tr></thead><tbody>${o.contas.map(c=>`<tr><td>${esc(c.banco||'—')}</td><td class="mono">${esc(c.iban||'—')}</td><td class="muted">${esc(c.obs||'')}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">—</p>');
+  const C=o.contactos,cats=uniq(CONT_CAT.concat(C.map(c=>c.cat).filter(Boolean)));
+  const contactos=`<div class="ectop"><input type="search" id="ecQ" placeholder="🔍 Procurar contacto…" aria-label="Procurar contacto"><select id="ecCat" aria-label="Categoria"><option value="">Todas as categorias</option>${uniq(C.map(c=>c.cat).filter(Boolean)).sort((a,b)=>a.localeCompare(b,'pt')).map(c=>`<option>${esc(c)}</option>`).join('')}</select>${ed?'':`<span class="muted">${C.length} contacto${C.length===1?'':'s'}</span>`}</div>`
+    +(C.length?`<div class="tw"><table class="t eft ect"><thead><tr><th>Nome</th><th>Categoria</th><th>Telemóvel</th><th>Email</th><th>Morada</th><th>Empresa</th>${ed?'<th></th>':''}</tr></thead><tbody>${C.map((c,i)=>{const busca=esc(norm([c.nome,c.cat,c.tel,c.email,c.morada,c.emp].join(' ')));
+      return ed?`<tr data-ecr="${busca}" data-ecc="${esc(c.cat||'')}"><td><input data-ect="${i}|nome" value="${esc(c.nome||'')}" placeholder="Nome"></td><td><input data-ect="${i}|cat" value="${esc(c.cat||'')}" list="dlContCat" placeholder="Categoria"></td><td><input type="tel" data-ect="${i}|tel" value="${esc(c.tel||'')}" placeholder="9xx xxx xxx"></td><td><input type="email" data-ect="${i}|email" value="${esc(c.email||'')}" placeholder="email"></td><td><input data-ect="${i}|morada" value="${esc(c.morada||'')}" placeholder="Morada"></td><td><input data-ect="${i}|emp" value="${esc(c.emp||'')}" placeholder="Empresa"></td><td><button class="btn ic sm" type="button" data-ectdel="${i}" title="Apagar">🗑</button></td></tr>`
+        :`<tr data-ecr="${busca}" data-ecc="${esc(c.cat||'')}"><td><b>${esc(c.nome||'—')}</b></td><td>${c.cat?`<span class="tag">${esc(c.cat)}</span>`:''}</td><td>${c.tel?`<a href="tel:${esc(c.tel.replace(/\s/g,''))}">${esc(c.tel)}</a>`:''}</td><td>${c.email?`<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`:''}</td><td style="white-space:normal">${esc(c.morada||'')}</td><td>${esc(c.emp||'')}</td></tr>`}).join('')}</tbody></table></div><datalist id="dlContCat">${cats.map(c=>`<option value="${esc(c)}">`).join('')}</datalist><p class="muted" id="ecNada" hidden>Nenhum contacto com esta pesquisa.</p>`
+      :`<p class="muted">Ainda não há contactos.${ed?'':' Carregue em ✏ Editar para acrescentar.'}</p>`)
+    +(ed?'<button class="btn sm" type="button" id="ectAdd">＋ Contacto</button>':'');
+  $('#empFicha').innerHTML=`<div class="card${ed?' eed':''}"><h3>🏢 ${esc(nm)} <small>dados da empresa · partilhados com os membros da empresa</small><span class="r"><button class="btn sm${ed?' pri':''}" type="button" id="empEd">${ed?'✓ Concluir':'✏ Editar'}</button></span></h3>
+    ${!ed&&vazia?'<div class="empty"><b>Ficha por preencher</b>Carregue em ✏ Editar para escrever os dados da empresa (NIPC, regime de IVA, sócios, contas…).</div>':''}
     ${EMPF.map(([g,cs])=>`<h4 class="eg">${g}</h4><div class="efg">${cs.map(campo).join('')}</div>`).join('')}
-    <h4 class="eg">Sócios e gerentes</h4>${o.socios.length?`<div class="tw"><table class="t eft"><thead><tr><th>Nome</th><th>Cargo</th><th class="num">Quota (%)</th><th></th></tr></thead><tbody>${o.socios.map((s,i)=>`<tr><td><input data-es="${i}|nome" value="${esc(s.nome||'')}" placeholder="Nome"></td><td><select data-es="${i}|cargo">${['Sócio-gerente','Sócio','Gerente','Administrador','Outro'].map(c=>`<option${c===(s.cargo||'Sócio-gerente')?' selected':''}>${c}</option>`).join('')}</select></td><td class="num"><input class="pv" data-es="${i}|quota" value="${s.quota!=null&&s.quota!==''?String(s.quota).replace('.',','):''}" inputmode="decimal" placeholder="—"></td><td><button class="btn ic sm" type="button" data-esdel="${i}" title="Apagar">🗑</button></td></tr>`).join('')}</tbody></table></div>${(()=>{const q=o.socios.reduce((s,x)=>s+(+x.quota||0),0);return q&&Math.abs(q-100)>.01?`<p class="note warn">As quotas somam ${q.toLocaleString('pt-PT')} % (deviam somar 100 %).</p>`:''})()}`:''}
-    <button class="btn sm" type="button" id="esAdd">＋ Sócio / gerente</button>
-    <h4 class="eg">Contas bancárias</h4>${o.contas.length?`<div class="tw"><table class="t eft"><thead><tr><th>Banco</th><th>IBAN</th><th>Notas</th><th></th></tr></thead><tbody>${o.contas.map((c,i)=>`<tr><td><input data-ecb="${i}|banco" value="${esc(c.banco||'')}" list="dlEmpBanco" placeholder="Banco"></td><td><input data-ecb="${i}|iban" value="${esc(c.iban||'')}" placeholder="PT50 …" style="min-width:230px"></td><td><input data-ecb="${i}|obs" value="${esc(c.obs||'')}" placeholder="ex.: conta à ordem"></td><td><button class="btn ic sm" type="button" data-ecdel="${i}" title="Apagar">🗑</button></td></tr>`).join('')}</tbody></table></div><datalist id="dlEmpBanco">${uniq(DB.mov.map(m=>m.banco)).map(b=>`<option value="${esc(b)}">`).join('')}</datalist>`:''}
-    <button class="btn sm" type="button" id="ecAdd">＋ Conta bancária</button>
-    <h4 class="eg">Notas</h4><textarea class="enotas" data-ef="notas" placeholder="Notas livres (ex.: datas de assembleias, contactos). Não guarde aqui palavras-passe.">${esc(f.notas||'')}</textarea></div>
+    <h4 class="eg">Sócios e gerentes</h4>${socios}${q&&Math.abs(q-100)>.01?`<p class="note warn">As quotas somam ${q.toLocaleString('pt-PT')} % (deviam somar 100 %).</p>`:''}
+    <h4 class="eg">Contas bancárias</h4>${contas}
+    <h4 class="eg">Notas</h4>${ed?`<textarea class="enotas" data-ef="notas" placeholder="Notas livres (ex.: datas de assembleias, contactos). Não guarde aqui palavras-passe.">${esc(f.notas||'')}</textarea>`:`<p style="white-space:pre-wrap">${f.notas?esc(f.notas):'<span class="muted">—</span>'}</p>`}</div>
+  <div class="card" id="empCont"><h3>📇 Contactos <small>clientes, fornecedores, contabilista…</small>${ed?'':'<span class="r"><button class="btn sm" type="button" data-emped="1">✏ Editar</button></span>'}</h3>${contactos}</div>
   <div class="card"><h3>📅 Prazos <small>próximos 75 dias e em atraso · a partir do regime acima</small></h3>
-    ${!temReg?'<div class="empty"><b>Sem prazos</b>Escolha o regime de IVA e de IRC e marque as opções acima para ver as obrigações da empresa.</div>'
+    ${!temReg?'<div class="empty"><b>Sem prazos</b>Carregue em ✏ Editar e escolha o regime de IVA e de IRC para ver as obrigações da empresa.</div>'
       :P.length?`<div class="tw"><table class="t eft"><thead><tr><th>Até</th><th>Obrigação</th><th>Refere-se a</th><th></th><th></th></tr></thead><tbody>${P.map(x=>{const n=diasAte(x.d);return `<tr class="${x.d<h?'atr':n<=7?'perto':''}"><td><b>${fmtD(x.d)}</b></td><td${x.tip?` title="${esc(x.tip)}"`:''}>${esc(x.nome)}${x.tip?' <span class="muted">ⓘ</span>':''}</td><td class="muted">${esc(x.ref)}</td><td class="muted">${quandoTxt(x.d)}</td><td><button class="btn sm" type="button" data-epf="${esc(x.k)}">✓ Feito</button></td></tr>`}).join('')}</tbody></table></div>`:'<p class="muted">Nada por fazer nos próximos 75 dias. 🎉</p>'}
     ${feitos.length?`<details class="efeitos"><summary>Feitos (${feitos.length})</summary><ul>${feitos.map(x=>`<li>${fmtD(x.d)} · ${esc(x.nome)} <small class="muted">(${esc(x.ref)})</small> <button class="btn ic sm" type="button" data-epf="${esc(x.k)}" data-desfaz="1" title="Desfazer">↺</button></li>`).join('')}</ul></details>`:''}
-    <h4 class="eg">Outros prazos <small class="muted">acrescentados por si</small></h4>
-    ${o.prazos.length?`<div class="tw"><table class="t eft"><thead><tr><th>Obrigação</th><th>Repete</th><th>Dia</th><th>Mês</th><th></th></tr></thead><tbody>${o.prazos.map(x=>`<tr data-epid="${esc(x.id)}"><td><input data-epz="nome" value="${esc(x.nome||'')}" placeholder="ex.: Pagar a renda do escritório"></td><td><select data-epz="per"><option value="m"${x.per==='m'?' selected':''}>Todos os meses</option><option value="a"${x.per==='a'?' selected':''}>Todos os anos</option></select></td><td><input class="pv rpdia" data-epz="dia" value="${esc(x.dia||'')}" inputmode="numeric"></td><td>${x.per==='a'?`<select data-epz="mes">${MESES.map((m,i)=>`<option value="${i+1}"${+x.mes===i+1?' selected':''}>${m}</option>`).join('')}</select>`:'<span class="muted">—</span>'}</td><td><button class="btn ic sm" type="button" data-epdel="${esc(x.id)}" title="Apagar">🗑</button></td></tr>`).join('')}</tbody></table></div>`:''}
-    <button class="btn sm" type="button" id="epAdd">＋ Prazo</button>
-    <p class="note">Em atraso só aparecem os prazos desde que configurou o regime (${o.desde?fmtD(o.desde):'hoje'}), até 60 dias para trás. Datas gerais da AT e da Segurança Social (ao sábado ou domingo passam para segunda-feira; feriados não estão contados). Os prazos podem mudar ou ser prorrogados — confirme com o contabilista ou no Portal das Finanças.</p></div>`}
+    ${ed||o.prazos.length?`<h4 class="eg">Outros prazos <small class="muted">acrescentados por si</small></h4>`:''}
+    ${ed?(o.prazos.length?`<div class="tw"><table class="t eft"><thead><tr><th>Obrigação</th><th>Repete</th><th>Dia</th><th>Mês</th><th></th></tr></thead><tbody>${o.prazos.map(x=>`<tr data-epid="${esc(x.id)}"><td><input data-epz="nome" value="${esc(x.nome||'')}" placeholder="ex.: Pagar a renda do escritório"></td><td><select data-epz="per"><option value="m"${x.per==='m'?' selected':''}>Todos os meses</option><option value="a"${x.per==='a'?' selected':''}>Todos os anos</option></select></td><td><input class="pv rpdia" data-epz="dia" value="${esc(x.dia||'')}" inputmode="numeric"></td><td>${x.per==='a'?`<select data-epz="mes">${MESES.map((m,i)=>`<option value="${i+1}"${+x.mes===i+1?' selected':''}>${m}</option>`).join('')}</select>`:'<span class="muted">—</span>'}</td><td><button class="btn ic sm" type="button" data-epdel="${esc(x.id)}" title="Apagar">🗑</button></td></tr>`).join('')}</tbody></table></div>`:'')+'<button class="btn sm" type="button" id="epAdd">＋ Prazo</button>'
+      :o.prazos.length?`<ul class="eplist">${o.prazos.map(x=>`<li>${esc(x.nome||'(sem nome)')} <small class="muted">— ${x.per==='a'?`todos os anos a ${x.dia||'?'} de ${(MESES[(+x.mes||1)-1]||'').toLowerCase()}`:`todos os meses ao dia ${x.dia||'?'}`}</small></li>`).join('')}</ul>`:''}
+    <p class="note">Em atraso só aparecem os prazos desde que configurou o regime (${o.desde?fmtD(o.desde):'hoje'}), até 60 dias para trás. Datas gerais da AT e da Segurança Social (ao sábado ou domingo passam para segunda-feira; feriados não estão contados). Os prazos podem mudar ou ser prorrogados — confirme com o contabilista ou no Portal das Finanças.</p></div>`;
+  filtraCont()}
+function filtraCont(){const q=norm(($('#ecQ')||{}).value||''),c=($('#ecCat')||{}).value||'';let n=0,t=0;
+  $$('#empCont tr[data-ecr]').forEach(tr=>{t++;const ok=(!q||tr.dataset.ecr.includes(q))&&(!c||tr.dataset.ecc===c);tr.hidden=!ok;if(ok)n++});const nd=$('#ecNada');if(nd)nd.hidden=!(t&&!n)}
+$('#tab-emp').addEventListener('input',e=>{if(e.target.id==='ecQ')filtraCont()});
 $('#tab-emp').addEventListener('change',e=>{const t=e.target,d=t.dataset,o=EMP();
+  if(t.id==='ecCat'){filtraCont();return}
   if(d.ef){o.f[d.ef]=t.type==='checkbox'?t.checked:t.value.trim();if(d.ef==='nipc'&&o.f.nipc&&!/^\d{9}$/.test(o.f.nipc.replace(/\s/g,'')))toast('O NIPC tem 9 dígitos — confirme.')}
   else if(d.es){const [i,c]=d.es.split('|');o.socios[i][c]=c==='quota'?(t.value.trim()?num(t.value):''):t.value.trim()}
   else if(d.ecb){const [i,c]=d.ecb.split('|');o.contas[i][c]=c==='iban'?t.value.toUpperCase().replace(/\s+/g,' ').trim():t.value.trim()}
+  else if(d.ect){const [i,c]=d.ect.split('|');o.contactos[i][c]=t.value.trim();if(c==='email'&&o.contactos[i].email&&!/^\S+@\S+\.\S+$/.test(o.contactos[i].email))toast('Confirme o email do contacto.')}
   else if(d.epz){const x=o.prazos.find(y=>y.id===t.closest('[data-epid]').dataset.epid);if(!x)return;if(d.epz==='dia'){const v=parseInt(t.value,10);x.dia=v>=1&&v<=31?v:''}else x[d.epz]=t.value.trim();if(x.per==='a'&&!x.mes)x.mes=1}
   else return;if(!o.desde&&(o.f.iva||o.f.irc||o.f.trab||o.f.saft||o.prazos.length))o.desde=hoje(); // só mostra em atraso os prazos depois de configurar
   trk('empresa',{});save();render()});
-$('#tab-emp').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset,o=EMP();
+$('#tab-emp').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset,o=EMP();o.contactos=o.contactos||[];
+  if(b.id==='empEd'||d.emped){EMPED=!EMPED;render();if(d.emped)requestAnimationFrame(()=>{const c=$('#empCont');if(c)c.scrollIntoView({block:'start'})});return}
   if(b.id==='esAdd')o.socios.push({nome:'',cargo:'Sócio-gerente',quota:''});
   else if(b.id==='ecAdd')o.contas.push({banco:'',iban:'',obs:''});
+  else if(b.id==='ectAdd'){o.contactos.push({nome:'',cat:'',tel:'',email:'',morada:'',emp:''});save();render();requestAnimationFrame(()=>{const i=$$('#empCont [data-ect$="|nome"]').pop();if(i)i.focus()});return}
   else if(b.id==='epAdd')o.prazos.push({id:uid('pz'),nome:'',per:'m',dia:'',mes:''});
   else if(d.esdel!=null){if(!confirm('Apagar este sócio / gerente?'))return;o.socios.splice(+d.esdel,1)}
   else if(d.ecdel!=null){if(!confirm('Apagar esta conta bancária?'))return;o.contas.splice(+d.ecdel,1)}
+  else if(d.ectdel!=null){const c=o.contactos[+d.ectdel];if(c&&c.nome&&!confirm(`Apagar o contacto "${c.nome}"?`))return;o.contactos.splice(+d.ectdel,1)}
   else if(d.epdel){o.prazos=o.prazos.filter(x=>x.id!==d.epdel)}
   else if(d.epf){if(d.desfaz)delete o.feito[d.epf];else o.feito[d.epf]=1}
   else return;save();render()});
+
+/* ================= v0.14: Chat do agregado / empresa (Supabase: chat_mensagens, chat_enviar, chat_lido; por ler via o site) ================= */
+const CHAT={id:null,L:[],ult:null,t:null,aEnviar:false};
+const chatPorLer=()=>{try{const m=window.parent.FP_CHAT||{};return CTX.t==='a'?(+m[CTX.id]||0):0}catch(e){return 0}};
+function chatBadge(){const b=$('#bdgChat');if(!b)return;const n=chatPorLer();b.hidden=!n;b.textContent=n>99?'99+':n}
+addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-chat'){chatBadge();if(abaAtiva()==='chat'&&CTX.t==='a'&&chatPorLer())chatCarrega()}});
+const hhmm=d=>{const x=new Date(d),h=hoje();const dia=`${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}`;return (dia===h?'':fmtD(dia).slice(0,5)+' ')+`${pad(x.getHours())}:${pad(x.getMinutes())}`};
+function chatPinta(){const el=$('#chatMsgs');if(!el)return;const fim=el.scrollHeight-el.scrollTop-el.clientHeight<60;
+  el.innerHTML=CHAT.L.length?CHAT.L.map((m,i)=>{const p=CHAT.L[i-1],dia=m.created_at.slice(0,10),sep=!p||p.created_at.slice(0,10)!==dia?`<div class="cdia">${fmtD(dia)}</div>`:'',mesmo=p&&p.autor===m.autor&&!sep;
+    return `${sep}<div class="cmsg${m.eu?' eu':''}">${m.eu||mesmo?'':`<b>${esc(m.autor)}</b>`}<div class="ctx">${esc(m.texto)}</div><small>${hhmm(m.created_at).slice(-5)}</small></div>`}).join('')
+    :'<div class="empty"><b>Ainda não há mensagens</b>Escreva a primeira — só os membros deste agregado / empresa a veem.</div>';
+  if(fim||CHAT.primeira){el.scrollTop=el.scrollHeight;CHAT.primeira=false}}
+async function chatCarrega(){if(CTX.t!=='a'||!SY.sb||!SY.user)return;const id=CTX.id;
+  if(CHAT.id!==id){CHAT.id=id;CHAT.L=[];CHAT.ult=null;CHAT.primeira=true;chatPinta()}
+  try{const {data,error}=await SY.sb.rpc('chat_mensagens',{p_agregado:id,p_desde:CHAT.ult});if(error)throw error;if(CHAT.id!==id)return;
+    const novas=(data||[]).filter(m=>!CHAT.L.some(x=>x.id===m.id));if(novas.length||CHAT.primeira){CHAT.L=CHAT.L.concat(novas);if(CHAT.L.length)CHAT.ult=CHAT.L[CHAT.L.length-1].created_at;chatPinta()}
+    if(document.visibilityState==='visible'&&abaAtiva()==='chat'&&(novas.some(m=>!m.eu)||chatPorLer())){await SY.sb.rpc('chat_lido',{p_agregado:id});try{window.parent.FPChat&&window.parent.FPChat.atualiza()}catch(e){}}
+    $('#chatErr').hidden=true}catch(e){$('#chatErr').hidden=false;$('#chatErr').textContent='Não foi possível carregar as mensagens: '+(e.message||e)}}
+function renderChat(){const ok=CTX.t==='a',log=!!(SY.sb&&SY.user);$('#chatTit').textContent=ok?(CTX.emp?'🏢 ':'👪 ')+(CTX.nome||''):'';
+  $('#chatSem').hidden=ok&&log;$('#chatBox').hidden=!(ok&&log);$('#chatSem').innerHTML=!ok?'O chat existe nos agregados e nas empresas.':'Entre na conta para usar o chat.';
+  if(!ok||!log)return;if(CHAT.id!==CTX.id)chatPinta();chatCarrega();clearInterval(CHAT.t);CHAT.t=setInterval(()=>{if(abaAtiva()!=='chat'||document.visibilityState!=='visible'){clearInterval(CHAT.t);CHAT.t=null;return}chatCarrega()},8000)}
+async function chatEnvia(){const i=$('#chatTx'),t=i.value.trim();if(!t||CHAT.aEnviar||CTX.t!=='a'||!SY.sb)return;CHAT.aEnviar=true;$('#chatEnv').disabled=true;
+  try{const {error}=await SY.sb.rpc('chat_enviar',{p_agregado:CTX.id,p_texto:t});if(error)throw error;i.value='';i.style.height='';trk('chat',{});await chatCarrega();const el=$('#chatMsgs');el.scrollTop=el.scrollHeight}
+  catch(e){toast('Não foi possível enviar: '+(e.message||e))}finally{CHAT.aEnviar=false;$('#chatEnv').disabled=false;i.focus()}}
+$('#chatEnv').addEventListener('click',chatEnvia);
+$('#chatTx').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();chatEnvia()}});
+$('#chatTx').addEventListener('input',e=>{const t=e.target;t.style.height='';t.style.height=Math.min(140,t.scrollHeight)+'px'});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&abaAtiva()==='chat')renderChat()});
+setInterval(chatBadge,1500);
 window.fpTipos={lista:()=>JSON.parse(JSON.stringify(DB.tiposDesp)),
   uso:()=>{const u={};Object.values(DB.refTipo).forEach(id=>u[id]=(u[id]||0)+1);return u},
   grava:(tipos,remap)=>{DB.tiposDesp=tipos.filter(t=>t&&t.id&&String(t.nome||'').trim()).map(t=>({id:String(t.id),nome:String(t.nome).trim(),cor:t.cor||'#90a4ae'}));
@@ -2121,7 +2190,7 @@ function limAtingido(t){const lim=+LIM[t];if(!lim)return false;const n=t==='cats
 const SCR={};let SCRL=true;try{SCRL=localStorage.getItem('fp_scroll')!=='0'}catch(e){}addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-scroll')SCRL=!!e.data.on});
 function go(tab,keep,mem){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;if(muda)trk('aba',{aba:tab});if(muda)SCR[abaAtiva()]=scrollY;const vol=mem&&SCRL&&muda&&SCR[tab]>0?SCR[tab]:null;
   if(muda&&abaAtiva()==='ext'&&!SCRL){EXT.n=EXT_PASSO;DESENHADA.ext=-1;if(EXT_IO)EXT_IO.disconnect();const t=$('#extTable');if(t)t.innerHTML=''} /* ao sair dos Extratos volta às 100 primeiras linhas */
-  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des','prev','emp'].includes(tab))render();if(vol!=null){window.scrollTo({top:vol});requestAnimationFrame(()=>window.scrollTo({top:vol}))}else if(!keep)window.scrollTo({top:0});fixaCab();if(muda)setTimeout(()=>dica(tab),450)}
+  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des','prev','emp','chat'].includes(tab))render();if(vol!=null){window.scrollTo({top:vol});requestAnimationFrame(()=>window.scrollTo({top:vol}))}else if(!keep)window.scrollTo({top:0});fixaCab();if(muda)setTimeout(()=>dica(tab),450)}
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-dtog],[data-dgo],[data-dgox],[data-corq],[data-pvusa],[data-corset],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-gorendx],[data-goref],[data-reemb],[data-rbsel],[data-extmais],[data-calc],[data-calcmov],[data-calcrend],[data-sptog],[data-split],[data-spdel],[data-spreemb],[data-reembp],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
   const d=t.dataset;
@@ -2530,7 +2599,7 @@ document.addEventListener('click',e=>{const p=$('#infPop'),b=e.target.closest('.
   p.textContent=txt;p.hidden=false;const r=b.getBoundingClientRect(),pw=p.offsetWidth;p.style.left=Math.min(innerWidth-pw-10,Math.max(10,r.left-20))+'px';const ph=p.offsetHeight;p.style.top=(r.bottom+6+ph>innerHeight-8?Math.max(8,r.top-ph-6):r.bottom+6)+'px'},true);
 addEventListener('scroll',()=>{const p=$('#infPop');if(p&&!p.hidden)p.hidden=true},{passive:true});
 $('#impRes').addEventListener('click',e=>{const b=e.target.closest('[data-amostra]');if(b)window.fpAmostra(b.dataset.amostra)});
-{const pc=()=>{document.documentElement.classList.toggle('ctxAgr',CTX.t==='a'&&!CTX.emp);document.documentElement.classList.toggle('ctxEmp',CTX.t==='a'&&!!CTX.emp);if(!(CTX.t==='a'&&CTX.emp)&&abaAtiva()==='emp')go('home')};pc();setInterval(pc,500)}
+{const pc=()=>{document.documentElement.classList.toggle('ctxAgr',CTX.t==='a'&&!CTX.emp);document.documentElement.classList.toggle('ctxEmp',CTX.t==='a'&&!!CTX.emp);if((!(CTX.t==='a'&&CTX.emp)&&abaAtiva()==='emp')||(CTX.t!=='a'&&abaAtiva()==='chat'))go('home')};pc();setInterval(pc,500)}
 $('#voltaBt').addEventListener('click',volta);
 window.fpCtx={atual:()=>({...CTX}),muda:(c)=>trocaCtx(c),db:()=>DB,temEx,
   exemplo:async()=>{const n=criaEx();trk('exemplo',{acao:'criar'});await trocaCtx({t:'x'});const h=new Date();P.m='mes';P.d=new Date(h.getFullYear(),h.getMonth()-1,1);$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel();render();avisaPer();return n},apagaEx};
