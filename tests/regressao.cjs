@@ -693,6 +693,23 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     window.plataforma=velho;await FPAdm.sessao(null);document.querySelector('#mSet').hidden=true;
     ok({ok:notif&&tabMin&&conv&&resp&&limpa&&fech&&rec&&term,notif,tabMin,conv,resp,limpa,fech,rec,term})}));
   t('D131','Sugestões em conversa: "As minhas" com respostas, responder, notificação até abrir; admin abre, responde e termina/reabre',z131.ok,z131);
+  const z141=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),velho=window.plataforma,ch=[];
+    const T={sugestoes:[{id:'s1',site_id:'financas',user_id:'u7',tipo:'Problema',texto:'Não elimina repetidos',email:'u7@exemplo.pt',por_ler:false,por_ler_user:false,fechada:false,ultima_de_admin:false,ultima_em:new Date().toISOString(),created_at:new Date().toISOString()}],
+      sugestao_mensagens:[{id:'m1',sugestao_id:'s1',de_admin:true,texto:'Vamos ver',created_at:new Date().toISOString()}],faq_perguntas:[]};
+    const q=t=>{const f=[];const o={select:()=>o,eq:(k,v)=>{f.push([k,v]);return o},order:()=>o,limit:()=>o,delete:()=>o,update:()=>o,
+      then:(res,rej)=>{const d=(T[t]||[]).filter(r=>f.every(([k,v])=>r[k]===v||(r[k]===undefined&&k==='site_id')));return Promise.resolve({data:d,count:d.length,error:null}).then(res,rej)}};return o};
+    window.plataforma={from:q,rpc:async(f,a)=>{ch.push(f+(a&&a.p_como?':'+a.p_como:''));if(f==='e_admin_site')return {data:true};if(f==='sugestao_nao_lida'){if(a.p_como==='admin')T.sugestoes[0].por_ler=true;else T.sugestoes[0].por_ler_user=true;return {data:null,error:null}}return {data:null,error:null}}};
+    await FPAdm.sessao({id:'u7',email:'u7@exemplo.pt'});document.querySelector('#mSet').hidden=true;document.querySelector('[data-set="sugestao"]').click();await W(150);
+    document.querySelector('#sgTabs [data-st="rec"]').click();await W(150);document.querySelector('#sgAdm [data-sgo]').click();await W(150);
+    const b=document.querySelector('#sgConv .cvb'),cs=b&&getComputedStyle(b),meta=!!b&&cs.display!=='flex'&&b.querySelector('.cvm').getBoundingClientRect().bottom<=b.querySelector('.cvx2').getBoundingClientRect().top+1;
+    const cab=!!document.querySelector('#sgConv .cvh .cvt [data-cvtipo]')&&/À espera de resposta/.test(document.querySelector('.cvh').textContent)&&/u7@exemplo\.pt/.test(document.querySelector('.cvt2').textContent);
+    document.querySelector('[data-cvnl]').click();await W(200);const nlAdm=ch.includes('sugestao_nao_lida:admin')&&T.sugestoes[0].por_ler&&document.querySelector('#sgConv').hidden&&/nova/.test(document.querySelector('#sgAdm').textContent);
+    await FPAdm.conta();await W(100);const aviso=!document.querySelector('#bdgMenu').hidden;
+    document.querySelector('#sgTabs [data-st="min"]').click();await W(150);const bl=document.querySelector('#sgMin [data-sgnl]');if(bl)bl.click();await W(200);
+    const nlAut=ch.includes('sugestao_nao_lida:autor')&&T.sugestoes[0].por_ler_user&&/nova resposta/.test(document.querySelector('#sgMin').textContent);
+    window.plataforma=velho;await FPAdm.sessao(null);document.querySelector('#mSet').hidden=true;
+    ok({ok:meta&&cab&&nlAdm&&aviso&&nlAut,meta,cab,nlAdm,aviso,nlAut,ch})}));
+  t('D141','Sugestões: ✉ Não lida na conversa e na lista (admin e autor) volta o aviso; conversa arrumada (cabeçalho com estado, balões com nome/hora por cima)',z141.ok,z141);
   console.log('v0.11c');
   {const fr=p.frames().find(f=>f.url().includes('financas.html'));await fr.evaluate(async()=>{await fpCtx.exemplo();go('ext')});await p.waitForTimeout(300);
    await fr.setInputFiles('#fExt',[path.join(FX,'santander_teste.xlsx'),path.join(FX,'activobank_teste.pdf')]);await p.waitForTimeout(2500);
