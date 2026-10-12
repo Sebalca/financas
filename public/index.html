@@ -184,6 +184,11 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
   .ctxsel{order:3;max-width:100%;overflow-x:auto;scrollbar-width:none}.ctxsel button{padding:5px 9px}.fper{order:4;flex:1 1 auto;justify-content:space-between;gap:6px}.fper .nv .lb{min-width:0;padding:4px 4px}}
 #fCtx .cdot,#empPop .cdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e53935;margin-left:6px;vertical-align:1px}
 .verban{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:120;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--ac);box-shadow:0 8px 28px rgba(0,0,0,.18);border-radius:14px;padding:10px 12px 10px 16px;font-size:14px;max-width:calc(100vw - 24px)}.verban[hidden]{display:none}.verban .opt{width:auto;margin:0}
+.lock{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:16px;background:color-mix(in srgb,var(--bg) 45%,transparent);backdrop-filter:blur(14px) saturate(.8);-webkit-backdrop-filter:blur(14px) saturate(.8)}.lock[hidden]{display:none}
+.lkbox{width:100%;max-width:360px;background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.25);display:grid;gap:10px;text-align:center}.lkbox img{margin:0 auto;border-radius:12px}.lkbox h2{margin:2px 0 0;font-size:19px}.lksub{margin:0;color:var(--mu);font-size:13.5px}
+.lkbox input{font:inherit;font-size:15px;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;width:100%;box-sizing:border-box}.lkbox #lkEmail{color:var(--mu);text-align:center;background:transparent;border-style:dashed}.lkpw{position:relative}.lkpw input{padding-right:42px}.lkpw .pwv{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:16px}
+.lkbox .bt.pri{padding:10px;font-size:15px}.lkmsg{min-height:18px;font-size:13px;color:var(--mu)}.lkmsg.err{color:#c62828}.lkmsg.ok{color:#2e7d32}.lklinks{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.lkl{border:0;background:none;color:var(--ac);cursor:pointer;font:inherit;font-size:12.5px;padding:2px}
+.lkopt{margin:12px 0 4px;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;font-size:13.5px}.lkopt select{font:inherit;margin:0 4px}.muted2{color:var(--mu);font-size:12.5px;display:block;margin-top:4px}body.locked{overflow:hidden}
 </style>
 <script>
 /* tema claro/escuro partilhado por todos os separadores */
@@ -266,7 +271,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
       <h3 style="margin-top:16px">Dependentes <small style="color:var(--mu);font-weight:400" id="pfDepN"></small></h3><p class="note2" style="margin-top:0">Indique o ano de nascimento de cada dependente (filhos ou outros a cargo).</p>
       <div id="pfDeps" class="pfdeps"></div><div class="grp"><button class="opt" type="button" id="pfDepAdd">＋ Dependente</button></div></div>
       <div class="note2" id="pfMsg"></div></section>
-    <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div><h3 style="margin-top:18px">Dados de uso</h3><p>Com sessão iniciada, guardamos estatísticas de uso associadas à conta: sessões e tempo no site, abas abertas, ações (importar extrato e falhas na importação, categorizar, criar regras, dividir, previsões, agregado, exportar, sugestões) e erros técnicos. <b>Nunca</b> são guardados valores, descrições de movimentos nem nomes de ficheiros. Servem só para melhorar o site e apagam-se ao fim de 12 meses. As visitas anónimas são contadas sem cookies. Mais detalhes na <a href="privacidade.html" target="_blank" rel="noopener">página de privacidade</a>.</p></section>
+    <section data-s="conta" hidden><h3>Conta</h3><div id="contaInfo"></div><div class="lkopt"><label for="optLock"><b>🔒 Bloquear a sessão</b> depois de</label> <select id="optLock"><option value="10">10 minutos</option><option value="30">30 minutos</option><option value="60">1 hora</option><option value="120">2 horas</option><option value="240">4 horas</option></select> <span class="muted2">sem atividade — e sempre na 1.ª vez de cada dia. Para continuar basta escrever a palavra-passe.</span></div><h3 style="margin-top:18px">Dados de uso</h3><p>Com sessão iniciada, guardamos estatísticas de uso associadas à conta: sessões e tempo no site, abas abertas, ações (importar extrato e falhas na importação, categorizar, criar regras, dividir, previsões, agregado, exportar, sugestões) e erros técnicos. <b>Nunca</b> são guardados valores, descrições de movimentos nem nomes de ficheiros. Servem só para melhorar o site e apagam-se ao fim de 12 meses. As visitas anónimas são contadas sem cookies. Mais detalhes na <a href="privacidade.html" target="_blank" rel="noopener">página de privacidade</a>.</p></section>
     <section data-s="backup" hidden><h3>Cópia de segurança</h3><p>Exporta tudo das Finanças (movimentos, categorias, regras, pessoas, rendimentos, previstos) para um ficheiro .json, que pode importar noutro dispositivo ou mais tarde.</p>
       <div class="grp"><button class="opt" id="bkExp" type="button">⤓ Exportar ficheiro</button><button class="opt" id="bkImpBt" type="button">⤒ Importar ficheiro…</button><input type="file" id="bkImp" accept=".json,application/json" hidden></div><div class="note2" id="bkMsg"></div></section>
     <section data-s="apagar" hidden><h3>Apagar dados</h3><p>Apaga os dados das Finanças. Exporte antes uma cópia de segurança se os quiser guardar.</p>
@@ -337,6 +342,12 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
     <div class="msg" id="rMsg" role="status"></div>
   </form>
 </div>
+<div class="lock" id="lock" hidden role="dialog" aria-modal="true" aria-labelledby="lkT"><form class="lkbox" id="fLock" autocomplete="on"><img src="img/logo-64.png" width="52" height="52" alt="">
+  <h2 id="lkT">🔒 Sessão bloqueada</h2><p class="lksub" id="lkSub"></p>
+  <input type="email" id="lkEmail" autocomplete="username" readonly tabindex="-1" aria-label="Email">
+  <div class="lkpw"><input type="password" id="lkPass" autocomplete="current-password" placeholder="Palavra-passe" aria-label="Palavra-passe" required><button type="button" class="pwv" data-pwv="lkPass" title="Mostrar a palavra-passe" aria-label="Mostrar a palavra-passe">👁</button></div>
+  <button class="bt pri" type="submit" id="lkOk">Entrar</button><div class="lkmsg" id="lkMsg" role="alert"></div>
+  <div class="lklinks"><button type="button" class="lkl" id="lkEsq">Esqueceu-se da palavra-passe?</button><button type="button" class="lkl" id="lkSair">Sair da conta</button></div></form></div>
 <div class="verban" id="verBan" hidden role="status"><span>🆕 Há uma versão nova do site<b id="verN"></b>.</span><button type="button" class="bt pri" id="verOk">Atualizar agora</button><button type="button" class="bt" id="verX" title="Fechar (atualiza na próxima vez que abrir)">✕</button></div>
 <div class="frames" id="frames"><a class="extlink" id="extLink" target="_blank" rel="noopener noreferrer" hidden title="Se o site não aparecer aqui, abra-o numa nova aba">↗ Abrir numa nova aba</a></div>
 <script>
@@ -643,7 +654,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pwv]');if(
     if(/different from the old/i.test(m))return 'A nova palavra-passe tem de ser diferente da anterior.';
     return m||'Não foi possível concluir. Tente novamente.';};
   function mostrar(user){
-    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);try{FPFaq.sessao(user)}catch(e){}try{FPAdm.sessao(user||null)}catch(e){}try{FPEst.sessao(user||null)}catch(e){}try{FPChat.sessao(user||null)}catch(e){}try{FPNov.verifica(user||null)}catch(e){}try{FPAgr.sessao(user||null)}catch(e){}try{FPTrack.sessao(user||null)}catch(e){}
+    const on=!!user;FPMenu.sessao(user);if(on)FPOnb.talvez(user);try{FPFaq.sessao(user)}catch(e){}try{FPAdm.sessao(user||null)}catch(e){}try{FPEst.sessao(user||null)}catch(e){}try{FPChat.sessao(user||null)}catch(e){}try{FPLock.sessao(user||null)}catch(e){}try{FPNov.verifica(user||null)}catch(e){}try{FPAgr.sessao(user||null)}catch(e){}try{FPTrack.sessao(user||null)}catch(e){}
     window.financasUser=user||null; // disponível para os separadores (window.parent.financasUser)
     if(!TESTE)gate.hidden=on;
     document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'financas-sessao',user:user?{id:user.id,email:user.email}:null},'*')}catch(e){}});
@@ -654,7 +665,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pwv]');if(
   document.addEventListener('keydown',e=>{if(e.key==='Escape')mod.hidden=true});
   $('fLogin').addEventListener('submit',async e=>{e.preventDefault();setMsg('A entrar…',true);
     const {data,error}=await Auth.signIn($('lEmail').value.trim(),$('lPass').value);
-    if(error)return setMsg(traduz(error));mod.hidden=true;mostrar(data.user)});
+    if(error)return setMsg(traduz(error));mod.hidden=true;try{FPLock.desbloqueou()}catch(x){}mostrar(data.user);try{FPVer.verifica(true,true)}catch(x){}});
   $('btCriar').onclick=async()=>{const f=$('fLogin');if(!f.reportValidity())return;setMsg('A criar conta…',true);
     const {data,error}=await Auth.signUp($('lEmail').value.trim(),$('lPass').value);
     if(error)return setMsg(traduz(error));
@@ -831,6 +842,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.17',d:'12/10/2026',n:['🔒 Bloqueio da sessão: na 1.ª vez de cada dia e depois de 1 hora sem atividade pede a palavra-passe (o tempo muda-se em Definições › Conta)'],a:['Ao entrar ou desbloquear, se houver versão nova o site atualiza logo']},
  {v:'0.16',d:'12/10/2026',n:['Sugestões: aba ✅ Concluídas para toda a gente (cada um vê as suas)','Quando há uma versão nova do site aparece "🆕 Atualizar agora" (verifica uma vez por dia)'],a:['Despesas, Previsões e Rendimentos: o mês escolhido fica com um contorno grosso em vez de fundo azul','Despesas: saiu a caixa "Categorias"','Janela das Definições maior']},
  {v:'0.15a',d:'12/10/2026',n:['Sugestões: ✉ marcar como não lida (na conversa e na lista) — o aviso volta a aparecer'],a:['Sugestões: conversa mais arrumada — estado e data no topo, mensagens em balões com o nome e a hora por cima']},
  {v:'0.15',d:'10/10/2026',n:['📝 Notas partilhadas ao lado do Chat, nos agregados e nas empresas','Previsões: abrir e fechar tudo nas Despesas previstas e no Saldo previsto (despesas por categoria)'],a:['A linha de cada categoria fica pintada com a sua cor nas Despesas e nas Despesas previstas']},
@@ -1073,13 +1085,45 @@ window.FPChat=FPChat;
 /* v0.16: versão nova — verifica só na 1.ª vez que o site é aberto (ou volta a ficar visível) em cada dia; mostra a faixa "Atualizar agora" */
 const FPVer=(function(){const $=id=>document.getElementById(id),hojeV=()=>new Date().toISOString().slice(0,10);
   const atual=()=>{try{return NOVIDADES[0].v}catch(e){return ''}};
-  async function verifica(forca){let d='';try{d=localStorage.getItem('fp_ver_dia')||''}catch(e){}if(!forca&&d===hojeV())return;try{localStorage.setItem('fp_ver_dia',hojeV())}catch(e){}
+  async function verifica(forca,auto){let d='';try{d=localStorage.getItem('fp_ver_dia')||''}catch(e){}if(!forca&&d===hojeV())return;try{localStorage.setItem('fp_ver_dia',hojeV())}catch(e){}
     try{const r=await fetch('index.html?nv='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const NOVIDADES=\[\s*\{v:'([^']+)'/);
-      if(m&&atual()&&m[1]!==atual()){$('verN').textContent=` (v${m[1]})`;$('verBan').hidden=false;try{FPTrack.log('versao_nova',{de:atual(),para:m[1]})}catch(e){}}}catch(e){}}
+      if(m&&atual()&&m[1]!==atual()){if(auto){try{FPTrack.log('versao_nova',{de:atual(),para:m[1],auto:1})}catch(e){}setTimeout(()=>location.reload(),300);return}$('verN').textContent=` (v${m[1]})`;$('verBan').hidden=false;try{FPTrack.log('versao_nova',{de:atual(),para:m[1]})}catch(e){}}}catch(e){}}
   $('verOk').addEventListener('click',()=>{location.reload()});$('verX').addEventListener('click',()=>{$('verBan').hidden=true});
   setTimeout(()=>verifica(false),2500);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')verifica(false)});
   return {verifica}})();
 window.FPVer=FPVer;
+/* v0.17: ecrã de bloqueio — 1.ª vez de cada dia e depois de N minutos sem atividade (Definições › Conta, 60 por defeito); desbloqueia com a palavra-passe */
+const FPLock=(function(){const $=id=>document.getElementById(id),TESTE=/[?&]teste/.test(location.search);let U=null,T=null;
+  const ls={g:k=>{try{return localStorage.getItem(k)}catch(e){return null}},s:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+  const dia=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+  const minutos=()=>{const v=+ls.g('fp_lock_min');return [10,30,60,120,240].includes(v)?v:60};
+  const ativo=()=>!!U&&(!TESTE||window.FP_LOCK_TESTE);
+  const bloqueado=()=>!$('lock').hidden;
+  let ultG=0;function ativ(){if(!ativo()||bloqueado())return;const n=Date.now();if(n-ultG<5000)return;ultG=n;ls.s('fp_lock_ult',String(n))}
+  function deve(){if(!ativo())return false;const k='fp_lock_dia_'+U.id;if(ls.g(k)!==dia())return 'dia';const u=+ls.g('fp_lock_ult')||0;if(u&&Date.now()-u>minutos()*60000)return 'tempo';return false}
+  function bloqueia(porque){if(!ativo()||bloqueado())return;
+    document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'fp-lock'},'*')}catch(e){}}); // grava o que estiver por gravar
+    $('lkSub').textContent=porque==='dia'?'Bom dia! Por segurança, confirme a palavra-passe para continuar.':`Esteve mais de ${minutos()>=60?minutos()/60+' hora'+(minutos()>60?'s':''):minutos()+' minutos'} sem atividade. Escreva a palavra-passe para continuar onde estava.`;
+    $('lkEmail').value=U.email||'';$('lkPass').value='';$('lkMsg').textContent='';$('lock').hidden=false;document.body.classList.add('locked');
+    ['frames','gate'].forEach(id=>{const e=$(id);if(e)e.inert=true});document.querySelectorAll('body>header,body>nav,.top').forEach(e=>e.inert=true);
+    setTimeout(()=>{try{$('lkPass').focus()}catch(e){}},50);try{FPTrack.log('sessao_bloqueada',{porque})}catch(e){}}
+  function solta(){$('lock').hidden=true;document.body.classList.remove('locked');['frames','gate'].forEach(id=>{const e=$(id);if(e)e.inert=false});document.querySelectorAll('[inert]').forEach(e=>e.inert=false)}
+  function desbloqueou(){if(U)ls.s('fp_lock_dia_'+U.id,dia());ls.s('fp_lock_ult',String(Date.now()));ls.s('fp_lock_des',String(Date.now()));solta()}
+  function verifica(){const p=deve();if(p)bloqueia(p)}
+  function sessao(u){const novo=!U||!u||U.id!==u.id;U=u||null;clearInterval(T);T=null;if(!U){solta();return}
+    if(novo&&!ls.g('fp_lock_ult'))ls.s('fp_lock_ult',String(Date.now()));verifica();T=setInterval(verifica,30000)}
+  $('fLock').addEventListener('submit',async e=>{e.preventDefault();if(!U)return;const m=$('lkMsg');m.textContent='A confirmar…';m.className='lkmsg';$('lkOk').disabled=true;
+    try{const {error}=await Auth.signIn(U.email,$('lkPass').value);if(error){m.textContent=/Invalid login/i.test(error.message)?'Palavra-passe incorreta.':/rate limit|too many/i.test(error.message)?'Demasiadas tentativas. Espere alguns minutos.':(error.message||'Não foi possível confirmar.');m.className='lkmsg err';return}
+      $('lkPass').value='';desbloqueou();try{FPTrack.log('sessao_desbloqueada',{})}catch(x){}try{FPVer.verifica(true,true)}catch(x){}}
+    catch(x){m.textContent='Sem ligação. Verifique a internet e tente outra vez.';m.className='lkmsg err'}finally{$('lkOk').disabled=false}});
+  $('lkSair').addEventListener('click',async()=>{solta();window.sairConta&&await window.sairConta()});
+  $('lkEsq').addEventListener('click',async()=>{if(!U)return;const m=$('lkMsg');try{const {error}=await window.plataforma.auth.resetPasswordForEmail(U.email,{redirectTo:location.origin+location.pathname});m.textContent=error?(error.message||'Não foi possível enviar.'):'Enviámos um email com um link para definir uma palavra-passe nova.';m.className='lkmsg'+(error?' err':' ok')}catch(e){m.textContent='Não foi possível enviar.';m.className='lkmsg err'}});
+  ['pointerdown','keydown','wheel','touchstart','scroll'].forEach(ev=>addEventListener(ev,ativ,{passive:true,capture:true}));
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')verifica()});
+  addEventListener('storage',e=>{if(e.key==='fp_lock_des'&&bloqueado()){if(!deve())solta()}});
+  const sel=$('optLock');sel.value=String(minutos());sel.addEventListener('change',()=>{ls.s('fp_lock_min',sel.value);ativ()});
+  return {sessao,ativ,verifica,bloqueia,desbloqueou,_estado:()=>({bloqueado:bloqueado(),min:minutos()})}})();
+window.FPLock=FPLock;
 </script>
 </body>
 </html>

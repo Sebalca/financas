@@ -881,6 +881,15 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
      const fr=document.querySelector('iframe[data-id="financas"]'),src=fr?fr.getAttribute('src'):'';
      ok({ok:ban&&umaVez&&w>=900&&/financas\.html\?v=/.test(src),ban,umaVez,w,src})}));
    t('D143','Versão nova: verifica 1× por dia e mostra "Atualizar agora"; iframe com ?v=versão; janela das Definições maior; Sugestões: ✅ Concluídas para todos (D131)',z.ok,z)}
+  {const r=await ev(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),o={};window.FP_LOCK_TESTE=1;const A=window.Auth;let pw='';
+    window.Auth={...(A||{}),signIn:async(e,p)=>{pw=p;return p==='certa'?{data:{user:{id:'u1',email:e}},error:null}:{data:null,error:{message:'Invalid login credentials'}}},signOut:async()=>({})};
+    localStorage.removeItem('fp_lock_dia_u1');FPLock.sessao({id:'u1',email:'a@b.pt'});await W(50);o.dia=!document.querySelector('#lock').hidden&&/Bom dia/.test(document.querySelector('#lkSub').textContent)&&document.querySelector('#lkEmail').value==='a@b.pt';
+    o.blur=getComputedStyle(document.querySelector('#lock')).backdropFilter.includes('blur');o.inert=document.querySelector('#frames').inert===true;
+    document.querySelector('#lkPass').value='errada';document.querySelector('#lkOk').click();await W(80);o.errada=/incorreta/.test(document.querySelector('#lkMsg').textContent)&&!document.querySelector('#lock').hidden;
+    document.querySelector('#lkPass').value='certa';document.querySelector('#lkOk').click();await W(80);o.abre=document.querySelector('#lock').hidden&&!document.querySelector('#frames').inert;
+    o.min=FPLock._estado().min===60;localStorage.setItem('fp_lock_ult',String(Date.now()-61*60000));FPLock.verifica();await W(30);o.tempo=!document.querySelector('#lock').hidden&&/1 hora/.test(document.querySelector('#lkSub').textContent);
+    window.Auth=A;FPLock.desbloqueou();window.FP_LOCK_TESTE=0;FPLock.sessao(null);return o});
+   t('D144','Bloqueio da sessão: 1.ª vez do dia e após 60 min (por defeito) sem atividade; fundo desfocado e inacessível; palavra-passe errada não abre, certa abre',Object.values(r).every(Boolean),r)}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

@@ -621,7 +621,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.16'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.17'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -2436,6 +2436,9 @@ async function enviar(){
   }catch(e){console.warn('sync',e);setSt('erro')}
   finally{SY.busy=false;if(SY.again){SY.again=false;agendaEnvio(300)}}
 }
+/* v0.17: atividade aqui dentro conta para o bloqueio da sessão (o site de fora não vê os eventos do iframe); ao bloquear grava já o que estiver pendente */
+{let u=0;const at=()=>{const n=Date.now();if(n-u<5000)return;u=n;try{window.parent!==window&&window.parent.FPLock&&window.parent.FPLock.ativ()}catch(e){}};['pointerdown','keydown','wheel','touchstart','scroll'].forEach(ev=>addEventListener(ev,at,{passive:true,capture:true}))}
+addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-lock'&&SY.t){clearTimeout(SY.t);SY.t=null;try{enviar()}catch(x){}}});
 function agendaEnvio(ms){if(!SY.user||CTX.t==='x')return;clearTimeout(SY.t);SY.t=setTimeout(enviar,ms??1200)}
 async function aoEntrar(u){
   if(SY.user&&u&&SY.user.id===u.id)return; // p.ex. renovação de sessão
