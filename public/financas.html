@@ -169,7 +169,7 @@ html:not(.ctxEmp) nav.tabs .tabemp{display:none}html:not(.ctxEmp):not(.ctxAgr) n
 .enotas{width:100%;min-height:80px;box-sizing:border-box;font:inherit;font-size:14px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px}.efeitos{margin:10px 0;font-size:13px}.efeitos ul{margin:6px 0;padding-left:18px}
 .rpt input,.rpt select{font:inherit;font-size:13px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:4px 6px;box-sizing:border-box;width:100%}.rpt input.pv{width:100px}.rpt input.rpdia,.eft input.rpdia{width:52px}.rpt input[type=month]{min-width:130px}
 table.rpg{min-width:980px}table.rpg td:first-child{white-space:nowrap;min-width:190px}table.rpg td,table.rpg th{padding:5px 6px;font-size:12.5px}table.rpg tr.gc td{background:var(--soft)}table.rpg tr.sub td:first-child{padding-left:20px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
-table.rpg tr.sub[style*="--tl"]>td{background:var(--tl)}.pvacts{display:flex;justify-content:flex-end;margin:-4px 0 6px}table.rpg td small{display:block;font-size:11px}table.rpg td.okv small{color:var(--pos,#2e7d32)}table.rpg td.kov small{color:var(--neg,#c62828)}table.rpg .cur{background:color-mix(in srgb,var(--ac) 9%,transparent)}table.rpg tr.tot td{font-weight:700;border-top:1px solid var(--bd)}table.rpg td.real{font-weight:600}
+table.rpg tr.sub[style*="--tl"]>td{background:var(--tl)}.pvacts{display:flex;justify-content:flex-end;margin:-4px 0 6px}table.rpg td small{display:block;font-size:11px}table.rpg td.okv small{color:var(--pos,#2e7d32)}table.rpg td.kov small{color:var(--neg,#c62828)}table.rpg tr.tot td{font-weight:700;border-top:1px solid var(--bd)}table.rpg td.real{font-weight:600}
 table.prevt tr.gc td{background:var(--soft)}table.prevt input.pv{width:100%;max-width:110px;text-align:right}table.prevt .pvx td{color:var(--mu)}table.prevt td.tpn{font-size:12px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card.desedit>h3{position:sticky;top:var(--stkH,0px);z-index:6;background:var(--card);margin:-4px -4px 8px;padding:10px 4px;border-bottom:1px solid var(--bd)}
 .gtp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:16px}@media (max-width:1000px){.gtp{grid-template-columns:1fr}}
@@ -319,7 +319,9 @@ table.des-ano td,table.des-ano th{padding:7px 6px}table.des-ano{font-size:12.5px
 table.dgrid{font-size:12.5px;min-width:1100px;table-layout:fixed;width:100%}table.dgrid tr[style*="--tl"]>td{background:var(--tl)}table.dgrid .pvro{color:var(--mu)}table.dgrid th{text-transform:uppercase;font-size:11px;letter-spacing:.03em;color:var(--mu);white-space:nowrap}
 table.dgrid td,table.dgrid th{padding:7px 8px}table.dgrid .nm{min-width:170px;position:sticky;left:0;background:var(--card);z-index:1}
 table.dgrid tr.gc td{background:var(--soft);cursor:pointer;border-top:1px solid var(--bd)}table.dgrid tr.gc td.nm{background:var(--soft)}table.dgrid tr.gc[style*="--tl"]>td,table.dgrid tr.gc[style*="--tl"]>td.nm,table.prevt tr.gc[style*="--tl"]>td,table.rpg tr.gc[style*="--tl"]>td{background:var(--tl)}table.prevt tr[style*="--tl"]>td{background:var(--tl)}table.prevt tr.gc,table.rpg tr.gc.tg{cursor:pointer}table.prevt tr.gc b::after,table.rpg tr.tg b::after{content:' ▾';color:var(--mu);font-weight:400}table.prevt tr.gc.fech b::after,table.rpg tr.tg.fech b::after{content:' ▸'}table.dgrid tr.gc td.nm b::after{content:' ▸';color:var(--mu);font-weight:400}table.dgrid tr.gc.open td.nm b::after{content:' ▾'}
-table.dgrid tr.gr td.nm{padding-left:22px}table.dgrid td.dim{color:var(--bd)}table.dgrid .msel{background:color-mix(in srgb,var(--ac) 11%,transparent)!important}
+table.dgrid tr.gr td.nm{padding-left:22px}table.dgrid td.dim{color:var(--bd)}/* v0.16: mês escolhido = contorno grosso à volta da coluna (sem fundo) */
+table .msel{--mb:2.5px;box-shadow:inset var(--mb) 0 0 var(--ac),inset calc(-1*var(--mb)) 0 0 var(--ac)}table .msel.mtop{box-shadow:inset var(--mb) 0 0 var(--ac),inset calc(-1*var(--mb)) 0 0 var(--ac),inset 0 var(--mb) 0 var(--ac)}table .msel.mbot{box-shadow:inset var(--mb) 0 0 var(--ac),inset calc(-1*var(--mb)) 0 0 var(--ac),inset 0 calc(-1*var(--mb)) 0 var(--ac)}table .msel.mtop.mbot{box-shadow:inset 0 0 0 var(--mb) var(--ac)}
+tr.rsel>td{box-shadow:inset 0 2.5px 0 var(--ac),inset 0 -2.5px 0 var(--ac)}tr.rsel>td:first-child{box-shadow:inset 2.5px 0 0 var(--ac),inset 0 2.5px 0 var(--ac),inset 0 -2.5px 0 var(--ac)}tr.rsel>td:last-child{box-shadow:inset -2.5px 0 0 var(--ac),inset 0 2.5px 0 var(--ac),inset 0 -2.5px 0 var(--ac)}
 table.dgrid td.clk{cursor:pointer}table.dgrid td.clk:hover{outline:1px solid var(--ac);outline-offset:-2px}table.dgrid td.over{color:var(--neg);font-weight:700}
 table.dgrid th.tt,table.dgrid td.tt,table.dgrid tr td:nth-last-child(3){border-left:2px solid var(--bd)}
 table.dgrid tr.tot td.nm{background:var(--soft)}
@@ -619,7 +621,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.15a'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.16'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1185,6 +1187,9 @@ function extMostraId(id){const i=EXT.rows.findIndex(m=>m.id===id);if(i>=EXT.n)ex
 /* desenha só a aba aberta; as outras ficam marcadas e desenham-se ao abrir (go) */
 let RV=0;const DESENHADA={};const abaAtiva=()=>(($('nav.tabs button.on')||{}).dataset||{}).tab||'home';
 /* v0.13: saldo de cada conta numa data (usado no Início e no saldo previsto das Previsões) */
+/* v0.16: liga as células .msel de cada tabela num contorno (topo na 1.ª, fundo na última) */
+function msBordas(root){(root||document).querySelectorAll('table').forEach(t=>{const c=[...t.querySelectorAll('.msel')];c.forEach(x=>x.classList.remove('mtop','mbot'));if(c.length){c[0].classList.add('mtop');c[c.length-1].classList.add('mbot')}})}
+function msCol(t,idx){if(!t||idx<0)return;[...t.rows].forEach(r=>{const c=r.cells[idx];if(c&&r.cells.length>idx)c.classList.add('msel')});msBordas(t.parentNode)}
 function saldoItens(b){const all=DB.mov,allX=expandeC(all);
   const contas={};ordena(all.filter(m=>m.dm<=b&&m.saldo!=null)).forEach(m=>{const k=m.banco+'|'+m.conta;if(!contas[k])contas[k]=m});
   delete contas[DIN+'|'];const DN=dinheiro(),dnS=DN.tem?DN.ate(b):null;
@@ -1326,7 +1331,7 @@ function render(){
 
   /* ---- Rendimentos / Despesas ---- */
   if(TAB==='ren')renderRend(a,b);
-  if(TAB==='des')renderDespesas(perX,k);
+  if(TAB==='des'){renderDespesas(perX,k);msBordas($('#tab-des'))}
   if(TAB==='prev'){renderPrev();renderRendPrev()}
   if(TAB==='emp')renderEmp();
   if(TAB==='chat')renderChat();
@@ -1350,7 +1355,7 @@ function renderDespesas(per,k){
   const norm_=DB.cats.map((c,ci)=>({c,ci})).filter(x=>!eFora(x.c.nome)),fora=DB.cats.map((c,ci)=>({c,ci})).filter(x=>eFora(x.c.nome));
   const tp=norm_.reduce((s,x)=>s+prvC(x.c),0)*k,tr=norm_.reduce((s,x)=>s+liqP(per,x.c.nome),0);
   const tsB=norm_.reduce((s,x)=>s+saiP(per,x.c.nome),0),teB=norm_.reduce((s,x)=>s+entP(per,x.c.nome),0);
-  $('#desKpis').innerHTML=kpiH('Previsto',E(tp),k>1?`Orçamento de ${k} meses (previsto mensal × ${k})`:'Orçamento do mês (soma dos previstos mensais)','','','dprev')+kpiH('Saídas',E(tr),`Saídas ${E(tsB)} − reembolsos ${E(teB)} no período (categorias que entram nas contas)`,'neg','','dsai')+kpiH('Diferença',E(tp-tr),tp-tr>=0?'Abaixo do previsto':'Acima do previsto',tp-tr>=0?'pos':'neg','','ddif')+kpiH('Categorias',String(norm_.length),`${norm_.reduce((s,x)=>s+x.c.refs.length,0)} referências · ${fora.length} categorias fora das contas`);
+  $('#desKpis').innerHTML=kpiH('Previsto',E(tp),k>1?`Orçamento de ${k} meses (previsto mensal × ${k})`:'Orçamento do mês (soma dos previstos mensais)','','','dprev')+kpiH('Saídas',E(tr),`Saídas ${E(tsB)} − reembolsos ${E(teB)} no período (categorias que entram nas contas)`,'neg','','dsai')+kpiH('Diferença',E(tp-tr),tp-tr>=0?'Abaixo do previsto':'Acima do previsto',tp-tr>=0?'pos':'neg','','ddif');
   {/* 🧮 como foi calculado — Despesas */
    const nc=new Set(norm_.map(x=>x.c.nome)),dS=m=>m.valor<0&&nc.has(m.cat),dR=m=>m.valor>0&&nc.has(m.cat);
    CALC.dprev=()=>({t:'Previsto',tot:tp,f:`Previsto = soma dos previstos mensais${k>1?` × ${k} meses`:''} = <b>${E(tp)}</b>`,
@@ -1473,6 +1478,7 @@ function renderRendPrev(){const Y=prevAno(),ms=mesesAno(Y),hm=hoje().slice(0,7),
     <tr class="tot"><td title="Meses fechados: recebido − gasto; mês atual e seguintes: previsto">Saldo do mês</td>${sm.map((v,i)=>`<td class="num ${v>=0?'pos':'neg'}${fech[i]?' real':''}">${Math.abs(v)>.004?E(v):'—'}</td>`).join('')}<td class="num ${tot(sm)>=0?'pos':'neg'}">${E(tot(sm))}</td></tr>
     <tr class="tot"><td title="Saldo de hoje nas contas + previsto até ao fim de cada mês">Saldo nas contas no fim do mês</td>${sc.map(v=>v==null?'<td class="num muted">—</td>':`<td class="num ${v>=0?'pos':'neg'}">${E(v)}</td>`).join('')}<td></td></tr>
     </tbody></table></div>`;
+  {const ms_=P.m==='mes'?`${P.d.getFullYear()}-${pad(P.d.getMonth()+1)}`:hm,ix=ms.indexOf(ms_);msCol($('#rpGrid table'),ix<0?-1:ix+1)}
   $('#rpNota').innerHTML=`Meses fechados (até ao mês anterior): <b>real</b> — por baixo de cada rendimento previsto aparece o que foi recebido dessa entidade (verde = recebeu o previsto, vermelho = menos). Mês atual e seguintes: <b>previsto</b>. `
     +(temS?`O saldo nas contas parte do saldo de hoje (<b>${E(tb)}</b>, Início › Saldo por banco) e soma o que falta receber e gastar este mês, depois o previsto de cada mês.`:'Para ver o saldo nas contas, importe extratos ou acerte o saldo no Início › Saldo por banco.')
     +(fech.every(Boolean)?' Este ano já fechou: só há valores reais.':'')}
@@ -2059,9 +2065,9 @@ function renderRend(a,b){
     ds=uniq(ds).sort();if(!ds.length)return '<td class="muted">—</td>';const fora=ds.some(d=>d.slice(0,7)!==p);
     return `<td${fora?' class="mcx"':''} title="${esc('Pago a '+ds.map(fmtD).join(' e ')+(fora?' · conta em '+mesTxt(p).toLowerCase():''))}">${ds.map(d=>fmtD(d)).join('<br>')}</td>`};
   $('#renAno').innerHTML=doAnoF.length?`<div class="exthead pvhead rahead"><table class="t ra">${cols}<thead><tr><th>Mês</th><th>Data</th>${RCOLS.map(c=>`<th class="num">${c[1]}</th>`).join('')}<th>Ligação ao extrato</th><th></th></tr></thead></table></div><div class="tw raw"><table class="t ra">${cols}<tbody>${linhas.map(({n,p,l})=>{
-      if(!l.length)return `<tr class="muted"><td style="padding-left:22px">${n}</td><td></td>${RCOLS.map(()=>'<td class="num">—</td>').join('')}<td></td><td></td></tr>`;
+      if(!l.length)return `<tr class="muted${P.m==='mes'&&p===`${P.d.getFullYear()}-${pad(P.d.getMonth()+1)}`?' rsel':''}"><td style="padding-left:22px">${n}</td><td></td>${RCOLS.map(()=>'<td class="num">—</td>').join('')}<td></td><td></td></tr>`;
       const op=RA.open.has(p),nl=l.reduce((s,r)=>s+porLigar(r),0);
-      return `<tr class="ra-m${op?' open':''}" data-ram="${p}"><td><b>${n}</b> <small class="muted">${l.length} ${l.length>1?'registos':'registo'}</small></td><td></td>${RCOLS.map(([f])=>`<td class="num">${E(S(l,f))}</td>`).join('')}<td>${nl?`<span class="lk no">⚠ ${nl} por ligar</span>`:''}</td><td></td></tr>`
+      return `<tr class="ra-m${op?' open':''}${P.m==='mes'&&p===`${P.d.getFullYear()}-${pad(P.d.getMonth()+1)}`?' rsel':''}" data-ram="${p}"><td><b>${n}</b> <small class="muted">${l.length} ${l.length>1?'registos':'registo'}</small></td><td></td>${RCOLS.map(([f])=>`<td class="num">${E(S(l,f))}</td>`).join('')}<td>${nl?`<span class="lk no">⚠ ${nl} por ligar</span>`:''}</td><td></td></tr>`
         +(op?l.map(r=>r.tipo==='ext'?`<tr class="ra-d ra-x"><td title="${esc(r.desc+(r.ent0!==r.entidade?' · '+r.ent0:''))}"><b>${esc(r.entidade)}</b> <span class="muted">· ${esc(r.ref||'Rendimentos')}</span> <span class="tag">extrato</span></td>${celData(r,p)}${RCOLS.map(([f])=>{const v=val2(r,f);return `<td class="num">${v?E(v):'—'}</td>`}).join('')}<td><span class="lk no" data-golk="${esc(chave(r.mov))}" title="Só no extrato: carregue o recibo (ou adicione o rendimento) para ligar. Clique para ver o movimento." style="cursor:pointer">⚠ recibo por ligar</span></td><td></td></tr>`:`<tr class="ra-d" data-rid="${r.id}"><td title="${esc((r.ent0||'')+' · '+(r.desc||''))}"><b>${esc(r.entidade||'(sem entidade)')}</b> <span class="muted">· ${esc(r.desc||(r.tipo==='rec'?'recibo':'pontual'))}</span>${r.tipo==='pon'?' <span class="tag">pontual</span>':''}${r.ficheiro?` <span class="auto" title="Lido do recibo ${esc(r.ficheiro)}${r.ok===false?' — os totais não conferem, verifique':''}">${r.ok===false?'⚠':'📎'}</span>`:''}</td>${celData(r,p)}${RCOLS.map(([f])=>{const v=val2(r,f);return `<td class="num">${v?E(v):'—'}</td>`}).join('')}<td>${celLig(r,K)}</td><td style="white-space:nowrap;text-align:right"><button class="btn ic sm" data-redit="${r.id}" title="Editar / ligações">✏</button> <button class="btn ic sm" data-rendel="${r.id}" title="Apagar">🗑</button></td></tr>`).join(''):'')}).join('')}
     <tr class="tot"><td>Total ${ano}${RA.ent?' · '+esc(RA.ent):''}</td><td></td>${RCOLS.map(([f])=>`<td class="num">${E(S(doAnoF,f))}</td>`).join('')}<td></td><td></td></tr></tbody></table></div>`
     :`<div class="empty"><b>Sem rendimentos em ${ano}${RA.ent?' para '+esc(RA.ent):''}${RA.orig||RA.lig?' com estes filtros':''}</b>Carregue um recibo ou adicione um rendimento acima.</div>`;

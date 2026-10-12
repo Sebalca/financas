@@ -147,7 +147,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
 .emppop{position:fixed;z-index:60;background:var(--card);border:1px solid var(--bd);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:6px;min-width:200px}.emppop[hidden]{display:none}
 .emppop button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:7px;font:600 13px system-ui,sans-serif;color:var(--tx);cursor:pointer}.emppop button:hover{background:var(--bg)}.emppop button.on{color:#b45309;background:#fdf1dc}
 .big nav.sn button[data-s="agr"].on{background:#f3e5f5;color:#7b1fa2}
-#mSet .big{height:min(600px,88vh)}
+#mSet .big{height:min(760px,92vh);max-height:92vh;max-width:min(980px,96vw)!important;width:96vw}
 .sw2{display:flex!important;flex-direction:row;gap:10px;align-items:center;cursor:pointer;padding:6px 0;text-align:left}.sw2 input{width:18px!important;height:18px;flex:none;margin:0;accent-color:var(--ac)}.sw2 span{flex:1}
 .big .sc{flex:1;overflow:auto;padding:16px 18px}
 .big .sc h3{margin:0 0 6px;font-size:15px}.big .sc p{color:var(--mu);font-size:13px;margin:0 0 12px}
@@ -183,6 +183,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
 @media (max-width:760px){.bar{flex-wrap:wrap;height:auto;row-gap:6px;column-gap:8px;padding:6px 10px;overflow:visible}.bar>.sp{display:none}.brand{order:0}#tabs{order:1;flex:1 1 calc(100% - 80px);height:34px}.fper .nv .lb{white-space:nowrap}.mbtn{order:2;margin-left:auto}
   .ctxsel{order:3;max-width:100%;overflow-x:auto;scrollbar-width:none}.ctxsel button{padding:5px 9px}.fper{order:4;flex:1 1 auto;justify-content:space-between;gap:6px}.fper .nv .lb{min-width:0;padding:4px 4px}}
 #fCtx .cdot,#empPop .cdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e53935;margin-left:6px;vertical-align:1px}
+.verban{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:120;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--ac);box-shadow:0 8px 28px rgba(0,0,0,.18);border-radius:14px;padding:10px 12px 10px 16px;font-size:14px;max-width:calc(100vw - 24px)}.verban[hidden]{display:none}.verban .opt{width:auto;margin:0}
 </style>
 <script>
 /* tema claro/escuro partilhado por todos os separadores */
@@ -282,7 +283,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
       <div id="fqMinhas" hidden></div>
       <div id="fqAdm" class="adm" hidden></div></section>
     <section data-s="sugestao" hidden><h3>Enviar sugestão</h3>
-      <div class="fq-tabs" id="sgTabs" hidden><button type="button" data-st="env" class="on">✏ Enviar</button><button type="button" data-st="min">💬 As minhas<span class="bdg" id="bdgSug4" hidden></span></button><button type="button" data-st="rec" data-adm hidden>📥 Recebidas<span class="bdg" id="bdgSug3" hidden></span></button><button type="button" data-st="abe" data-adm hidden>💬 Em aberto</button><button type="button" data-st="conc" data-adm hidden>✅ Concluídas</button></div>
+      <div class="fq-tabs" id="sgTabs" hidden><button type="button" data-st="env" class="on">✏ Enviar</button><button type="button" data-st="min">💬 As minhas<span class="bdg" id="bdgSug4" hidden></span></button><button type="button" data-st="minc" data-nadm hidden>✅ Concluídas</button><button type="button" data-st="rec" data-adm hidden>📥 Recebidas<span class="bdg" id="bdgSug3" hidden></span></button><button type="button" data-st="abe" data-adm hidden>💬 Em aberto</button><button type="button" data-st="conc" data-adm hidden>✅ Concluídas</button></div>
       <div id="sgAdm" class="adm" hidden></div><div id="sgMin" class="adm" hidden></div><div id="sgConv" class="adm" hidden></div><div id="sgEnv"><p>Ideias, problemas ou dúvidas — seguem diretamente para quem desenvolve o site.</p>
       <div class="grp" id="sgTipo"><button class="opt on" data-v="Ideia" type="button">💡 Ideia</button><button class="opt" data-v="Problema" type="button">🐞 Problema</button><button class="opt" data-v="Outro" type="button">💬 Outro</button></div>
       <textarea id="sgTxt" rows="6" maxlength="4000" placeholder="Escreva a sua sugestão…" style="margin-top:8px"></textarea>
@@ -336,6 +337,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
     <div class="msg" id="rMsg" role="status"></div>
   </form>
 </div>
+<div class="verban" id="verBan" hidden role="status"><span>🆕 Há uma versão nova do site<b id="verN"></b>.</span><button type="button" class="bt pri" id="verOk">Atualizar agora</button><button type="button" class="bt" id="verX" title="Fechar (atualiza na próxima vez que abrir)">✕</button></div>
 <div class="frames" id="frames"><a class="extlink" id="extLink" target="_blank" rel="noopener noreferrer" hidden title="Se o site não aparecer aqui, abra-o numa nova aba">↗ Abrir numa nova aba</a></div>
 <script>
 /* Para adicionar um separador: acrescentar {id, nome, ficheiro} a esta lista e criar o HTML na mesma pasta. */
@@ -353,7 +355,7 @@ function abrir(id){
   const s=SEPARADORES.find(x=>x.id===id)||SEPARADORES[0];
   let f=frames.querySelector(`iframe[data-id="${s.id}"]`);
   if(!f){f=document.createElement('iframe');f.dataset.id=s.id;f.title=s.nome;
-    if(s.url){f.dataset.ext='1';f.src=s.url;f.referrerPolicy='no-referrer';f.setAttribute('allow','clipboard-write')}else f.src=s.ficheiro;
+    if(s.url){f.dataset.ext='1';f.src=s.url;f.referrerPolicy='no-referrer';f.setAttribute('allow','clipboard-write')}else{const vv=()=>{try{const m=[...document.scripts].map(x=>x.text).join('').match(/const NOVIDADES=\[\s*\{v:'([^']+)'/);return m?'?v='+encodeURIComponent(m[1]):''}catch(e){return ''}},pf=()=>{f.src=s.ficheiro+vv()};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pf,{once:true});else pf()} // v0.16: a versão no endereço evita ficar com uma cópia antiga em cache
     frames.appendChild(f)} // carrega só quando é aberto e mantém o estado
   const ex=document.getElementById('extLink');ex.hidden=!s.url;if(s.url)ex.href=s.url;
   frames.querySelectorAll('iframe').forEach(x=>x.classList.toggle('on',x===f));
@@ -829,6 +831,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.16',d:'12/10/2026',n:['Sugestões: aba ✅ Concluídas para toda a gente (cada um vê as suas)','Quando há uma versão nova do site aparece "🆕 Atualizar agora" (verifica uma vez por dia)'],a:['Despesas, Previsões e Rendimentos: o mês escolhido fica com um contorno grosso em vez de fundo azul','Despesas: saiu a caixa "Categorias"','Janela das Definições maior']},
  {v:'0.15a',d:'12/10/2026',n:['Sugestões: ✉ marcar como não lida (na conversa e na lista) — o aviso volta a aparecer'],a:['Sugestões: conversa mais arrumada — estado e data no topo, mensagens em balões com o nome e a hora por cima']},
  {v:'0.15',d:'10/10/2026',n:['📝 Notas partilhadas ao lado do Chat, nos agregados e nas empresas','Previsões: abrir e fechar tudo nas Despesas previstas e no Saldo previsto (despesas por categoria)'],a:['A linha de cada categoria fica pintada com a sua cor nas Despesas e nas Despesas previstas']},
  {v:'0.14',d:'10/10/2026',n:['💬 Chat nos agregados e nas empresas, só para os membros, com bolinha quando há mensagens por ler','Empresas: 📇 Contactos (nome, categoria, telemóvel, email, morada e empresa) com pesquisa'],a:['Empresas: a ficha mostra-se arrumada e muda-se em ✏ Editar; a aba Empresa passou para o fim','Previsões: o saldo previsto fica em cima e por baixo há duas abas — Despesas previstas e Rendimentos previstos','Corrigida a barra vazia por baixo das abas']},
@@ -980,10 +983,11 @@ const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';
   let SG=[],SGN=100,SGF='todas',MS=[],CV=null;const dh=d=>new Date(d).toLocaleString('pt-PT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
   /* v0.11d: admin — Recebidas (sem resposta / última mensagem da pessoa), Em aberto (última mensagem do admin), Concluídas (terminadas) */
   const ADMT=['rec','abe','conc'],estado=x=>x.fechada?'conc':x.ultima_de_admin?'abe':'rec',TIPOS_SG=['Ideia','Problema','Outro'];let SGT='rec';
-  function sgTab(t){const tc=t==='conv'&&CV?(CV.de==='rec'?estado(CV.s):'min'):t;[...$('sgTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.st===tc));
-    const adm=ADMT.includes(t);$('sgEnv').hidden=t!=='env';$('sgAdm').hidden=!adm;$('sgMin').hidden=t!=='min';$('sgConv').hidden=t!=='conv';
-    if(adm){SGT=t;SGF='todas';recebidas()}if(t==='min')minhas()}
-  function abreSug(){$('sgTabs').hidden=!U;$$s('#sgTabs [data-adm]').forEach(b=>b.hidden=!ADM);sgTab(NU&&U?'min':'env');conta()}
+  let MC=false; // v0.16: As minhas (abertas) | Concluídas (as minhas terminadas)
+  function sgTab(t){const tc=t==='conv'&&CV?(CV.de==='rec'?estado(CV.s):(CV.s.fechada&&!ADM?'minc':'min')):t;[...$('sgTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.st===tc));
+    const adm=ADMT.includes(t);$('sgEnv').hidden=t!=='env';$('sgAdm').hidden=!adm;$('sgMin').hidden=t!=='min'&&t!=='minc';$('sgConv').hidden=t!=='conv';
+    if(adm){SGT=t;SGF='todas';recebidas()}if(t==='min'||t==='minc'){MC=t==='minc';minhas()}}
+  function abreSug(){$('sgTabs').hidden=!U;$$s('#sgTabs [data-adm]').forEach(b=>b.hidden=!ADM);$$s('#sgTabs [data-nadm]').forEach(b=>b.hidden=ADM||!U);sgTab(NU&&U?'min':'env');conta()}
   const $$s=q=>[...document.querySelectorAll(q)];
   async function recebidas(){const c=sb();if(!ADM||!c)return;$('sgAdm').innerHTML='<p class="note2">A carregar…</p>';
     const {data,error}=await c.from('sugestoes').select('id,user_id,tipo,texto,email,separador,versao,por_ler,fechada,ultima_de_admin,ultima_em,created_at').eq('site_id',SITE).order('ultima_em',{ascending:false}).limit(1000);
@@ -995,9 +999,9 @@ const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';
         +(l.length>SGN?`<div style="text-align:center"><button class="bt" type="button" data-sgmais>Mostrar mais</button></div>`:''):`<p class="note2">${SGT==='rec'?'Nada por responder.':SGT==='abe'?'Nenhuma conversa à espera de resposta da pessoa.':'Ainda não há conversas concluídas.'}</p>`)}
   async function minhas(){const c=sb();if(!U||!c){$('sgMin').innerHTML='<p class="note2">Entre na sua conta para ver as suas sugestões.</p>';return}$('sgMin').innerHTML='<p class="note2">A carregar…</p>';
     const {data,error}=await c.from('sugestoes').select('id,user_id,tipo,texto,por_ler_user,fechada,ultima_em,created_at').eq('site_id',SITE).eq('user_id',U.id).order('ultima_em',{ascending:false}).limit(200);
-    if(error){$('sgMin').innerHTML='<p class="note2">Não foi possível carregar.</p>';return}MS=data||[];
-    $('sgMin').innerHTML=MS.length?MS.map(x=>`<div class="it2 clk" data-sid="${x.id}" data-sgo="min" title="Abrir a conversa"><div class="meta">${x.por_ler_user?'<span class="bdg" style="margin:0 6px 0 0">nova resposta</span>':''}${x.fechada?'🔒 terminada · ':''}<b>${esc(x.tipo)}</b> · ${dh(x.created_at)}<span class="sgacts">${x.por_ler_user?'':'<button class="bt" type="button" data-sgnl title="Marcar como não lida (volta o aviso)">✉</button>'}</span></div><div class="pv">${esc(x.texto)}</div></div>`).join('')
-      :'<p class="note2">Ainda não enviou sugestões (ou foram enviadas sem sessão iniciada).</p>'}
+    if(error){$('sgMin').innerHTML='<p class="note2">Não foi possível carregar.</p>';return}MS=data||[];const L=MS.filter(x=>!ADM?!!x.fechada===MC:true);
+    $('sgMin').innerHTML=L.length?L.map(x=>`<div class="it2 clk" data-sid="${x.id}" data-sgo="min" title="Abrir a conversa"><div class="meta">${x.por_ler_user?'<span class="bdg" style="margin:0 6px 0 0">nova resposta</span>':''}${x.fechada?'🔒 terminada · ':''}<b>${esc(x.tipo)}</b> · ${dh(x.created_at)}<span class="sgacts">${x.por_ler_user?'':'<button class="bt" type="button" data-sgnl title="Marcar como não lida (volta o aviso)">✉</button>'}</span></div><div class="pv">${esc(x.texto)}</div></div>`).join('')
+      :`<p class="note2">${MC?'Ainda não há conversas concluídas.':MS.length?'Não tem conversas em aberto — veja as ✅ Concluídas.':'Ainda não enviou sugestões (ou foram enviadas sem sessão iniciada).'}</p>`}
   async function naoLida(s,de){const c=sb();if(!c||!s)return false;const {error}=await c.rpc('sugestao_nao_lida',{p_sugestao:s.id,p_como:de==='rec'?'admin':'autor'});if(error){alert('Não foi possível marcar como não lida.');return false}
     if(de==='rec')s.por_ler=true;else s.por_ler_user=true;try{FPTrack.log('sugestao_nao_lida',{admin:de==='rec'})}catch(x){}conta();return true}
   async function abreConv(id,de){const c=sb();if(!c)return;const s=(de==='rec'?SG:MS).find(x=>x.id===id);if(!s)return;CV={id,de,s};sgTab('conv');$('sgConv').innerHTML='<p class="note2">A carregar…</p>';
@@ -1026,8 +1030,8 @@ const FPAdm=(function(){const $=id=>document.getElementById(id),SITE='financas';
     const it=e.target.closest('[data-sgo]');if(it)abreConv(it.dataset.sid,it.dataset.sgo)};
   $('sgAdm').addEventListener('click',cliqueLista);$('sgMin').addEventListener('click',cliqueLista);
   $('sgConv').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b||!CV)return;const c=sb();
-    if('cvback' in b.dataset){sgTab(CV.de==='rec'?estado(CV.s):'min');return}
-    if('cvnl' in b.dataset){if(await naoLida(CV.s,CV.de))sgTab(CV.de==='rec'?estado(CV.s):'min');return}
+    if('cvback' in b.dataset){sgTab(CV.de==='rec'?estado(CV.s):(CV.s.fechada&&!ADM?'minc':'min'));return}
+    if('cvnl' in b.dataset){if(await naoLida(CV.s,CV.de))sgTab(CV.de==='rec'?estado(CV.s):(CV.s.fechada&&!ADM?'minc':'min'));return}
     if(b.dataset.cvfecha!=null){const f=b.dataset.cvfecha==='1';try{const {error}=await c.rpc('sugestao_fechar',{p_sugestao:CV.id,p_fechar:f});if(error)throw error;CV.s.fechada=f;abreConv(CV.id,CV.de)}catch(x){alert('Não foi possível: '+(x.message||x))}return}
     if('cvenv' in b.dataset){const t=$('cvTxt').value.trim();if(!t)return;b.disabled=true;$('cvMsg').textContent='A enviar…';
       const {error}=await c.rpc('sugestao_responder',{p_sugestao:CV.id,p_texto:t});b.disabled=false;
@@ -1066,6 +1070,16 @@ const FPChat=(function(){let U=null,T=null;window.FP_CHAT={};
   [0,1500,4000].forEach(t=>setTimeout(()=>{let u=null;try{u=window.financasUser||null}catch(e){}if(u&&(!U||U.id!==u.id))sessao(u)},t));
   return {sessao,atualiza}})();
 window.FPChat=FPChat;
+/* v0.16: versão nova — verifica só na 1.ª vez que o site é aberto (ou volta a ficar visível) em cada dia; mostra a faixa "Atualizar agora" */
+const FPVer=(function(){const $=id=>document.getElementById(id),hojeV=()=>new Date().toISOString().slice(0,10);
+  const atual=()=>{try{return NOVIDADES[0].v}catch(e){return ''}};
+  async function verifica(forca){let d='';try{d=localStorage.getItem('fp_ver_dia')||''}catch(e){}if(!forca&&d===hojeV())return;try{localStorage.setItem('fp_ver_dia',hojeV())}catch(e){}
+    try{const r=await fetch('index.html?nv='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const NOVIDADES=\[\s*\{v:'([^']+)'/);
+      if(m&&atual()&&m[1]!==atual()){$('verN').textContent=` (v${m[1]})`;$('verBan').hidden=false;try{FPTrack.log('versao_nova',{de:atual(),para:m[1]})}catch(e){}}}catch(e){}}
+  $('verOk').addEventListener('click',()=>{location.reload()});$('verX').addEventListener('click',()=>{$('verBan').hidden=true});
+  setTimeout(()=>verifica(false),2500);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')verifica(false)});
+  return {verifica}})();
+window.FPVer=FPVer;
 </script>
 </body>
 </html>

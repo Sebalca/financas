@@ -686,7 +686,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     document.querySelector('#sgMin [data-sgo]').click();await W(150);const conv=/Obrigado, vamos ver!/.test(document.querySelector('#sgConv').textContent)&&ch.includes('sugestao_lida')&&!!document.querySelector('#cvTxt');
     document.querySelector('#cvTxt').value='Boa, obrigado';document.querySelector('[data-cvenv]').click();await W(150);const resp=ch.includes('sugestao_responder')&&/Boa, obrigado/.test(document.querySelector('#sgConv').textContent);
     const limpa=document.querySelector('#bdgMenu').hidden;
-    T.sugestoes[0].fechada=true;document.querySelector('[data-cvback]').click();await W(150);document.querySelector('#sgMin [data-sgo]').click();await W(150);const fech=!document.querySelector('#cvTxt')&&/Conversa terminada/.test(document.querySelector('#sgConv').textContent);
+    T.sugestoes[0].fechada=true;document.querySelector('[data-cvback]').click();await W(150);document.querySelector('#sgTabs [data-st="min"]').click();await W(150);const soAbertas=!document.querySelector('#sgMin [data-sgo]');document.querySelector('#sgTabs [data-st="minc"]').click();await W(150);document.querySelector('#sgMin [data-sgo]').click();await W(150);const fech=soAbertas&&!document.querySelector('#cvTxt')&&/Conversa terminada/.test(document.querySelector('#sgConv').textContent);
     T.sugestoes[0].fechada=false;T.sugestoes[0].por_ler=true;ADMv=true;await FPAdm.sessao({id:'u1',email:'adm@exemplo.pt'});document.querySelector('#mSet').hidden=true;document.querySelector('[data-set="sugestao"]').click();await W(100);
     document.querySelector('#sgTabs [data-st="rec"]').click();await W(150);const rec=!document.querySelector('#sgTabs [data-st="rec"]').hidden&&/nova/.test(document.querySelector('#sgAdm').textContent);
     document.querySelector('#sgAdm [data-sgo]').click();await W(150);document.querySelector('[data-cvfecha="1"]').click();await W(150);const term=ch.includes('sugestao_fechar')&&T.sugestoes[0].fechada&&!!document.querySelector('[data-cvfecha="0"]');
@@ -862,6 +862,25 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     return o});
    const [n0,n1,n2]=r.fecha.split(',').map(Number),ok140=/\/ 0\.18\)|, 0\.18\)/.test(r.desCor)&&r.desCor===r.prevCor&&n1<n0&&n2>n1&&r.rp.endsWith('Fechar tudo')&&r.nota==='[["Compras","seb"]]'&&+r.cols.split(',')[1]>600;
    t('D140','Linha da categoria pintada nas Despesas e nas Despesas previstas; abrir/fechar tudo nas Despesas previstas e no Saldo previsto; Chat à direita com 📝 Notas partilhadas à esquerda',ok140&&!er2.length,{r,er2});await p2.close()}
+  console.log('v0.16');
+  {const p2=await b.newPage({viewport:{width:1500,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));await fpCtx.exemplo();await W(300);const o={};
+     const ult=DB.mov.map(m=>m.dm).sort().pop();verMes(ult);go('des');render();await W(50);
+     o.semCat=!/Categorias/.test(document.querySelector('#desKpis').textContent);
+     const c=[...document.querySelectorAll('#tab-des table.dgrid .msel')];o.col=c.length>3&&c[0].classList.contains('mtop')&&c.some(x=>x.classList.contains('mbot'))&&getComputedStyle(c[1]).boxShadow!=='none';
+     o.semAzul=!/rgba?\(.*0\.11\)/.test(getComputedStyle(c[1]).backgroundColor);
+     go('prev');render();await W(50);o.prev=document.querySelectorAll('#rpGrid .msel').length>3&&!!document.querySelector('#rpGrid .msel.mtop');
+     go('ren');render();await W(50);o.ren=!!document.querySelector('#renAno tr.rsel')||!document.querySelector('#renAno tr');
+     return o});
+   t('D142','Mês escolhido com contorno grosso (Despesas, Saldo previsto, linha nos Rendimentos) em vez de fundo; sem a caixa "Categorias" nas Despesas',Object.values(r).every(Boolean)&&!er2.length,{r,er2});await p2.close()}
+  {const z=await ev(()=>new Promise(async ok=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),f0=window.fetch;
+     window.fetch=async()=>({ok:true,text:async()=>"const NOVIDADES=[\n {v:'9.99',d:'x'}"});localStorage.removeItem('fp_ver_dia');await FPVer.verifica(false);const ban=!document.querySelector('#verBan').hidden&&/9\.99/.test(document.querySelector('#verBan').textContent);
+     document.querySelector('#verX').click();document.querySelector('#verBan').hidden=true;let n=0;window.fetch=async()=>{n++;return {ok:true,text:async()=>''}};await FPVer.verifica(false);const umaVez=n===0;window.fetch=f0;
+     document.querySelector('[data-set="geral"],#setNav [data-s]')&&0;const m=document.querySelector('#mSet');m.hidden=false;await W(50);const w=m.querySelector('.big').getBoundingClientRect().width;m.hidden=true;
+     const fr=document.querySelector('iframe[data-id="financas"]'),src=fr?fr.getAttribute('src'):'';
+     ok({ok:ban&&umaVez&&w>=900&&/financas\.html\?v=/.test(src),ban,umaVez,w,src})}));
+   t('D143','Versão nova: verifica 1× por dia e mostra "Atualizar agora"; iframe com ?v=versão; janela das Definições maior; Sugestões: ✅ Concluídas para todos (D131)',z.ok,z)}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
