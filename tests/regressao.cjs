@@ -776,7 +776,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D136','Saldo por banco: ✏ acertar saldo (vale o mais recente), ＋ Conta sem extrato no total; 💳 Cartões com nome nos Detalhes e filtro "Cartão"',z136.ok,z136);
   console.log('v0.12');
   {const mock=E=>{window.__ch=[];const q=()=>{const o={select:()=>o,eq:()=>o,order:()=>o,limit:()=>o,then:res=>Promise.resolve({data:[],count:0}).then(res)};return o};
-     window.plataforma={from:q,rpc:async(f,a)=>{window.__ch.push([f,a]);if(f==='e_admin_site')return {data:true};if(f==='fin_estado')return {data:E};if(f==='admin_cfg')return {data:{registos_abertos:true,limites:{sug_dia:10,faq_dia:10,cats:40,refs:300},excecoes:[],bloqueios:[],avisos:[],novos:[{email:'novo@exemplo.pt',created_at:new Date().toISOString()}]}};return {data:f.startsWith('admin_')&&f!=='admin_cfg_gravar'&&f!=='admin_novos_vistos'&&f!=='admin_aviso_apagar'?'ok':null}}};
+     window.plataforma={from:q,rpc:async(f,a)=>{window.__ch.push([f,a]);if(f==='e_admin_site')return {data:true};if(f==='fin_estado')return {data:E};if(f==='admin_alertas')return {data:[]};if(f==='admin_cfg')return {data:{registos_abertos:true,limites:{sug_dia:10,faq_dia:10,cats:40,refs:300},excecoes:[],bloqueios:[],avisos:[],novos:[{email:'novo@exemplo.pt',created_at:new Date().toISOString()}]}};return {data:f.startsWith('admin_')&&f!=='admin_cfg_gravar'&&f!=='admin_novos_vistos'&&f!=='admin_aviso_apagar'?'ok':null}}};
      window.financasUser={id:'u1',email:'adm@exemplo.pt'};window.Auth={onChange(){},getSession:()=>Promise.resolve({user:window.financasUser})}};
    const pg=async(E,url)=>{const p2=await b.newPage();p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());await p2.addInitScript(mock,E);await p2.goto(U+url);await p2.waitForTimeout(900);return p2};
    let p2=await pg({bloqueado:true,motivo:'teste',limites:{},avisos:[],novos:0},'/index.html?teste=1');
@@ -860,7 +860,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     go('chat');await W(100);document.querySelector('#notaAdd').click();await W(30);const t=document.querySelector('#notasL .ntit');t.value='Compras';t.dispatchEvent(new Event('change',{bubbles:true}));t.blur();
     o.nota=JSON.stringify(DB.notas.map(n=>[n.tit,n.autor]));const cs=[...document.querySelectorAll('.chatg>.card')].map(c=>Math.round(c.getBoundingClientRect().left));o.cols=cs.join();
     return o});
-   const [n0,n1,n2]=r.fecha.split(',').map(Number),ok140=/\/ 0\.18\)|, 0\.18\)/.test(r.desCor)&&r.desCor===r.prevCor&&n1<n0&&n2>n1&&r.rp.endsWith('Fechar tudo')&&r.nota==='[["Compras","seb"]]'&&+r.cols.split(',')[1]>600;
+   const [n0,n1,n2]=r.fecha.split(',').map(Number),ok140=/\/ 0\.18\)|, 0\.18\)/.test(r.desCor)&&r.desCor===r.prevCor&&n1<n0&&n2>n1&&r.rp.endsWith('Fechar tudo')&&r.nota==='[["Compras","seb"]]'&&+r.cols.split(',').pop()>600;
    t('D140','Linha da categoria pintada nas Despesas e nas Despesas previstas; abrir/fechar tudo nas Despesas previstas e no Saldo previsto; Chat à direita com 📝 Notas partilhadas à esquerda',ok140&&!er2.length,{r,er2});await p2.close()}
   console.log('v0.16');
   {const p2=await b.newPage({viewport:{width:1500,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
@@ -890,6 +890,34 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     o.min=FPLock._estado().min===60;localStorage.setItem('fp_lock_ult',String(Date.now()-61*60000));FPLock.verifica();await W(30);o.tempo=!document.querySelector('#lock').hidden&&/1 hora/.test(document.querySelector('#lkSub').textContent);
     window.Auth=A;FPLock.desbloqueou();window.FP_LOCK_TESTE=0;FPLock.sessao(null);return o});
    t('D144','Bloqueio da sessão: 1.ª vez do dia e após 60 min (por defeito) sem atividade; fundo desfocado e inacessível; palavra-passe errada não abre, certa abre',Object.values(r).every(Boolean),r)}
+  console.log('v0.18');
+  {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept('Viagem'));await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),o={};await fpCtx.exemplo();await W(300);
+    CTX.t='a';CTX.emp=true;CTX.id='e1';CTX.nome='Teste Lda';await W(700);const up=[];SY.user={id:'u1',email:'seb@x.pt'};
+    SY.sb={rpc:async(f,a)=>{up.push(f);return {data:[],error:null}},storage:{from:()=>({upload:async(pth,f)=>{up.push('up:'+pth);return {error:null}},createSignedUrl:async()=>({data:{signedUrl:'about:blank'},error:null}),remove:async(x)=>{up.push('rm');return {error:null}}})}};
+    go('chat');await W(150);o.cols=[...document.querySelectorAll('.chatg>.card')].map(c=>Math.round(c.getBoundingClientRect().left)).join();
+    const n=document.querySelector('#tNova');n.value='Comprar tinta';n.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));await W(50);
+    o.tar=DB.listas[0].t.length===1;o.b1=!!document.querySelector("[data-tmais]");document.querySelector("[data-tmais]").click();await W(30);o.b2=document.querySelector("#lstL").innerHTML.includes("tsuba");await W(30);document.querySelector('[data-tsuba]').click();await W(30);
+    const si=document.querySelector('[data-stx]');si.value='Escolher cor';si.dispatchEvent(new Event('change',{bubbles:true}));await W(30);o.sub=DB.listas[0].t[0].sub[0].txt==='Escolher cor';
+    const pz=document.querySelector('[data-tpz]');pz.value='2020-01-01';pz.dispatchEvent(new Event('change',{bubbles:true}));await W(30);o.atr=!!document.querySelector('.tpz.atr');
+    document.querySelector('[data-schk]').click();await W(30);o.feita=DB.listas[0].t[0].feito===true;
+    document.querySelector('#lstAdd').click();await W(30);o.listas=DB.listas.map(l=>l.nome).join();
+    go('emp');await W(50);document.querySelector('#empEd').click();await W(30);const fx=document.querySelector('#empEd2');o.fixo=!!fx&&getComputedStyle(fx).position==='fixed';
+    const dt=new DataTransfer();dt.items.add(new File(['%PDF-1.4 teste'],'iban.pdf',{type:'application/pdf'}));const fi=document.querySelector('#anxFich');fi.files=dt.files;
+    document.querySelector('#anxEnv').click();await W(80);o.anx=(DB.empresa.anexos||[]).length===1&&up.some(x=>x.startsWith('up:e1/'));o.anxLin=/iban\.pdf/.test(document.querySelector('#empAnx').textContent);
+    const v=DB.empresa.anexos[0];v.validade=hoje();o.prazoAnx=prazosEmp(hoje(),hoje()).some(x=>/Renovar: iban/.test(x.nome));
+    document.querySelector('#empEd2').click();await W(30);o.saiu=!document.querySelector('#empEd2');
+    CTX.t='p';CTX.emp=false;await W(700);
+    LIM.mov_mes=3;DB.imports.push({id:'i9',em:new Date().toISOString(),novos:2});o.mm=movMes()>=2;
+    return o});
+   await p2.setInputFiles('#fExt',path.join(FX,'cgd_teste.csv'));await p2.waitForTimeout(500);
+   const r2=await p2.evaluate(()=>({lim:!document.querySelector('#mLim').hidden&&/3 movimentos importados por mês/.test(document.querySelector('#limTx').textContent),bloqueou:/Limite de 3/.test(document.querySelector('#impRes').textContent)}));
+   const c=r.cols.split(',').map(Number);
+   t('D145','Aba Chat em 3 (Notas | Checklist | Chat) com listas, tarefas, subtarefas, responsável e data; Empresa: ✓ Concluir fixo e 📎 Anexos (validade entra nos prazos); limite de movimentos importados por mês com aviso',c.length===3&&c[1]>c[0]&&c[2]>c[1]&&['tar','b2','sub','atr','feita','fixo','anx','anxLin','prazoAnx','saiu','mm'].every(k=>r[k])&&r.listas==='Tarefas,Viagem'&&r2.lim&&r2.bloqueou&&!er2.length,{r,r2,er2});await p2.close()}
+  {const z=await ev(()=>({demoBt:!!document.querySelector('#gDemo'),ban:!!document.querySelector('#demoBan'),demo:typeof FPDemo==='object',lockDemo:(()=>{window.FP_LOCK_TESTE=1;localStorage.removeItem('fp_lock_dia_ud');FPLock.sessao({id:'ud',email:'demo@frisk.pt'});const b=!document.querySelector('#lock').hidden;FPLock.sessao(null);window.FP_LOCK_TESTE=0;return !b})()}));
+   const adm=fs.readFileSync(path.join(PUB,'admin.html'),'utf8');
+   t('D146','Conta de demonstração (botão "Ver a demonstração", faixa, sem bloqueio de sessão); admin: limite "Movimentos importados por mês" e caixa "Limites atingidos"',Object.values(z).every(Boolean)&&/mov_mes:'Movimentos importados por mês'/.test(adm)&&/Limites atingidos/.test(adm)&&/admin_alertas_vistos/.test(adm),z)}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

@@ -189,6 +189,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
 .lkbox input{font:inherit;font-size:15px;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;width:100%;box-sizing:border-box}.lkbox #lkEmail{color:var(--mu);text-align:center;background:transparent;border-style:dashed}.lkpw{position:relative}.lkpw input{padding-right:42px}.lkpw .pwv{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:16px}
 .lkbox .bt.pri{padding:10px;font-size:15px}.lkmsg{min-height:18px;font-size:13px;color:var(--mu)}.lkmsg.err{color:#c62828}.lkmsg.ok{color:#2e7d32}.lklinks{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.lkl{border:0;background:none;color:var(--ac);cursor:pointer;font:inherit;font-size:12.5px;padding:2px}
 .lkopt{margin:12px 0 4px;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;font-size:13.5px}.lkopt select{font:inherit;margin:0 4px}.muted2{color:var(--mu);font-size:12.5px;display:block;margin-top:4px}body.locked{overflow:hidden}
+.gdemo{margin-top:14px;display:grid;gap:4px;justify-items:center}.gdemo small{color:var(--mu);font-size:12px}.demoban{position:fixed;left:12px;bottom:12px;z-index:110;background:#fff8e1;color:#5d4300;border:1px solid #f0c060;border-radius:12px;padding:6px 14px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:calc(100vw - 24px)}.demoban[hidden]{display:none}.demoban a{color:inherit;font-weight:700;margin-left:6px}
 </style>
 <script>
 /* tema claro/escuro partilhado por todos os separadores */
@@ -317,7 +318,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
 <div id="tour" hidden><div id="tourBlock"></div><div id="tourSpot"></div><div id="tourBub" role="dialog" aria-live="polite"></div></div>
 <div class="gate" id="gate" hidden role="dialog" aria-label="Entrar nas Finanças Pessoais"><div class="gbox"><img src="img/logo-64.png" width="56" height="56" alt=""><h2>Finanças Pessoais</h2>
   <p>Junte os extratos dos bancos, os recibos e as despesas num só sítio. Os seus dados ficam guardados na sua conta, protegidos, e só você os vê.</p>
-  <div class="gbt"><button class="bt pri" type="button" id="gEntrar">🔑 Entrar</button><button class="bt" type="button" id="gCriar">✨ Criar conta</button></div>
+  <div class="gbt"><button class="bt pri" type="button" id="gEntrar">🔑 Entrar</button><button class="bt" type="button" id="gCriar">✨ Criar conta</button></div><div class="gdemo"><button class="bt" type="button" id="gDemo" title="Entra numa conta de demonstração com dados fictícios — pode mexer à vontade">👀 Ver a demonstração</button><small>Dados fictícios · voltam ao início todas as noites</small></div>
   <p class="gmsg" id="gMsg"></p><p class="gpv"><a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a></p></div></div>
 <div class="mod" id="mod" hidden>
   <form class="box" id="fLogin" autocomplete="on">
@@ -348,6 +349,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
   <div class="lkpw"><input type="password" id="lkPass" autocomplete="current-password" placeholder="Palavra-passe" aria-label="Palavra-passe" required><button type="button" class="pwv" data-pwv="lkPass" title="Mostrar a palavra-passe" aria-label="Mostrar a palavra-passe">👁</button></div>
   <button class="bt pri" type="submit" id="lkOk">Entrar</button><div class="lkmsg" id="lkMsg" role="alert"></div>
   <div class="lklinks"><button type="button" class="lkl" id="lkEsq">Esqueceu-se da palavra-passe?</button><button type="button" class="lkl" id="lkSair">Sair da conta</button></div></form></div>
+<div class="demoban" id="demoBan" hidden role="status">👀 <b>Conta de demonstração</b> — dados fictícios; pode mexer à vontade, tudo volta ao início todas as noites. <a href="#" id="demoSair">Criar a minha conta</a></div>
 <div class="verban" id="verBan" hidden role="status"><span>🆕 Há uma versão nova do site<b id="verN"></b>.</span><button type="button" class="bt pri" id="verOk">Atualizar agora</button><button type="button" class="bt" id="verX" title="Fechar (atualiza na próxima vez que abrir)">✕</button></div>
 <div class="frames" id="frames"><a class="extlink" id="extLink" target="_blank" rel="noopener noreferrer" hidden title="Se o site não aparecer aqui, abra-o numa nova aba">↗ Abrir numa nova aba</a></div>
 <script>
@@ -431,8 +433,8 @@ const FPMenu=(function(){const $=id=>document.getElementById(id),m=$('menu');let
     $('av').textContent=l;$('mail').textContent=on?U.email:'Menu';$('mAv').textContent=on?l:'?';$('mMail').textContent=on?U.email:'Sem sessão';
     $('mSub').textContent=on?'Dados guardados na conta':'Os dados ficam só neste dispositivo';$('miEntrar').hidden=on||!window.FP_AUTH;$('miSair').hidden=!on;
     $('contaInfo').innerHTML=on?`<p>Sessão iniciada como <b>${U.email.replace(/</g,'&lt;')}</b>.</p>
-      <label for="novaPass">Mudar palavra-passe</label><div class="pw"><input id="novaPass" type="password" minlength="6" autocomplete="new-password" placeholder="Nova palavra-passe (mín. 6)"><button class="pwv" type="button" data-pwv="novaPass" aria-label="Mostrar a palavra-passe" title="Mostrar a palavra-passe">👁</button></div>
-      <div class="grp" style="margin-top:8px"><button class="opt" id="btPass" type="button">Guardar palavra-passe</button><button class="opt danger" id="btSair2" type="button">Terminar sessão</button></div><div class="note2" id="passMsg"></div>
+      ${/^demo@frisk\.pt$/i.test(U.email||'')?'<p class="note2">👀 Conta de demonstração: a palavra-passe não se muda e os dados voltam ao início todas as noites.</p><div hidden>':'<div>'}<label for="novaPass">Mudar palavra-passe</label><div class="pw"><input id="novaPass" type="password" minlength="6" autocomplete="new-password" placeholder="Nova palavra-passe (mín. 6)"><button class="pwv" type="button" data-pwv="novaPass" aria-label="Mostrar a palavra-passe" title="Mostrar a palavra-passe">👁</button></div>
+      <div class="grp" style="margin-top:8px"><button class="opt" id="btPass" type="button">Guardar palavra-passe</button></div><div class="note2" id="passMsg"></div></div><div class="grp" style="margin-top:8px"><button class="opt danger" id="btSair2" type="button">Terminar sessão</button></div>
       <h3 style="margin-top:18px">Os meus dados</h3><p>Leve uma cópia de todos os seus dados das Finanças, ou apague-os. Saiba mais na <a href="privacidade.html" target="_blank" rel="noopener">página de privacidade</a>.</p>
       <div class="grp"><button class="opt" id="btExpConta" type="button">📦 Exportar os meus dados</button><button class="opt danger" id="btApConta" type="button">🗑 Apagar os meus dados das Finanças</button></div>
       <div id="apcBox" hidden style="margin-top:10px;border:1px solid #c62828;border-radius:10px;padding:12px"><p style="margin-top:0"><b>Isto apaga todos os seus dados das Finanças</b>: movimentos, categorias, regras, rendimentos, previsões, preferências, sugestões e estatísticas de uso. Sai dos agregados; os de que é dono passam para o membro mais antigo (ou são apagados, se for o único). <b>Não se pode desfazer</b> — exporte os dados primeiro, se os quiser guardar.</p>
@@ -731,7 +733,7 @@ window.FPPer=(function(){const $=id=>document.getElementById(id),MS=['Janeiro','
     // mostra logo "enviada" e envia em segundo plano: Google Sheet + cópia no Supabase (para o sinal de "por ler" do admin)
     $('sgTxt').value='';$('sgMail').checked=false;$('sgMsg').textContent='✓ Obrigado! Sugestão enviada.';setTimeout(()=>{if(/Obrigado/.test($('sgMsg').textContent))$('sgMsg').textContent=''},6000);
     fetch(SUG_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).catch(()=>{});
-    try{FPTrack.log('sugestao',{tipo:d.tipo});const c=window.plataforma;if(c&&c.from&&!d.site)c.from('sugestoes').insert({site_id:'financas',user_id:u?u.id:null,tipo:d.tipo,texto:t,email:d.email||null,separador:(d.separador||'').slice(0,60),versao:(d.versao||'').slice(0,20)}).then(()=>{},()=>{})}catch(e){}});
+    try{FPTrack.log('sugestao',{tipo:d.tipo});const c=window.plataforma;if(c&&c.from&&!d.site)c.from('sugestoes').insert({site_id:'financas',user_id:u?u.id:null,tipo:d.tipo,texto:t,email:d.email||null,separador:(d.separador||'').slice(0,60),versao:(d.versao||'').slice(0,20)}).then(r=>{if(r&&r.error&&/Limite/i.test(r.error.message||'')){try{c.rpc('fin_limite_atingido',{p_site:'financas',p_tipo:'sug_dia'})}catch(x){}alert('Atingiu o limite de sugestões de hoje. Se precisa de enviar mais, tente amanhã ou fale connosco pelas sugestões existentes.')}},()=>{})}catch(e){}});
   /* v0.10c: banco não suportado — abre a sugestão já preenchida com uma amostra anónima (a pessoa vê e edita antes de enviar) */
   window.FPSug={amostra:txt=>{const b=document.querySelector('[data-set="sugestao"]');if(b)b.click();setTimeout(()=>{const p=[...$('sgTipo').children].find(x=>x.dataset.v==='Problema');if(p)p.click();$('sgTxt').value=txt.slice(0,4000);$('sgTxt').focus();$('sgTxt').setSelectionRange(0,0);pinta()},60)}};
   pinta()})();
@@ -770,7 +772,7 @@ const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=
   const faz=async(f,ok)=>{if(ocupado)return;ocupado=true;msg('A guardar…');try{const r=await f();msg(typeof ok==='function'?ok(r):ok||'')}catch(e){msg('Erro: '+((e&&e.message)||'não foi possível concluir'),1)}ocupado=false;await carrega()};
   const pal=()=>QUAL==='emp'?{w:'empresa',a:'a',d:'da'}:{w:'agregado',a:'o',d:'do'};
   const RES={ok:e=>`✓ Convite enviado a ${e}. A pessoa vê o convite quando entrar nas Finanças.`,sem_conta:e=>`Não existe nenhuma conta com o email ${e}. A pessoa tem de criar conta primeiro (no futuro será enviado um email de convite).`,
-    ja_membro:e=>`${e} já é membro ${QUAL==='emp'?'desta empresa':'deste agregado'}.`,ja_convidado:e=>`${e} já tem um convite por aceitar.`,proprio:()=>'Não se pode convidar a si próprio.',limite:()=>'Limite de convites por dia atingido. Tente amanhã.'};
+    ja_membro:e=>`${e} já é membro ${QUAL==='emp'?'desta empresa':'deste agregado'}.`,ja_convidado:e=>`${e} já tem um convite por aceitar.`,demo:()=>'Na conta de demonstração não se enviam convites.',proprio:()=>'Não se pode convidar a si próprio.',limite:()=>'Limite de convites por dia atingido. Tente amanhã.'};
   function liga(){['agrBox','empBox'].forEach(id=>{const box=$(id);if(!box)return;const Q=id==='empBox'?'emp':'agr';box.addEventListener('focusin',()=>{QUAL=Q});box.addEventListener('pointerdown',()=>{QUAL=Q});
     box.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
       QUAL=Q;if(f.id==='agrNovo'){const n=f.querySelector('input').value.trim();if(n)faz(()=>rpc('agregado_criar',{p_site:SITE,p_nome:n}),'✓ Agregado criado. Já pode convidar pessoas.');return}
@@ -842,6 +844,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.18',d:'13/10/2026',n:['Agregados e empresas: aba Chat dividida em 📝 Notas, ✅ Checklist (listas, tarefas e subtarefas, com responsável e data) e 💬 Chat','Empresas: 📎 Anexos (comprovativo de IBAN, certidão permanente…) — a validade entra nos prazos','👀 Conta de demonstração para experimentar o site com dados fictícios'],a:['Empresas: ao editar, o botão ✓ Concluir fica sempre visível no canto','Limite de movimentos importados por mês — ao chegar a um limite aparece um aviso a explicar']},
  {v:'0.17',d:'12/10/2026',n:['🔒 Bloqueio da sessão: na 1.ª vez de cada dia e depois de 1 hora sem atividade pede a palavra-passe (o tempo muda-se em Definições › Conta)'],a:['Ao entrar ou desbloquear, se houver versão nova o site atualiza logo']},
  {v:'0.16',d:'12/10/2026',n:['Sugestões: aba ✅ Concluídas para toda a gente (cada um vê as suas)','Quando há uma versão nova do site aparece "🆕 Atualizar agora" (verifica uma vez por dia)'],a:['Despesas, Previsões e Rendimentos: o mês escolhido fica com um contorno grosso em vez de fundo azul','Despesas: saiu a caixa "Categorias"','Janela das Definições maior']},
  {v:'0.15a',d:'12/10/2026',n:['Sugestões: ✉ marcar como não lida (na conversa e na lista) — o aviso volta a aparecer'],a:['Sugestões: conversa mais arrumada — estado e data no topo, mensagens em balões com o nome e a hora por cima']},
@@ -968,7 +971,7 @@ const FPFaq=(function(){const $=id=>document.getElementById(id),SITE='financas';
     if(!U||!c){$('fqMsg').innerHTML='Entre na conta para fazer perguntas.';return}
     $('fqEnviar').disabled=true;$('fqMsg').textContent='A enviar…';
     const {error}=await c.from('faq_perguntas').insert({site_id:SITE,user_id:U.id,pergunta:t});FPTrack.log('pergunta');$('fqEnviar').disabled=false;
-    if(error){$('fqMsg').textContent=/Limite/.test(error.message)?'Atingiu o limite de perguntas de hoje.':'Não foi possível enviar.';return}
+    if(error){if(/Limite/.test(error.message))try{window.plataforma.rpc('fin_limite_atingido',{p_site:'financas',p_tipo:'faq_dia'})}catch(x){}$('fqMsg').textContent=/Limite/.test(error.message)?'Atingiu o limite de perguntas de hoje. Se precisa de mais, envie-nos uma sugestão a explicar.':'Não foi possível enviar.';return}
     $('fqNova').value='';$('fqMsg').textContent='✓ Pergunta enviada. A resposta aparece em "As minhas perguntas".';await carrega()});
   $('fqAdm').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
     if(b.dataset.af){AF=b.dataset.af;pintaAdm();return}
@@ -1061,7 +1064,7 @@ const FPEst=(function(){const $=id=>document.getElementById(id),SITE='financas';
   const env=lim=>document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'fp-lim',lim},'*')}catch(e){}});
   async function sessao(u){U=u||null;$('bloq').hidden=true;$('mAviso').hidden=true;AV=[];if(!U)return;const c=window.plataforma;if(!c||!c.rpc)return;
     let E=null;try{const r=await c.rpc('fin_estado',{p_site:SITE});if(r.error)throw r.error;E=r.data||{}}catch(e){return}if(!U||U.id!==u.id)return;
-    window.FP_LIM=E.limites||{};env(window.FP_LIM);try{FPAdm.novos(E.novos||0)}catch(e){}
+    window.FP_LIM=E.limites||{};env(window.FP_LIM);try{FPAdm.novos((E.novos||0)+(E.alertas||0))}catch(e){}window.FP_DEMO=!!E.demo;try{FPDemo.estado(!!E.demo)}catch(e){}
     if(E.bloqueado||E.registos_fechados){$('bqT').textContent=E.bloqueado?'🔒 Conta bloqueada':'Registos fechados';
       $('bqTx').textContent=E.bloqueado?`A sua conta (${U.email||''}) está bloqueada nas Finanças Pessoais.${E.motivo?' Motivo: '+E.motivo:''}`:'De momento não estamos a aceitar contas novas nas Finanças Pessoais. Tente mais tarde.';
       $('bloq').hidden=false;try{FPTrack.log(E.bloqueado?'conta_bloqueada':'registos_fechados',{})}catch(e){}return}
@@ -1081,7 +1084,7 @@ const FPChat=(function(){let U=null,T=null;window.FP_CHAT={};
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')atualiza()});
   [0,1500,4000].forEach(t=>setTimeout(()=>{let u=null;try{u=window.financasUser||null}catch(e){}if(u&&(!U||U.id!==u.id))sessao(u)},t));
   return {sessao,atualiza}})();
-window.FPChat=FPChat;
+window.FPChat=FPChat;try{window.FPAgr=FPAgr}catch(e){}
 /* v0.16: versão nova — verifica só na 1.ª vez que o site é aberto (ou volta a ficar visível) em cada dia; mostra a faixa "Atualizar agora" */
 const FPVer=(function(){const $=id=>document.getElementById(id),hojeV=()=>new Date().toISOString().slice(0,10);
   const atual=()=>{try{return NOVIDADES[0].v}catch(e){return ''}};
@@ -1100,7 +1103,7 @@ const FPLock=(function(){const $=id=>document.getElementById(id),TESTE=/[?&]test
   const ativo=()=>!!U&&(!TESTE||window.FP_LOCK_TESTE);
   const bloqueado=()=>!$('lock').hidden;
   let ultG=0;function ativ(){if(!ativo()||bloqueado())return;const n=Date.now();if(n-ultG<5000)return;ultG=n;ls.s('fp_lock_ult',String(n))}
-  function deve(){if(!ativo())return false;const k='fp_lock_dia_'+U.id;if(ls.g(k)!==dia())return 'dia';const u=+ls.g('fp_lock_ult')||0;if(u&&Date.now()-u>minutos()*60000)return 'tempo';return false}
+  function deve(){if(!ativo()||/^demo@frisk\.pt$/i.test(U.email||''))return false;const k='fp_lock_dia_'+U.id;if(ls.g(k)!==dia())return 'dia';const u=+ls.g('fp_lock_ult')||0;if(u&&Date.now()-u>minutos()*60000)return 'tempo';return false}
   function bloqueia(porque){if(!ativo()||bloqueado())return;
     document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo:'fp-lock'},'*')}catch(e){}}); // grava o que estiver por gravar
     $('lkSub').textContent=porque==='dia'?'Bom dia! Por segurança, confirme a palavra-passe para continuar.':`Esteve mais de ${minutos()>=60?minutos()/60+' hora'+(minutos()>60?'s':''):minutos()+' minutos'} sem atividade. Escreva a palavra-passe para continuar onde estava.`;
@@ -1124,6 +1127,14 @@ const FPLock=(function(){const $=id=>document.getElementById(id),TESTE=/[?&]test
   const sel=$('optLock');sel.value=String(minutos());sel.addEventListener('change',()=>{ls.s('fp_lock_min',sel.value);ativ()});
   return {sessao,ativ,verifica,bloqueia,desbloqueou,_estado:()=>({bloqueado:bloqueado(),min:minutos()})}})();
 window.FPLock=FPLock;
+/* v0.18: conta de demonstração (demo@frisk.pt, palavra-passe pública "demo2026") — botão no ecrã de entrada e faixa enquanto se está nela */
+const FPDemo=(function(){const $=id=>document.getElementById(id),EM='demo@frisk.pt',PW='demo2026';
+  function estado(on){$('demoBan').hidden=!on;document.body.classList.toggle('demo',!!on)}
+  const b=$('gDemo');if(b)b.addEventListener('click',async()=>{if(!window.Auth)return;b.disabled=true;const m=$('gMsg');if(m)m.textContent='A abrir a demonstração…';
+    try{const {data,error}=await Auth.signIn(EM,PW);if(error)throw error;try{FPTrack.log('demo_entrar',{})}catch(e){}}catch(e){if(m)m.textContent='Não foi possível abrir a demonstração. Tente outra vez.'}finally{b.disabled=false}});
+  $('demoSair').addEventListener('click',async e=>{e.preventDefault();if(window.sairConta)await window.sairConta();setTimeout(()=>{try{$('gCriar').click()}catch(x){}},300)});
+  return {estado}})();
+window.FPDemo=FPDemo;
 </script>
 </body>
 </html>

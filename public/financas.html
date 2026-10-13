@@ -154,7 +154,12 @@ html:not(.ctxEmp) nav.tabs .tabemp{display:none}html:not(.ctxEmp):not(.ctxAgr) n
 .pvtabs{margin:0 0 12px}.pvtabs button{border:0;background:var(--card);color:inherit;font:inherit;font-weight:600;padding:8px 16px;cursor:pointer}.pvtabs button.on{background:var(--ac);color:#fff}
 .ef.ro b{font-weight:600;font-size:14px;color:var(--tx);overflow-wrap:anywhere}.ef.ro b a{color:var(--ac)}td.mono{font-family:ui-monospace,monospace;font-size:12.5px}.eplist{margin:4px 0;padding-left:18px;font-size:13.5px}
 .ectop{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}.ectop input{flex:1;min-width:180px;max-width:320px}.ectop input,.ectop select{font:inherit;font-size:13.5px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 9px}.ect tr[hidden]{display:none}
-.chatg{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}@media(max-width:860px){.chatg{grid-template-columns:1fr}.chatg .chatc{order:-1}}.chatg>.card{margin:0}
+.chatg{display:grid;grid-template-columns:1fr 1.15fr 1.25fr;gap:14px;align-items:start}@media(max-width:1180px){.chatg{grid-template-columns:1fr 1fr}.chatg .chatc{grid-column:1/-1;order:-1}}@media(max-width:760px){.chatg{grid-template-columns:1fr}}.chatg>.card{margin:0}
+#lstL{max-height:calc(min(58vh,560px) + 30px);overflow-y:auto}.lsttabs{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin:-2px 0 8px}.lsttabs button[data-lst]{border:1px solid var(--bd);background:var(--card);color:inherit;border-radius:999px;padding:3px 11px;font:inherit;font-size:12.5px;cursor:pointer}.lsttabs button[data-lst].on{background:var(--ac);border-color:var(--ac);color:#fff}.lsttabs button small{opacity:.75}.lsttabs .sp{flex:1}
+.tnova input{width:100%;box-sizing:border-box;font:inherit;font-size:13.5px;color:var(--tx);background:var(--soft);border:1px dashed var(--bd);border-radius:9px;padding:8px 10px;margin-bottom:8px}
+.tar{border-bottom:1px solid var(--bd);padding:5px 0}.tl,.tsub{display:flex;align-items:center;gap:6px}.tl input[type=checkbox],.tsub input[type=checkbox]{width:17px;height:17px;flex:none;accent-color:var(--ac)}.ttx{flex:1;min-width:0;font:inherit;font-size:13.5px;color:var(--tx);background:transparent;border:0;outline:0;padding:3px 2px;border-radius:5px}.ttx:focus{background:var(--soft)}
+.tar.feita>.tl .ttx,.tsub.feita .ttx{text-decoration:line-through;color:var(--mu)}.tresp{flex:none;width:22px;height:22px;border-radius:50%;background:var(--ac2);color:var(--ac);font-size:10.5px;font-weight:700;display:grid;place-items:center}.tpz{flex:none;font-size:11px;color:var(--mu);border:1px solid var(--bd);border-radius:6px;padding:1px 5px}.tpz.atr{color:#c62828;border-color:#e57373}
+.tsubn{flex:none;border:0;background:none;color:var(--mu);font:inherit;font-size:11.5px;cursor:pointer}.tsubs{padding:2px 0 2px 24px}.tsub .btn{opacity:.5}.tdet{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:6px 0 4px 24px;font-size:12px;color:var(--mu)}.tdet label{display:flex;gap:4px;align-items:center}.tdet select,.tdet input{font:inherit;font-size:12.5px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:2px 4px}.tlimpa{text-align:right;margin-top:8px}
 #notasL{display:grid;gap:10px;max-height:calc(min(58vh,560px) + 64px);overflow-y:auto}.nota{border:1px solid var(--bd);border-radius:10px;padding:8px 10px;background:var(--soft)}.nota input,.nota textarea{width:100%;box-sizing:border-box;font:inherit;color:var(--tx);background:transparent;border:0;outline:0;padding:2px 0}.nota .ntit{font-weight:700;font-size:14.5px}.nota textarea{min-height:60px;resize:vertical;font-size:13.5px}.nota:focus-within{border-color:var(--ac);background:var(--card)}.nrod{display:flex;justify-content:space-between;align-items:center}
 .chatc{display:flex;flex-direction:column}.chatm{height:min(58vh,560px);overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:10px;background:var(--soft);border-radius:10px;border:1px solid var(--bd)}
 .cmsg{max-width:min(76%,560px);align-self:flex-start;background:var(--card);border:1px solid var(--bd);border-radius:12px 12px 12px 4px;padding:6px 10px 4px;font-size:14px}.cmsg.eu{align-self:flex-end;background:var(--ac2);border-color:var(--ac);border-radius:12px 12px 4px 12px}
@@ -166,6 +171,7 @@ html:not(.ctxEmp) nav.tabs .tabemp{display:none}html:not(.ctxEmp):not(.ctxAgr) n
 .ef.chk{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--tx);align-self:end;padding-bottom:6px}.ef.chk input{width:auto}
 .eft input,.eft select{font:inherit;font-size:13px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:4px 6px;width:100%;box-sizing:border-box}.eft input.pv{width:80px}
 .eft tr.atr td{background:color-mix(in srgb,#e53935 12%,transparent)}.eft tr.perto td{background:color-mix(in srgb,#f0b347 16%,transparent)}#tab-emp .btn+h4,#tab-emp .tw+.btn{margin-top:8px}
+.empfix{position:fixed;top:12px;right:16px;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.18);padding:8px 16px}.anxf{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd)}.anxf select,.anxf input[type=date]{font:inherit;font-size:13px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:4px 6px}.anxf input[type=file]{font-size:12.5px;max-width:260px}
 .enotas{width:100%;min-height:80px;box-sizing:border-box;font:inherit;font-size:14px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px}.efeitos{margin:10px 0;font-size:13px}.efeitos ul{margin:6px 0;padding-left:18px}
 .rpt input,.rpt select{font:inherit;font-size:13px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:4px 6px;box-sizing:border-box;width:100%}.rpt input.pv{width:100px}.rpt input.rpdia,.eft input.rpdia{width:52px}.rpt input[type=month]{min-width:130px}
 table.rpg{min-width:980px}table.rpg td:first-child{white-space:nowrap;min-width:190px}table.rpg td,table.rpg th{padding:5px 6px;font-size:12.5px}table.rpg tr.gc td{background:var(--soft)}table.rpg tr.sub td:first-child{padding-left:20px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
@@ -502,11 +508,12 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
   <section class="panel" id="tab-emp"><div id="empFicha"></div></section>
   <!-- ================= CHAT (v0.14, agregados e empresas) ================= -->
   <section class="panel" id="tab-chat"><div class="chatg">
-    <div class="card notasc"><h3>📝 Notas <small>partilhadas com os membros</small><span class="r"><button class="btn sm" type="button" id="notaAdd">＋ Nota</button></span></h3><div id="notasL"></div></div>
+    <div class="card notasc"><h3>📝 Notas <small>partilhadas</small><span class="r"><button class="btn sm" type="button" id="notaAdd">＋ Nota</button></span></h3><div id="notasL"></div></div>
+    <div class="card listc"><h3>✅ Checklist <small>partilhada</small><span class="r"><button class="btn sm" type="button" id="lstAdd" title="Nova lista">＋ Lista</button></span></h3><div class="lsttabs" id="lstTabs"></div><div id="lstL"></div></div>
     <div class="card chatc"><h3>💬 Chat <small id="chatTit"></small><span class="r"><small class="muted">só os membros veem</small></span></h3>
     <div class="empty" id="chatSem" hidden></div><p class="note err" id="chatErr" hidden></p>
     <div id="chatBox" hidden><div class="chatm" id="chatMsgs" aria-live="polite"></div>
-      <div class="chatf"><textarea id="chatTx" rows="1" maxlength="2000" placeholder="Escreva uma mensagem… (Enter envia, Shift+Enter muda de linha)" aria-label="Mensagem"></textarea><button class="btn pri" type="button" id="chatEnv">Enviar</button></div></div></div></div></section>
+      <div class="chatf"><textarea id="chatTx" rows="1" maxlength="2000" placeholder="Escreva uma mensagem…" title="Enter envia · Shift+Enter muda de linha" aria-label="Mensagem"></textarea><button class="btn pri" type="button" id="chatEnv">Enviar</button></div></div></div></div></section>
   <section class="panel" id="tab-prev">
     <div class="card"><h3>Saldo previsto <small>rendimentos − despesas, mês a mês</small><span class="r"><span class="nav pvnav" id="pvNav"><button type="button" data-pvy="-1" aria-label="Ano anterior">‹</button><b id="pvAno"></b><button type="button" data-pvy="1" aria-label="Ano seguinte">›</button></span></span></h3>
       <div class="pvsum" id="rpKpis"></div><div class="pvacts"><button class="btn sm" type="button" id="rpTodos">Abrir tudo</button></div><div id="rpGrid"></div><p class="note" id="rpNota"></p></div>
@@ -524,6 +531,8 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
       <p class="note" id="desNota"></p>
     </div>
   </section>
+<div class="modal" id="mLim" hidden><div class="sheet" style="max-width:460px"><div class="mh"><h3>⚠ Limite atingido</h3><button class="mx" type="button" data-close="mLim" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd"><p id="limTx"></p>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px"><button class="btn" type="button" id="limFecha">Fechar</button><button class="btn pri" type="button" id="limMsg">✉ Enviar mensagem</button></div></div></div></div>
 </main>
 <div id="toast"></div>
 <datalist id="dlCat"></datalist><datalist id="dlQuem"></datalist>
@@ -621,7 +630,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.17'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.18'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -970,7 +979,9 @@ async function importar(files){
       const REP=new Map(),di=new Set(DB.delImp||[]),v=validar(r),ex=new Set(DB.mov.map(chave)),exD=new Set(DB.del.filter(k=>!(DB.rep[k]>0)&&!di.has(k))),impId=uid('i');let novos=[],dup=0,elim=0;
       r.mov.forEach(m=>{const o={id:'m'+(++DB.seq),imp:impId,banco:r.banco,conta:r.conta,dm:m.dm,dv:m.dv,desc:m.desc,...(m.desc0?{desc0:m.desc0}:{}),valor:m.valor,saldo:m.saldo,saldoDisp:m.saldoDisp,
         cat:'',ref:'',catSrc:'',det:[m.catBanco||'',refBanco(m.desc)].filter(Boolean).join(' · '),obs:'',quem:'',quemMan:false,ord:m.ord};
-        tiraPrefixo(o);{const kb=chave(o),n=REP.get(kb)||0;REP.set(kb,n+1);if(n)o.rep=n}const k=chave(o);if(ex.has(k)){dup++;DB.seq--;return}if(exD.has(k)){elim++;DB.seq--;return}if(di.has(k)){DB.rep[k]=Date.now();DB.delImp=DB.delImp.filter(x=>x!==k)}ex.add(k);DB.mov.push(o);novos.push(o)});
+        tiraPrefixo(o);{const kb=chave(o),n=REP.get(kb)||0;REP.set(kb,n+1);if(n)o.rep=n}const k=chave(o);if(ex.has(k)){dup++;DB.seq--;return}if(exD.has(k)){elim++;DB.seq--;return}if(di.has(k)){DB.rep[k]=Date.now();DB.delImp=DB.delImp.filter(x=>x!==k)}ex.add(k);novos.push(o)});
+      {const lim=+LIM.mov_mes,usados=movMes();if(lim&&usados+novos.length>lim){limiteAviso('mov_mes',{lim,usados,novos:novos.length});throw new Error(`Limite de ${lim} movimentos importados por mês atingido (já importou ${usados} este mês; este ficheiro tem ${novos.length} novos).`)}}
+      novos.forEach(o=>DB.mov.push(o));
       aplicaRegras(novos);aplicaPessoas(novos);autoLiga();
       DB.imports.push({id:impId,ficheiro:f.name,banco:r.banco,conta:r.conta,titular:r.titular,inicio:r.inicio,fim:r.fim,em:new Date().toISOString(),novos:novos.length,dup});
       if(gen){FALHOU.set(f.name,f);if(FALHOU.size>10)FALHOU.delete(FALHOU.keys().next().value)}
@@ -1529,6 +1540,7 @@ function prazosEmp(a,b){const f=EMP().f,out=[],ad=(k,d,nome,ref,tip)=>{if(d>=a&&
     EMP().prazos.forEach(x=>{if(x.per==='a'){if(x.mes&&x.dia)ad(`u${x.id}|${y}`,diaUtil(y,+x.mes-1,+x.dia),x.nome||'(sem nome)',`${y}`,'Prazo acrescentado por si')}})}
   EMP().prazos.forEach(x=>{if(x.per==='m'&&x.dia)for(let i=0;i<n;i++){const p=mAdd(m0,i);ad(`u${x.id}|${p}`,diaUtil(+p.slice(0,4),+p.slice(5,7)-1,+x.dia),x.nome||'(sem nome)',`${MESES[+p.slice(5,7)-1]} ${p.slice(0,4)}`.toLowerCase(),'Prazo acrescentado por si')}});
   if(f.certV)ad('cert|'+f.certV,f.certV,'Renovar a certidão permanente','validade','A certidão deixa de ser válida neste dia');
+  (EMP().anexos||[]).forEach(x=>{if(x.validade)ad('anx|'+x.id+'|'+x.validade,x.validade,'Renovar: '+(x.nome||x.tipo||'anexo'),'validade do anexo','A validade indicada no anexo termina neste dia')});
   return out.sort((x,y)=>x.d.localeCompare(y.d)||x.nome.localeCompare(y.nome,'pt'))}
 const diasAte=d=>Math.round((new Date(d+'T12:00')-new Date(hoje()+'T12:00'))/864e5);
 const quandoTxt=d=>{const n=diasAte(d);return n<0?`passou há ${-n} dia${n===-1?'':'s'}`:n===0?'é hoje':n===1?'é amanhã':`faltam ${n} dias`};
@@ -1539,6 +1551,25 @@ function renderEmpPrazo(){const el=$('#empPrazo');if(!el)return;if(!eEmp()){el.h
   el.innerHTML=`<span>📅 <b>${at?'Prazo em atraso':'Próximo prazo'}:</b> ${esc(x.nome)} <small class="muted">(${esc(x.ref)})</small> — até ${fmtD(x.d)} · <b class="${diasAte(x.d)<0?'neg':diasAte(x.d)<=7?'warn':''}">${quandoTxt(x.d)}</b>${L.length>1?` <small class="muted">· mais ${L.length-1} por fazer até ${fmtD(L[L.length-1].d)}</small>`:''}</span><button class="btn sm" type="button" data-tab="emp">Ver prazos</button>`;el.hidden=false}
 /* v0.14: ficha só de leitura com ✏ Editar; contactos (nome, categoria, telemóvel, email, morada, empresa) */
 let EMPED=false;const CONT_CAT=['Cliente','Fornecedor','Contabilista','Banco','Parceiro','Trabalhador','Outro'];
+/* v0.18: anexos da empresa — Supabase Storage privado 'empresa-anexos' (<agregado>/<ficheiro>); a lista fica em DB.empresa.anexos */
+const ANX_TIPOS=['Comprovativo de IBAN','Certidão permanente','Pacto social','Declaração de início de atividade','Cartão de contribuinte','Contrato','Seguro','Licença / alvará','Outro'];
+const fmtTam=b=>b>=1048576?(b/1048576).toLocaleString('pt-PT',{maximumFractionDigits:1})+' MB':Math.max(1,Math.round(b/1024))+' KB';
+const anxTotal=()=>(EMP().anexos||[]).reduce((s,x)=>s+(+x.tam||0),0);
+function anexosHtml(ed){const L=(EMP().anexos||[]).slice().sort((a,b)=>(a.tipo||'').localeCompare(b.tipo||'','pt')||(b.em||'').localeCompare(a.em||'')),hj=hoje(),on=!!(SY.sb&&SY.user);
+  return (L.length?`<div class="tw"><table class="t eft"><thead><tr><th>Documento</th><th>Tipo</th><th>Validade</th><th class="num">Tamanho</th><th>Enviado</th><th></th></tr></thead><tbody>${L.map(x=>`<tr><td><b>${esc(x.nome)}</b></td><td>${esc(x.tipo||'')}</td><td${x.validade&&x.validade<hj?' class="neg" title="Expirado"':''}>${x.validade?fmtD(x.validade):'—'}</td><td class="num">${fmtTam(+x.tam||0)}</td><td class="muted">${fmtD((x.em||'').slice(0,10))}${x.autor?' · '+esc(x.autor):''}</td><td style="white-space:nowrap"><button class="btn sm" type="button" data-anxab="${esc(x.id)}">Abrir</button>${ed?` <button class="btn ic sm" type="button" data-anxdel="${esc(x.id)}" title="Apagar">🗑</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">Ainda não há anexos.</p>')
+    +(on&&/^demo@frisk\.pt$/i.test(SY.user.email||'')?'<p class="muted">Na conta de demonstração não se enviam anexos.</p>':on?`<div class="anxf"><input type="file" id="anxFich" accept="application/pdf,image/*" aria-label="Ficheiro"><select id="anxTipo" aria-label="Tipo">${ANX_TIPOS.map(t=>`<option>${t}</option>`).join('')}</select><label class="muted">Validade <input type="date" id="anxVal"></label><button class="btn pri sm" type="button" id="anxEnv">⬆ Enviar</button><span id="anxMsg" class="muted"></span></div>`:'<p class="muted">Entre na conta para enviar anexos.</p>')}
+async function anexoEnvia(){const fi=$('#anxFich').files[0],msg=$('#anxMsg');if(!fi){msg.textContent='Escolha um ficheiro.';return}
+  if(!/^(application\/pdf|image\/)/.test(fi.type)){msg.textContent='Só PDF ou imagens.';return}if(fi.size>10485760){msg.textContent='O ficheiro tem mais de 10 MB.';return}
+  if(anxTotal()+fi.size>209715200){msg.textContent='Ultrapassa os 200 MB da empresa — apague anexos antigos.';return}
+  const id=uid('ax'),nome=fi.name.replace(/[^\w.\-() ]+/g,'_').slice(-80),path=`${CTX.id}/${id}-${nome}`;msg.textContent='A enviar…';$('#anxEnv').disabled=true;
+  try{const {error}=await SY.sb.storage.from('empresa-anexos').upload(path,fi,{contentType:fi.type,upsert:false});if(error)throw error;
+    const o=EMP();o.anexos=o.anexos||[];o.anexos.push({id,path,nome:fi.name.slice(0,120),tipo:$('#anxTipo').value,validade:$('#anxVal').value||'',tam:fi.size,em:new Date().toISOString(),autor:(SY.user.email||'').split('@')[0]});
+    trk('anexo',{tipo:$('#anxTipo').value});save();render()}
+  catch(e){msg.textContent='Não foi possível enviar: '+(/exceeded|size/i.test(e.message||'')?'ficheiro grande demais.':/mime|type/i.test(e.message||'')?'tipo de ficheiro não aceite.':(e.message||e));$('#anxEnv').disabled=false}}
+async function anexoAbre(id){const x=(EMP().anexos||[]).find(y=>y.id===id);if(!x||!SY.sb)return;const w=window.open('','_blank');
+  try{const {data,error}=await SY.sb.storage.from('empresa-anexos').createSignedUrl(x.path,120);if(error)throw error;if(w)w.location=data.signedUrl;else location.href=data.signedUrl}catch(e){if(w)w.close();toast('Não foi possível abrir o anexo.')}}
+async function anexoApaga(id){const o=EMP(),x=(o.anexos||[]).find(y=>y.id===id);if(!x||!confirm(`Apagar o anexo "${x.nome}"?`))return;
+  try{if(SY.sb){const {error}=await SY.sb.storage.from('empresa-anexos').remove([x.path]);if(error)throw error}o.anexos=o.anexos.filter(y=>y!==x);save();render()}catch(e){toast('Não foi possível apagar: '+(e.message||e))}}
 function renderEmp(){const o=EMP(),f=o.f,ed=EMPED;o.contactos=o.contactos||[];
   const vTxt=([k,l,t,ph])=>{const v=f[k];if(t==='chk')return v?'Sim':'Não';if(!v)return '';if(t==='date')return fmtD(v);if(t==='email')return `<a href="mailto:${esc(v)}">${esc(v)}</a>`;if(t==='tel')return `<a href="tel:${esc(String(v).replace(/\s/g,''))}">${esc(v)}</a>`;if(k==='site')return `<a href="${/^https?:/i.test(v)?esc(v):'https://'+esc(v)}" target="_blank" rel="noopener">${esc(v)}</a>`;return esc(v)};
   const campo=([k,l,t,ph,larga])=>{t=t||'txt';const v=f[k];
@@ -1568,6 +1599,7 @@ function renderEmp(){const o=EMP(),f=o.f,ed=EMPED;o.contactos=o.contactos||[];
     <h4 class="eg">Contas bancárias</h4>${contas}
     <h4 class="eg">Notas</h4>${ed?`<textarea class="enotas" data-ef="notas" placeholder="Notas livres (ex.: datas de assembleias, contactos). Não guarde aqui palavras-passe.">${esc(f.notas||'')}</textarea>`:`<p style="white-space:pre-wrap">${f.notas?esc(f.notas):'<span class="muted">—</span>'}</p>`}</div>
   <div class="card" id="empCont"><h3>📇 Contactos <small>clientes, fornecedores, contabilista…</small>${ed?'':'<span class="r"><button class="btn sm" type="button" data-emped="1">✏ Editar</button></span>'}</h3>${contactos}</div>
+  <div class="card" id="empAnx"><h3>📎 Anexos <small>PDF ou imagem até 10 MB · só os membros da empresa veem</small><span class="r"><small class="muted">${fmtTam(anxTotal())} de 200 MB</small></span></h3>${anexosHtml(ed)}</div>
   <div class="card"><h3>📅 Prazos <small>próximos 75 dias e em atraso · a partir do regime acima</small></h3>
     ${!temReg?'<div class="empty"><b>Sem prazos</b>Carregue em ✏ Editar e escolha o regime de IVA e de IRC para ver as obrigações da empresa.</div>'
       :P.length?`<div class="tw"><table class="t eft"><thead><tr><th>Até</th><th>Obrigação</th><th>Refere-se a</th><th></th><th></th></tr></thead><tbody>${P.map(x=>{const n=diasAte(x.d);return `<tr class="${x.d<h?'atr':n<=7?'perto':''}"><td><b>${fmtD(x.d)}</b></td><td${x.tip?` title="${esc(x.tip)}"`:''}>${esc(x.nome)}${x.tip?' <span class="muted">ⓘ</span>':''}</td><td class="muted">${esc(x.ref)}</td><td class="muted">${quandoTxt(x.d)}</td><td><button class="btn sm" type="button" data-epf="${esc(x.k)}">✓ Feito</button></td></tr>`}).join('')}</tbody></table></div>`:'<p class="muted">Nada por fazer nos próximos 75 dias. 🎉</p>'}
@@ -1575,7 +1607,7 @@ function renderEmp(){const o=EMP(),f=o.f,ed=EMPED;o.contactos=o.contactos||[];
     ${ed||o.prazos.length?`<h4 class="eg">Outros prazos <small class="muted">acrescentados por si</small></h4>`:''}
     ${ed?(o.prazos.length?`<div class="tw"><table class="t eft"><thead><tr><th>Obrigação</th><th>Repete</th><th>Dia</th><th>Mês</th><th></th></tr></thead><tbody>${o.prazos.map(x=>`<tr data-epid="${esc(x.id)}"><td><input data-epz="nome" value="${esc(x.nome||'')}" placeholder="ex.: Pagar a renda do escritório"></td><td><select data-epz="per"><option value="m"${x.per==='m'?' selected':''}>Todos os meses</option><option value="a"${x.per==='a'?' selected':''}>Todos os anos</option></select></td><td><input class="pv rpdia" data-epz="dia" value="${esc(x.dia||'')}" inputmode="numeric"></td><td>${x.per==='a'?`<select data-epz="mes">${MESES.map((m,i)=>`<option value="${i+1}"${+x.mes===i+1?' selected':''}>${m}</option>`).join('')}</select>`:'<span class="muted">—</span>'}</td><td><button class="btn ic sm" type="button" data-epdel="${esc(x.id)}" title="Apagar">🗑</button></td></tr>`).join('')}</tbody></table></div>`:'')+'<button class="btn sm" type="button" id="epAdd">＋ Prazo</button>'
       :o.prazos.length?`<ul class="eplist">${o.prazos.map(x=>`<li>${esc(x.nome||'(sem nome)')} <small class="muted">— ${x.per==='a'?`todos os anos a ${x.dia||'?'} de ${(MESES[(+x.mes||1)-1]||'').toLowerCase()}`:`todos os meses ao dia ${x.dia||'?'}`}</small></li>`).join('')}</ul>`:''}
-    <p class="note">Em atraso só aparecem os prazos desde que configurou o regime (${o.desde?fmtD(o.desde):'hoje'}), até 60 dias para trás. Datas gerais da AT e da Segurança Social (ao sábado ou domingo passam para segunda-feira; feriados não estão contados). Os prazos podem mudar ou ser prorrogados — confirme com o contabilista ou no Portal das Finanças.</p></div>`;
+    ${ed?'<button class="btn pri empfix" type="button" id="empEd2" title="Terminar a edição">✓ Concluir</button>':''}<p class="note">Em atraso só aparecem os prazos desde que configurou o regime (${o.desde?fmtD(o.desde):'hoje'}), até 60 dias para trás. Datas gerais da AT e da Segurança Social (ao sábado ou domingo passam para segunda-feira; feriados não estão contados). Os prazos podem mudar ou ser prorrogados — confirme com o contabilista ou no Portal das Finanças.</p></div>`;
   filtraCont()}
 function filtraCont(){const q=norm(($('#ecQ')||{}).value||''),c=($('#ecCat')||{}).value||'';let n=0,t=0;
   $$('#empCont tr[data-ecr]').forEach(tr=>{t++;const ok=(!q||tr.dataset.ecr.includes(q))&&(!c||tr.dataset.ecc===c);tr.hidden=!ok;if(ok)n++});const nd=$('#ecNada');if(nd)nd.hidden=!(t&&!n)}
@@ -1590,6 +1622,10 @@ $('#tab-emp').addEventListener('change',e=>{const t=e.target,d=t.dataset,o=EMP()
   else return;if(!o.desde&&(o.f.iva||o.f.irc||o.f.trab||o.f.saft||o.prazos.length))o.desde=hoje(); // só mostra em atraso os prazos depois de configurar
   trk('empresa',{});save();render()});
 $('#tab-emp').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset,o=EMP();o.contactos=o.contactos||[];
+  if(b.id==='empEd2'){EMPED=false;render();return}
+  if(b.id==='anxEnv'){anexoEnvia();return}
+  if(d.anxab){anexoAbre(d.anxab);return}
+  if(d.anxdel){anexoApaga(d.anxdel);return}
   if(b.id==='empEd'||d.emped){EMPED=!EMPED;render();if(d.emped)requestAnimationFrame(()=>{const c=$('#empCont');if(c)c.scrollIntoView({block:'start'})});return}
   if(b.id==='esAdd')o.socios.push({nome:'',cargo:'Sócio-gerente',quota:''});
   else if(b.id==='ecAdd')o.contas.push({banco:'',iban:'',obs:''});
@@ -1627,7 +1663,38 @@ function renderNotas(){if(document.activeElement&&document.activeElement.closest
 $('#notaAdd').addEventListener('click',()=>{if(CTX.t!=='a')return;DB.notas=DB.notas||[];const q=renderNotas.quem?renderNotas.quem():'eu';DB.notas.push({id:uid('nt'),tit:'',txt:'',autor:q,em:new Date().toISOString().slice(0,16).replace('T',' ')});save();renderNotas();const i=$('#notasL .ntit');if(i)i.focus();trk('nota',{})});
 $('#notasL').addEventListener('change',e=>{const f=e.target.dataset.nf,c=e.target.closest('[data-nid]');if(!f||!c)return;const n=(DB.notas||[]).find(x=>x.id===c.dataset.nid);if(!n)return;n[f]=e.target.value;n.em=new Date().toISOString().slice(0,16).replace('T',' ');n.autor=renderNotas.quem?renderNotas.quem():n.autor;save()});
 $('#notasL').addEventListener('click',e=>{const b=e.target.closest('[data-ndel]');if(!b)return;const n=(DB.notas||[]).find(x=>x.id===b.dataset.ndel);if(n&&(n.tit||n.txt)&&!confirm(`Apagar a nota "${n.tit||n.txt.slice(0,30)}"?`))return;DB.notas=(DB.notas||[]).filter(x=>x.id!==b.dataset.ndel);save();renderNotas()});
-function renderChat(){if(CTX.t==='a')renderNotas();const ok=CTX.t==='a',log=!!(SY.sb&&SY.user);$('#chatTit').textContent=ok?(CTX.emp?'🏢 ':'👪 ')+(CTX.nome||''):'';
+/* v0.18: Checklist partilhada (DB.listas=[{id,nome,t:[{id,txt,feito,resp,prazo,sub:[{id,txt,feito}],aberta}]}]) */
+let LST=null;
+function membrosCtx(){try{const g=(window.parent.FPAgr&&window.parent.FPAgr.ativos()||[]).find(x=>x.id===CTX.id);return (g&&g.membros||[]).map(m=>({id:m.user_id,nome:m.nome||String(m.email||'').split('@')[0]}))}catch(e){return []}}
+const iniciais=n=>String(n||'?').split(/[\s._-]+/).filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join('')||'?';
+function renderListas(forca){const ae=document.activeElement;if(forca!==true&&ae&&ae.closest&&ae.closest('#lstL')&&ae.matches('[data-ttx],[data-stx]'))return;
+  DB.listas=DB.listas||[];if(!DB.listas.length)DB.listas.push({id:uid('ls'),nome:'Tarefas',t:[]});const L=DB.listas;if(!LST||!L.some(x=>x.id===LST))LST=L[0].id;const l=L.find(x=>x.id===LST),M=membrosCtx(),hj=hoje();
+  $('#lstTabs').innerHTML=L.map(x=>{const n=x.t.filter(t=>!t.feito).length;return `<button type="button" data-lst="${esc(x.id)}" class="${x.id===LST?'on':''}">${esc(x.nome)}${n?` <small>${n}</small>`:''}</button>`}).join('')+(L.length>1||l.nome!=='Tarefas'?`<span class="sp"></span><button type="button" class="btn ic sm" data-lstren title="Mudar o nome da lista">✏</button><button type="button" class="btn ic sm" data-lstdel title="Apagar a lista">🗑</button>`:'<span class="sp"></span><button type="button" class="btn ic sm" data-lstren title="Mudar o nome da lista">✏</button>');
+  const ord=l.t.slice().sort((a,b)=>(a.feito-b.feito)||((a.prazo||'9')>(b.prazo||'9')?1:-1));
+  const tar=t=>{const ns=(t.sub||[]).length,nf=(t.sub||[]).filter(x=>x.feito).length,atr=!t.feito&&t.prazo&&t.prazo<hj,r=M.find(m=>m.id===t.resp);
+    return `<div class="tar${t.feito?' feita':''}" data-tid="${esc(t.id)}"><div class="tl"><input type="checkbox" data-tchk${t.feito?' checked':''} aria-label="Feito"><input class="ttx" data-ttx value="${esc(t.txt||'')}" placeholder="Tarefa…">
+      ${ns?`<button type="button" class="tsubn" data-tsubt title="Subtarefas">${nf}/${ns} ${t.aberta?'▾':'▸'}</button>`:''}${r?`<span class="tresp" title="${esc(r.nome)}">${esc(iniciais(r.nome))}</span>`:''}${t.prazo?`<span class="tpz${atr?' atr':''}" title="Data limite">${fmtD(t.prazo).slice(0,5)}</span>`:''}<button type="button" class="btn ic sm" data-tmais title="Detalhes">⋯</button></div>
+      ${t.mais?`<div class="tdet"><label>Responsável <select data-tresp><option value="">—</option>${M.map(m=>`<option value="${esc(m.id)}"${m.id===t.resp?' selected':''}>${esc(m.nome)}</option>`).join('')}</select></label><label>Data limite <input type="date" data-tpz value="${esc(t.prazo||'')}"></label><button type="button" class="btn sm" data-tsuba>＋ Subtarefa</button><button type="button" class="btn ic sm" data-tdel title="Apagar tarefa">🗑</button></div>`:''}
+      ${(t.aberta||t.mais)&&ns?`<div class="tsubs">${t.sub.map(x=>`<div class="tsub${x.feito?' feita':''}" data-sid="${esc(x.id)}"><input type="checkbox" data-schk${x.feito?' checked':''} aria-label="Feito"><input class="ttx" data-stx value="${esc(x.txt||'')}" placeholder="Subtarefa…"><button type="button" class="btn ic sm" data-sdel title="Apagar">✕</button></div>`).join('')}</div>`:''}</div>`};
+  $('#lstL').innerHTML=`<div class="tnova"><input id="tNova" placeholder="＋ Nova tarefa (Enter)" aria-label="Nova tarefa"></div>`+(ord.length?ord.map(tar).join(''):'<div class="empty"><b>Sem tarefas</b>Escreva acima e carregue em Enter.</div>')+(l.t.some(t=>t.feito)?`<div class="tlimpa"><button type="button" class="btn sm" data-tlimpa>Limpar feitas (${l.t.filter(t=>t.feito).length})</button></div>`:'')}
+const lstAtual=()=>(DB.listas||[]).find(x=>x.id===LST);
+$('#lstAdd').addEventListener('click',()=>{const n=prompt('Nome da nova lista (ex.: Casa, Viagem):');if(!n||!n.trim())return;DB.listas=DB.listas||[];const l={id:uid('ls'),nome:n.trim().slice(0,40),t:[]};DB.listas.push(l);LST=l.id;save();renderListas(true)});
+$('#lstTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const l=lstAtual();
+  if(b.dataset.lst){LST=b.dataset.lst;renderListas(true);return}
+  if('lstren' in b.dataset){const n=prompt('Nome da lista:',l.nome);if(n&&n.trim()){l.nome=n.trim().slice(0,40);save();renderListas(true)}return}
+  if('lstdel' in b.dataset){if(!confirm(`Apagar a lista "${l.nome}" e as suas ${l.t.length} tarefas?`))return;DB.listas=DB.listas.filter(x=>x!==l);LST=null;save();renderListas(true)}});
+$('#lstL').addEventListener('keydown',e=>{if(e.target.id==='tNova'&&e.key==='Enter'){const v=e.target.value.trim();if(!v)return;const l=lstAtual();l.t.push({id:uid('t'),txt:v.slice(0,300),feito:false,sub:[]});e.target.value='';save();e.target.blur();renderListas(true);const i=$('#tNova');if(i)i.focus();trk('tarefa',{})}
+  else if(e.key==='Enter'&&e.target.matches('[data-ttx],[data-stx]'))e.target.blur()});
+$('#lstL').addEventListener('change',e=>{const t=e.target,d=t.dataset,tr=t.closest('[data-tid]');if(!tr)return;const l=lstAtual(),x=l.t.find(y=>y.id===tr.dataset.tid);if(!x)return;
+  if('tchk' in d){x.feito=t.checked;if(t.checked)(x.sub||[]).forEach(s=>s.feito=true)}else if('ttx' in d)x.txt=t.value.trim().slice(0,300);else if('tresp' in d)x.resp=t.value;else if('tpz' in d)x.prazo=t.value;
+  else{const sr=t.closest('[data-sid]');const s=sr&&(x.sub||[]).find(y=>y.id===sr.dataset.sid);if(!s)return;if('schk' in d){s.feito=t.checked;if(x.sub.every(y=>y.feito))x.feito=true;else x.feito=false}else if('stx' in d)s.txt=t.value.trim().slice(0,300)}
+  save();const f_=!t.matches('[data-ttx],[data-stx]');setTimeout(()=>renderListas(f_),0)});
+$('#lstL').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const l=lstAtual();if('tlimpa' in b.dataset){l.t=l.t.filter(t=>!t.feito);save();renderListas(true);return}
+  const tr=b.closest('[data-tid]');if(!tr)return;const x=l.t.find(y=>y.id===tr.dataset.tid);if(!x)return;const d=b.dataset;
+  if('tmais' in d)x.mais=!x.mais;else if('tsubt' in d)x.aberta=!x.aberta;else if('tsuba' in d){x.sub=x.sub||[];x.sub.push({id:uid('s'),txt:'',feito:false});x.aberta=true;save();renderListas(true);const i=[...document.querySelectorAll(`#lstL [data-tid="${x.id}"] [data-stx]`)].pop();if(i)i.focus();return}
+  else if('tdel' in d){if(x.txt&&!confirm(`Apagar a tarefa "${x.txt}"?`))return;l.t=l.t.filter(y=>y!==x)}else if('sdel' in d){const sr=b.closest('[data-sid]');x.sub=x.sub.filter(y=>y.id!==sr.dataset.sid)}else return;
+  if('tmais' in d||'tsubt' in d)renderListas(true);else{save();renderListas(true)}});
+function renderChat(){if(CTX.t==='a'){renderNotas();renderListas(false)}const ok=CTX.t==='a',log=!!(SY.sb&&SY.user);$('#chatTit').textContent=ok?(CTX.emp?'🏢 ':'👪 ')+(CTX.nome||''):'';
   $('#chatSem').hidden=ok&&log;$('#chatBox').hidden=!(ok&&log);$('#chatSem').innerHTML=!ok?'O chat existe nos agregados e nas empresas.':'Entre na conta para usar o chat.';
   if(!ok||!log)return;if(CHAT.id!==CTX.id)chatPinta();chatCarrega();clearInterval(CHAT.t);CHAT.t=setInterval(()=>{if(abaAtiva()!=='chat'||document.visibilityState!=='visible'){clearInterval(CHAT.t);CHAT.t=null;return}chatCarrega()},8000)}
 async function chatEnvia(){const i=$('#chatTx'),t=i.value.trim();if(!t||CHAT.aEnviar||CTX.t!=='a'||!SY.sb)return;CHAT.aEnviar=true;$('#chatEnv').disabled=true;
@@ -2210,8 +2277,15 @@ $('#mMov').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==
 function limpaFiltros(){['#fQ','#fBanco','#fCat','#fRef','#fQuem','#fTipo','#fCart'].forEach(i=>$(i).value='')}
 /* v0.12: limites definidos pelo admin (n.º de categorias e de referências por pessoa); vêm da página principal */
 let LIM={};try{LIM=(window.parent!==window&&window.parent.FP_LIM)||{}}catch(e){}addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-lim')LIM=e.data.lim||{}});
+/* v0.18: movimentos importados neste mês do calendário (no conjunto de dados atual) e aviso de limite */
+function movMes(){const m=hoje().slice(0,7);return (DB.imports||[]).filter(i=>(i.em||'').slice(0,7)===m).reduce((s,i)=>s+(+i.novos||0),0)}
+const LIM_TXT={mov_mes:'movimentos importados por mês',cats:'categorias',refs:'referências',sug_dia:'sugestões por dia',faq_dia:'perguntas por dia'};
+function limiteAviso(t,det){const lim=det&&det.lim||+LIM[t];try{SY.sb&&SY.user&&SY.sb.rpc('fin_limite_atingido',{p_site:'financas',p_tipo:t,p_detalhe:det||{}})}catch(e){}trk('limite',{tipo:t});
+  $('#limTx').innerHTML=`A sua conta tem um limite de <b>${lim} ${LIM_TXT[t]||t}</b>${t==='mov_mes'?` e já importou <b>${det.usados}</b> este mês — este ficheiro traria mais <b>${det.novos}</b>`:''}.<br><br>Os limites existem para o site continuar rápido e gratuito. Se precisa de mais, mande-nos uma mensagem a explicar e aumentamos o limite da sua conta.`;$('#mLim').hidden=false}
+$('#limFecha').addEventListener('click',()=>{$('#mLim').hidden=true});
+$('#limMsg').addEventListener('click',()=>{$('#mLim').hidden=true;try{const b=window.parent.document.querySelector('[data-set="sugestao"]');if(b)b.click();else toast('Abra o menu da conta › Sugestões')}catch(e){}});
 function limAtingido(t){const lim=+LIM[t];if(!lim)return false;const n=t==='cats'?DB.cats.length:DB.cats.reduce((s,c)=>s+c.refs.length,0);
-  if(n>=lim){toast(t==='cats'?`Atingiu o limite de ${lim} categorias`:`Atingiu o limite de ${lim} referências`);return true}return false}
+  if(n>=lim){limiteAviso(t,{lim,n});return true}return false}
 /* v0.11g: ao voltar a uma aba pela barra das abas, volta ao sítio onde estava (Definições › Geral pode desligar) */
 const SCR={};let SCRL=true;try{SCRL=localStorage.getItem('fp_scroll')!=='0'}catch(e){}addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-scroll')SCRL=!!e.data.on});
 function go(tab,keep,mem){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;if(muda)trk('aba',{aba:tab});if(muda)SCR[abaAtiva()]=scrollY;const vol=mem&&SCRL&&muda&&SCR[tab]>0?SCR[tab]:null;
