@@ -171,7 +171,7 @@ html:not(.ctxEmp) nav.tabs .tabemp{display:none}html:not(.ctxEmp):not(.ctxAgr) n
 .ef.chk{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--tx);align-self:end;padding-bottom:6px}.ef.chk input{width:auto}
 .eft input,.eft select{font:inherit;font-size:13px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:4px 6px;width:100%;box-sizing:border-box}.eft input.pv{width:80px}
 .eft tr.atr td{background:color-mix(in srgb,#e53935 12%,transparent)}.eft tr.perto td{background:color-mix(in srgb,#f0b347 16%,transparent)}#tab-emp .btn+h4,#tab-emp .tw+.btn{margin-top:8px}
-.empfix{position:fixed;top:12px;right:16px;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.18);padding:8px 16px}.anxf{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd)}.anxf select,.anxf input[type=date]{font:inherit;font-size:13px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:4px 6px}.anxf input[type=file]{font-size:12.5px;max-width:260px}
+nav.tabs .empdone{order:99;margin-left:auto;align-self:center;padding:4px 10px;font-size:12px;flex:none}nav.tabs .empdone[hidden]{display:none}.anxf{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd)}.anxf select,.anxf input[type=date]{font:inherit;font-size:13px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:4px 6px}.anxf input[type=file]{font-size:12.5px;max-width:260px}
 .enotas{width:100%;min-height:80px;box-sizing:border-box;font:inherit;font-size:14px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px}.efeitos{margin:10px 0;font-size:13px}.efeitos ul{margin:6px 0;padding-left:18px}
 .rpt input,.rpt select{font:inherit;font-size:13px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:4px 6px;box-sizing:border-box;width:100%}.rpt input.pv{width:100px}.rpt input.rpdia,.eft input.rpdia{width:52px}.rpt input[type=month]{min-width:130px}
 table.rpg{min-width:980px}table.rpg td:first-child{white-space:nowrap;min-width:190px}table.rpg td,table.rpg th{padding:5px 6px;font-size:12.5px}table.rpg tr.gc td{background:var(--soft)}table.rpg tr.sub td:first-child{padding-left:20px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
@@ -406,7 +406,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
       <div class="rng" id="perRng"><input type="date" id="rIni"> <span class="muted">a</span> <input type="date" id="rFim"></div>
     </div>
   </div>
-  <nav class="tabs" role="tablist">
+  <nav class="tabs" role="tablist"><button type="button" class="btn sm pri empdone" id="empEd2" hidden title="Terminar a edição da empresa">✓ Concluir</button>
     <button type="button" data-tab="home" class="on">Início</button>
     <button type="button" data-tab="ext">Extratos <span class="n" data-cnt="ext"></span></button>
     <button type="button" data-tab="ren">Rendimentos</button>
@@ -630,7 +630,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.18'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.18a'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1570,7 +1570,7 @@ async function anexoAbre(id){const x=(EMP().anexos||[]).find(y=>y.id===id);if(!x
   try{const {data,error}=await SY.sb.storage.from('empresa-anexos').createSignedUrl(x.path,120);if(error)throw error;if(w)w.location=data.signedUrl;else location.href=data.signedUrl}catch(e){if(w)w.close();toast('Não foi possível abrir o anexo.')}}
 async function anexoApaga(id){const o=EMP(),x=(o.anexos||[]).find(y=>y.id===id);if(!x||!confirm(`Apagar o anexo "${x.nome}"?`))return;
   try{if(SY.sb){const {error}=await SY.sb.storage.from('empresa-anexos').remove([x.path]);if(error)throw error}o.anexos=o.anexos.filter(y=>y!==x);save();render()}catch(e){toast('Não foi possível apagar: '+(e.message||e))}}
-function renderEmp(){const o=EMP(),f=o.f,ed=EMPED;o.contactos=o.contactos||[];
+function renderEmp(){const o=EMP(),f=o.f,ed=EMPED;$('#empEd2').hidden=!ed;o.contactos=o.contactos||[];
   const vTxt=([k,l,t,ph])=>{const v=f[k];if(t==='chk')return v?'Sim':'Não';if(!v)return '';if(t==='date')return fmtD(v);if(t==='email')return `<a href="mailto:${esc(v)}">${esc(v)}</a>`;if(t==='tel')return `<a href="tel:${esc(String(v).replace(/\s/g,''))}">${esc(v)}</a>`;if(k==='site')return `<a href="${/^https?:/i.test(v)?esc(v):'https://'+esc(v)}" target="_blank" rel="noopener">${esc(v)}</a>`;return esc(v)};
   const campo=([k,l,t,ph,larga])=>{t=t||'txt';const v=f[k];
     if(!ed){const x=vTxt([k,l,t,ph]);return `<div class="ef ro${larga?' lg':''}"><span>${l}</span><b>${x||'<i class="muted">—</i>'}</b></div>`}
@@ -1592,14 +1592,13 @@ function renderEmp(){const o=EMP(),f=o.f,ed=EMPED;o.contactos=o.contactos||[];
         :`<tr data-ecr="${busca}" data-ecc="${esc(c.cat||'')}"><td><b>${esc(c.nome||'—')}</b></td><td>${c.cat?`<span class="tag">${esc(c.cat)}</span>`:''}</td><td>${c.tel?`<a href="tel:${esc(c.tel.replace(/\s/g,''))}">${esc(c.tel)}</a>`:''}</td><td>${c.email?`<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`:''}</td><td style="white-space:normal">${esc(c.morada||'')}</td><td>${esc(c.emp||'')}</td></tr>`}).join('')}</tbody></table></div><datalist id="dlContCat">${cats.map(c=>`<option value="${esc(c)}">`).join('')}</datalist><p class="muted" id="ecNada" hidden>Nenhum contacto com esta pesquisa.</p>`
       :`<p class="muted">Ainda não há contactos.${ed?'':' Carregue em ✏ Editar para acrescentar.'}</p>`)
     +(ed?'<button class="btn sm" type="button" id="ectAdd">＋ Contacto</button>':'');
-  $('#empFicha').innerHTML=`<div class="card${ed?' eed':''}"><h3>🏢 ${esc(nm)} <small>dados da empresa · partilhados com os membros da empresa</small><span class="r"><button class="btn sm${ed?' pri':''}" type="button" id="empEd">${ed?'✓ Concluir':'✏ Editar'}</button></span></h3>
+  $('#empFicha').innerHTML=`<div class="card${ed?' eed':''}"><h3>🏢 ${esc(nm)} <small>dados da empresa · partilhados com os membros da empresa</small><span class="r">${ed?'':'<button class="btn sm" type="button" id="empEd">✏ Editar</button>'}</span></h3>
     ${!ed&&vazia?'<div class="empty"><b>Ficha por preencher</b>Carregue em ✏ Editar para escrever os dados da empresa (NIPC, regime de IVA, sócios, contas…).</div>':''}
     ${EMPF.map(([g,cs])=>`<h4 class="eg">${g}</h4><div class="efg">${cs.map(campo).join('')}</div>`).join('')}
     <h4 class="eg">Sócios e gerentes</h4>${socios}${q&&Math.abs(q-100)>.01?`<p class="note warn">As quotas somam ${q.toLocaleString('pt-PT')} % (deviam somar 100 %).</p>`:''}
     <h4 class="eg">Contas bancárias</h4>${contas}
     <h4 class="eg">Notas</h4>${ed?`<textarea class="enotas" data-ef="notas" placeholder="Notas livres (ex.: datas de assembleias, contactos). Não guarde aqui palavras-passe.">${esc(f.notas||'')}</textarea>`:`<p style="white-space:pre-wrap">${f.notas?esc(f.notas):'<span class="muted">—</span>'}</p>`}</div>
   <div class="card" id="empCont"><h3>📇 Contactos <small>clientes, fornecedores, contabilista…</small>${ed?'':'<span class="r"><button class="btn sm" type="button" data-emped="1">✏ Editar</button></span>'}</h3>${contactos}</div>
-  <div class="card" id="empAnx"><h3>📎 Anexos <small>PDF ou imagem até 10 MB · só os membros da empresa veem</small><span class="r"><small class="muted">${fmtTam(anxTotal())} de 200 MB</small></span></h3>${anexosHtml(ed)}</div>
   <div class="card"><h3>📅 Prazos <small>próximos 75 dias e em atraso · a partir do regime acima</small></h3>
     ${!temReg?'<div class="empty"><b>Sem prazos</b>Carregue em ✏ Editar e escolha o regime de IVA e de IRC para ver as obrigações da empresa.</div>'
       :P.length?`<div class="tw"><table class="t eft"><thead><tr><th>Até</th><th>Obrigação</th><th>Refere-se a</th><th></th><th></th></tr></thead><tbody>${P.map(x=>{const n=diasAte(x.d);return `<tr class="${x.d<h?'atr':n<=7?'perto':''}"><td><b>${fmtD(x.d)}</b></td><td${x.tip?` title="${esc(x.tip)}"`:''}>${esc(x.nome)}${x.tip?' <span class="muted">ⓘ</span>':''}</td><td class="muted">${esc(x.ref)}</td><td class="muted">${quandoTxt(x.d)}</td><td><button class="btn sm" type="button" data-epf="${esc(x.k)}">✓ Feito</button></td></tr>`}).join('')}</tbody></table></div>`:'<p class="muted">Nada por fazer nos próximos 75 dias. 🎉</p>'}
@@ -1607,10 +1606,12 @@ function renderEmp(){const o=EMP(),f=o.f,ed=EMPED;o.contactos=o.contactos||[];
     ${ed||o.prazos.length?`<h4 class="eg">Outros prazos <small class="muted">acrescentados por si</small></h4>`:''}
     ${ed?(o.prazos.length?`<div class="tw"><table class="t eft"><thead><tr><th>Obrigação</th><th>Repete</th><th>Dia</th><th>Mês</th><th></th></tr></thead><tbody>${o.prazos.map(x=>`<tr data-epid="${esc(x.id)}"><td><input data-epz="nome" value="${esc(x.nome||'')}" placeholder="ex.: Pagar a renda do escritório"></td><td><select data-epz="per"><option value="m"${x.per==='m'?' selected':''}>Todos os meses</option><option value="a"${x.per==='a'?' selected':''}>Todos os anos</option></select></td><td><input class="pv rpdia" data-epz="dia" value="${esc(x.dia||'')}" inputmode="numeric"></td><td>${x.per==='a'?`<select data-epz="mes">${MESES.map((m,i)=>`<option value="${i+1}"${+x.mes===i+1?' selected':''}>${m}</option>`).join('')}</select>`:'<span class="muted">—</span>'}</td><td><button class="btn ic sm" type="button" data-epdel="${esc(x.id)}" title="Apagar">🗑</button></td></tr>`).join('')}</tbody></table></div>`:'')+'<button class="btn sm" type="button" id="epAdd">＋ Prazo</button>'
       :o.prazos.length?`<ul class="eplist">${o.prazos.map(x=>`<li>${esc(x.nome||'(sem nome)')} <small class="muted">— ${x.per==='a'?`todos os anos a ${x.dia||'?'} de ${(MESES[(+x.mes||1)-1]||'').toLowerCase()}`:`todos os meses ao dia ${x.dia||'?'}`}</small></li>`).join('')}</ul>`:''}
-    ${ed?'<button class="btn pri empfix" type="button" id="empEd2" title="Terminar a edição">✓ Concluir</button>':''}<p class="note">Em atraso só aparecem os prazos desde que configurou o regime (${o.desde?fmtD(o.desde):'hoje'}), até 60 dias para trás. Datas gerais da AT e da Segurança Social (ao sábado ou domingo passam para segunda-feira; feriados não estão contados). Os prazos podem mudar ou ser prorrogados — confirme com o contabilista ou no Portal das Finanças.</p></div>`;
+<p class="note">Em atraso só aparecem os prazos desde que configurou o regime (${o.desde?fmtD(o.desde):'hoje'}), até 60 dias para trás. Datas gerais da AT e da Segurança Social (ao sábado ou domingo passam para segunda-feira; feriados não estão contados). Os prazos podem mudar ou ser prorrogados — confirme com o contabilista ou no Portal das Finanças.</p></div>
+  <div class="card" id="empAnx"><h3>📎 Anexos <small>PDF ou imagem até 10 MB · só os membros da empresa veem</small><span class="r"><small class="muted">${fmtTam(anxTotal())} de 200 MB</small></span></h3>${anexosHtml(ed)}</div>`;
   filtraCont()}
 function filtraCont(){const q=norm(($('#ecQ')||{}).value||''),c=($('#ecCat')||{}).value||'';let n=0,t=0;
   $$('#empCont tr[data-ecr]').forEach(tr=>{t++;const ok=(!q||tr.dataset.ecr.includes(q))&&(!c||tr.dataset.ecc===c);tr.hidden=!ok;if(ok)n++});const nd=$('#ecNada');if(nd)nd.hidden=!(t&&!n)}
+$('#empEd2').addEventListener('click',()=>{EMPED=false;render()});
 $('#tab-emp').addEventListener('input',e=>{if(e.target.id==='ecQ')filtraCont()});
 $('#tab-emp').addEventListener('change',e=>{const t=e.target,d=t.dataset,o=EMP();
   if(t.id==='ecCat'){filtraCont();return}
@@ -1622,7 +1623,6 @@ $('#tab-emp').addEventListener('change',e=>{const t=e.target,d=t.dataset,o=EMP()
   else return;if(!o.desde&&(o.f.iva||o.f.irc||o.f.trab||o.f.saft||o.prazos.length))o.desde=hoje(); // só mostra em atraso os prazos depois de configurar
   trk('empresa',{});save();render()});
 $('#tab-emp').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset,o=EMP();o.contactos=o.contactos||[];
-  if(b.id==='empEd2'){EMPED=false;render();return}
   if(b.id==='anxEnv'){anexoEnvia();return}
   if(d.anxab){anexoAbre(d.anxab);return}
   if(d.anxdel){anexoApaga(d.anxdel);return}
@@ -2290,7 +2290,7 @@ function limAtingido(t){const lim=+LIM[t];if(!lim)return false;const n=t==='cats
 const SCR={};let SCRL=true;try{SCRL=localStorage.getItem('fp_scroll')!=='0'}catch(e){}addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-scroll')SCRL=!!e.data.on});
 function go(tab,keep,mem){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;if(muda)trk('aba',{aba:tab});if(muda)SCR[abaAtiva()]=scrollY;const vol=mem&&SCRL&&muda&&SCR[tab]>0?SCR[tab]:null;
   if(muda&&abaAtiva()==='ext'&&!SCRL){EXT.n=EXT_PASSO;DESENHADA.ext=-1;if(EXT_IO)EXT_IO.disconnect();const t=$('#extTable');if(t)t.innerHTML=''} /* ao sair dos Extratos volta às 100 primeiras linhas */
-  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des','prev','emp','chat'].includes(tab))render();if(vol!=null){window.scrollTo({top:vol});requestAnimationFrame(()=>window.scrollTo({top:vol}))}else if(!keep)window.scrollTo({top:0});fixaCab();if(muda)setTimeout(()=>dica(tab),450)}
+  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));{const e2=$('#empEd2');if(e2)try{e2.hidden=!(EMPED&&tab==='emp')}catch(x){e2.hidden=true}}$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des','prev','emp','chat'].includes(tab))render();if(vol!=null){window.scrollTo({top:vol});requestAnimationFrame(()=>window.scrollTo({top:vol}))}else if(!keep)window.scrollTo({top:0});fixaCab();if(muda)setTimeout(()=>dica(tab),450)}
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-dtog],[data-dgo],[data-dgox],[data-corq],[data-pvusa],[data-corset],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-gorendx],[data-goref],[data-reemb],[data-rbsel],[data-extmais],[data-calc],[data-calcmov],[data-calcrend],[data-sptog],[data-split],[data-spdel],[data-spreemb],[data-reembp],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
   const d=t.dataset;

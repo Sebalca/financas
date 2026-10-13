@@ -842,7 +842,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     document.querySelector('#ectAdd').click();await W(30);const i=document.querySelector('[data-ect="0|nome"]');i.value='João Contab';i.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
     const c=document.querySelector('[data-ect="0|cat"]');c.value='Contabilista';c.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
     document.querySelector('#ectAdd').click();await W(30);const i2=document.querySelector('[data-ect="1|nome"]');i2.value='Maria Cliente';i2.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
-    document.querySelector('#empEd').click();await W(30);const q=document.querySelector('#ecQ');q.value='joao';q.dispatchEvent(new Event('input',{bubbles:true}));
+    document.querySelector('#empEd2').click();await W(30);const q=document.querySelector('#ecQ');q.value='joao';q.dispatchEvent(new Event('input',{bubbles:true}));
     o.filtro=[...document.querySelectorAll('#empCont tr[data-ecr]')].filter(t=>!t.hidden).map(t=>t.textContent).join('|');o.cont=DB.empresa.contactos.length;
     return o});
    const ok139=r.ordem==='card | pvTabs | card | rpCard'&&r.desVis&&r.renVis&&r.navNoSaldo&&r.barra==='none'&&/saude,chat,emp$/.test(r.tabs)&&r.chatEsc&&r.bdg==='1'&&r.chatVis&&/Olá equipa/.test(r.msg1)&&r.lido&&/cmsg eu:Bom dia/.test(r.env)&&r.ro&&r.edit&&r.filtro==='João ContabContabilista'&&r.cont===2;
@@ -903,21 +903,21 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const pz=document.querySelector('[data-tpz]');pz.value='2020-01-01';pz.dispatchEvent(new Event('change',{bubbles:true}));await W(30);o.atr=!!document.querySelector('.tpz.atr');
     document.querySelector('[data-schk]').click();await W(30);o.feita=DB.listas[0].t[0].feito===true;
     document.querySelector('#lstAdd').click();await W(30);o.listas=DB.listas.map(l=>l.nome).join();
-    go('emp');await W(50);document.querySelector('#empEd').click();await W(30);const fx=document.querySelector('#empEd2');o.fixo=!!fx&&getComputedStyle(fx).position==='fixed';
+    go('emp');await W(50);document.querySelector('#empEd').click();await W(30);const fx=document.querySelector('#empEd2');o.fixo=!!fx&&!fx.hidden&&!!fx.closest('nav.tabs')&&!document.querySelector('#empEd');
     const dt=new DataTransfer();dt.items.add(new File(['%PDF-1.4 teste'],'iban.pdf',{type:'application/pdf'}));const fi=document.querySelector('#anxFich');fi.files=dt.files;
     document.querySelector('#anxEnv').click();await W(80);o.anx=(DB.empresa.anexos||[]).length===1&&up.some(x=>x.startsWith('up:e1/'));o.anxLin=/iban\.pdf/.test(document.querySelector('#empAnx').textContent);
     const v=DB.empresa.anexos[0];v.validade=hoje();o.prazoAnx=prazosEmp(hoje(),hoje()).some(x=>/Renovar: iban/.test(x.nome));
-    document.querySelector('#empEd2').click();await W(30);o.saiu=!document.querySelector('#empEd2');
+    document.querySelector('#empEd2').click();await W(30);o.saiu=document.querySelector('#empEd2').hidden&&!!document.querySelector('#empEd');
     CTX.t='p';CTX.emp=false;await W(700);
     LIM.mov_mes=3;DB.imports.push({id:'i9',em:new Date().toISOString(),novos:2});o.mm=movMes()>=2;
     return o});
    await p2.setInputFiles('#fExt',path.join(FX,'cgd_teste.csv'));await p2.waitForTimeout(500);
    const r2=await p2.evaluate(()=>({lim:!document.querySelector('#mLim').hidden&&/3 movimentos importados por mês/.test(document.querySelector('#limTx').textContent),bloqueou:/Limite de 3/.test(document.querySelector('#impRes').textContent)}));
    const c=r.cols.split(',').map(Number);
-   t('D145','Aba Chat em 3 (Notas | Checklist | Chat) com listas, tarefas, subtarefas, responsável e data; Empresa: ✓ Concluir fixo e 📎 Anexos (validade entra nos prazos); limite de movimentos importados por mês com aviso',c.length===3&&c[1]>c[0]&&c[2]>c[1]&&['tar','b2','sub','atr','feita','fixo','anx','anxLin','prazoAnx','saiu','mm'].every(k=>r[k])&&r.listas==='Tarefas,Viagem'&&r2.lim&&r2.bloqueou&&!er2.length,{r,r2,er2});await p2.close()}
-  {const z=await ev(()=>({demoBt:!!document.querySelector('#gDemo'),ban:!!document.querySelector('#demoBan'),demo:typeof FPDemo==='object',lockDemo:(()=>{window.FP_LOCK_TESTE=1;localStorage.removeItem('fp_lock_dia_ud');FPLock.sessao({id:'ud',email:'demo@frisk.pt'});const b=!document.querySelector('#lock').hidden;FPLock.sessao(null);window.FP_LOCK_TESTE=0;return !b})()}));
+   t('D145','Aba Chat em 3 (Notas | Checklist | Chat) com listas, tarefas, subtarefas, responsável e data; Empresa: ✓ Concluir na barra das abas e 📎 Anexos (validade entra nos prazos); limite de movimentos importados por mês com aviso',c.length===3&&c[1]>c[0]&&c[2]>c[1]&&['tar','b2','sub','atr','feita','fixo','anx','anxLin','prazoAnx','saiu','mm'].every(k=>r[k])&&r.listas==='Tarefas,Viagem'&&r2.lim&&r2.bloqueou&&!er2.length,{r,r2,er2});await p2.close()}
+  {const z=await ev(()=>({demoBt:!!document.querySelector('#demoOpt #gDemo')&&!document.querySelector('#gate #gDemo'),ban:!!document.querySelector('#demoBan'),demo:typeof FPDemo==='object',lockDemo:(()=>{window.FP_LOCK_TESTE=1;localStorage.removeItem('fp_lock_dia_ud');FPLock.sessao({id:'ud',email:'demo@frisk.pt'});const b=!document.querySelector('#lock').hidden;FPLock.sessao(null);window.FP_LOCK_TESTE=0;return !b})()}));
    const adm=fs.readFileSync(path.join(PUB,'admin.html'),'utf8');
-   t('D146','Conta de demonstração (botão "Ver a demonstração", faixa, sem bloqueio de sessão); admin: limite "Movimentos importados por mês" e caixa "Limites atingidos"',Object.values(z).every(Boolean)&&/mov_mes:'Movimentos importados por mês'/.test(adm)&&/Limites atingidos/.test(adm)&&/admin_alertas_vistos/.test(adm),z)}
+   t('D146','Conta de demonstração (entrar só pelo admin em Definições › Conta, faixa, sem bloqueio de sessão); admin: limite "Movimentos importados por mês" e caixa "Limites atingidos"',Object.values(z).every(Boolean)&&/mov_mes:'Movimentos importados por mês'/.test(adm)&&/Limites atingidos/.test(adm)&&/admin_alertas_vistos/.test(adm),z)}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
