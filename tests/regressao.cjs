@@ -956,6 +956,30 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     CTX.t='a';CTX.id='g1';await W(700);go('chat');render();await W(50);o.agrNaCol=$('#alCard').parentNode.id==='cCol2'&&!$('.chatg .chatc').hidden;
     CTX.t='p';await W(700);return o});
    t('D149','Alertas (Pessoal, agregados e empresas): nome, descrição, data, recorrência, antecedência; janela 1× por dia e bolinha na aba até ✓ Feito; recorrente passa à data seguinte; sem ícone 💬 nas observações',r.add==='2026-02-28,2026-10-06,2025-02-28'&&['criado','lista','janela','umaVez','prox','atr','fim','agrNaCol'].every(k=>r[k])&&r.bdg==='1'&&r.pesCols===3&&!er2.length,{r,er2});await p2.close()}
+  console.log('v0.21');
+  {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),o={};await fpCtx.exemplo();await W(300);
+    o.escondida=getComputedStyle(document.querySelector('[data-tab="part"]')).display==='none';
+    CTX.t='a';CTX.id='g1';CTX.emp=false;await W(700);o.visivel=getComputedStyle(document.querySelector('[data-tab="part"]')).display!=='none';
+    go('part');await W(30);o.poucos=/pelo menos 2 membros/.test($('#ptBox').textContent);
+    window.__ptTeste=[{id:'ua',nome:'Ana'},{id:'ur',nome:'Rui'}];SY.user={id:'ua',email:'ana@x.pt'};
+    // atribui quem é: metade Ana, resto via conta do Rui
+    const ms=uniq(DB.mov.map(m=>m.dm.slice(0,7))).sort();const ult=ms[ms.length-1];
+    DB.mov.forEach((m,i)=>{if(m.dm.startsWith(ult)&&m.valor<0)m.quem=i%2?'Ana':''});
+    render();await W(30);document.querySelector('#ptEd').click();await W(30);
+    const ia=document.querySelector('[data-ptr="ua|v"]');ia.value='2000';ia.dispatchEvent(new Event('change',{bubbles:true}));
+    const ir=document.querySelector('[data-ptr="ur|v"]');ir.value='1000';ir.dispatchEvent(new Event('change',{bubbles:true}));
+    $('#ptDesde').value=ms[0];$('#ptDesde').dispatchEvent(new Event('change',{bubbles:true}));document.querySelector('#ptGuarda').click();await W(30);
+    o.regra=/Ana 66,7 %/.test($('#ptBox').textContent)&&/Rui 33,3 %/.test($('#ptBox').textContent);o.espera=!!document.querySelector('.ptc.ok')&&/⏳ Rui/.test($('#ptBox').textContent);
+    const k=DB.mov.find(m=>m.dm.startsWith(ult)&&m.valor<0&&!m.quem);const ck=k.banco+'|'+(k.conta||'');const sel=document.querySelector(`[data-ptco="${ck}"]`);if(sel){sel.value='ur';sel.dispatchEvent(new Event('change',{bubbles:true}));await W(30)}
+    const R=ptCalc([ult],window.__ptTeste)[0];o.calc=Math.abs(R.dev.ua-R.D*2/3)<.01&&Math.abs(R.pago.ua+R.pago.ur+R.sem-R.D)<.01;
+    o.frase=$('.ptsaldo').innerHTML;const ac=document.querySelector('[data-ptac]');if(ac){ac.click();await W(30)}o.quites=/quites/.test($('.ptsaldo').textContent);
+    SY.user={id:'ur',email:'rui@x.pt'};render();await W(30);document.querySelector('#ptConc').click();await W(30);o.conf=/confirmada por todos/.test($('#ptBox').textContent);
+    document.querySelector('#ptEd').click();await W(30);document.querySelector('input[name="ptTipo"][value="igual"]').click();await W(30);$('#ptDesde').value=ult;$('#ptDesde').dispatchEvent(new Event('change',{bubbles:true}));document.querySelector('#ptGuarda').click();await W(30);
+    o.hist=DB.partilha.regras.length===2&&ptRegra(ms[0]).tipo==='prop'&&ptRegra(ult).tipo==='igual'&&!/confirmada por todos/.test($('#ptBox').textContent);
+    window.__ptTeste=null;CTX.t='p';await W(700);return o});
+   t('D150','⚖️ Partilha (só agregados): regra proporcional/50-50/fixa/percentagem com data de início e histórico; quem pagou por "Quem é" ou dono da conta/cartão; saldo "X deve Y a Z" e ✓ Acertar; confirmação por todos os membros',Object.values(r).every(v=>v===true||typeof v==='string')&&['escondida','visivel','poucos','regra','espera','calc','quites','conf','hist'].every(k=>r[k])&&/deve/.test(r.frase)&&!er2.length,{r,er2});await p2.close()}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

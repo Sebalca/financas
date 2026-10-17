@@ -150,7 +150,8 @@ tr.ra-d td{background:var(--soft);font-size:12.5px}tr.ra-d td:first-child{paddin
 .pvnav{display:inline-flex;align-items:center;gap:6px;margin-right:6px}.pvnav button{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:6px;width:26px;height:26px;cursor:pointer}.pvnav b{min-width:150px;text-align:center}
 .pvsum{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.pvsum .ch{border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font-size:12.5px;display:flex;gap:8px;align-items:center}.pvsum .ch b{font-size:13.5px}.pvsum .ch.tot{background:var(--soft)}
 table.prevt{font-size:12.5px;table-layout:fixed;min-width:1150px}table.prevt th.yr{text-align:center;border-left:1px solid var(--bd)}table.prevt td.bl,table.prevt th.bl{border-left:1px solid var(--bd)}
-html:not(.ctxEmp) nav.tabs .tabemp{display:none}.empz[hidden]{display:none!important}
+html:not(.ctxEmp) nav.tabs .tabemp{display:none}html:not(.ctxAgr) nav.tabs .tabpart{display:none}
+.ptreg{font-size:14.5px;line-height:1.6;margin:4px 0 8px}.ptconf{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.ptc{border:1px solid var(--bd);border-radius:999px;padding:3px 10px;font-size:12.5px}.ptc.ok{border-color:#66bb6a;color:#2e7d32;background:color-mix(in srgb,#66bb6a 12%,transparent)}.ptsaldo{font-size:16px;margin:6px 0 10px}.ptrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 0}.ptform{display:grid;gap:10px}.ptt{display:grid;gap:6px}.ptt label.chk,.ptcats label.chk{display:flex;gap:8px;align-items:center;font-size:14px}.ptcats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}.ptacs{margin-top:10px;font-size:13px}.ptacs div{padding:3px 0}table.ptg td:first-child{min-width:200px}.ptform input[type=month]{font:inherit;padding:4px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--tx)}.empz[hidden]{display:none!important}
 .bdgc{display:inline-block;min-width:8px;height:16px;line-height:16px;padding:0 5px;border-radius:9px;background:#e53935;color:#fff;font-size:10.5px;font-weight:700;vertical-align:1px}.bdgc[hidden]{display:none}
 .pvtabs{margin:0 0 12px}.pvtabs button{border:0;background:var(--card);color:inherit;font:inherit;font-weight:600;padding:8px 16px;cursor:pointer}.pvtabs button.on{background:var(--ac);color:#fff}
 .ef.ro b{font-weight:600;font-size:14px;color:var(--tx);overflow-wrap:anywhere}.ef.ro b a{color:var(--ac)}td.mono{font-family:ui-monospace,monospace;font-size:12.5px}.eplist{margin:4px 0;padding-left:18px;font-size:13.5px}
@@ -415,6 +416,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
     <button type="button" data-tab="ext">Extratos <span class="n" data-cnt="ext"></span></button>
     <button type="button" data-tab="ren">Rendimentos</button>
     <button type="button" data-tab="des">Despesas</button>
+    <button type="button" data-tab="part" class="tabpart">⚖️ Partilha</button>
     <button type="button" data-tab="prev">Previsões</button>
     <button type="button" data-tab="obj">Objetivos</button>
     <button type="button" data-tab="fat">Faturas</button>
@@ -509,6 +511,8 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
     <div class="card"><h3>Objetivos <small>em desenvolvimento</small></h3><div class="empty"><b>🎯 Em breve</b>Aqui vai poder definir objetivos financeiros — por exemplo fundo de emergência, férias, entrada para casa ou pagar um crédito — com valor e prazo, ligá-los a uma categoria/referência (ex.: Poupanças › Férias) e acompanhar automaticamente quanto já juntou, quanto falta e quanto precisa de pôr de parte por mês.</div></div>
   </section>
   <!-- ================= EMPRESA (v0.13, só no contexto de uma empresa) ================= -->
+  <!-- ================= PARTILHA (v0.21, só agregados) ================= -->
+  <section class="panel" id="tab-part"><div id="ptBox"></div></section>
   <section class="panel" id="tab-emp"><div id="empFicha"></div></section>
   <!-- ================= CHAT (v0.14, agregados e empresas) ================= -->
   <section class="panel" id="tab-chat"><div class="chatg">
@@ -645,7 +649,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.20'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.21'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1371,6 +1375,7 @@ function render(){
   if(TAB==='des'){renderDespesas(perX,k);msBordas($('#tab-des'))}
   if(TAB==='prev'){renderPrev();renderRendPrev()}
   if(TAB==='emp')renderEmp();
+  if(TAB==='part')renderPartilha();
   if(TAB==='chat')renderChat();
   if(CALC_ID&&!$('#calcPan').hidden)calcPinta();
 }
@@ -1758,6 +1763,99 @@ $('#chatTx').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.p
 $('#chatTx').addEventListener('input',e=>{const t=e.target;t.style.height='';t.style.height=Math.min(140,t.scrollHeight)+'px'});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&abaAtiva()==='chat')renderChat()});
 setInterval(chatBadge,1500);
+/* ================= v0.21: ⚖️ Partilha (só agregados) — regras de casal para dividir as despesas comuns =================
+   DB.partilha={ver,regras:[{desde:'AAAA-MM',tipo:'prop'|'igual'|'fixo'|'pers',rend:{uid:{v,per:'m'|'a',div}},fixo:{uid:v},pct:{uid:p}}],
+                alias:{uid:'Ana, Aninhas'},contas:{'banco|conta' ou 'cartão':uid},excl:[cat],acertos:[{id,data,de,para,v}],conf:{uid:ver}} */
+const PT_TIPOS=[['prop','Proporcional ao que cada um ganha'],['igual','Partes iguais (50/50)'],['fixo','Valor fixo por mês'],['pers','Percentagem à escolha']];
+let PTED=false,PTY=null;
+const PT=()=>{const o=DB.partilha||(DB.partilha={});o.ver=o.ver||1;o.regras=o.regras||[];o.alias=o.alias||{};o.contas=o.contas||{};o.excl=o.excl||[];o.acertos=o.acertos||[];o.conf=o.conf||{};return o};
+const eu_=()=>SY.user&&SY.user.id;
+function ptPessoas(){const M=membrosCtx();return M.length?M:(window.__ptTeste||[])}
+const ptRegra=p=>{const R=PT().regras.filter(r=>r.desde<=p).sort((a,b)=>a.desde.localeCompare(b.desde));return R[R.length-1]||null};
+const rendMes=x=>!x?0:x.per==='a'?(+x.v||0)/(+x.div||12):(+x.v||0);
+/* quotas de cada pessoa (0..1) e, na regra fixa, o valor */
+function ptQuotas(r,P){const q={};if(!r)return q;
+  if(r.tipo==='igual')P.forEach(p=>q[p.id]=1/P.length);
+  else if(r.tipo==='prop'){const t=P.reduce((s,p)=>s+rendMes(r.rend&&r.rend[p.id]),0);P.forEach(p=>q[p.id]=t?rendMes(r.rend&&r.rend[p.id])/t:1/P.length)}
+  else if(r.tipo==='pers'){const t=P.reduce((s,p)=>s+(+((r.pct||{})[p.id])||0),0);P.forEach(p=>q[p.id]=t?(+((r.pct||{})[p.id])||0)/t:1/P.length)}
+  return q}
+/* quem pagou: "Quem é" (nome ou alias da pessoa) e, sem ele, o dono do cartão ou da conta */
+function ptQuem(m,P){const o=PT(),q=norm(m.quem||'');if(q){for(const p of P){const al=[p.nome,...String(o.alias[p.id]||'').split(',')].map(x=>norm(x.trim())).filter(Boolean);if(al.includes(q))return p.id}}
+  const c=cartaoDe(m);if(c&&o.contas[c])return o.contas[c];const k=m.banco+'|'+(m.conta||'');if(o.contas[k])return o.contas[k];return ''}
+const ptConta=m=>!isInterna(m)&&!!m.cat&&!eFora(m.cat)&&!PT().excl.includes(m.cat)&&(m.valor<0||eReemb(m));
+function ptCalc(ms,P){const X=expandeC(DB.mov),o=PT();const R=ms.map(p=>{const r=ptRegra(p),q=ptQuotas(r,P),L=X.filter(m=>m.dm.slice(0,7)===p&&ptConta(m)),D=r2(-L.reduce((s,m)=>s+m.valor,0));
+    const pago={},dev={};let sem=0;P.forEach(x=>{pago[x.id]=0;dev[x.id]=0});L.forEach(m=>{const w=ptQuem(m,P);if(w&&w in pago)pago[w]-=m.valor;else sem-=m.valor});
+    P.forEach(x=>{dev[x.id]=r&&r.tipo==='fixo'?(+((r.fixo||{})[x.id])||0):D*(q[x.id]||0)});
+    const ac=o.acertos.filter(a=>a.data.slice(0,7)===p);return {p,r,q,D,pago,dev,sem:r2(sem),ac}});
+  return R}
+function ptSaldoTotal(P){const o=PT(),X=expandeC(DB.mov),ms=uniq(X.filter(ptConta).map(m=>m.dm.slice(0,7))).filter(p=>p<=hoje().slice(0,7)&&ptRegra(p)).sort(),R=ptCalc(ms,P),S={};P.forEach(x=>S[x.id]=0);
+  R.forEach(x=>P.forEach(p=>S[p.id]+=x.pago[p.id]-x.dev[p.id]));o.acertos.forEach(a=>{if(a.de in S)S[a.de]+=+a.v;if(a.para in S)S[a.para]-=+a.v});Object.keys(S).forEach(k=>S[k]=r2(S[k]));return S}
+function ptFrase(S,P){const nm=id=>(P.find(p=>p.id===id)||{}).nome||'?',pos=P.filter(p=>S[p.id]>.004).sort((a,b)=>S[b.id]-S[a.id]),neg=P.filter(p=>S[p.id]<-.004).sort((a,b)=>S[a.id]-S[b.id]);
+  if(!pos.length&&!neg.length)return {txt:'Estão quites ✓',pares:[]};
+  /* liquidação simples: quem deve paga a quem tem a receber */
+  const a=pos.map(p=>({id:p.id,v:S[p.id]})),d=neg.map(p=>({id:p.id,v:-S[p.id]})),pares=[];let i=0,j=0;
+  while(i<d.length&&j<a.length){const v=Math.min(d[i].v,a[j].v);if(v>.004)pares.push({de:d[i].id,para:a[j].id,v:r2(v)});d[i].v-=v;a[j].v-=v;if(d[i].v<.005)i++;if(a[j].v<.005)j++}
+  return {txt:pares.map(x=>`<b>${esc(nm(x.de))}</b> deve <b>${E(x.v)}</b> a <b>${esc(nm(x.para))}</b>`).join(' · '),pares}}
+function renderPartilha(){const el=$('#ptBox');const P=ptPessoas(),o=PT(),me=eu_();
+  if(P.length<2){el.innerHTML='<div class="card"><h3>⚖️ Partilha</h3><div class="empty"><b>É preciso pelo menos 2 membros</b>Convide a outra pessoa para o agregado (Definições › Agregado familiar). Depois definem aqui a regra para dividir as despesas comuns.</div></div>';return}
+  const Y=PTY!=null?PTY:anoIni(P_d()).getFullYear(),ms=mesesAno(Y),hm=hoje().slice(0,7),rAt=ptRegra(hm)||o.regras.slice(-1)[0]||null;
+  const conf=P.filter(p=>o.conf[p.id]===o.ver),ok=o.regras.length&&conf.length===P.length,nm=id=>(P.find(p=>p.id===id)||{}).nome||'?';
+  const rTx=r=>!r?'—':r.tipo==='igual'?`partes iguais (${(100/P.length).toLocaleString('pt-PT',{maximumFractionDigits:1})} % cada)`:r.tipo==='fixo'?P.map(p=>`${esc(p.nome)} ${E(+((r.fixo||{})[p.id])||0)}/mês`).join(' · '):
+    Object.entries(ptQuotas(r,P)).map(([k,v])=>`${esc(nm(k))} ${(v*100).toLocaleString('pt-PT',{maximumFractionDigits:1})} %`).join(' · ')+(r.tipo==='prop'?` <small class="muted">(${P.map(p=>`${esc(p.nome)} ganha ${E(rendMes(r.rend&&r.rend[p.id]))}/mês`).join(', ')})</small>`:'');
+  /* regra (ver ou editar) */
+  const er=PTED?(PTED===true?(rAt?JSON.parse(JSON.stringify(rAt)):{desde:hm,tipo:'prop',rend:{},fixo:{},pct:{}}):PTED):null;if(er&&PTED===true)PTED=er;
+  const regraHtml=!er?`${o.regras.length?`<p class="ptreg">📐 <b>${PT_TIPOS.find(t=>t[0]===rAt.tipo)[1]}</b> — ${rTx(rAt)}<br><small class="muted">Em vigor desde ${mesTxt(rAt.desde)}${o.regras.length>1?` · ${o.regras.length-1} regra(s) anterior(es) continuam a valer nos meses antes disso`:''}</small></p>`:'<div class="empty"><b>Ainda não há regra</b>Carregue em ✏ Definir regra.</div>'}
+      ${o.regras.length?`<div class="ptconf">${P.map(p=>`<span class="ptc${o.conf[p.id]===o.ver?' ok':''}">${o.conf[p.id]===o.ver?'✓':'⏳'} ${esc(p.nome)}</span>`).join('')}${ok?'<span class="muted">Regra confirmada por todos.</span>':me&&o.conf[me]!==o.ver&&P.some(p=>p.id===me)?'<button class="btn sm pri" type="button" id="ptConc">✓ Concordo</button>':'<span class="muted">À espera de confirmação.</span>'}</div>`:''}`
+    :`<div class="ptform"><div class="ptt">${PT_TIPOS.map(([k,l])=>`<label class="chk"><input type="radio" name="ptTipo" value="${k}"${er.tipo===k?' checked':''}> ${l}</label>`).join('')}</div>
+      ${er.tipo==='prop'?`<table class="t eft"><thead><tr><th>Pessoa</th><th class="num">Ganha (líquido)</th><th>Por</th><th></th></tr></thead><tbody>${P.map(p=>{const x=(er.rend||{})[p.id]||{};return `<tr><td>${esc(p.nome)}</td><td class="num"><input class="pv" data-ptr="${p.id}|v" value="${x.v?fmtN(+x.v):''}" inputmode="decimal" placeholder="0,00"></td><td><select data-ptr="${p.id}|per"><option value="m"${x.per!=='a'?' selected':''}>mês</option><option value="a"${x.per==='a'?' selected':''}>ano</option></select></td><td>${x.per==='a'?`<select data-ptr="${p.id}|div"><option value="12"${+x.div!==14?' selected':''}>÷ 12 meses</option><option value="14"${+x.div===14?' selected':''}>÷ 14 (com subsídios)</option></select>`:''}</td></tr>`}).join('')}</tbody></table>`:''}
+      ${er.tipo==='fixo'?`<table class="t eft"><thead><tr><th>Pessoa</th><th class="num">Põe por mês</th></tr></thead><tbody>${P.map(p=>`<tr><td>${esc(p.nome)}</td><td class="num"><input class="pv" data-ptf="${p.id}" value="${(er.fixo||{})[p.id]?fmtN(+er.fixo[p.id]):''}" inputmode="decimal" placeholder="0,00"></td></tr>`).join('')}</tbody></table>`:''}
+      ${er.tipo==='pers'?`<table class="t eft"><thead><tr><th>Pessoa</th><th class="num">%</th></tr></thead><tbody>${P.map(p=>`<tr><td>${esc(p.nome)}</td><td class="num"><input class="pv" data-ptp="${p.id}" value="${(er.pct||{})[p.id]??''}" inputmode="decimal" placeholder="0"></td></tr>`).join('')}</tbody></table>`:''}
+      <div class="ptrow"><label>Vale a partir de <input type="month" id="ptDesde" value="${esc(er.desde||hm)}"></label><span class="muted">Os meses anteriores continuam com a regra que tinham.</span></div>
+      <div class="ptrow"><button class="btn" type="button" id="ptCanc">Cancelar</button><button class="btn pri" type="button" id="ptGuarda">Guardar regra</button><span class="muted">Ao guardar, todos têm de voltar a confirmar.</span></div></div>`;
+  /* resultado do ano */
+  const R=ptCalc(ms,P),S=ptSaldoTotal(P),fr=ptFrase(S,P),comR=R.filter(x=>x.r&&x.p<=hm);
+  const tot=f=>R.reduce((s,x)=>s+(x.p<=hm&&x.r?f(x):0),0),cel=(v,cls)=>`<td class="num${cls?' '+cls:''}">${Math.abs(v)>.004?E(v):'<span class="muted">—</span>'}</td>`;
+  const lin=(lbl,f,cls)=>`<tr class="${cls||''}"><td>${lbl}</td>${R.map(x=>x.p>hm||!x.r?'<td class="num muted">—</td>':cel(f(x))).join('')}${cel(tot(f))}</tr>`;
+  const ac=o.acertos.slice().sort((a,b)=>b.data.localeCompare(a.data));
+  el.innerHTML=`<div class="card"><h3>⚖️ Regra de partilha <small>despesas comuns do agregado</small><span class="r">${PTED?'':`<button class="btn sm" type="button" id="ptEd">✏ ${o.regras.length?'Mudar regra':'Definir regra'}</button>`}</span></h3>${regraHtml}</div>
+   <div class="card"><h3>💶 Saldo entre vocês <small>desde o início da regra, já com os acertos</small></h3><p class="ptsaldo">${fr.txt}</p>
+     ${fr.pares.length?`<div class="ptrow">${fr.pares.map((x,i)=>`<button class="btn sm pri" type="button" data-ptac="${i}">✓ Acertar: ${esc(nm(x.de))} → ${esc(nm(x.para))} ${E(x.v)}</button>`).join('')}<span class="muted">Regista a transferência entre os dois (hoje) e o saldo volta a zero.</span></div>`:''}
+     ${ac.length?`<details class="ptacs"><summary>Acertos registados (${ac.length})</summary>${ac.map(a=>`<div>${fmtD(a.data)} · ${esc(nm(a.de))} → ${esc(nm(a.para))} <b>${E(+a.v)}</b> <button class="btn ic sm" type="button" data-ptacdel="${esc(a.id)}" title="Apagar">🗑</button></div>`).join('')}</details>`:''}</div>
+   <div class="card"><h3>📊 Mês a mês<span class="r"><span class="nav pvnav"><button type="button" data-pty="-1" aria-label="Ano anterior">‹</button><b>${anoTxt(new Date(Y,MES1,1))}</b><button type="button" data-pty="1" aria-label="Ano seguinte">›</button></span></span></h3>
+     ${o.regras.length?`<div class="tw"><table class="t rpg ptg"><thead><tr><th></th>${ms.map(p=>`<th class="num">${MES3[+p.slice(5)-1]}</th>`).join('')}<th class="num">Total</th></tr></thead><tbody>
+       ${lin('<b>Despesas comuns</b>',x=>x.D,'gc')}
+       ${P.map(p=>lin(`${esc(p.nome)} devia pôr`,x=>x.dev[p.id])+lin(`${esc(p.nome)} pagou`,x=>x.pago[p.id])+`<tr class="tot"><td>${esc(p.nome)} — diferença</td>${R.map(x=>{if(x.p>hm||!x.r)return '<td class="num muted">—</td>';const v=x.pago[p.id]-x.dev[p.id];return `<td class="num ${v>=0?'pos':'neg'}">${Math.abs(v)>.004?E(v):'0,00 €'}</td>`}).join('')}${(()=>{const v=tot(x=>x.pago[p.id]-x.dev[p.id]);return `<td class="num ${v>=0?'pos':'neg'}">${E(v)}</td>`})()}</tr>`).join('')}
+       ${comR.some(x=>x.sem>.004)?lin('<span class="warn">Por atribuir</span> <small class="muted">sem "Quem é" nem conta</small>',x=>x.sem):''}
+       </tbody></table></div>
+       <p class="note">🧮 <b>Despesas comuns</b> = saídas − reembolsos das categorias que entram nas contas (menos as excluídas abaixo). <b>Devia pôr</b> = despesas comuns × a parte de cada um (na regra de valor fixo, o valor combinado). <b>Pagou</b> = despesas pagas por cada um ("Quem é" ou, sem ele, o dono do cartão/conta). Diferença positiva = pagou a mais.</p>`:'<p class="muted">Defina primeiro a regra.</p>'}</div>
+   <div class="card"><h3>👥 Quem é quem <small>para saber quem pagou cada despesa</small></h3>
+     <table class="t eft"><thead><tr><th>Pessoa</th><th>Outros nomes no "Quem é" <small class="muted">(separados por vírgulas)</small></th></tr></thead><tbody>${P.map(p=>`<tr><td><b>${esc(p.nome)}</b></td><td><input data-ptal="${p.id}" value="${esc(o.alias[p.id]||'')}" placeholder="ex.: nome completo, alcunha"></td></tr>`).join('')}</tbody></table>
+     <h4 class="eg">Contas e cartões</h4><table class="t eft"><thead><tr><th>Conta / cartão</th><th>É de</th></tr></thead><tbody>${uniq(DB.mov.map(m=>m.banco+'|'+(m.conta||''))).map(k=>[k,0]).concat(uniq(DB.mov.map(cartaoDe).filter(Boolean)).map(k=>[k,1])).map(([k,cart])=>`<tr><td>${cart?'💳 '+esc(nomeCart(k)):'🏦 '+esc(k.split('|')[0])+(k.split('|')[1]?' · conta '+esc(k.split('|')[1]):'')}</td><td><select data-ptco="${esc(k)}"><option value="">— (comum / não sei)</option>${P.map(p=>`<option value="${p.id}"${o.contas[k]===p.id?' selected':''}>${esc(p.nome)}</option>`).join('')}</select></td></tr>`).join('')||'<tr><td colspan="2" class="muted">Ainda não há movimentos.</td></tr>'}</tbody></table></div>
+   <div class="card"><h3>🚫 Categorias que não entram na partilha</h3><div class="ptcats">${DB.cats.filter(c=>!eFora(c.nome)).map(c=>`<label class="chk"><input type="checkbox" data-ptex="${esc(c.nome)}"${o.excl.includes(c.nome)?' checked':''}> ${esc(c.nome)}</label>`).join('')}</div></div>`;
+  {const t=$('#ptBox table.ptg');if(t){const ix=ms.indexOf(hm);t.querySelectorAll('.msel').forEach(x=>x.classList.remove('msel'));if(ix>=0)msCol(t,ix+1)}}}
+const P_d=()=>P.m==='int'&&P.fim?new Date(+P.fim.slice(0,4),+P.fim.slice(5,7)-1,1):P.d;
+$('#tab-part').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const o=PT(),P=ptPessoas(),d=b.dataset;
+  if(b.id==='ptEd'){PTED=true;render();return}
+  if(b.id==='ptCanc'){PTED=false;render();return}
+  if(b.id==='ptGuarda'){const r=PTED;r.desde=$('#ptDesde').value||hoje().slice(0,7);
+    if(r.tipo==='pers'){const t=P.reduce((s,p)=>s+(+((r.pct||{})[p.id])||0),0);if(Math.abs(t-100)>.01&&!confirm(`As percentagens somam ${t.toLocaleString('pt-PT')} %. Guardar na mesma (são ajustadas para 100 %)?`))return}
+    if(r.tipo==='prop'&&!P.some(p=>rendMes(r.rend&&r.rend[p.id])>0)){toast('Escreva quanto ganha cada um.');return}
+    o.regras=o.regras.filter(x=>x.desde<r.desde);o.regras.push({desde:r.desde,tipo:r.tipo,rend:r.rend||{},fixo:r.fixo||{},pct:r.pct||{}});o.ver++;o.conf={};const me=eu_();if(me)o.conf[me]=o.ver;
+    PTED=false;trk('partilha_regra',{tipo:r.tipo});save();render();return}
+  if(b.id==='ptConc'){const me=eu_();if(me){o.conf[me]=o.ver;trk('partilha_concordo',{});save();render()}return}
+  if(d.ptac!=null){const fr=ptFrase(ptSaldoTotal(P),P),x=fr.pares[+d.ptac];if(!x)return;const nm=id=>(P.find(p=>p.id===id)||{}).nome;
+    if(!confirm(`Registar que ${nm(x.de)} transferiu ${E(x.v)} para ${nm(x.para)} hoje?`))return;o.acertos.push({id:uid('ac'),data:hoje(),de:x.de,para:x.para,v:x.v});trk('partilha_acerto',{});save();render();return}
+  if(d.ptacdel){if(!confirm('Apagar este acerto?'))return;o.acertos=o.acertos.filter(a=>a.id!==d.ptacdel);save();render();return}
+  if(d.pty){PTY=(PTY!=null?PTY:anoIni(P_d()).getFullYear())+(+d.pty);render()}});
+$('#tab-part').addEventListener('change',e=>{const t=e.target,d=t.dataset,o=PT();
+  if(t.name==='ptTipo'){PTED.tipo=t.value;render();return}
+  if(d.ptr){const [id,f]=d.ptr.split('|');PTED.rend=PTED.rend||{};const x=PTED.rend[id]=PTED.rend[id]||{per:'m',div:12};x[f]=f==='v'?Math.abs(num(t.value)):f==='div'?+t.value:t.value;if(f==='per')render();return}
+  if(d.ptf){PTED.fixo=PTED.fixo||{};PTED.fixo[d.ptf]=Math.abs(num(t.value));return}
+  if(d.ptp){PTED.pct=PTED.pct||{};PTED.pct[d.ptp]=Math.abs(num(t.value));return}
+  if(t.id==='ptDesde'){PTED.desde=t.value;return}
+  if(d.ptal!=null){o.alias[d.ptal]=t.value.trim();save();render();return}
+  if(d.ptco!=null){if(t.value)o.contas[d.ptco]=t.value;else delete o.contas[d.ptco];save();render();return}
+  if(d.ptex!=null){o.excl=t.checked?uniq(o.excl.concat(d.ptex)):o.excl.filter(x=>x!==d.ptex);save();render()}});
 window.fpTipos={lista:()=>JSON.parse(JSON.stringify(DB.tiposDesp)),
   uso:()=>{const u={};Object.values(DB.refTipo).forEach(id=>u[id]=(u[id]||0)+1);return u},
   grava:(tipos,remap)=>{DB.tiposDesp=tipos.filter(t=>t&&t.id&&String(t.nome||'').trim()).map(t=>({id:String(t.id),nome:String(t.nome).trim(),cor:t.cor||'#90a4ae'}));
@@ -2366,7 +2464,7 @@ function limAtingido(t){const lim=+LIM[t];if(!lim)return false;const n=t==='cats
 const SCR={};let SCRL=true;try{SCRL=localStorage.getItem('fp_scroll')!=='0'}catch(e){}addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-scroll')SCRL=!!e.data.on});
 function go(tab,keep,mem){setTimeout(ajustaLarg,0);const muda=abaAtiva()!==tab;if(muda)trk('aba',{aba:tab});if(muda)SCR[abaAtiva()]=scrollY;const vol=mem&&SCRL&&muda&&SCR[tab]>0?SCR[tab]:null;
   if(muda&&abaAtiva()==='ext'&&!SCRL){EXT.n=EXT_PASSO;DESENHADA.ext=-1;if(EXT_IO)EXT_IO.disconnect();const t=$('#extTable');if(t)t.innerHTML=''} /* ao sair dos Extratos volta às 100 primeiras linhas */
-  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));{const ob=document.querySelector('.obsbal');if(ob)ob.hidden=true}{const e2=$('#empEd2');if(e2)try{e2.hidden=!(EMPED&&tab==='emp')}catch(x){e2.hidden=true}}$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des','prev','emp','chat'].includes(tab))render();if(vol!=null){window.scrollTo({top:vol});requestAnimationFrame(()=>window.scrollTo({top:vol}))}else if(!keep)window.scrollTo({top:0});fixaCab();if(muda)setTimeout(()=>dica(tab),450)}
+  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));{const ob=document.querySelector('.obsbal');if(ob)ob.hidden=true}{const e2=$('#empEd2');if(e2)try{e2.hidden=!(EMPED&&tab==='emp')}catch(x){e2.hidden=true}}$$('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+tab));if(DESENHADA[tab]!==RV&&['home','ext','ren','des','prev','emp','chat','part'].includes(tab))render();if(vol!=null){window.scrollTo({top:vol});requestAnimationFrame(()=>window.scrollTo({top:vol}))}else if(!keep)window.scrollTo({top:0});fixaCab();if(muda)setTimeout(()=>dica(tab),450)}
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tab],[data-go],[data-todo],[data-del],[data-undo],[data-close],[data-mv],[data-rgdel],[data-padd],[data-pdel],[data-radd],[data-rdel],[data-cdel],[data-edit],[data-redit],[data-rendel],[data-radd2],[data-golk],[data-gorend],[data-ram],[data-cmv],[data-rmv],[data-cadd],[data-dcat],[data-dtog],[data-dgo],[data-dgox],[data-corq],[data-pvusa],[data-corset],[data-gounc],[data-gouncq],[data-nrg],[data-gocat],[data-gorent],[data-gorendx],[data-goref],[data-reemb],[data-rbsel],[data-extmais],[data-calc],[data-calcmov],[data-calcrend],[data-sptog],[data-split],[data-spdel],[data-spreemb],[data-reembp],[data-gotipo],[data-rbtodas],[data-rbok]');if(!t)return;
   const d=t.dataset;
@@ -2778,7 +2876,7 @@ document.addEventListener('click',e=>{const p=$('#infPop'),b=e.target.closest('.
   p.textContent=txt;p.hidden=false;const r=b.getBoundingClientRect(),pw=p.offsetWidth;p.style.left=Math.min(innerWidth-pw-10,Math.max(10,r.left-20))+'px';const ph=p.offsetHeight;p.style.top=(r.bottom+6+ph>innerHeight-8?Math.max(8,r.top-ph-6):r.bottom+6)+'px'},true);
 addEventListener('scroll',()=>{const p=$('#infPop');if(p&&!p.hidden)p.hidden=true},{passive:true});
 $('#impRes').addEventListener('click',e=>{const b=e.target.closest('[data-amostra]');if(b)window.fpAmostra(b.dataset.amostra)});
-{const pc=()=>{document.documentElement.classList.toggle('ctxAgr',CTX.t==='a'&&!CTX.emp);document.documentElement.classList.toggle('ctxEmp',CTX.t==='a'&&!!CTX.emp);if(!(CTX.t==='a'&&CTX.emp)&&abaAtiva()==='emp')go('home');{const tn=$('#tabChatN'),v=CTX.t==='a'?'💬 Chat':'📝 Notas';if(tn&&tn.textContent!==v){tn.textContent=v;if(abaAtiva()==='chat')render()}}};pc();setInterval(pc,500)}
+{const pc=()=>{document.documentElement.classList.toggle('ctxAgr',CTX.t==='a'&&!CTX.emp);document.documentElement.classList.toggle('ctxEmp',CTX.t==='a'&&!!CTX.emp);if(!(CTX.t==='a'&&CTX.emp)&&abaAtiva()==='emp')go('home');if(!(CTX.t==='a'&&!CTX.emp)&&abaAtiva()==='part')go('home');{const tn=$('#tabChatN'),v=CTX.t==='a'?'💬 Chat':'📝 Notas';if(tn&&tn.textContent!==v){tn.textContent=v;if(abaAtiva()==='chat')render()}}};pc();setInterval(pc,500)}
 $('#voltaBt').addEventListener('click',volta);
 window.fpCtx={atual:()=>({...CTX}),muda:(c)=>trocaCtx(c),db:()=>DB,temEx,
   exemplo:async()=>{const n=criaEx();trk('exemplo',{acao:'criar'});await trocaCtx({t:'x'});const h=new Date();P.m='mes';P.d=new Date(h.getFullYear(),h.getMonth()-1,1);$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel();render();avisaPer();return n},apagaEx};
