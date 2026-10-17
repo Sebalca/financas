@@ -150,7 +150,9 @@ tr.ra-d td{background:var(--soft);font-size:12.5px}tr.ra-d td:first-child{paddin
 .pvnav{display:inline-flex;align-items:center;gap:6px;margin-right:6px}.pvnav button{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:6px;width:26px;height:26px;cursor:pointer}.pvnav b{min-width:150px;text-align:center}
 .pvsum{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.pvsum .ch{border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font-size:12.5px;display:flex;gap:8px;align-items:center}.pvsum .ch b{font-size:13.5px}.pvsum .ch.tot{background:var(--soft)}
 table.prevt{font-size:12.5px;table-layout:fixed;min-width:1150px}table.prevt th.yr{text-align:center;border-left:1px solid var(--bd)}table.prevt td.bl,table.prevt th.bl{border-left:1px solid var(--bd)}
-html:not(.ctxEmp) nav.tabs .tabemp{display:none}html:not(.ctxAgr) nav.tabs .tabpart{display:none}
+html:not(.ctxEmp) nav.tabs .tabemp{display:none}html:not(.ctxAgr) nav.tabs .tabpart{display:none}nav.tabs .tabpart.so1{display:none}
+.ptesp td{background:color-mix(in srgb,var(--ac) 7%,transparent)}.ptrow label{display:flex;gap:6px;align-items:center}.ptrow select,.ptrow input.pv{font:inherit;font-size:13px}
+.ptg2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;align-items:start;margin-bottom:14px}.ptg2>.card{margin:0}@media(max-width:860px){.ptg2{grid-template-columns:1fr}}
 .ptreg{font-size:14.5px;line-height:1.6;margin:4px 0 8px}.ptconf{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.ptc{border:1px solid var(--bd);border-radius:999px;padding:3px 10px;font-size:12.5px}.ptc.ok{border-color:#66bb6a;color:#2e7d32;background:color-mix(in srgb,#66bb6a 12%,transparent)}.ptsaldo{font-size:16px;margin:6px 0 10px}.ptrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 0}.ptform{display:grid;gap:10px}.ptt{display:grid;gap:6px}.ptt label.chk,.ptcats label.chk{display:flex;gap:8px;align-items:center;font-size:14px}.ptcats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}.ptacs{margin-top:10px;font-size:13px}.ptacs div{padding:3px 0}table.ptg td:first-child{min-width:200px}.ptform input[type=month]{font:inherit;padding:4px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--tx)}.empz[hidden]{display:none!important}
 .bdgc{display:inline-block;min-width:8px;height:16px;line-height:16px;padding:0 5px;border-radius:9px;background:#e53935;color:#fff;font-size:10.5px;font-weight:700;vertical-align:1px}.bdgc[hidden]{display:none}
 .pvtabs{margin:0 0 12px}.pvtabs button{border:0;background:var(--card);color:inherit;font:inherit;font-weight:600;padding:8px 16px;cursor:pointer}.pvtabs button.on{background:var(--ac);color:#fff}
@@ -649,7 +651,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.21'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.22'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1491,12 +1493,12 @@ function despReais(){const M={};expandeC(DB.mov).forEach(m=>{if(!contaInicio(m))
 const despPrevMes=Y=>DB.cats.filter(c=>!eFora(c.nome)).reduce((s,c)=>s+c.refs.reduce((t,r)=>t+pvK(Y,c.nome+'›'+r),0),0);
 function renderRendPrev(){const Y=prevAno(),ms=mesesAno(Y),hm=hoje().slice(0,7),L=rpL(),RR=rendReais(),DR=despReais(),dp=despPrevMes(Y);
   const ents=uniq(entTodas().map(entN)).sort((a,b)=>a.localeCompare(b,'pt'));
-  $('#rpLista').innerHTML=L.length?`<div class="tw"><table class="t rpt"><thead><tr><th>Entidade</th><th>Descrição</th><th class="num">Valor</th><th>Periodicidade</th><th>Desde / mês</th><th>Até</th><th title="Dia do mês em que costuma receber (só informativo)">Dia</th><th class="num" title="Quanto conta no ano escolhido">No ano</th><th></th></tr></thead><tbody>${L.map(x=>{const pon=x.per==='0',na=ms.reduce((s,p)=>s+rpValor(x,p),0);
+  $('#rpLista').innerHTML=L.length?`<div class="tw"><table class="t rpt"><thead><tr><th>Entidade</th><th>Descrição</th><th class="num">Valor</th><th>Periodicidade</th><th>Desde / mês</th><th>Até</th><th title="Dia do mês em que costuma receber (só informativo)">Dia</th><th class="num" title="Quanto conta no ano escolhido">No ano</th>${CTX.t==='a'&&!CTX.emp?'<th title="De quem é este rendimento (usado na Partilha)">Quem</th>':''}<th></th></tr></thead><tbody>${L.map(x=>{const pon=x.per==='0',na=ms.reduce((s,p)=>s+rpValor(x,p),0);
     return `<tr data-rpid="${esc(x.id)}"><td><input data-rpf="ent" value="${esc(x.ent||'')}" list="dlRpEnt" placeholder="Entidade" aria-label="Entidade"></td><td><input data-rpf="desc" value="${esc(x.desc||'')}" placeholder="${pon?'ex.: Subsídio de Natal':'ex.: Ordenado'}" aria-label="Descrição"></td>
       <td class="num"><input class="pv" data-rpf="v" value="${fmtN(+x.v)}" placeholder="0,00" inputmode="decimal" aria-label="Valor"></td>
       <td><select data-rpf="per" aria-label="Periodicidade">${RP_PER.map(([k,l])=>`<option value="${k}"${k===(x.per||'1')?' selected':''}>${l}</option>`).join('')}</select></td>
       <td><input type="month" data-rpf="ini" value="${esc(x.ini||'')}" aria-label="${pon?'Mês':'Desde'}"></td><td>${pon?'<span class="muted">—</span>':`<input type="month" data-rpf="fim" value="${esc(x.fim||'')}" aria-label="Até (vazio = sem fim)" title="Vazio = sem fim">`}</td>
-      <td>${pon?'':`<input class="pv rpdia" data-rpf="dia" value="${esc(x.dia||'')}" inputmode="numeric" placeholder="—" aria-label="Dia do mês">`}</td><td class="num">${na?E(na):'<span class="muted">—</span>'}</td>
+      <td>${pon?'':`<input class="pv rpdia" data-rpf="dia" value="${esc(x.dia||'')}" inputmode="numeric" placeholder="—" aria-label="Dia do mês">`}</td><td class="num">${na?E(na):'<span class="muted">—</span>'}</td>${CTX.t==='a'&&!CTX.emp?`<td><select data-rpf="quem" aria-label="Quem"><option value="">—</option>${ptPessoas().map(m=>`<option value="${esc(m.id)}"${m.id===x.quem?' selected':''}>${esc(m.nome)}</option>`).join('')}</select></td>`:''}
       <td><button class="btn ic sm" type="button" data-rpdel="${esc(x.id)}" title="Apagar">🗑</button></td></tr>`}).join('')}</tbody></table></div><datalist id="dlRpEnt">${ents.map(e=>`<option value="${esc(e)}">`).join('')}</datalist>`
     :`<div class="empty"><b>Ainda não há rendimentos previstos</b>Acrescente os recorrentes (ordenado, rendas…) e os pontuais (subsídios, prémios, reembolso do IRS) — ou carregue em ✨ Sugerir.</div>`;
   /* grelha do ano: previsto vs real e saldo */
@@ -1729,12 +1731,13 @@ $('#lstL').addEventListener('click',e=>{const b=e.target.closest('button');if(!b
 const addU=(iso,n,u,sinal=1)=>{const d=new Date(iso+'T12:00');n=(+n||0)*sinal;if(u==='d')d.setDate(d.getDate()+n);else if(u==='s')d.setDate(d.getDate()+7*n);else if(u==='m'){const dd=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+n);d.setDate(Math.min(dd,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()))}else if(u==='a'){const dd=d.getDate();d.setDate(1);d.setFullYear(d.getFullYear()+n);d.setDate(Math.min(dd,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()))}return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
 const UN={d:['dia','dias'],s:['semana','semanas'],m:['mês','meses'],a:['ano','anos']},unTx=(n,u)=>`${n} ${UN[u][+n===1?0:1]}`;
 const alInicio=a=>addU(a.data,a.ant?a.ant.n:0,a.ant?a.ant.u:'d',-1);
-const alAtivos=()=>(DB.alertas||[]).filter(a=>!a.fim&&a.data&&alInicio(a)<=hoje()).sort((x,y)=>x.data.localeCompare(y.data));
+const alAtivos=()=>(DB.alertas||[]).filter(a=>!a.fim&&a.data&&alInicio(a)<=hoje()).concat((()=>{try{return ptCCAlertas()}catch(e){return []}})()).sort((x,y)=>x.data.localeCompare(y.data));
 function alQuando(a){const n=diasAte(a.data);return n<0?`passou há ${-n} dia${n===-1?'':'s'}`:n===0?'é hoje':n===1?'é amanhã':`faltam ${n} dias`}
-function alFeito(id){const a=(DB.alertas||[]).find(x=>x.id===id);if(!a)return;if(a.rec&&+a.rec.n>0){let d=a.data;do{d=addU(d,a.rec.n,a.rec.u)}while(alInicio({...a,data:d})<=hoje()&&d<=hoje());a.data=d}else a.fim=hoje();trk('alerta_feito',{rec:!!a.rec});save()}
-function renderAlertas(){const L=(DB.alertas||[]).slice().sort((x,y)=>(!!x.fim-!!y.fim)||(x.data||'').localeCompare(y.data||'')),hj=hoje();
+function alFeito(id){if(String(id).startsWith('ptc|')){const o=PT();o.ccOk=o.ccOk||{};o.ccOk[id]=1;save();return}const a=(DB.alertas||[]).find(x=>x.id===id);if(!a)return;if(a.rec&&+a.rec.n>0){let d=a.data;do{d=addU(d,a.rec.n,a.rec.u)}while(alInicio({...a,data:d})<=hoje()&&d<=hoje());a.data=d}else a.fim=hoje();trk('alerta_feito',{rec:!!a.rec});save()}
+function renderAlertas(){const AU=(()=>{try{return ptCCAlertas()}catch(e){return []}})(),L=(DB.alertas||[]).slice().sort((x,y)=>(!!x.fim-!!y.fim)||(x.data||'').localeCompare(y.data||'')),hj=hoje();
   $('#alL').innerHTML=L.filter(a=>!a.fim).length?L.filter(a=>!a.fim).map(a=>{const at=alInicio(a)<=hj,pas=a.data<hj;return `<div class="alit${at?' at':''}${pas?' pas':''}" data-alid="${esc(a.id)}"><div class="alt"><b>${esc(a.nome||'(sem nome)')}</b><small>${fmtD(a.data)} · ${at?alQuando(a):'avisa a '+fmtD(alInicio(a))}${a.rec?` · 🔁 a cada ${unTx(a.rec.n,a.rec.u)}`:''}</small>${a.desc?`<span class="ald">${esc(a.desc)}</span>`:''}</div>${at?`<button class="btn sm pri" type="button" data-alfeito="${esc(a.id)}">✓ Feito</button>`:''}</div>`}).join('')
     :'<div class="empty"><b>Sem alertas</b>Seguros, IUC, revisões, aniversários… carregue em ＋ Alerta.</div>';
+  if(AU.length)$('#alL').insertAdjacentHTML('afterbegin',AU.map(a=>`<div class="alit at"><div class="alt"><b>🏦 ${esc(a.nome)}</b><small>${fmtD(a.data)} · automático (Partilha › conta comum)</small><span class="ald">${esc(a.desc)}</span></div><button class="btn sm pri" type="button" data-alfeito="${esc(a.id)}">✓ Feito</button></div>`).join(''));
   const fe=L.filter(a=>a.fim);if(fe.length)$('#alL').insertAdjacentHTML('beforeend',`<details class="alfe"><summary>Concluídos (${fe.length})</summary>${fe.map(a=>`<div class="alit fe" data-alid="${esc(a.id)}"><div class="alt"><b>${esc(a.nome)}</b><small>${fmtD(a.data)} · feito a ${fmtD(a.fim)}</small></div></div>`).join('')}</details>`)}
 function alBadge(){const n=alAtivos().length,b=$('#bdgAl');if(b){b.hidden=!n;b.textContent=n}}
 let ALE=null;function abreAlerta(id){const a=id?(DB.alertas||[]).find(x=>x.id===id):null;ALE=a?a.id:null;$('#alTit').textContent=a?'🔔 Editar alerta':'🔔 Novo alerta';
@@ -1773,21 +1776,37 @@ const eu_=()=>SY.user&&SY.user.id;
 function ptPessoas(){const M=membrosCtx();return M.length?M:(window.__ptTeste||[])}
 const ptRegra=p=>{const R=PT().regras.filter(r=>r.desde<=p).sort((a,b)=>a.desde.localeCompare(b.desde));return R[R.length-1]||null};
 const rendMes=x=>!x?0:x.per==='a'?(+x.v||0)/(+x.div||12):(+x.v||0);
+/* v0.22: rendimento de uma pessoa num mês a partir das Previsões (campo Quem); meses fechados usam o recebido dessa entidade (extratos/recibos) */
+let PT_RR=null;const ptRR=()=>PT_RR||(PT_RR=rendReais());
+function ptRendPrev(pid,p){const hm=hoje().slice(0,7),RR=ptRR(),vis=new Set();let t=0;
+  rpL().filter(x=>x.quem===pid).forEach(x=>{const v=rpValor(x,p);if(!v)return;if(p<hm&&x.ent){if(vis.has(x.ent))return;vis.add(x.ent);const re=((RR[p]||{}).e||{})[x.ent];t+=re!=null?re:v}else t+=v});return t}
+const ptMesesCalc=(r,p)=>r.calc==='ano'?mesesAno(anoIni(new Date(+p.slice(0,4),+p.slice(5,7)-1,1)).getFullYear()):r.calc==='12m'?Array.from({length:12},(_,i)=>mAdd(p,i-11)):[p];
+const ptRend=(r,pid,p)=>r.fonte==='prev'?ptMesesCalc(r,p).reduce((s,m)=>s+ptRendPrev(pid,m),0):rendMes(r.rend&&r.rend[pid]);
 /* quotas de cada pessoa (0..1) e, na regra fixa, o valor */
-function ptQuotas(r,P){const q={};if(!r)return q;
+function ptQuotas(r,P,p){const q={};if(!r)return q;p=p||hoje().slice(0,7);
   if(r.tipo==='igual')P.forEach(p=>q[p.id]=1/P.length);
-  else if(r.tipo==='prop'){const t=P.reduce((s,p)=>s+rendMes(r.rend&&r.rend[p.id]),0);P.forEach(p=>q[p.id]=t?rendMes(r.rend&&r.rend[p.id])/t:1/P.length)}
-  else if(r.tipo==='pers'){const t=P.reduce((s,p)=>s+(+((r.pct||{})[p.id])||0),0);P.forEach(p=>q[p.id]=t?(+((r.pct||{})[p.id])||0)/t:1/P.length)}
+  else if(r.tipo==='prop'){const v={};P.forEach(x=>v[x.id]=ptRend(r,x.id,p));const t=P.reduce((s,x)=>s+v[x.id],0);P.forEach(x=>q[x.id]=t?v[x.id]/t:1/P.length)}
+  else if(r.tipo==='pers'){const t=P.reduce((s,x)=>s+(+((r.pct||{})[x.id])||0),0);P.forEach(x=>q[x.id]=t?(+((r.pct||{})[x.id])||0)/t:1/P.length)}
   return q}
 /* quem pagou: "Quem é" (nome ou alias da pessoa) e, sem ele, o dono do cartão ou da conta */
 function ptQuem(m,P){const o=PT(),q=norm(m.quem||'');if(q){for(const p of P){const al=[p.nome,...String(o.alias[p.id]||'').split(',')].map(x=>norm(x.trim())).filter(Boolean);if(al.includes(q))return p.id}}
   const c=cartaoDe(m);if(c&&o.contas[c])return o.contas[c];const k=m.banco+'|'+(m.conta||'');if(o.contas[k])return o.contas[k];return ''}
-const ptConta=m=>!isInterna(m)&&!!m.cat&&!eFora(m.cat)&&!PT().excl.includes(m.cat)&&(m.valor<0||eReemb(m));
-function ptCalc(ms,P){const X=expandeC(DB.mov),o=PT();const R=ms.map(p=>{const r=ptRegra(p),q=ptQuotas(r,P),L=X.filter(m=>m.dm.slice(0,7)===p&&ptConta(m)),D=r2(-L.reduce((s,m)=>s+m.valor,0));
+const ptConta=m=>!isInterna(m)&&!!m.cat&&!eFora(m.cat)&&(!PT().excl.includes(m.cat)||(m.pt&&m.pt.t!=='x'))&&(m.valor<0||eReemb(m));
+function ptCalc(ms,P){PT_RR=null;const X=expandeC(DB.mov),o=PT();const R=ms.map(p=>{const r=ptRegra(p),q=ptQuotas(r,P,p),L=X.filter(m=>m.dm.slice(0,7)===p&&ptConta(m)&&!(m.pt&&m.pt.t==='x')),Ln=L.filter(m=>!m.pt),D=r2(-L.reduce((s,m)=>s+m.valor,0)),Dn=-Ln.reduce((s,m)=>s+m.valor,0);
     const pago={},dev={};let sem=0;P.forEach(x=>{pago[x.id]=0;dev[x.id]=0});L.forEach(m=>{const w=ptQuem(m,P);if(w&&w in pago)pago[w]-=m.valor;else sem-=m.valor});
-    P.forEach(x=>{dev[x.id]=r&&r.tipo==='fixo'?(+((r.fixo||{})[x.id])||0):D*(q[x.id]||0)});
+    P.forEach(x=>{dev[x.id]=r&&r.tipo==='fixo'?(+((r.fixo||{})[x.id])||0):Dn*(q[x.id]||0)});
+    /* v0.22: movimentos com divisão própria (m.pt: {t:'p',u} só de uma pessoa | {t:'%',pct:{uid:%}}) */
+    L.filter(m=>m.pt).forEach(m=>{const v=-m.valor;if(m.pt.t==='p'){if(m.pt.u in dev)dev[m.pt.u]+=v}else if(m.pt.t==='%'){const t=P.reduce((s,x)=>s+(+(m.pt.pct||{})[x.id]||0),0)||1;P.forEach(x=>dev[x.id]+=v*(+(m.pt.pct||{})[x.id]||0)/t)}});
     const ac=o.acertos.filter(a=>a.data.slice(0,7)===p);return {p,r,q,D,pago,dev,sem:r2(sem),ac}});
   return R}
+/* v0.22: modo conta comum — cada um transfere a sua parte (o.cc={on,conta,base:'prev'|'real'|'fixo',total,dia}) */
+function ptCC(p,P){const o=PT(),cc=o.cc||{},r=ptRegra(p);if(!cc.on||!r)return null;const q=ptQuotas(r,P,p),X=expandeC(DB.mov);
+  const base=cc.base==='fixo'?(+cc.total||0):cc.base==='real'?r2(-X.filter(m=>m.dm.slice(0,7)===mAdd(p,-1)&&ptConta(m)).reduce((s,m)=>s+m.valor,0)):despPrevMes(anoIni(new Date(+p.slice(0,4),+p.slice(5,7)-1,1)).getFullYear());
+  const dev={},trf={};P.forEach(x=>{dev[x.id]=r.tipo==='fixo'?(+((r.fixo||{})[x.id])||0):base*(q[x.id]||0);trf[x.id]=0});
+  X.filter(m=>m.dm.slice(0,7)===p&&m.valor>0&&cc.conta&&(m.banco+'|'+(m.conta||''))===cc.conta).forEach(m=>{let w=ptQuem(m,P);if(!w){const d=norm(m.desc+' '+(m.det||''));const x=P.find(x=>[x.nome,...String(o.alias[x.id]||'').split(',')].map(a=>norm(a.trim())).filter(a=>a.length>2).some(a=>d.includes(a)));if(x)w=x.id}if(w)trf[w]+=m.valor});
+  return {base,dev,trf}}
+function ptCCAlertas(){if(CTX.t!=='a'||CTX.emp)return [];const o=PT(),cc=o.cc||{};if(!cc.on)return [];const P=ptPessoas();if(P.length<2)return [];const hm=hoje().slice(0,7),dia=Math.min(28,Math.max(1,+cc.dia||1)),dt=hm+'-'+pad(dia);if(hoje()<dt)return [];
+  const c=ptCC(hm,P);if(!c)return [];o.ccOk=o.ccOk||{};return P.filter(x=>c.dev[x.id]-c.trf[x.id]>.5&&!o.ccOk['ptc|'+hm+'|'+x.id]).map(x=>({id:'ptc|'+hm+'|'+x.id,nome:`Transferência para a conta comum — ${x.nome}`,desc:`Falta transferir ${E(c.dev[x.id]-c.trf[x.id])} (de ${E(c.dev[x.id])}).`,data:dt,ant:{n:0,u:'d'},auto:true}))}
 function ptSaldoTotal(P){const o=PT(),X=expandeC(DB.mov),ms=uniq(X.filter(ptConta).map(m=>m.dm.slice(0,7))).filter(p=>p<=hoje().slice(0,7)&&ptRegra(p)).sort(),R=ptCalc(ms,P),S={};P.forEach(x=>S[x.id]=0);
   R.forEach(x=>P.forEach(p=>S[p.id]+=x.pago[p.id]-x.dev[p.id]));o.acertos.forEach(a=>{if(a.de in S)S[a.de]+=+a.v;if(a.para in S)S[a.para]-=+a.v});Object.keys(S).forEach(k=>S[k]=r2(S[k]));return S}
 function ptFrase(S,P){const nm=id=>(P.find(p=>p.id===id)||{}).nome||'?',pos=P.filter(p=>S[p.id]>.004).sort((a,b)=>S[b.id]-S[a.id]),neg=P.filter(p=>S[p.id]<-.004).sort((a,b)=>S[a.id]-S[b.id]);
@@ -1795,21 +1814,25 @@ function ptFrase(S,P){const nm=id=>(P.find(p=>p.id===id)||{}).nome||'?',pos=P.fi
   /* liquidação simples: quem deve paga a quem tem a receber */
   const a=pos.map(p=>({id:p.id,v:S[p.id]})),d=neg.map(p=>({id:p.id,v:-S[p.id]})),pares=[];let i=0,j=0;
   while(i<d.length&&j<a.length){const v=Math.min(d[i].v,a[j].v);if(v>.004)pares.push({de:d[i].id,para:a[j].id,v:r2(v)});d[i].v-=v;a[j].v-=v;if(d[i].v<.005)i++;if(a[j].v<.005)j++}
+  if(!pares.length)return {txt:'<span class="muted">Sem acertos a fazer entre vocês — há despesas por atribuir (escreva o "Quem é" ou diga de quem é cada conta em "Quem é quem").</span>',pares};
   return {txt:pares.map(x=>`<b>${esc(nm(x.de))}</b> deve <b>${E(x.v)}</b> a <b>${esc(nm(x.para))}</b>`).join(' · '),pares}}
 function renderPartilha(){const el=$('#ptBox');const P=ptPessoas(),o=PT(),me=eu_();
   if(P.length<2){el.innerHTML='<div class="card"><h3>⚖️ Partilha</h3><div class="empty"><b>É preciso pelo menos 2 membros</b>Convide a outra pessoa para o agregado (Definições › Agregado familiar). Depois definem aqui a regra para dividir as despesas comuns.</div></div>';return}
   const Y=PTY!=null?PTY:anoIni(P_d()).getFullYear(),ms=mesesAno(Y),hm=hoje().slice(0,7),rAt=ptRegra(hm)||o.regras.slice(-1)[0]||null;
   const conf=P.filter(p=>o.conf[p.id]===o.ver),ok=o.regras.length&&conf.length===P.length,nm=id=>(P.find(p=>p.id===id)||{}).nome||'?';
   const rTx=r=>!r?'—':r.tipo==='igual'?`partes iguais (${(100/P.length).toLocaleString('pt-PT',{maximumFractionDigits:1})} % cada)`:r.tipo==='fixo'?P.map(p=>`${esc(p.nome)} ${E(+((r.fixo||{})[p.id])||0)}/mês`).join(' · '):
-    Object.entries(ptQuotas(r,P)).map(([k,v])=>`${esc(nm(k))} ${(v*100).toLocaleString('pt-PT',{maximumFractionDigits:1})} %`).join(' · ')+(r.tipo==='prop'?` <small class="muted">(${P.map(p=>`${esc(p.nome)} ganha ${E(rendMes(r.rend&&r.rend[p.id]))}/mês`).join(', ')})</small>`:'');
+    Object.entries(ptQuotas(r,P,hm)).map(([k,v])=>`${esc(nm(k))} ${(v*100).toLocaleString('pt-PT',{maximumFractionDigits:1})} %`).join(' · ')+(r.tipo==='prop'?` <small class="muted">(${r.fonte==='prev'?`das Previsões e extratos, ${({mes:'mês a mês',ano:'média do ano','12m':'últimos 12 meses'})[r.calc||'mes']} — este mês: `:''}${P.map(p=>`${esc(p.nome)} ${E(r.fonte==='prev'?ptRend(r,p.id,hm):rendMes(r.rend&&r.rend[p.id]))}${r.fonte==='prev'&&r.calc&&r.calc!=='mes'?'':'/mês'}`).join(', ')})</small>`:'')+(r.tipo==='pers'?'':'');
   /* regra (ver ou editar) */
   const er=PTED?(PTED===true?(rAt?JSON.parse(JSON.stringify(rAt)):{desde:hm,tipo:'prop',rend:{},fixo:{},pct:{}}):PTED):null;if(er&&PTED===true)PTED=er;
   const regraHtml=!er?`${o.regras.length?`<p class="ptreg">📐 <b>${PT_TIPOS.find(t=>t[0]===rAt.tipo)[1]}</b> — ${rTx(rAt)}<br><small class="muted">Em vigor desde ${mesTxt(rAt.desde)}${o.regras.length>1?` · ${o.regras.length-1} regra(s) anterior(es) continuam a valer nos meses antes disso`:''}</small></p>`:'<div class="empty"><b>Ainda não há regra</b>Carregue em ✏ Definir regra.</div>'}
       ${o.regras.length?`<div class="ptconf">${P.map(p=>`<span class="ptc${o.conf[p.id]===o.ver?' ok':''}">${o.conf[p.id]===o.ver?'✓':'⏳'} ${esc(p.nome)}</span>`).join('')}${ok?'<span class="muted">Regra confirmada por todos.</span>':me&&o.conf[me]!==o.ver&&P.some(p=>p.id===me)?'<button class="btn sm pri" type="button" id="ptConc">✓ Concordo</button>':'<span class="muted">À espera de confirmação.</span>'}</div>`:''}`
     :`<div class="ptform"><div class="ptt">${PT_TIPOS.map(([k,l])=>`<label class="chk"><input type="radio" name="ptTipo" value="${k}"${er.tipo===k?' checked':''}> ${l}</label>`).join('')}</div>
-      ${er.tipo==='prop'?`<table class="t eft"><thead><tr><th>Pessoa</th><th class="num">Ganha (líquido)</th><th>Por</th><th></th></tr></thead><tbody>${P.map(p=>{const x=(er.rend||{})[p.id]||{};return `<tr><td>${esc(p.nome)}</td><td class="num"><input class="pv" data-ptr="${p.id}|v" value="${x.v?fmtN(+x.v):''}" inputmode="decimal" placeholder="0,00"></td><td><select data-ptr="${p.id}|per"><option value="m"${x.per!=='a'?' selected':''}>mês</option><option value="a"${x.per==='a'?' selected':''}>ano</option></select></td><td>${x.per==='a'?`<select data-ptr="${p.id}|div"><option value="12"${+x.div!==14?' selected':''}>÷ 12 meses</option><option value="14"${+x.div===14?' selected':''}>÷ 14 (com subsídios)</option></select>`:''}</td></tr>`}).join('')}</tbody></table>`:''}
+      ${er.tipo==='prop'?`<div class="ptrow"><b>Quanto cada um ganha:</b><label class="chk"><input type="radio" name="ptFonte" value="prev"${er.fonte==='prev'?' checked':''}> das Previsões (campo "Quem") e dos extratos</label><label class="chk"><input type="radio" name="ptFonte" value="man"${er.fonte!=='prev'?' checked':''}> escrito à mão</label></div>`:''}
+      ${er.tipo==='prop'&&er.fonte==='prev'?`<div class="ptrow"><label>Cálculo da proporção <select id="ptCalc">${[['mes','mês a mês'],['ano','média do ano'],['12m','últimos 12 meses']].map(([k,l])=>`<option value="${k}"${(er.calc||'mes')===k?' selected':''}>${l}</option>`).join('')}</select></label><span class="muted">Meses fechados: o que recebeu (extratos/recibos de cada entidade); este mês e seguintes: o previsto.</span></div>
+        <table class="t eft"><thead><tr><th>Pessoa</th><th class="num">Rendimento usado este mês</th></tr></thead><tbody>${P.map(p=>`<tr><td>${esc(p.nome)}</td><td class="num">${E(ptRend(er,p.id,hm))}</td></tr>`).join('')}</tbody></table>${P.every(p=>!ptRend(er,p.id,hm))?'<p class="note warn">Ainda não há rendimentos previstos com "Quem" — escolha a pessoa em Previsões › Rendimentos previstos.</p>':''}`:''}
+      ${er.tipo==='prop'&&er.fonte!=='prev'?`<table class="t eft"><thead><tr><th>Pessoa</th><th class="num">Ganha (líquido)</th><th>Por</th><th></th></tr></thead><tbody>${P.map(p=>{const x=(er.rend||{})[p.id]||{};return `<tr><td>${esc(p.nome)}</td><td class="num"><input class="pv" data-ptr="${p.id}|v" value="${x.v?fmtN(+x.v):''}" inputmode="decimal" placeholder="0,00"></td><td><select data-ptr="${p.id}|per"><option value="m"${x.per!=='a'?' selected':''}>mês</option><option value="a"${x.per==='a'?' selected':''}>ano</option></select></td><td>${x.per==='a'?`<select data-ptr="${p.id}|div"><option value="12"${+x.div!==14?' selected':''}>÷ 12 meses</option><option value="14"${+x.div===14?' selected':''}>÷ 14 (com subsídios)</option></select>`:''}</td></tr>`}).join('')}</tbody></table>`:''}
       ${er.tipo==='fixo'?`<table class="t eft"><thead><tr><th>Pessoa</th><th class="num">Põe por mês</th></tr></thead><tbody>${P.map(p=>`<tr><td>${esc(p.nome)}</td><td class="num"><input class="pv" data-ptf="${p.id}" value="${(er.fixo||{})[p.id]?fmtN(+er.fixo[p.id]):''}" inputmode="decimal" placeholder="0,00"></td></tr>`).join('')}</tbody></table>`:''}
-      ${er.tipo==='pers'?`<table class="t eft"><thead><tr><th>Pessoa</th><th class="num">%</th></tr></thead><tbody>${P.map(p=>`<tr><td>${esc(p.nome)}</td><td class="num"><input class="pv" data-ptp="${p.id}" value="${(er.pct||{})[p.id]??''}" inputmode="decimal" placeholder="0"></td></tr>`).join('')}</tbody></table>`:''}
+      ${er.tipo==='pers'?`<table class="t eft"><thead><tr><th>Pessoa</th><th class="num">%</th></tr></thead><tbody>${P.map((p,i)=>{const ult=i===P.length-1,v=ult?Math.max(0,100-P.slice(0,-1).reduce((s,x)=>s+(+((er.pct||{})[x.id])||0),0)):(er.pct||{})[p.id];return `<tr><td>${esc(p.nome)}</td><td class="num">${ult?`<b>${(+v||0).toLocaleString('pt-PT',{maximumFractionDigits:2})} %</b> <small class="muted">(100 − ${P.length>2?'os outros':'o outro'})</small>`:`<input class="pv" data-ptp="${p.id}" value="${v??''}" inputmode="decimal" placeholder="0">`}</td></tr>`}).join('')}</tbody></table>`:''}
       <div class="ptrow"><label>Vale a partir de <input type="month" id="ptDesde" value="${esc(er.desde||hm)}"></label><span class="muted">Os meses anteriores continuam com a regra que tinham.</span></div>
       <div class="ptrow"><button class="btn" type="button" id="ptCanc">Cancelar</button><button class="btn pri" type="button" id="ptGuarda">Guardar regra</button><span class="muted">Ao guardar, todos têm de voltar a confirmar.</span></div></div>`;
   /* resultado do ano */
@@ -1817,10 +1840,10 @@ function renderPartilha(){const el=$('#ptBox');const P=ptPessoas(),o=PT(),me=eu_
   const tot=f=>R.reduce((s,x)=>s+(x.p<=hm&&x.r?f(x):0),0),cel=(v,cls)=>`<td class="num${cls?' '+cls:''}">${Math.abs(v)>.004?E(v):'<span class="muted">—</span>'}</td>`;
   const lin=(lbl,f,cls)=>`<tr class="${cls||''}"><td>${lbl}</td>${R.map(x=>x.p>hm||!x.r?'<td class="num muted">—</td>':cel(f(x))).join('')}${cel(tot(f))}</tr>`;
   const ac=o.acertos.slice().sort((a,b)=>b.data.localeCompare(a.data));
-  el.innerHTML=`<div class="card"><h3>⚖️ Regra de partilha <small>despesas comuns do agregado</small><span class="r">${PTED?'':`<button class="btn sm" type="button" id="ptEd">✏ ${o.regras.length?'Mudar regra':'Definir regra'}</button>`}</span></h3>${regraHtml}</div>
-   <div class="card"><h3>💶 Saldo entre vocês <small>desde o início da regra, já com os acertos</small></h3><p class="ptsaldo">${fr.txt}</p>
+  el.innerHTML=`<div class="ptg2"><div class="card"><h3>⚖️ Regra de partilha <small>despesas comuns do agregado</small><span class="r">${PTED?'':`<button class="btn sm" type="button" id="ptEd">✏ ${o.regras.length?'Mudar regra':'Definir regra'}</button>`}</span></h3>${regraHtml}</div>
+   <div class="card"><h3>💶 Saldo entre vocês <small>${o.cc&&o.cc.on?'despesas pagas por cada um fora da conta comum':'desde o início da regra, já com os acertos'}</small></h3>${o.cc&&o.cc.on?(()=>{const c=ptCC(hm,P);return c?`<p class="ptsaldo" style="font-size:14px">🏦 <b>Conta comum — ${mesTxt(hm).toLowerCase()}:</b> ${P.map(x=>{const f=c.dev[x.id]-c.trf[x.id];return `${esc(x.nome)} ${f>.5?`<span class="neg">falta ${E(f)}</span>`:'<span class="pos">✓ transferiu</span>'}`}).join(' · ')}</p>`:''})():''}<p class="ptsaldo">${fr.txt}</p>
      ${fr.pares.length?`<div class="ptrow">${fr.pares.map((x,i)=>`<button class="btn sm pri" type="button" data-ptac="${i}">✓ Acertar: ${esc(nm(x.de))} → ${esc(nm(x.para))} ${E(x.v)}</button>`).join('')}<span class="muted">Regista a transferência entre os dois (hoje) e o saldo volta a zero.</span></div>`:''}
-     ${ac.length?`<details class="ptacs"><summary>Acertos registados (${ac.length})</summary>${ac.map(a=>`<div>${fmtD(a.data)} · ${esc(nm(a.de))} → ${esc(nm(a.para))} <b>${E(+a.v)}</b> <button class="btn ic sm" type="button" data-ptacdel="${esc(a.id)}" title="Apagar">🗑</button></div>`).join('')}</details>`:''}</div>
+     ${ac.length?`<details class="ptacs"><summary>Acertos registados (${ac.length})</summary>${ac.map(a=>`<div>${fmtD(a.data)} · ${esc(nm(a.de))} → ${esc(nm(a.para))} <b>${E(+a.v)}</b> <button class="btn ic sm" type="button" data-ptacdel="${esc(a.id)}" title="Apagar">🗑</button></div>`).join('')}</details>`:''}</div></div>
    <div class="card"><h3>📊 Mês a mês<span class="r"><span class="nav pvnav"><button type="button" data-pty="-1" aria-label="Ano anterior">‹</button><b>${anoTxt(new Date(Y,MES1,1))}</b><button type="button" data-pty="1" aria-label="Ano seguinte">›</button></span></span></h3>
      ${o.regras.length?`<div class="tw"><table class="t rpg ptg"><thead><tr><th></th>${ms.map(p=>`<th class="num">${MES3[+p.slice(5)-1]}</th>`).join('')}<th class="num">Total</th></tr></thead><tbody>
        ${lin('<b>Despesas comuns</b>',x=>x.D,'gc')}
@@ -1828,19 +1851,37 @@ function renderPartilha(){const el=$('#ptBox');const P=ptPessoas(),o=PT(),me=eu_
        ${comR.some(x=>x.sem>.004)?lin('<span class="warn">Por atribuir</span> <small class="muted">sem "Quem é" nem conta</small>',x=>x.sem):''}
        </tbody></table></div>
        <p class="note">🧮 <b>Despesas comuns</b> = saídas − reembolsos das categorias que entram nas contas (menos as excluídas abaixo). <b>Devia pôr</b> = despesas comuns × a parte de cada um (na regra de valor fixo, o valor combinado). <b>Pagou</b> = despesas pagas por cada um ("Quem é" ou, sem ele, o dono do cartão/conta). Diferença positiva = pagou a mais.</p>`:'<p class="muted">Defina primeiro a regra.</p>'}</div>
+${ptCards(P,o,ms,hm,Y)}
    <div class="card"><h3>👥 Quem é quem <small>para saber quem pagou cada despesa</small></h3>
      <table class="t eft"><thead><tr><th>Pessoa</th><th>Outros nomes no "Quem é" <small class="muted">(separados por vírgulas)</small></th></tr></thead><tbody>${P.map(p=>`<tr><td><b>${esc(p.nome)}</b></td><td><input data-ptal="${p.id}" value="${esc(o.alias[p.id]||'')}" placeholder="ex.: nome completo, alcunha"></td></tr>`).join('')}</tbody></table>
      <h4 class="eg">Contas e cartões</h4><table class="t eft"><thead><tr><th>Conta / cartão</th><th>É de</th></tr></thead><tbody>${uniq(DB.mov.map(m=>m.banco+'|'+(m.conta||''))).map(k=>[k,0]).concat(uniq(DB.mov.map(cartaoDe).filter(Boolean)).map(k=>[k,1])).map(([k,cart])=>`<tr><td>${cart?'💳 '+esc(nomeCart(k)):'🏦 '+esc(k.split('|')[0])+(k.split('|')[1]?' · conta '+esc(k.split('|')[1]):'')}</td><td><select data-ptco="${esc(k)}"><option value="">— (comum / não sei)</option>${P.map(p=>`<option value="${p.id}"${o.contas[k]===p.id?' selected':''}>${esc(p.nome)}</option>`).join('')}</select></td></tr>`).join('')||'<tr><td colspan="2" class="muted">Ainda não há movimentos.</td></tr>'}</tbody></table></div>
    <div class="card"><h3>🚫 Categorias que não entram na partilha</h3><div class="ptcats">${DB.cats.filter(c=>!eFora(c.nome)).map(c=>`<label class="chk"><input type="checkbox" data-ptex="${esc(c.nome)}"${o.excl.includes(c.nome)?' checked':''}> ${esc(c.nome)}</label>`).join('')}</div></div>`;
   {const t=$('#ptBox table.ptg');if(t){const ix=ms.indexOf(hm);t.querySelectorAll('.msel').forEach(x=>x.classList.remove('msel'));if(ix>=0)msCol(t,ix+1)}}}
+/* v0.22: cartões "Conta comum" e "Divisão por movimento" */
+let PTM=null;
+function ptCards(P,o,ms,hm,Y){const cc=o.cc||{},contas=uniq(DB.mov.map(m=>m.banco+'|'+(m.conta||''))),nm=id=>(P.find(p=>p.id===id)||{}).nome||'?';
+  const ccHtml=`<div class="card"><h3>🏦 Conta comum <small>em vez de dividir despesa a despesa, cada um transfere a sua parte todos os meses</small></h3>
+    <label class="chk ptrow"><input type="checkbox" id="ptCcOn"${cc.on?' checked':''}> Usamos uma conta comum</label>
+    ${cc.on?`<div class="ptrow"><label>Conta comum <select id="ptCcConta"><option value="">— escolha —</option>${contas.map(k=>`<option value="${esc(k)}"${cc.conta===k?' selected':''}>${esc(k.split('|')[0])}${k.split('|')[1]?' · '+esc(k.split('|')[1]):''}</option>`).join('')}</select></label>
+      <label>Valor a juntar por mês <select id="ptCcBase"><option value="prev"${(cc.base||'prev')==='prev'?' selected':''}>despesas previstas (Previsões)</option><option value="real"${cc.base==='real'?' selected':''}>despesas comuns do mês anterior</option><option value="fixo"${cc.base==='fixo'?' selected':''}>valor fixo</option></select></label>
+      ${cc.base==='fixo'?`<label>Total <input class="pv" id="ptCcTot" value="${cc.total?fmtN(+cc.total):''}" inputmode="decimal" placeholder="0,00"></label>`:''}
+      <label>Avisar a partir do dia <input class="pv rpdia" id="ptCcDia" value="${cc.dia||5}" inputmode="numeric"></label></div>
+      ${(()=>{const L=ms.filter(p=>p<=hm).map(p=>({p,c:ptCC(p,P)})).filter(x=>x.c);if(!L.length)return '<p class="muted">Defina primeiro a regra.</p>';
+        return `<div class="tw"><table class="t eft"><thead><tr><th>Mês</th><th class="num">A juntar</th>${P.map(x=>`<th class="num">${esc(x.nome)}: devia</th><th class="num">transferiu</th>`).join('')}</tr></thead><tbody>${L.map(({p,c})=>`<tr${p===hm?' class="rsel"':''}><td>${mesTxt(p)}</td><td class="num">${E(c.base)}</td>${P.map(x=>{const f=c.dev[x.id]-c.trf[x.id];return `<td class="num">${E(c.dev[x.id])}</td><td class="num ${f>.5?'neg':'pos'}" title="${f>.5?'Falta '+E(f):'Completo'}">${E(c.trf[x.id])}</td>`}).join('')}</tr>`).join('')}</tbody></table></div>
+        <p class="note">Transferências = entradas na conta comum com "Quem é" (ou o nome da pessoa na descrição). A partir do dia escolhido, quem ainda não transferiu a sua parte recebe um 🔔 alerta.</p>`})()}`:''}</div>`;
+  const mm=PTM&&PTM>=ms[0]&&PTM<=ms[11]?PTM:(ms.includes(hm)?hm:ms[11]),X=expandeC(DB.mov).filter(m=>m.dm.slice(0,7)===mm&&!isInterna(m)&&!!m.cat&&!eFora(m.cat)&&m.valor<0).sort((a,b)=>a.dm.localeCompare(b.dm));
+  const opv=m=>!m.pt?'':m.pt.t==='x'?'x':m.pt.t==='p'?'p:'+m.pt.u:'%';
+  const dvHtml=`<div class="card"><h3>✂️ Divisão por movimento <small>exceções à regra — só de uma pessoa, não entra, ou % própria</small><span class="r"><select id="ptMes">${ms.filter(p=>p<=hm).map(p=>`<option value="${p}"${p===mm?' selected':''}>${mesTxt(p)}</option>`).join('')}</select></span></h3>
+    ${X.length?`<div class="tw"><table class="t eft"><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th class="num">Valor</th><th>Divisão</th></tr></thead><tbody>${X.map(m=>{const v=opv(m);return `<tr${v?' class="ptesp"':''}><td>${fmtD(m.dm)}</td><td>${esc(m.desc)}</td><td class="muted">${esc(m.cat)}${m.ref?' › '+esc(m.ref):''}</td><td class="num">${E(-m.valor)}</td><td><select data-ptmv="${esc(chave(m))}"><option value="">Regra do casal</option>${P.map(x=>`<option value="p:${x.id}"${v==='p:'+x.id?' selected':''}>Só de ${esc(x.nome)}</option>`).join('')}<option value="x"${v==='x'?' selected':''}>Não entra</option>${P.length===2?`<option value="%"${v==='%'?' selected':''}>% própria…</option>`:''}</select>${v==='%'?` <input class="pv rpdia" data-ptmvp="${esc(chave(m))}" value="${(m.pt.pct||{})[P[0].id]??50}" inputmode="decimal" title="% de ${esc(P[0].nome)} (o resto é de ${esc(P[1].nome)})"> <small class="muted">% ${esc(P[0].nome)}</small>`:''}</td></tr>`}).join('')}</tbody></table></div>`:'<p class="muted">Sem despesas neste mês.</p>'}</div>`;
+  return ccHtml+dvHtml}
 const P_d=()=>P.m==='int'&&P.fim?new Date(+P.fim.slice(0,4),+P.fim.slice(5,7)-1,1):P.d;
 $('#tab-part').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const o=PT(),P=ptPessoas(),d=b.dataset;
   if(b.id==='ptEd'){PTED=true;render();return}
   if(b.id==='ptCanc'){PTED=false;render();return}
   if(b.id==='ptGuarda'){const r=PTED;r.desde=$('#ptDesde').value||hoje().slice(0,7);
-    if(r.tipo==='pers'){const t=P.reduce((s,p)=>s+(+((r.pct||{})[p.id])||0),0);if(Math.abs(t-100)>.01&&!confirm(`As percentagens somam ${t.toLocaleString('pt-PT')} %. Guardar na mesma (são ajustadas para 100 %)?`))return}
-    if(r.tipo==='prop'&&!P.some(p=>rendMes(r.rend&&r.rend[p.id])>0)){toast('Escreva quanto ganha cada um.');return}
-    o.regras=o.regras.filter(x=>x.desde<r.desde);o.regras.push({desde:r.desde,tipo:r.tipo,rend:r.rend||{},fixo:r.fixo||{},pct:r.pct||{}});o.ver++;o.conf={};const me=eu_();if(me)o.conf[me]=o.ver;
+    if(r.tipo==='pers'){r.pct=r.pct||{};const t=P.slice(0,-1).reduce((s,p)=>s+(+r.pct[p.id]||0),0);if(t>100){toast('As percentagens passam de 100 %.');return}r.pct[P[P.length-1].id]=r2(100-t)}
+    if(r.tipo==='prop'&&r.fonte!=='prev'&&!P.some(p=>rendMes(r.rend&&r.rend[p.id])>0)){toast('Escreva quanto ganha cada um.');return}
+    o.regras=o.regras.filter(x=>x.desde<r.desde);o.regras.push({desde:r.desde,tipo:r.tipo,rend:r.rend||{},fixo:r.fixo||{},pct:r.pct||{},fonte:r.fonte||'man',calc:r.calc||'mes'});o.ver++;o.conf={};const me=eu_();if(me)o.conf[me]=o.ver;
     PTED=false;trk('partilha_regra',{tipo:r.tipo});save();render();return}
   if(b.id==='ptConc'){const me=eu_();if(me){o.conf[me]=o.ver;trk('partilha_concordo',{});save();render()}return}
   if(d.ptac!=null){const fr=ptFrase(ptSaldoTotal(P),P),x=fr.pares[+d.ptac];if(!x)return;const nm=id=>(P.find(p=>p.id===id)||{}).nome;
@@ -1849,12 +1890,21 @@ $('#tab-part').addEventListener('click',e=>{const b=e.target.closest('button');i
   if(d.pty){PTY=(PTY!=null?PTY:anoIni(P_d()).getFullYear())+(+d.pty);render()}});
 $('#tab-part').addEventListener('change',e=>{const t=e.target,d=t.dataset,o=PT();
   if(t.name==='ptTipo'){PTED.tipo=t.value;render();return}
+  if(t.name==='ptFonte'){PTED.fonte=t.value;render();return}
+  if(t.id==='ptCalc'){PTED.calc=t.value;render();return}
   if(d.ptr){const [id,f]=d.ptr.split('|');PTED.rend=PTED.rend||{};const x=PTED.rend[id]=PTED.rend[id]||{per:'m',div:12};x[f]=f==='v'?Math.abs(num(t.value)):f==='div'?+t.value:t.value;if(f==='per')render();return}
   if(d.ptf){PTED.fixo=PTED.fixo||{};PTED.fixo[d.ptf]=Math.abs(num(t.value));return}
-  if(d.ptp){PTED.pct=PTED.pct||{};PTED.pct[d.ptp]=Math.abs(num(t.value));return}
+  if(d.ptp){PTED.pct=PTED.pct||{};PTED.pct[d.ptp]=Math.min(100,Math.abs(num(t.value)));render();return}
   if(t.id==='ptDesde'){PTED.desde=t.value;return}
   if(d.ptal!=null){o.alias[d.ptal]=t.value.trim();save();render();return}
   if(d.ptco!=null){if(t.value)o.contas[d.ptco]=t.value;else delete o.contas[d.ptco];save();render();return}
+  if(t.id==='ptCcOn'){o.cc=o.cc||{};o.cc.on=t.checked;if(t.checked&&!o.cc.base)o.cc.base='prev';trk('partilha_cc',{on:t.checked});save();render();return}
+  if(t.id==='ptCcConta'||t.id==='ptCcBase'){o.cc[t.id==='ptCcConta'?'conta':'base']=t.value;save();render();return}
+  if(t.id==='ptCcTot'){o.cc.total=Math.abs(num(t.value));save();render();return}
+  if(t.id==='ptCcDia'){const v=parseInt(t.value,10);o.cc.dia=v>=1&&v<=28?v:5;save();render();return}
+  if(t.id==='ptMes'){PTM=t.value;render();return}
+  if(d.ptmv!=null){const m=DB.mov.find(x=>chave(x)===d.ptmv);if(!m)return;const P=ptPessoas(),v=t.value;if(!v)delete m.pt;else if(v==='x')m.pt={t:'x'};else if(v==='%')m.pt={t:'%',pct:{[P[0].id]:50,[P[1].id]:50}};else m.pt={t:'p',u:v.slice(2)};trk('partilha_mov',{t:v[0]||'r'});save();render();return}
+  if(d.ptmvp!=null){const m=DB.mov.find(x=>chave(x)===d.ptmvp);if(!m||!m.pt)return;const P=ptPessoas(),a=Math.min(100,Math.max(0,num(t.value)));m.pt.pct={[P[0].id]:a,[P[1].id]:100-a};save();render();return}
   if(d.ptex!=null){o.excl=t.checked?uniq(o.excl.concat(d.ptex)):o.excl.filter(x=>x!==d.ptex);save();render()}});
 window.fpTipos={lista:()=>JSON.parse(JSON.stringify(DB.tiposDesp)),
   uso:()=>{const u={};Object.values(DB.refTipo).forEach(id=>u[id]=(u[id]||0)+1);return u},
@@ -2876,7 +2926,7 @@ document.addEventListener('click',e=>{const p=$('#infPop'),b=e.target.closest('.
   p.textContent=txt;p.hidden=false;const r=b.getBoundingClientRect(),pw=p.offsetWidth;p.style.left=Math.min(innerWidth-pw-10,Math.max(10,r.left-20))+'px';const ph=p.offsetHeight;p.style.top=(r.bottom+6+ph>innerHeight-8?Math.max(8,r.top-ph-6):r.bottom+6)+'px'},true);
 addEventListener('scroll',()=>{const p=$('#infPop');if(p&&!p.hidden)p.hidden=true},{passive:true});
 $('#impRes').addEventListener('click',e=>{const b=e.target.closest('[data-amostra]');if(b)window.fpAmostra(b.dataset.amostra)});
-{const pc=()=>{document.documentElement.classList.toggle('ctxAgr',CTX.t==='a'&&!CTX.emp);document.documentElement.classList.toggle('ctxEmp',CTX.t==='a'&&!!CTX.emp);if(!(CTX.t==='a'&&CTX.emp)&&abaAtiva()==='emp')go('home');if(!(CTX.t==='a'&&!CTX.emp)&&abaAtiva()==='part')go('home');{const tn=$('#tabChatN'),v=CTX.t==='a'?'💬 Chat':'📝 Notas';if(tn&&tn.textContent!==v){tn.textContent=v;if(abaAtiva()==='chat')render()}}};pc();setInterval(pc,500)}
+{const pc=()=>{document.documentElement.classList.toggle('ctxAgr',CTX.t==='a'&&!CTX.emp);document.documentElement.classList.toggle('ctxEmp',CTX.t==='a'&&!!CTX.emp);if(!(CTX.t==='a'&&CTX.emp)&&abaAtiva()==='emp')go('home');{const tp=document.querySelector('[data-tab="part"]'),um=!(CTX.t==='a'&&!CTX.emp)||ptPessoas().length<2;if(tp)tp.classList.toggle('so1',um);if(um&&abaAtiva()==='part')go('home')}{const tn=$('#tabChatN'),v=CTX.t==='a'?'💬 Chat':'📝 Notas';if(tn&&tn.textContent!==v){tn.textContent=v;if(abaAtiva()==='chat')render()}}};pc();setInterval(pc,500)}
 $('#voltaBt').addEventListener('click',volta);
 window.fpCtx={atual:()=>({...CTX}),muda:(c)=>trocaCtx(c),db:()=>DB,temEx,
   exemplo:async()=>{const n=criaEx();trk('exemplo',{acao:'criar'});await trocaCtx({t:'x'});const h=new Date();P.m='mes';P.d=new Date(h.getFullYear(),h.getMonth()-1,1);$$('#perMode button').forEach(x=>x.classList.toggle('on',x.dataset.m==='mes'));perLabel();render();avisaPer();return n},apagaEx};

@@ -961,13 +961,13 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
    await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
    const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),o={};await fpCtx.exemplo();await W(300);
     o.escondida=getComputedStyle(document.querySelector('[data-tab="part"]')).display==='none';
-    CTX.t='a';CTX.id='g1';CTX.emp=false;await W(700);o.visivel=getComputedStyle(document.querySelector('[data-tab="part"]')).display!=='none';
-    go('part');await W(30);o.poucos=/pelo menos 2 membros/.test($('#ptBox').textContent);
+    CTX.t='a';CTX.id='g1';CTX.emp=false;await W(700);o.visivel=getComputedStyle(document.querySelector('[data-tab="part"]')).display==='none'; // desde a v0.22 só aparece com 2+ membros
+    renderPartilha();await W(30);o.poucos=/pelo menos 2 membros/.test($('#ptBox').textContent);
     window.__ptTeste=[{id:'ua',nome:'Ana'},{id:'ur',nome:'Rui'}];SY.user={id:'ua',email:'ana@x.pt'};
     // atribui quem é: metade Ana, resto via conta do Rui
     const ms=uniq(DB.mov.map(m=>m.dm.slice(0,7))).sort();const ult=ms[ms.length-1];
     DB.mov.forEach((m,i)=>{if(m.dm.startsWith(ult)&&m.valor<0)m.quem=i%2?'Ana':''});
-    render();await W(30);document.querySelector('#ptEd').click();await W(30);
+    go('part');render();await W(30);document.querySelector('#ptEd').click();await W(30);
     const ia=document.querySelector('[data-ptr="ua|v"]');ia.value='2000';ia.dispatchEvent(new Event('change',{bubbles:true}));
     const ir=document.querySelector('[data-ptr="ur|v"]');ir.value='1000';ir.dispatchEvent(new Event('change',{bubbles:true}));
     $('#ptDesde').value=ms[0];$('#ptDesde').dispatchEvent(new Event('change',{bubbles:true}));document.querySelector('#ptGuarda').click();await W(30);
@@ -980,6 +980,32 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     o.hist=DB.partilha.regras.length===2&&ptRegra(ms[0]).tipo==='prop'&&ptRegra(ult).tipo==='igual'&&!/confirmada por todos/.test($('#ptBox').textContent);
     window.__ptTeste=null;CTX.t='p';await W(700);return o});
    t('D150','⚖️ Partilha (só agregados): regra proporcional/50-50/fixa/percentagem com data de início e histórico; quem pagou por "Quem é" ou dono da conta/cartão; saldo "X deve Y a Z" e ✓ Acertar; confirmação por todos os membros',Object.values(r).every(v=>v===true||typeof v==='string')&&['escondida','visivel','poucos','regra','espera','calc','quites','conf','hist'].every(k=>r[k])&&/deve/.test(r.frase)&&!er2.length,{r,er2});await p2.close()}
+  console.log('v0.22');
+  {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),o={};await fpCtx.exemplo();await W(300);
+    CTX.t='a';CTX.id='g1';CTX.emp=false;await W(700);o.so1=getComputedStyle(document.querySelector('[data-tab="part"]')).display==='none';
+    window.__ptTeste=[{id:'ua',nome:'Ana'},{id:'ur',nome:'Rui'}];SY.user={id:'ua',email:'ana@x.pt'};await W(700);o.visivel=getComputedStyle(document.querySelector('[data-tab="part"]')).display!=='none';
+    const hm=hoje().slice(0,7);DB.rendPrev=[{id:'r1',ent:'Firma A',v:2000,per:'1',ini:mAdd(hm,-12),fim:'',quem:'ua'},{id:'r2',ent:'Firma B',v:1000,per:'1',ini:mAdd(hm,-12),fim:'',quem:'ur'}];
+    go('prev');render();await W(50);document.querySelector('[data-pvt="ren"]').click();o.quem=!!document.querySelector('#rpLista [data-rpf="quem"]')&&document.querySelector('#rpLista [data-rpf="quem"]').value==='ua';
+    go('part');render();await W(50);o.lado=getComputedStyle(document.querySelector('.ptg2')).gridTemplateColumns.split(' ').length===2;
+    document.querySelector('#ptEd').click();await W(30);document.querySelector('input[name="ptFonte"][value="prev"]').click();await W(30);
+    const ms=uniq(DB.mov.map(m=>m.dm.slice(0,7))).sort();$('#ptDesde').value=ms[0];$('#ptDesde').dispatchEvent(new Event('change',{bubbles:true}));
+    const cs=$('#ptCalc');cs.value='ano';cs.dispatchEvent(new Event('change',{bubbles:true}));await W(30);document.querySelector('#ptGuarda').click();await W(30);
+    o.prev=/Ana 66,7 %/.test($('#ptBox').textContent)&&DB.partilha.regras[0].fonte==='prev'&&DB.partilha.regras[0].calc==='ano';
+    document.querySelector('#ptEd').click();await W(30);document.querySelector('input[name="ptTipo"][value="pers"]').click();await W(30);const pa=document.querySelector('[data-ptp="ua"]');pa.value='70';pa.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+    o.pers=/30 %/.test($('.ptform').textContent)&&!document.querySelector('[data-ptp="ur"]');$('#ptDesde').value=ms[0];$('#ptDesde').dispatchEvent(new Event('change',{bubbles:true}));document.querySelector('#ptGuarda').click();await W(30);o.pers2=DB.partilha.regras[0].pct.ur===30;
+    const ult=ms[ms.length-1];const sm=$('#ptMes');sm.value=ult;sm.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+    const sel=document.querySelector('[data-ptmv]');const k=sel.dataset.ptmv;const mv=DB.mov.find(x=>chave(x)===k);const R0=ptCalc([ult],__ptTeste)[0];
+    sel.value='p:ur';sel.dispatchEvent(new Event('change',{bubbles:true}));await W(30);const R1=ptCalc([ult],__ptTeste)[0];o.mov=Math.abs((R1.dev.ur-R0.dev.ur)-(-mv.valor)*0.7)<.02;
+    const s2=document.querySelector(`[data-ptmv="${k}"]`);s2.value='x';s2.dispatchEvent(new Event('change',{bubbles:true}));await W(30);o.nentra=Math.abs(ptCalc([ult],__ptTeste)[0].D-(R0.D+mv.valor))<.02;
+    document.querySelector('#ptCcOn').click();await W(30);const cc=$('#ptCcConta');cc.value=cc.options[1].value;cc.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+    const cb=$('#ptCcBase');cb.value='fixo';cb.dispatchEvent(new Event('change',{bubbles:true}));await W(30);const ct=$('#ptCcTot');ct.value='1000';ct.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+    const dd=$('#ptCcDia');dd.value='1';dd.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+    const c=ptCC(hm,__ptTeste);o.cc=c&&c.dev.ua===700&&c.dev.ur===300;o.al=ptCCAlertas().length>=1&&alAtivos().some(a=>a.auto);
+    const a1=ptCCAlertas()[0];alFeito(a1.id);o.alOk=!ptCCAlertas().some(a=>a.id===a1.id);
+    window.__ptTeste=null;CTX.t='p';await W(700);return o});
+   t('D151','Partilha: aba só com 2+ membros; regra e saldo lado a lado; % à escolha = 100 − o outro; rendimentos das Previsões (Quem) + extratos com cálculo mês/ano/12 meses; divisão por movimento (só de um / não entra / %); conta comum com alerta automático',Object.values(r).every(Boolean)&&!er2.length,{r,er2});await p2.close()}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
