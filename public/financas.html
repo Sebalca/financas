@@ -120,7 +120,7 @@ tr.flash td{animation:pisca 2.2s ease-out}
 .pvhead{position:sticky;top:var(--stkH,0px);z-index:5;background:var(--card)}
 table.ra{table-layout:fixed;min-width:1100px}table.t.ra td,table.t.ra th{overflow:hidden;text-overflow:ellipsis}table.t.ra th{white-space:normal;vertical-align:bottom}
 table.t.ra td:nth-last-child(2){white-space:normal}
-.obsbal{position:absolute;z-index:80;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:12px;padding:8px 11px;font-size:13px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 8px 24px rgba(0,0,0,.16);pointer-events:none}.obsbal[hidden]{display:none}.obsbal::after{content:'';position:absolute;left:var(--ax,20px);bottom:-7px;width:12px;height:12px;background:var(--card);border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);transform:translateX(-50%) rotate(45deg)}.obsbal.baixo::after{bottom:auto;top:-7px;transform:translateX(-50%) rotate(225deg)}td.c-obs.tem input.obs{background-image:linear-gradient(transparent,transparent);font-style:normal}td.c-obs.tem{position:relative}td.c-obs.tem::after{content:'💬';position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:11px;opacity:.55;pointer-events:none}
+.obsbal{position:absolute;z-index:80;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:12px;padding:8px 11px;font-size:13px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 8px 24px rgba(0,0,0,.16);pointer-events:none}.obsbal[hidden]{display:none}.obsbal::after{content:'';position:absolute;left:var(--ax,20px);bottom:-7px;width:12px;height:12px;background:var(--card);border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);transform:translateX(-50%) rotate(45deg)}.obsbal.baixo::after{bottom:auto;top:-7px;transform:translateX(-50%) rotate(225deg)}td.c-obs.tem input.obs{background-image:linear-gradient(transparent,transparent);font-style:normal}
 tr.ra-m{cursor:pointer}.lk.ign{color:var(--mu);opacity:.75}.racols{min-width:220px;padding:4px 0}.racols .rcl{display:flex;gap:8px;align-items:center;padding:5px 10px;font-size:13px;cursor:pointer}.racols .rcl:hover{background:var(--soft)}tr.ra-m td:first-child::before{content:'▸';display:inline-block;width:14px;color:var(--mu);transition:transform .15s}
 tr.ra-m.open td:first-child::before{transform:rotate(90deg)}
 tr.ra-d td{background:var(--soft);font-size:12.5px}tr.ra-d td:first-child{padding-left:26px}
@@ -155,7 +155,9 @@ html:not(.ctxEmp) nav.tabs .tabemp{display:none}.empz[hidden]{display:none!impor
 .pvtabs{margin:0 0 12px}.pvtabs button{border:0;background:var(--card);color:inherit;font:inherit;font-weight:600;padding:8px 16px;cursor:pointer}.pvtabs button.on{background:var(--ac);color:#fff}
 .ef.ro b{font-weight:600;font-size:14px;color:var(--tx);overflow-wrap:anywhere}.ef.ro b a{color:var(--ac)}td.mono{font-family:ui-monospace,monospace;font-size:12.5px}.eplist{margin:4px 0;padding-left:18px;font-size:13.5px}
 .ectop{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}.ectop input{flex:1;min-width:180px;max-width:320px}.ectop input,.ectop select{font:inherit;font-size:13.5px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 9px}.ect tr[hidden]{display:none}
-.chatg{display:grid;grid-template-columns:1fr 1.15fr 1.25fr;gap:14px;align-items:start}@media(max-width:1180px){.chatg{grid-template-columns:1fr 1fr}.chatg .chatc{grid-column:1/-1;order:-1}}@media(max-width:760px){.chatg{grid-template-columns:1fr}}.chatg>.card{margin:0}.chatg>.card[hidden]{display:none}
+.chatg{display:grid;grid-template-columns:1fr 1.15fr 1.25fr;gap:14px;align-items:start}@media(max-width:1180px){.chatg{grid-template-columns:1fr 1fr}.chatg .chatc{grid-column:1/-1;order:-1}}@media(max-width:760px){.chatg{grid-template-columns:1fr}}.chatg>.card,.ccol>.card{margin:0}.ccol{display:grid;gap:14px;align-content:start}.bdgc.al{background:#f59e0b}
+.alit{display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--bd);border-radius:10px;margin-bottom:8px;cursor:pointer}.alit:hover{background:var(--soft)}.alit.at{border-color:#f59e0b;background:color-mix(in srgb,#f59e0b 9%,transparent)}.alit.pas{border-color:#e57373;background:color-mix(in srgb,#e53935 8%,transparent)}.alit.fe{opacity:.6}.alt{flex:1;min-width:0;display:grid;gap:2px}.alt small{color:var(--mu);font-size:12px}.ald{font-size:12.5px;color:var(--mu);white-space:pre-wrap}.alfe summary{cursor:pointer;color:var(--mu);font-size:13px;margin:4px 0 8px}
+.alform{display:grid;gap:10px}.alform label{display:grid;gap:4px;font-size:12.5px;color:var(--mu)}.alform input,.alform textarea,.alform select{font:inherit;font-size:14px;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 8px}.alform .alrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13.5px}.alform .alrow input[type=number]{width:64px}.alform label.chk{display:flex;align-items:center;gap:6px;color:var(--tx);font-size:13.5px}.chatg>.card[hidden]{display:none}
 #lstL{max-height:calc(min(58vh,560px) + 30px);overflow-y:auto}.lsttabs{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin:-2px 0 8px}.lsttabs button[data-lst]{border:1px solid var(--bd);background:var(--card);color:inherit;border-radius:999px;padding:3px 11px;font:inherit;font-size:12.5px;cursor:pointer}.lsttabs button[data-lst].on{background:var(--ac);border-color:var(--ac);color:#fff}.lsttabs button small{opacity:.75}.lsttabs .sp{flex:1}
 .tnova input{width:100%;box-sizing:border-box;font:inherit;font-size:13.5px;color:var(--tx);background:var(--soft);border:1px dashed var(--bd);border-radius:9px;padding:8px 10px;margin-bottom:8px}
 .tar{border-bottom:1px solid var(--bd);padding:5px 0}.tl,.tsub{display:flex;align-items:center;gap:6px}.tl input[type=checkbox],.tsub input[type=checkbox]{width:17px;height:17px;flex:none;accent-color:var(--ac)}.ttx{flex:1;min-width:0;font:inherit;font-size:13.5px;color:var(--tx);background:transparent;border:0;outline:0;padding:3px 2px;border-radius:5px}.ttx:focus{background:var(--soft)}
@@ -417,7 +419,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
     <button type="button" data-tab="obj">Objetivos</button>
     <button type="button" data-tab="fat">Faturas</button>
     <button type="button" data-tab="saude">Saúde financeira</button>
-    <button type="button" data-tab="chat" class="tabchat"><span id="tabChatN">💬 Chat</span> <span class="bdgc" id="bdgChat" hidden></span></button>
+    <button type="button" data-tab="chat" class="tabchat"><span id="tabChatN">💬 Chat</span> <span class="bdgc" id="bdgChat" hidden></span><span class="bdgc al" id="bdgAl" hidden title="Alertas por tratar"></span></button>
     <button type="button" data-tab="emp" class="tabemp">🏢 Empresa</button>
   </nav>
   <div class="dgpop mcpop" id="mcPop" hidden role="dialog" aria-label="Mês de conta"></div><div class="dgpop" id="dgPop" hidden role="dialog" aria-label="Movimentos"></div><button class="voltabt" id="voltaBt" type="button" hidden>↩ Voltar ao reembolso</button><div class="dica" id="dica" hidden role="dialog" aria-label="Dica"></div><div class="infpop" id="infPop" hidden role="tooltip"></div>
@@ -511,8 +513,8 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
   <!-- ================= CHAT (v0.14, agregados e empresas) ================= -->
   <section class="panel" id="tab-chat"><div class="chatg">
     <div class="card notasc"><h3>📝 Notas <small>partilhadas</small><span class="r"><button class="btn sm" type="button" id="notaAdd">＋ Nota</button></span></h3><div id="notasL"></div></div>
-    <div class="card listc"><h3>✅ Checklist <small>partilhada</small><span class="r"><button class="btn sm" type="button" id="lstAdd" title="Nova lista">＋ Lista</button></span></h3><div class="lsttabs" id="lstTabs"></div><div id="lstL"></div></div>
-    <div class="card chatout" id="chatOutros" hidden><h3>🧩 Outros <small>em desenvolvimento</small></h3><div class="empty"><b>Em breve</b>Aqui vão aparecer outras ferramentas para o dia a dia.</div></div>
+    <div class="ccol" id="cCol2"><div class="card listc"><h3>✅ Checklist <small>partilhada</small><span class="r"><button class="btn sm" type="button" id="lstAdd" title="Nova lista">＋ Lista</button></span></h3><div class="lsttabs" id="lstTabs"></div><div id="lstL"></div></div></div>
+    <div class="card alc" id="alCard"><h3>🔔 Alertas<span class="r"><button class="btn sm" type="button" id="alAdd">＋ Alerta</button></span></h3><div id="alL"></div></div>
     <div class="card chatc"><h3>💬 Chat <small id="chatTit"></small><span class="r"><small class="muted">só os membros veem</small></span></h3>
     <div class="empty" id="chatSem" hidden></div><p class="note err" id="chatErr" hidden></p>
     <div id="chatBox" hidden><div class="chatm" id="chatMsgs" aria-live="polite"></div>
@@ -534,6 +536,16 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
       <p class="note" id="desNota"></p>
     </div>
   </section>
+<div class="modal" id="mAlerta" hidden><div class="sheet" style="max-width:480px"><div class="mh"><h3 id="alTit">🔔 Novo alerta</h3><button class="mx" type="button" data-close="mAlerta" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd alform">
+  <label>Nome<input id="alNome" maxlength="80" placeholder="ex.: Seguro do carro"></label>
+  <label>Descrição<textarea id="alDesc" maxlength="500" rows="2" placeholder="Opcional"></textarea></label>
+  <label>Data<input type="date" id="alData"></label>
+  <div class="alrow"><label class="chk"><input type="checkbox" id="alRec"> Recorrente — repete a cada</label><input type="number" id="alRecN" min="1" max="99" value="1"><select id="alRecU"><option value="d">dias</option><option value="s">semanas</option><option value="m" selected>meses</option><option value="a">anos</option></select></div>
+  <div class="alrow"><span>Avisar com</span><input type="number" id="alAntN" min="0" max="99" value="1"><select id="alAntU"><option value="d" selected>dias</option><option value="s">semanas</option><option value="m">meses</option></select><span>de antecedência</span></div>
+  <p class="note" style="margin:4px 0 0">A partir desse dia avisa todos os dias (janela ao abrir o site e bolinha na aba) até carregar em ✓ Feito. Se for recorrente, passa logo para a data seguinte.</p>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn" type="button" id="alApagar" hidden>🗑 Apagar</button><span style="flex:1"></span><button class="btn" type="button" data-close="mAlerta">Cancelar</button><button class="btn pri" type="button" id="alOk">Guardar</button></div></div></div></div>
+<div class="modal" id="mAlAviso" hidden><div class="sheet" style="max-width:480px"><div class="mh"><h3>🔔 Alertas</h3><button class="mx" type="button" data-close="mAlAviso" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd"><div id="alAvL"></div>
+  <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn" type="button" id="alAmanha">Lembrar amanhã</button></div></div></div></div>
 <div class="modal" id="mLim" hidden><div class="sheet" style="max-width:460px"><div class="mh"><h3>⚠ Limite atingido</h3><button class="mx" type="button" data-close="mLim" aria-label="Fechar" title="Fechar">✕</button></div><div class="mbd"><p id="limTx"></p>
   <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px"><button class="btn" type="button" id="limFecha">Fechar</button><button class="btn pri" type="button" id="limMsg">✉ Enviar mensagem</button></div></div></div></div>
 </main>
@@ -633,7 +645,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.19'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.20'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -1708,7 +1720,34 @@ $('#lstL').addEventListener('click',e=>{const b=e.target.closest('button');if(!b
   if('tmais' in d)x.mais=!x.mais;else if('tsubt' in d)x.aberta=!x.aberta;else if('tsuba' in d){x.sub=x.sub||[];x.sub.push({id:uid('s'),txt:'',feito:false});x.aberta=true;save();renderListas(true);const i=[...document.querySelectorAll(`#lstL [data-tid="${x.id}"] [data-stx]`)].pop();if(i)i.focus();return}
   else if('tdel' in d){if(x.txt&&!confirm(`Apagar a tarefa "${x.txt}"?`))return;l.t=l.t.filter(y=>y!==x)}else if('sdel' in d){const sr=b.closest('[data-sid]');x.sub=x.sub.filter(y=>y.id!==sr.dataset.sid)}else return;
   if('tmais' in d||'tsubt' in d)renderListas(true);else{save();renderListas(true)}});
-function renderChat(){renderNotas();renderListas(false);const pes=CTX.t!=='a';$('#chatOutros').hidden=!pes;$('.chatg .chatc').hidden=pes;$$('.chatg .notasc small, .chatg .listc small').forEach(x=>x.textContent=pes?'só suas':'partilhadas');const ok=CTX.t==='a',log=!!(SY.sb&&SY.user);$('#chatTit').textContent=ok?(CTX.emp?'🏢 ':'👪 ')+(CTX.nome||''):'';
+/* v0.20: Alertas (DB.alertas=[{id,nome,desc,data,rec:{n,u}|null,ant:{n,u},fim}]) — avisa todos os dias desde (data − antecedência) até ✓ Feito */
+const addU=(iso,n,u,sinal=1)=>{const d=new Date(iso+'T12:00');n=(+n||0)*sinal;if(u==='d')d.setDate(d.getDate()+n);else if(u==='s')d.setDate(d.getDate()+7*n);else if(u==='m'){const dd=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+n);d.setDate(Math.min(dd,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()))}else if(u==='a'){const dd=d.getDate();d.setDate(1);d.setFullYear(d.getFullYear()+n);d.setDate(Math.min(dd,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()))}return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
+const UN={d:['dia','dias'],s:['semana','semanas'],m:['mês','meses'],a:['ano','anos']},unTx=(n,u)=>`${n} ${UN[u][+n===1?0:1]}`;
+const alInicio=a=>addU(a.data,a.ant?a.ant.n:0,a.ant?a.ant.u:'d',-1);
+const alAtivos=()=>(DB.alertas||[]).filter(a=>!a.fim&&a.data&&alInicio(a)<=hoje()).sort((x,y)=>x.data.localeCompare(y.data));
+function alQuando(a){const n=diasAte(a.data);return n<0?`passou há ${-n} dia${n===-1?'':'s'}`:n===0?'é hoje':n===1?'é amanhã':`faltam ${n} dias`}
+function alFeito(id){const a=(DB.alertas||[]).find(x=>x.id===id);if(!a)return;if(a.rec&&+a.rec.n>0){let d=a.data;do{d=addU(d,a.rec.n,a.rec.u)}while(alInicio({...a,data:d})<=hoje()&&d<=hoje());a.data=d}else a.fim=hoje();trk('alerta_feito',{rec:!!a.rec});save()}
+function renderAlertas(){const L=(DB.alertas||[]).slice().sort((x,y)=>(!!x.fim-!!y.fim)||(x.data||'').localeCompare(y.data||'')),hj=hoje();
+  $('#alL').innerHTML=L.filter(a=>!a.fim).length?L.filter(a=>!a.fim).map(a=>{const at=alInicio(a)<=hj,pas=a.data<hj;return `<div class="alit${at?' at':''}${pas?' pas':''}" data-alid="${esc(a.id)}"><div class="alt"><b>${esc(a.nome||'(sem nome)')}</b><small>${fmtD(a.data)} · ${at?alQuando(a):'avisa a '+fmtD(alInicio(a))}${a.rec?` · 🔁 a cada ${unTx(a.rec.n,a.rec.u)}`:''}</small>${a.desc?`<span class="ald">${esc(a.desc)}</span>`:''}</div>${at?`<button class="btn sm pri" type="button" data-alfeito="${esc(a.id)}">✓ Feito</button>`:''}</div>`}).join('')
+    :'<div class="empty"><b>Sem alertas</b>Seguros, IUC, revisões, aniversários… carregue em ＋ Alerta.</div>';
+  const fe=L.filter(a=>a.fim);if(fe.length)$('#alL').insertAdjacentHTML('beforeend',`<details class="alfe"><summary>Concluídos (${fe.length})</summary>${fe.map(a=>`<div class="alit fe" data-alid="${esc(a.id)}"><div class="alt"><b>${esc(a.nome)}</b><small>${fmtD(a.data)} · feito a ${fmtD(a.fim)}</small></div></div>`).join('')}</details>`)}
+function alBadge(){const n=alAtivos().length,b=$('#bdgAl');if(b){b.hidden=!n;b.textContent=n}}
+let ALE=null;function abreAlerta(id){const a=id?(DB.alertas||[]).find(x=>x.id===id):null;ALE=a?a.id:null;$('#alTit').textContent=a?'🔔 Editar alerta':'🔔 Novo alerta';
+  $('#alNome').value=a?a.nome:'';$('#alDesc').value=a?a.desc||'':'';$('#alData').value=a?a.data:hoje();$('#alRec').checked=!!(a&&a.rec);$('#alRecN').value=a&&a.rec?a.rec.n:1;$('#alRecU').value=a&&a.rec?a.rec.u:'m';
+  $('#alAntN').value=a&&a.ant?a.ant.n:1;$('#alAntU').value=a&&a.ant?a.ant.u:'d';$('#alApagar').hidden=!a;$('#mAlerta').hidden=false;setTimeout(()=>$('#alNome').focus(),30)}
+$('#alAdd').addEventListener('click',()=>abreAlerta(null));
+$('#alOk').addEventListener('click',()=>{const nome=$('#alNome').value.trim(),data=$('#alData').value;if(!nome||!data){toast('Escreva o nome e a data.');return}
+  const o={nome:nome.slice(0,80),desc:$('#alDesc').value.trim().slice(0,500),data,rec:$('#alRec').checked?{n:Math.max(1,+$('#alRecN').value||1),u:$('#alRecU').value}:null,ant:{n:Math.max(0,+$('#alAntN').value||0),u:$('#alAntU').value}};
+  DB.alertas=DB.alertas||[];if(ALE){const a=DB.alertas.find(x=>x.id===ALE);Object.assign(a,o);delete a.fim}else DB.alertas.push({id:uid('al'),...o});trk('alerta',{rec:!!o.rec});save();$('#mAlerta').hidden=true;render()});
+$('#alApagar').addEventListener('click',()=>{if(!ALE||!confirm('Apagar este alerta?'))return;DB.alertas=DB.alertas.filter(x=>x.id!==ALE);save();$('#mAlerta').hidden=true;render()});
+$('#alL').addEventListener('click',e=>{const f=e.target.closest('[data-alfeito]');if(f){e.stopPropagation();alFeito(f.dataset.alfeito);render();return}const it=e.target.closest('[data-alid]');if(it)abreAlerta(it.dataset.alid)});
+/* janela 1× por dia (por conjunto de dados) com os alertas ativos */
+function alAviso(forca){const L=alAtivos();alBadge();const k='fp_al_dia_'+(CTX.t==='a'?CTX.id:CTX.t);let d='';try{d=localStorage.getItem(k)||''}catch(e){}if(!L.length||(!forca&&d===hoje()))return;
+  try{localStorage.setItem(k,hoje())}catch(e){}$('#alAvL').innerHTML=L.map(a=>`<div class="alit at${a.data<hoje()?' pas':''}"><div class="alt"><b>${esc(a.nome)}</b><small>${fmtD(a.data)} · ${alQuando(a)}</small>${a.desc?`<span class="ald">${esc(a.desc)}</span>`:''}</div><button class="btn sm pri" type="button" data-alfeito2="${esc(a.id)}">✓ Feito</button></div>`).join('');$('#mAlAviso').hidden=false}
+$('#alAvL').addEventListener('click',e=>{const b=e.target.closest('[data-alfeito2]');if(!b)return;alFeito(b.dataset.alfeito2);b.closest('.alit').remove();if(!$('#alAvL').children.length)$('#mAlAviso').hidden=true;render()});
+$('#alAmanha').addEventListener('click',()=>{$('#mAlAviso').hidden=true});
+setInterval(()=>{alBadge();if(document.visibilityState==='visible'&&!document.querySelector('.modal:not([hidden])'))alAviso(false)},5000);
+function renderChat(){renderNotas();renderListas(false);renderAlertas();alBadge();const pes=CTX.t!=='a';{const al=$('#alCard'),g=$('.chatg');if(pes){if(al.parentNode!==g)g.insertBefore(al,$('.chatg .chatc'))}else if(al.parentNode!==$('#cCol2'))$('#cCol2').appendChild(al)}$('.chatg .chatc').hidden=pes;$$('.chatg .notasc h3 small, .chatg .listc h3 small').forEach(x=>x.textContent=pes?'só suas':'partilhadas');const ok=CTX.t==='a',log=!!(SY.sb&&SY.user);$('#chatTit').textContent=ok?(CTX.emp?'🏢 ':'👪 ')+(CTX.nome||''):'';
   $('#chatSem').hidden=ok&&log;$('#chatBox').hidden=!(ok&&log);$('#chatSem').innerHTML=!ok?'O chat existe nos agregados e nas empresas.':'Entre na conta para usar o chat.';
   if(!ok||!log)return;if(CHAT.id!==CTX.id)chatPinta();chatCarrega();clearInterval(CHAT.t);CHAT.t=setInterval(()=>{if(abaAtiva()!=='chat'||document.visibilityState!=='visible'){clearInterval(CHAT.t);CHAT.t=null;return}chatCarrega()},8000)}
 async function chatEnvia(){const i=$('#chatTx'),t=i.value.trim();if(!t||CHAT.aEnviar||CTX.t!=='a'||!SY.sb)return;CHAT.aEnviar=true;$('#chatEnv').disabled=true;

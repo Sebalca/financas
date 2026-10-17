@@ -858,7 +858,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const m0=document.querySelectorAll('#rpGrid tbody tr').length;document.querySelector('#rpTodos').click();await W(30);o.rp=[m0,document.querySelectorAll('#rpGrid tbody tr').length,document.querySelector('#rpTodos').textContent].join();
     CTX.t='a';CTX.id='g1';CTX.nome='Família';await W(700);SY.user={id:'u',email:'seb@x.pt'};SY.sb={rpc:async()=>({data:[],error:null})};
     go('chat');await W(100);document.querySelector('#notaAdd').click();await W(30);const t=document.querySelector('#notasL .ntit');t.value='Compras';t.dispatchEvent(new Event('change',{bubbles:true}));t.blur();
-    o.nota=JSON.stringify(DB.notas.map(n=>[n.tit,n.autor]));const cs=[...document.querySelectorAll('.chatg>.card')].map(c=>Math.round(c.getBoundingClientRect().left));o.cols=cs.join();
+    o.nota=JSON.stringify(DB.notas.map(n=>[n.tit,n.autor]));const cs=[...document.querySelectorAll('.chatg>.card,.chatg>.ccol')].filter(c=>!c.hidden).map(c=>Math.round(c.getBoundingClientRect().left));o.cols=cs.join();
     return o});
    const [n0,n1,n2]=r.fecha.split(',').map(Number),ok140=/\/ 0\.18\)|, 0\.18\)/.test(r.desCor)&&r.desCor===r.prevCor&&n1<n0&&n2>n1&&r.rp.endsWith('Fechar tudo')&&r.nota==='[["Compras","seb"]]'&&+r.cols.split(',').pop()>600;
    t('D140','Linha da categoria pintada nas Despesas e nas Despesas previstas; abrir/fechar tudo nas Despesas previstas e no Saldo previsto; Chat à direita com 📝 Notas partilhadas à esquerda',ok140&&!er2.length,{r,er2});await p2.close()}
@@ -896,7 +896,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
    const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),o={};await fpCtx.exemplo();await W(300);
     CTX.t='a';CTX.emp=true;CTX.id='e1';CTX.nome='Teste Lda';await W(700);const up=[];SY.user={id:'u1',email:'seb@x.pt'};
     SY.sb={rpc:async(f,a)=>{up.push(f);return {data:[],error:null}},storage:{from:()=>({upload:async(pth,f)=>{up.push('up:'+pth);return {error:null}},createSignedUrl:async()=>({data:{signedUrl:'about:blank'},error:null}),remove:async(x)=>{up.push('rm');return {error:null}}})}};
-    go('chat');await W(150);o.cols=[...document.querySelectorAll('.chatg>.card')].map(c=>Math.round(c.getBoundingClientRect().left)).join();
+    go('chat');await W(150);o.cols=[...document.querySelectorAll('.chatg>.card,.chatg>.ccol')].filter(c=>!c.hidden).map(c=>Math.round(c.getBoundingClientRect().left)).join();
     const n=document.querySelector('#tNova');n.value='Comprar tinta';n.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));await W(50);
     o.tar=DB.listas[0].t.length===1;o.b1=!!document.querySelector("[data-tmais]");document.querySelector("[data-tmais]").click();await W(30);o.b2=document.querySelector("#lstL").innerHTML.includes("tsuba");await W(30);document.querySelector('[data-tsuba]').click();await W(30);
     const si=document.querySelector('[data-stx]');si.value='Escolher cor';si.dispatchEvent(new Event('change',{bubbles:true}));await W(30);o.sub=DB.listas[0].t[0].sub[0].txt==='Escolher cor';
@@ -933,7 +933,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     document.querySelector('#mRegras').hidden=false;renderRegras();await W(30);const n0=document.querySelectorAll('#rgList tbody tr').length;
     document.querySelector('#rgList [data-rgs="mov"]').click();await W(30);const movs=[...document.querySelectorAll('#rgList tbody tr')].map(t=>+t.children[7].textContent);o.sort=movs.every((v,i)=>!i||movs[i-1]>=v)&&!document.querySelector('#rgList [data-mv]');
     const sel=document.querySelector('#rgList [data-rgf="cat"]');sel.value=sel.options[1].value;sel.dispatchEvent(new Event('change',{bubbles:true}));await W(30);o.filtro=[n0,document.querySelectorAll('#rgList tbody tr').length].join('→');document.querySelector('#mRegras').hidden=true;
-    go('chat');render();await W(80);o.notasTab=document.querySelector('#tabChatN').textContent;o.vis=getComputedStyle(document.querySelector('[data-tab="chat"]')).display!=='none'&&!document.querySelector('#chatOutros').hidden&&document.querySelector('.chatg .chatc').hidden;
+    go('chat');render();await W(80);o.notasTab=document.querySelector('#tabChatN').textContent;o.vis=getComputedStyle(document.querySelector('[data-tab="chat"]')).display!=='none'&&document.querySelector('#alCard').parentNode.classList.contains('chatg')&&document.querySelector('.chatg .chatc').hidden;
     document.querySelector('#notaAdd').click();await W(30);o.nota=(DB.notas||[]).length===1;
     o.balFecha=(go('home'),document.querySelector('.obsbal').hidden);MES1=0;return o});
    const [f0,f1]=r.filtro.split('→').map(Number),[c0,c1]=r.cols.split(' ')[0].split('→').map(Number);
@@ -941,6 +941,21 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   {const p3=await b.newPage({viewport:{width:820,height:900}});await p3.route(/cdn\.jsdelivr\.net/,r=>r.abort());await p3.goto(U+'/index.html?teste=1&abrir=sugestao');await p3.waitForTimeout(2200);
    const z=await p3.evaluate(()=>({mset:!document.getElementById('mSet').hidden,sec:!document.querySelector('#mSet section[data-s="sugestao"]').hidden,solo:document.documentElement.classList.contains('solo'),bt:!!document.getElementById('sgExt')}));await p3.close();
    t('D148','Sugestões: ↗ Abrir noutra janela (?abrir=sugestao abre só as Sugestões em ecrã inteiro)',Object.values(z).every(Boolean),z)}
+  console.log('v0.20');
+  {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),o={};await fpCtx.exemplo();await W(300);
+    o.add=[addU('2026-01-31',1,'m'),addU('2026-10-20',2,'s',-1),addU('2024-02-29',1,'a')].join();
+    go('chat');render();await W(50);o.semIcone=!/💬/.test(getComputedStyle(document.createElement('td')).content||'');
+    document.querySelector('#alAdd').click();await W(30);$('#alNome').value='Seguro do carro';$('#alData').value=addU(hoje(),3,'d');$('#alAntN').value='1';$('#alAntU').value='s';$('#alRec').checked=true;$('#alRecN').value='1';$('#alRecU').value='a';
+    document.querySelector('#alOk').click();await W(50);o.criado=DB.alertas.length===1&&DB.alertas[0].rec.u==='a';o.lista=/Seguro do carro/.test($('#alL').textContent)&&!!document.querySelector('#alL [data-alfeito]');
+    alBadge();o.bdg=$('#bdgAl').textContent;localStorage.removeItem('fp_al_dia_x');alAviso(false);o.janela=!$('#mAlAviso').hidden;$('#mAlAviso').hidden=true;alAviso(false);o.umaVez=$('#mAlAviso').hidden;
+    const d0=DB.alertas[0].data;document.querySelector('#alL [data-alfeito]').click();await W(30);o.prox=DB.alertas[0].data===addU(d0,1,'a')&&!DB.alertas[0].fim;
+    DB.alertas.push({id:'a2',nome:'Revisão',data:addU(hoje(),-2,'d'),rec:null,ant:{n:0,u:'d'}});render();await W(30);o.atr=!!document.querySelector('#alL .alit.pas');document.querySelector('#alL .alit.pas [data-alfeito]').click();await W(30);o.fim=!!DB.alertas[1].fim&&/Concluídos \(1\)/.test($('#alL').textContent);
+    o.pesCols=[...document.querySelectorAll('.chatg>.card,.chatg>.ccol')].filter(x=>!x.hidden).length;
+    CTX.t='a';CTX.id='g1';await W(700);go('chat');render();await W(50);o.agrNaCol=$('#alCard').parentNode.id==='cCol2'&&!$('.chatg .chatc').hidden;
+    CTX.t='p';await W(700);return o});
+   t('D149','Alertas (Pessoal, agregados e empresas): nome, descrição, data, recorrência, antecedência; janela 1× por dia e bolinha na aba até ✓ Feito; recorrente passa à data seguinte; sem ícone 💬 nas observações',r.add==='2026-02-28,2026-10-06,2025-02-28'&&['criado','lista','janela','umaVez','prox','atr','fim','agrNaCol'].every(k=>r[k])&&r.bdg==='1'&&r.pesCols===3&&!er2.length,{r,er2});await p2.close()}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
