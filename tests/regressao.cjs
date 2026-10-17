@@ -829,7 +829,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     o.navNoSaldo=!!document.querySelector('#tab-prev .card:first-child #pvNav');
     go('home');render();await W(30);o.barra=getComputedStyle(document.querySelector('#empPrazo')).display;
     o.tabs=[...document.querySelectorAll('nav.tabs button')].map(b=>b.dataset.tab).join(',');
-    o.chatEsc=getComputedStyle(document.querySelector('[data-tab="chat"]')).display==='none';
+    o.chatEsc=document.querySelector('#tabChatN').textContent==='📝 Notas'; // desde a v0.19 no Pessoal a aba chama-se Notas
     CTX.t='a';CTX.emp=true;CTX.id='e1';CTX.nome='Teste Lda';await W(700);
     const M=[];let lidos=0;SY.user={id:'u1',email:'a@b.pt'};SY.sb={rpc:async(f,a)=>{if(f==='chat_mensagens')return {data:M.filter(m=>!a.p_desde||m.created_at>a.p_desde),error:null};if(f==='chat_enviar'){M.push({id:'m'+M.length,texto:a.p_texto,created_at:new Date(Date.now()+M.length).toISOString(),eu:true,autor:'eu'});return {data:{},error:null}}if(f==='chat_lido'){lidos++;return {data:null,error:null}}return {data:null,error:null}}};
     M.push({id:'x1',texto:'Olá equipa',created_at:new Date(Date.now()-60000).toISOString(),eu:false,autor:'Ana'});
@@ -913,11 +913,34 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     return o});
    await p2.setInputFiles('#fExt',path.join(FX,'cgd_teste.csv'));await p2.waitForTimeout(500);
    const r2=await p2.evaluate(()=>({lim:!document.querySelector('#mLim').hidden&&/3 movimentos importados por mês/.test(document.querySelector('#limTx').textContent),bloqueou:/Limite de 3/.test(document.querySelector('#impRes').textContent)}));
-   const c=r.cols.split(',').map(Number);
+   const c=r.cols.split(',').map(Number).filter(x=>x>0);
    t('D145','Aba Chat em 3 (Notas | Checklist | Chat) com listas, tarefas, subtarefas, responsável e data; Empresa: ✓ Concluir na barra das abas e 📎 Anexos (validade entra nos prazos); limite de movimentos importados por mês com aviso',c.length===3&&c[1]>c[0]&&c[2]>c[1]&&['tar','b2','sub','atr','feita','fixo','anx','anxLin','prazoAnx','saiu','mm'].every(k=>r[k])&&r.listas==='Tarefas,Viagem'&&r2.lim&&r2.bloqueou&&!er2.length,{r,r2,er2});await p2.close()}
   {const z=await ev(()=>({demoBt:!!document.querySelector('#demoOpt #gDemo')&&!document.querySelector('#gate #gDemo'),ban:!!document.querySelector('#demoBan'),demo:typeof FPDemo==='object',lockDemo:(()=>{window.FP_LOCK_TESTE=1;localStorage.removeItem('fp_lock_dia_ud');FPLock.sessao({id:'ud',email:'demo@frisk.pt'});const b=!document.querySelector('#lock').hidden;FPLock.sessao(null);window.FP_LOCK_TESTE=0;return !b})()}));
    const adm=fs.readFileSync(path.join(PUB,'admin.html'),'utf8');
    t('D146','Conta de demonstração (entrar só pelo admin em Definições › Conta, faixa, sem bloqueio de sessão); admin: limite "Movimentos importados por mês" e caixa "Limites atingidos"',Object.values(z).every(Boolean)&&/mov_mes:'Movimentos importados por mês'/.test(adm)&&/Limites atingidos/.test(adm)&&/admin_alertas_vistos/.test(adm),z)}
+  console.log('v0.19');
+  {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),o={};await fpCtx.exemplo();await W(300);
+    MES1=3;const mv=DB.mov.find(m=>m.valor<0);DB.rend.push({id:'rz1',tipo:'pon',data:mv.dm,entidade:'Firma Z',desc:'prémio',liquido:500,bruto:500,vale:0,lk:{},lkMan:{},t:500});
+    verMes(mv.dm);go('ren');render();await W(50);o.prim=document.querySelector('#renAno tbody tr td').textContent.trim().slice(0,5);
+    document.querySelector('#raAbrir').click();await W(30);const nl0=(document.querySelector('#renAno').textContent.match(/(\d+) por ligar/)||[])[1];
+    const eye=document.querySelector('#renAno [data-rign]');o.olho=!!eye;if(eye){eye.click();await W(30)}const nl1=(document.querySelector('#renAno').textContent.match(/(\d+) por ligar/)||[])[1];o.nl=[nl0,nl1].join('→');o.ign=/ignorado/.test(document.querySelector('#renAno').textContent);
+    const ncol0=document.querySelector('#renAno thead tr').children.length;document.querySelector('#raCols').click();await W(30);const cb=document.querySelector('[data-rcol="irs"]');cb.checked=false;cb.dispatchEvent(new Event('change',{bubbles:true}));await W(30);
+    o.cols=[ncol0,document.querySelector('#renAno thead tr').children.length].join('→')+' '+JSON.stringify(DB.renOcultas);
+    go('ext');render();await W(50);const ob=document.querySelector('#extTable input.obs');ob.value='Texto comprido das observações para o balão';ob.dispatchEvent(new Event('change',{bubbles:true}));await W(50);
+    const ob2=document.querySelector('#extTable input.obs');ob2.dispatchEvent(new MouseEvent('mouseover',{bubbles:true}));await W(30);o.balao=!document.querySelector('.obsbal').hidden&&/balão/.test(document.querySelector('.obsbal').textContent);
+    document.querySelector('#mRegras').hidden=false;renderRegras();await W(30);const n0=document.querySelectorAll('#rgList tbody tr').length;
+    document.querySelector('#rgList [data-rgs="mov"]').click();await W(30);const movs=[...document.querySelectorAll('#rgList tbody tr')].map(t=>+t.children[7].textContent);o.sort=movs.every((v,i)=>!i||movs[i-1]>=v)&&!document.querySelector('#rgList [data-mv]');
+    const sel=document.querySelector('#rgList [data-rgf="cat"]');sel.value=sel.options[1].value;sel.dispatchEvent(new Event('change',{bubbles:true}));await W(30);o.filtro=[n0,document.querySelectorAll('#rgList tbody tr').length].join('→');document.querySelector('#mRegras').hidden=true;
+    go('chat');render();await W(80);o.notasTab=document.querySelector('#tabChatN').textContent;o.vis=getComputedStyle(document.querySelector('[data-tab="chat"]')).display!=='none'&&!document.querySelector('#chatOutros').hidden&&document.querySelector('.chatg .chatc').hidden;
+    document.querySelector('#notaAdd').click();await W(30);o.nota=(DB.notas||[]).length===1;
+    o.balFecha=(go('home'),document.querySelector('.obsbal').hidden);MES1=0;return o});
+   const [f0,f1]=r.filtro.split('→').map(Number),[c0,c1]=r.cols.split(' ')[0].split('→').map(Number);
+   t('D147','Rendimentos: ano começa no mês das Definições, ✏ Colunas (na conta) e 👁 ignorar "por ligar"; Extratos: balão das observações; Regras: ordenar/filtrar pelos títulos; Pessoal: aba 📝 Notas (Notas, Checklist, Outros)',r.prim==='Abril'&&r.olho&&r.ign&&r.nl.startsWith('1→')&&!r.nl.endsWith('1')&&c1===c0-1&&r.balao&&r.balFecha&&r.sort&&f1<f0&&r.notasTab==='📝 Notas'&&r.vis&&r.nota&&!er2.length,{r,er2});await p2.close()}
+  {const p3=await b.newPage({viewport:{width:820,height:900}});await p3.route(/cdn\.jsdelivr\.net/,r=>r.abort());await p3.goto(U+'/index.html?teste=1&abrir=sugestao');await p3.waitForTimeout(2200);
+   const z=await p3.evaluate(()=>({mset:!document.getElementById('mSet').hidden,sec:!document.querySelector('#mSet section[data-s="sugestao"]').hidden,solo:document.documentElement.classList.contains('solo'),bt:!!document.getElementById('sgExt')}));await p3.close();
+   t('D148','Sugestões: ↗ Abrir noutra janela (?abrir=sugestao abre só as Sugestões em ecrã inteiro)',Object.values(z).every(Boolean),z)}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

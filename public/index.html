@@ -190,6 +190,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
 .lkbox .bt.pri{padding:10px;font-size:15px}.lkmsg{min-height:18px;font-size:13px;color:var(--mu)}.lkmsg.err{color:#c62828}.lkmsg.ok{color:#2e7d32}.lklinks{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.lkl{border:0;background:none;color:var(--ac);cursor:pointer;font:inherit;font-size:12.5px;padding:2px}
 .lkopt{margin:12px 0 4px;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;font-size:13.5px}.lkopt select{font:inherit;margin:0 4px}.muted2{color:var(--mu);font-size:12.5px;display:block;margin-top:4px}body.locked{overflow:hidden}
 .gdemo{margin-top:14px;display:grid;gap:4px;justify-items:center}.gdemo small{color:var(--mu);font-size:12px}.demoban{position:fixed;left:12px;bottom:12px;z-index:110;background:#fff8e1;color:#5d4300;border:1px solid #f0c060;border-radius:12px;padding:6px 14px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:calc(100vw - 24px)}.demoban[hidden]{display:none}.demoban a{color:inherit;font-weight:700;margin-left:6px}
+html.solo #mSet .big{max-width:100vw!important;width:100vw;height:100vh;max-height:100vh;border-radius:0}html.solo #mSet{padding:0}html.solo #mSet .big nav.sn{display:none}
 </style>
 <script>
 /* tema claro/escuro partilhado por todos os separadores */
@@ -288,7 +289,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
         <div class="grp" style="margin-top:6px"><button class="opt" id="fqEnviar" type="button">Enviar pergunta</button><span class="note2" id="fqMsg" style="align-self:center"></span></div></div>
       <div id="fqMinhas" hidden></div>
       <div id="fqAdm" class="adm" hidden></div></section>
-    <section data-s="sugestao" hidden><h3>Enviar sugestão</h3>
+    <section data-s="sugestao" hidden><h3 style="display:flex;align-items:center;gap:8px">Enviar sugestão<span style="flex:1"></span><button class="bt" type="button" id="sgExt" title="Abrir as sugestões numa janela à parte">↗ Abrir noutra janela</button></h3>
       <div class="fq-tabs" id="sgTabs" hidden><button type="button" data-st="env" class="on">✏ Enviar</button><button type="button" data-st="min">💬 As minhas<span class="bdg" id="bdgSug4" hidden></span></button><button type="button" data-st="minc" data-nadm hidden>✅ Concluídas</button><button type="button" data-st="rec" data-adm hidden>📥 Recebidas<span class="bdg" id="bdgSug3" hidden></span></button><button type="button" data-st="abe" data-adm hidden>💬 Em aberto</button><button type="button" data-st="conc" data-adm hidden>✅ Concluídas</button></div>
       <div id="sgAdm" class="adm" hidden></div><div id="sgMin" class="adm" hidden></div><div id="sgConv" class="adm" hidden></div><div id="sgEnv"><p>Ideias, problemas ou dúvidas — seguem diretamente para quem desenvolve o site.</p>
       <div class="grp" id="sgTipo"><button class="opt on" data-v="Ideia" type="button">💡 Ideia</button><button class="opt" data-v="Problema" type="button">🐞 Problema</button><button class="opt" data-v="Outro" type="button">💬 Outro</button></div>
@@ -844,6 +845,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.19',d:'17/10/2026',n:['Rendimentos: ✏ Colunas para escolher o que aparece e 👁 para ignorar o aviso "por ligar" de um registo','Extratos: as observações aparecem num balão ao passar o rato','Regras: ordenar e filtrar pelos títulos das colunas','Pessoal: aba 📝 Notas com as notas e a checklist','Sugestões: ↗ abrir noutra janela'],a:['Rendimentos: o ano começa no mês escolhido nas Definições (como nas Despesas)']},
  {v:'0.18a',d:'13/10/2026',n:[],a:['Empresas: os Anexos passam para depois dos Prazos; ao editar, o ✓ Concluir fica na barra das abas']},
  {v:'0.18',d:'13/10/2026',n:['Agregados e empresas: aba Chat dividida em 📝 Notas, ✅ Checklist (listas, tarefas e subtarefas, com responsável e data) e 💬 Chat','Empresas: 📎 Anexos (comprovativo de IBAN, certidão permanente…) — a validade entra nos prazos','👀 Conta de demonstração para experimentar o site com dados fictícios'],a:['Empresas: ao editar, o botão ✓ Concluir fica sempre visível no canto','Limite de movimentos importados por mês — ao chegar a um limite aparece um aviso a explicar']},
  {v:'0.17',d:'12/10/2026',n:['🔒 Bloqueio da sessão: na 1.ª vez de cada dia e depois de 1 hora sem atividade pede a palavra-passe (o tempo muda-se em Definições › Conta)'],a:['Ao entrar ou desbloquear, se houver versão nova o site atualiza logo']},
@@ -1138,6 +1140,11 @@ const FPDemo=(function(){const $=id=>document.getElementById(id),EM='demo@frisk.
   $('demoSair').addEventListener('click',async e=>{e.preventDefault();if(window.sairConta)await window.sairConta();setTimeout(()=>{try{$('gCriar').click()}catch(x){}},300)});
   return {estado}})();
 window.FPDemo=FPDemo;
+/* v0.19: sugestões numa janela à parte (?abrir=sugestao abre só as Definições › Sugestões, em ecrã inteiro) */
+(function(){const b=document.getElementById('sgExt');if(b)b.addEventListener('click',()=>{const w=window.open(location.pathname+'?abrir=sugestao#','fp_sugestoes','width=820,height=900');if(w){w.focus();try{document.getElementById('mSet').hidden=true}catch(e){}}else location.href=location.pathname+'?abrir=sugestao'});
+  if(!/[?&]abrir=sugestao/.test(location.search))return;document.documentElement.classList.add('solo');document.title='Sugestões — Finanças';
+  const abre=()=>{const m=document.querySelector('[data-set="sugestao"]');if(m){m.click();const x=document.getElementById('sgExt');if(x)x.hidden=true}};
+  [600,1800,4000].forEach(t=>setTimeout(()=>{if(document.getElementById('mSet').hidden)abre()},t))})();
 </script>
 </body>
 </html>
