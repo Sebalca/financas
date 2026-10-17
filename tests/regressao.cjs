@@ -4,7 +4,7 @@
 const {chromium}=require('playwright');
 const http=require('http'),fs=require('fs'),path=require('path');
 const PUB=path.join(__dirname,'..','public'),FX=path.join(__dirname,'fixtures');
-const MIME={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/json'};
+const MIME={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.webmanifest':'application/manifest+json'};
 const srv=http.createServer((q,r)=>{const f=path.join(PUB,decodeURIComponent(q.url.split('?')[0]).replace(/^\/$/,'/index.html?teste=1'));
   fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);r.end();return}r.writeHead(200,{'content-type':MIME[path.extname(f)]||'application/octet-stream'});r.end(d)})});
 let ok=0,falhas=[];
@@ -1034,6 +1034,22 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
      o.guarda=JSON.parse(localStorage.getItem('fp_cores')||'{}').cel==='cx';set('cel','0');await W(30);o.nada=!document.querySelector('#desCats td.cxr,#desCats td.cxg,#desCats td.over');set('cel','txt');return o});
    const ix=await (async()=>{const q=await b.newPage();await q.route(/cdn\.jsdelivr\.net/,r=>r.abort());await q.goto(U+'/index.html');const v=await q.evaluate(()=>({sem:!document.querySelector('[data-cor="des"]'),pad:/100% \(padrão\)/.test(document.querySelector('#gZoom').textContent)&&document.querySelector('#gZoom [data-v=""]')!==null}));await q.close();return v})();
    t('D154','Despesas: categorias separadas com linha grossa da cor; encaixa ao descer; 🎨 Aspeto só no Editar (substitui Abrir/Fechar todas) com pintura das células, previsão vs média, centrar e tipo; 100% = antigo 110%',Object.values(r).every(Boolean)&&ix.sem&&ix.pad&&!er2.length,{r,ix,er2});await p2.close()}
+  console.log('v0.25');
+  {const cx=await b.newContext({viewport:{width:1400,height:900}});const p2=await cx.newPage();const er2=[];p2.on('pageerror',e=>er2.push(e.message));await cx.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/index.html?teste=1&sw=1');await p2.evaluate(()=>navigator.serviceWorker.ready);await p2.waitForTimeout(800);
+   const o={};o.cache=await p2.evaluate(async()=>{const k=(await (await caches.open('financas-app-v1')).keys()).map(r=>new URL(r.url).pathname);return ['/index.html','/financas.html','/lib/xlsx.full.min.js'].every(x=>k.includes(x))});
+   o.man=await p2.evaluate(async()=>{const j=await (await fetch(document.querySelector('link[rel=manifest]').href)).json();return j.display==='standalone'&&j.icons.some(i=>i.sizes==='512x512')});
+   o.btn=await p2.evaluate(()=>!!document.querySelector('#setSc [data-s="tema"] #btInst'));
+   o.ver=await p2.evaluate(async()=>{const v='Teste-123',u={id:'u1',email:'a@x.pt'};await FPLock.guarda(u,v);const s=localStorage.getItem('fp_lock_v_u1');return !s.includes(v)&&await FPLock.confere('u1',v)===true&&await FPLock.confere('u1','x')===false&&await FPLock.confere('u2',v)===null});
+   await cx.setOffline(true);await p2.reload();await p2.waitForTimeout(1200);
+   o.off=await p2.evaluate(()=>!document.getElementById('offBan').hidden&&document.documentElement.classList.contains('offline'));
+   const f=p2.frames().find(x=>/financas\.html/.test(x.url()));
+   o.ro=!!f&&await f.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));CTX={t:'p'};DB=normaliza({...fresh(),mov:[{id:'m1',dm:'2026-09-01',data:'2026-09-01',desc:'X',valor:-5,cat:'',ref:''}]});saveLocal();
+     DB.mov.push({id:'m2',dm:'2026-09-02',data:'2026-09-02',desc:'Y',valor:-1});save();await W(50);const j=JSON.parse(localStorage.getItem(KEYC()));const t=document.querySelector('#toast').textContent;await importar([]);
+     return j.mov.length===1&&DB.mov.length===1&&/Sem internet/.test(t)&&/importar/.test(document.querySelector('#toast').textContent)});
+   await cx.setOffline(false);await p2.waitForTimeout(300);o.volta=await p2.evaluate(()=>document.getElementById('offBan').hidden);
+   const sw=fs.readFileSync(path.join(PUB,'sw.js'),'utf8');o.semDados=!/supabase\.co/.test(sw.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/.*$/gm,''))&&/fetch\(req\)/.test(sw);
+   t('D155','App instalável (manifest + service worker rede-primeiro, sem dados em cache); sem internet abre a última cópia, só consulta (não grava nem importa); bloqueio com verificação local PBKDF2',Object.values(o).every(Boolean)&&!er2.length,{o,er2});await cx.close()}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

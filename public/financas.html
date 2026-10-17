@@ -664,7 +664,7 @@ th[title]::after{content:" ⓘ";color:var(--mu);font-size:10.5px;font-weight:400
 
 <script>
 'use strict';
-const APP_VERSAO='0.24'; // atualizar a cada alteração — ver PATCH NOTES.md
+const APP_VERSAO='0.25'; // atualizar a cada alteração — ver PATCH NOTES.md
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const fE=new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',useGrouping:'always'});
 /* milhares sempre separados (1 234,56 €), também em browsers que ignoram useGrouping:'always' */
@@ -788,7 +788,11 @@ let DB=fresh();
 try{const j=JSON.parse(localStorage.getItem(KEYC())||'null');if(j&&Array.isArray(j.mov))DB=j}catch(e){}
 DB=normaliza(DB);
 function saveLocal(){try{localStorage.setItem(KEYC(),JSON.stringify(DB))}catch(e){toast('Não foi possível guardar no browser')}}
-function save(){DB.updatedAt=Date.now();saveLocal();agendaEnvio()}
+/* v0.25 (D155): sem internet só consulta — nada se grava; a alteração é desfeita (volta à última cópia guardada neste dispositivo) */
+const OFF=()=>!navigator.onLine&&CTX.t!=='x';
+function offRev(){const n=Date.now();if(n-(offRev.t||0)<1500)return;offRev.t=n;try{const j=JSON.parse(localStorage.getItem(KEYC())||'null');if(j&&Array.isArray(j.mov))DB=normaliza(j)}catch(e){}
+  toast('📴 Sem internet — só consulta. A alteração não foi guardada.');setTimeout(()=>{try{render()}catch(e){}},0)}
+function save(){if(OFF()){offRev();return}DB.updatedAt=Date.now();saveLocal();agendaEnvio()}
 /* eliminados: a chave fica para sempre (não voltam a entrar ao reimportar); os dados completos só dos últimos 50 (para repor).
    DB.rep[k] = +hora reposto / −hora eliminado de novo (ganha o mais recente ao juntar dispositivos) */
 const ELIM_MAX=50;
@@ -999,6 +1003,7 @@ window.fpAmostra=async nome=>{const f=FALHOU.get(nome);if(!f)return;const ext=(f
   try{if(window.parent!==window&&window.parent.FPSug){window.parent.FPSug.amostra(txt);return}}catch(e){}
   try{await navigator.clipboard.writeText(txt);toast('Amostra copiada — cole-a numa sugestão')}catch(e){toast('Abra o site principal para enviar a amostra')}};
 async function importar(files){
+  if(OFF()){toast('📴 Sem internet — não dá para importar. Tente quando a ligação voltar.');return}
   const res=[];
   for(const f of files){
     try{
@@ -2717,7 +2722,7 @@ function exporta(){(()=>{const [a,b]=range();const rows=ordena(DB.mov.filter(m=>
 /* ================= sincronização com a conta ================= */
 const SY={sb:null,user:null,t:null,busy:false,again:false,st:'',hora:''};
 const TAB='financas_dados',FERR='financas',CH='estado';
-function setSt(st,extra){SY.st=st;const el=$('#syncSt');if(!el)return;el.className='syncst '+st;
+function setSt(st,extra){SY.st=st;const el=$('#syncSt');if(!el)return;el.className='syncst '+st;if(OFF()&&SY.user){el.className='syncst off';el.innerHTML='📴 Sem internet · só consulta (últimos dados deste dispositivo)';el.title='';return}
   el.innerHTML=st==='local'?(SY.sb?'💾 Só neste browser · <u>Entrar</u> para guardar na conta':'💾 Só neste browser')
    :st==='busy'?'☁ A sincronizar…':st==='ok'?`☁ Guardado na conta${SY.hora?' · '+SY.hora:''}`:`⚠ Erro a sincronizar · <u>tentar de novo</u>${extra?'':''}`;
   if(CTX.t==='x'){el.className='syncst ex';el.innerHTML='🧪 Conta de exemplo · dados fictícios, só neste browser'}
@@ -2760,6 +2765,7 @@ async function enviar(){
 /* v0.17: atividade aqui dentro conta para o bloqueio da sessão (o site de fora não vê os eventos do iframe); ao bloquear grava já o que estiver pendente */
 {let u=0;const at=()=>{const n=Date.now();if(n-u<5000)return;u=n;try{window.parent!==window&&window.parent.FPLock&&window.parent.FPLock.ativ()}catch(e){}};['pointerdown','keydown','wheel','touchstart','scroll'].forEach(ev=>addEventListener(ev,at,{passive:true,capture:true}))}
 addEventListener('message',e=>{if(e.data&&e.data.tipo==='fp-lock'&&SY.t){clearTimeout(SY.t);SY.t=null;try{enviar()}catch(x){}}});
+addEventListener('online',()=>{document.documentElement.classList.remove('offline');if(SY.user)carregaConta(SY.user);else setSt(SY.st)});addEventListener('offline',()=>{document.documentElement.classList.add('offline');setSt(SY.st)});if(!navigator.onLine)document.documentElement.classList.add('offline');
 function agendaEnvio(ms){if(!SY.user||CTX.t==='x')return;clearTimeout(SY.t);SY.t=setTimeout(enviar,ms??1200)}
 async function aoEntrar(u){
   if(SY.user&&u&&SY.user.id===u.id)return; // p.ex. renovação de sessão
@@ -2767,7 +2773,7 @@ async function aoEntrar(u){
     if(tinha){DB=normaliza(fresh());saveLocal();render();toast('Sessão terminada — os dados continuam guardados na conta')}
     setSt('local');return}
   SY.user=u;await carregaConta(u)}
-async function carregaConta(u){if(CTX.t==='x'){setSt(SY.st);return}setSt('busy');
+async function carregaConta(u){if(CTX.t==='x'){setSt(SY.st);return}if(OFF()){if(DB.owner&&DB.owner!==dono())DB=normaliza(fresh());setSt('off');render();return}setSt('busy');
   try{
     if(DB.owner&&DB.owner!==dono()){DB=normaliza(fresh())} // cache de outra conta/agregado neste browser
     const r=await lerRemoto();

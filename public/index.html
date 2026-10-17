@@ -7,6 +7,9 @@
 <link rel="icon" type="image/png" sizes="32x32" href="img/logo-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="img/logo-64.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2451d6">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Finanças">
 <style>
 :root{--bg:#f4f5f7;--card:#fff;--tx:#18202b;--mu:#667085;--bd:#e2e5ea;--ac:#2451d6;--ac2:#e9eefc;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1217;--card:#161b22;--tx:#e7eaef;--mu:#95a0b1;--bd:#29313c;--ac:#7d9bff;--ac2:#1c2740;color-scheme:dark}}
@@ -183,6 +186,7 @@ body.ctxEmp{--ac:#b45309;--ac2:#fdf1dc}
 @media (max-width:760px){.bar{flex-wrap:wrap;height:auto;row-gap:6px;column-gap:8px;padding:6px 10px;overflow:visible}.bar>.sp{display:none}.brand{order:0}#tabs{order:1;flex:1 1 calc(100% - 80px);height:34px}.fper .nv .lb{white-space:nowrap}.mbtn{order:2;margin-left:auto}
   .ctxsel{order:3;max-width:100%;overflow-x:auto;scrollbar-width:none}.ctxsel button{padding:5px 9px}.fper{order:4;flex:1 1 auto;justify-content:space-between;gap:6px}.fper .nv .lb{min-width:0;padding:4px 4px}}
 #fCtx .cdot,#empPop .cdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e53935;margin-left:6px;vertical-align:1px}
+.offban{position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:121;background:#fff4e5;color:#7a4a00;border:1px solid #f0b45a;border-radius:12px;padding:7px 14px;font-size:13.5px;box-shadow:0 6px 20px rgba(0,0,0,.14);max-width:min(92vw,760px);text-align:center}.offban[hidden]{display:none}.instrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 14px}.instrow #btInst[hidden]{display:none}
 .verban{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:120;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--ac);box-shadow:0 8px 28px rgba(0,0,0,.18);border-radius:14px;padding:10px 12px 10px 16px;font-size:14px;max-width:calc(100vw - 24px)}.verban[hidden]{display:none}.verban .opt{width:auto;margin:0}
 .lock{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:16px;background:color-mix(in srgb,var(--bg) 45%,transparent);backdrop-filter:blur(14px) saturate(.8);-webkit-backdrop-filter:blur(14px) saturate(.8)}.lock[hidden]{display:none}
 .lkbox{width:100%;max-width:360px;background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:24px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.25);display:grid;gap:10px;text-align:center}.lkbox img{margin:0 auto;border-radius:12px}.lkbox h2{margin:2px 0 0;font-size:19px}.lksub{margin:0;color:var(--mu);font-size:13.5px}
@@ -239,6 +243,7 @@ html.solo #mSet .big{max-width:100vw!important;width:100vw;height:100vh;max-heig
       <div class="grp" id="gTema"><button class="opt" data-v="" type="button">Automático</button><button class="opt" data-v="light" type="button">☀️ Claro</button><button class="opt" data-v="dark" type="button">🌙 Escuro</button></div>
       <h3>Tamanho</h3><p>Tamanho do conteúdo das páginas.</p>
       <div class="grp" id="gZoom"><button class="opt" data-v="0.792" type="button">80%</button><button class="opt" data-v="0.891" type="button">90%</button><button class="opt" data-v="" type="button">100% (padrão)</button><button class="opt" data-v="1.089" type="button">110%</button><button class="opt" data-v="1.188" type="button">120%</button></div>
+      <h3>App no computador</h3><p>Instale o site como uma app: abre numa janela própria, com ícone no menu Iniciar / Dock, e sem internet mostra os últimos dados guardados neste dispositivo (só consulta).</p><div class="instrow"><button class="opt" id="btInst" type="button">💻 Instalar como app</button><span class="muted2" id="instTx"></span></div>
       <h3>Idioma</h3><p>Em breve poderá escolher outros idiomas.</p><select disabled style="max-width:260px"><option>Português (Portugal)</option><option>English</option></select>
       <h3>Opções</h3>
       <p style="margin:0 0 6px">Primeiro mês do ano (Início e Despesas)</p><select id="optMes1" style="max-width:260px;margin-bottom:12px"></select>
@@ -350,6 +355,7 @@ html.solo #mSet .big{max-width:100vw!important;width:100vw;height:100vh;max-heig
   <button class="bt pri" type="submit" id="lkOk">Entrar</button><div class="lkmsg" id="lkMsg" role="alert"></div>
   <div class="lklinks"><button type="button" class="lkl" id="lkEsq">Esqueceu-se da palavra-passe?</button><button type="button" class="lkl" id="lkSair">Sair da conta</button></div></form></div>
 <div class="demoban" id="demoBan" hidden role="status">👀 <b>Conta de demonstração</b> — dados fictícios; pode mexer à vontade, tudo volta ao início todas as noites. <a href="#" id="demoSair">Criar a minha conta</a></div>
+<div class="offban" id="offBan" hidden role="status">📴 Sem internet — está a ver os últimos dados guardados neste dispositivo (só consulta). As alterações voltam a ser possíveis quando a ligação regressar.</div>
 <div class="verban" id="verBan" hidden role="status"><span>🆕 Há uma versão nova do site<b id="verN"></b>.</span><button type="button" class="bt pri" id="verOk">Atualizar agora</button><button type="button" class="bt" id="verX" title="Fechar (atualiza na próxima vez que abrir)">✕</button></div>
 <div class="frames" id="frames"><a class="extlink" id="extLink" target="_blank" rel="noopener noreferrer" hidden title="Se o site não aparecer aqui, abra-o numa nova aba">↗ Abrir numa nova aba</a></div>
 <script>
@@ -667,7 +673,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pwv]');if(
   document.addEventListener('keydown',e=>{if(e.key==='Escape')mod.hidden=true});
   $('fLogin').addEventListener('submit',async e=>{e.preventDefault();setMsg('A entrar…',true);
     const {data,error}=await Auth.signIn($('lEmail').value.trim(),$('lPass').value);
-    if(error)return setMsg(traduz(error));mod.hidden=true;try{FPLock.desbloqueou()}catch(x){}mostrar(data.user);try{FPVer.verifica(true,true)}catch(x){}});
+    if(error)return setMsg(traduz(error));mod.hidden=true;try{FPLock.guarda(data.user,$('lPass').value)}catch(x){}try{FPLock.desbloqueou()}catch(x){}mostrar(data.user);try{FPVer.verifica(true,true)}catch(x){}});
   $('btCriar').onclick=async()=>{const f=$('fLogin');if(!f.reportValidity())return;setMsg('A criar conta…',true);
     const {data,error}=await Auth.signUp($('lEmail').value.trim(),$('lPass').value);
     if(error)return setMsg(traduz(error));
@@ -685,9 +691,14 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pwv]');if(
     $('rPass').value=$('rPass2').value='';setR('✓ Palavra-passe alterada. Já pode usar a nova.',true);setTimeout(()=>{rec.hidden=true},1800)});
   if(/type=recovery/.test(location.hash+location.search))setTimeout(abreRec,400);
   window.FPRec={abre:abreRec};
-  window.sairConta=async()=>{await Auth.signOut();mostrar(null)};
-  Auth.onChange((ev,session)=>{mostrar(session&&session.user);if(ev==='PASSWORD_RECOVERY')abreRec()});
-  Auth.getSession().then(s=>mostrar(s&&s.user));
+  /* v0.25: sem internet a sessão não se renova — usa o utilizador guardado no cookie da sessão (só id/email) para mostrar os dados deste dispositivo; nunca apaga nada por falta de rede */
+  const SK='sb-aehitgqsfcpzuunyzpsh-auth-token';
+  const uOff=()=>{try{const v=typeof cookieStorage!=='undefined'?cookieStorage.getItem(SK):null;const j=v&&JSON.parse(v);const u=j&&(j.user||(j.currentSession&&j.currentSession.user));return u&&u.id?{id:u.id,email:u.email}:null}catch(e){return null}};
+  const mostrarS=u=>{if(!u&&!navigator.onLine){const o=uOff();if(o){window.FP_OFFUSER=true;return mostrar(o)}}mostrar(u)};
+  window.FPSessOff=uOff;
+  window.sairConta=async()=>{const u=window.financasUser;try{await Auth.signOut()}catch(e){}if(!navigator.onLine){try{cookieStorage.removeItem(SK)}catch(e){}}try{if(u)localStorage.removeItem('fp_lock_v_'+u.id)}catch(e){}mostrar(null)};
+  Auth.onChange((ev,session)=>{if(ev==='SIGNED_OUT')mostrar(null);else mostrarS(session&&session.user);if(ev==='PASSWORD_RECOVERY')abreRec()});
+  Auth.getSession().then(s=>mostrarS(s&&s.user)).catch(()=>mostrarS(null));
 })();
 </script>
 <script>
@@ -748,7 +759,8 @@ const FPAgr=(()=>{const $=id=>document.getElementById(id),SITE='financas';let U=
     if(/^(agregado|empresa)_(criar|convidar|responder|sair|remover|apagar|restaurar)$/.test(f))FPTrack.log(f,f==='agregado_convidar'?{resultado:data}:f==='agregado_responder'?{aceitou:!!a.p_aceitar}:{});return data};
   const msg=(t,err,q)=>{q=q||QUAL;MSGS[q]=t||'';const m=$(q==='emp'?'empMsg':'agrMsg');if(m){m.textContent=MSGS[q];m.style.color=err?'var(--c2,#c62828)':''}};
   async function carrega(){if(!U){try{U=window.financasUser||null}catch(e){}}if(!U||!sb()){L=[];C=[];PODE=false;OK=!U;pinta();try{FPCtx.valida()}catch(e){}return}
-    try{const [a,b]=await Promise.all([rpc('meus_agregados',{p_site:SITE}),rpc('meus_convites',{p_site:SITE})]);L=a||[];C=b||[];OK=true}catch(e){msg('Não foi possível carregar o agregado.',1,'agr')}
+    try{const [a,b]=await Promise.all([rpc('meus_agregados',{p_site:SITE}),rpc('meus_convites',{p_site:SITE})]);L=a||[];C=b||[];OK=true;try{localStorage.setItem('fp_agr_c_'+U.id,JSON.stringify(L.map(g=>({id:g.id,nome:g.nome,tipo:g.tipo,apagar_em:g.apagar_em}))))}catch(x){}}
+    catch(e){let c=null;if(!navigator.onLine)try{c=JSON.parse(localStorage.getItem('fp_agr_c_'+U.id)||'null')}catch(x){}if(Array.isArray(c)){L=c;C=[];OK=true}else msg('Não foi possível carregar o agregado.',1,'agr')} // v0.25: sem internet usa a última lista
     try{PODE=!!(await rpc('tem_permissao',{p_site:SITE,p_perm:'criar_empresa'}))}catch(e){PODE=false}pinta();try{FPCtx.valida()}catch(e){}}
   const eEmp=x=>x&&x.tipo==='empresa';
   function badge(){const ca=C.filter(c=>!eEmp(c)).length,ce=C.filter(eEmp).length,b=$('bdgAgr'),be=$('bdgEmp');if(b){b.hidden=!ca;b.textContent=ca}if(be){be.hidden=!ce;be.textContent=ce}
@@ -844,6 +856,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.25',d:'17/10/2026',n:['💻 Instalar como app (Definições › Geral): abre numa janela própria, com ícone no computador ou no telemóvel','📴 Sem internet: a app abre e mostra os últimos dados guardados neste dispositivo (só consulta); o bloqueio aceita a palavra-passe mesmo offline'],a:[]},
  {v:'0.24',d:'17/10/2026',n:['Despesas › Editar › 🎨 Aspeto: pintar linhas, células em relação ao previsto (texto ou caixas verde/vermelho), coluna Previsão vs média, valores centrados e cor do tipo de despesa'],a:['O tamanho 100% passa a ser o antigo 110%','Despesas: categorias mais afastadas, com uma linha na cor da categoria por baixo, e a página encaixa no início de cada categoria ao descer']},
  {v:'0.23',d:'17/10/2026',n:['Quando sai uma versão nova aparece logo o aviso "🆕 Atualizar agora", mesmo com o site aberto','Agregados e empresas: um movimento importado por duas pessoas aparece uma vez, com ⚠ a explicar'],a:['Partilha passa para a seguir ao Chat e tem ⓘ a explicar cada caixa']},
  {v:'0.22',d:'17/10/2026',n:['Partilha: rendimentos de cada um a partir das Previsões (campo Quem) e dos extratos','Partilha: dividir uma despesa de outra forma (só de um, não entra, % própria)','Partilha: modo conta comum, com alerta a quem ainda não transferiu a sua parte'],a:['Partilha só aparece com 2 ou mais membros; na regra de % o último é sempre 100 − o outro']},
@@ -1106,6 +1119,23 @@ const FPVer=(function(){const $=id=>document.getElementById(id),hojeV=()=>new Da
   [1500,5000,15000].forEach(t=>setTimeout(escuta,t));
   return {verifica,novaVersao,escuta}})();
 window.FPVer=FPVer;
+/* v0.25: app instalável (PWA) e modo sem internet — D155 */
+const FPApp=(function(){const $=id=>document.getElementById(id),T=/[?&]teste/.test(location.search),SW=!T||/[?&]sw=1/.test(location.search);let ev=null;
+  const inst=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true,ios=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1);
+  function pinta(){const b=$('btInst'),t=$('instTx');if(!b)return;
+    if(inst()){b.hidden=true;t.textContent='✓ Está a usar a app instalada.';return}
+    if(ev){b.hidden=false;b.textContent='💻 Instalar como app';t.textContent='';return}
+    b.hidden=!ios();b.textContent='📱 Como instalar';t.textContent=ios()?'':/Safari/.test(navigator.userAgent)&&!/Chrome|Edg/.test(navigator.userAgent)?'No Safari do Mac: menu Ficheiro › Adicionar à Dock.':'O browser ainda não permite instalar (já está instalada, ou use o Chrome/Edge: ícone ⊕ na barra de endereço).'}
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;pinta()});
+  addEventListener('appinstalled',()=>{ev=null;pinta();try{FPTrack.log('app_instalada',{})}catch(x){}});
+  $('btInst')&&$('btInst').addEventListener('click',async()=>{if(ev){ev.prompt();try{const r=await ev.userChoice;try{FPTrack.log('app_instalar',{r:r&&r.outcome})}catch(x){}}catch(x){}ev=null;pinta();return}
+    if(ios())$('instTx').textContent='No iPhone/iPad: botão Partilhar (□↑) › "Adicionar ao ecrã principal".'});
+  function rede(){const off=!navigator.onLine;document.documentElement.classList.toggle('offline',off);const b=$('offBan');if(b)b.hidden=!off}
+  addEventListener('online',rede);addEventListener('offline',rede);rede();pinta();
+  if(SW&&'serviceWorker' in navigator)addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
+  if(inst())try{FPTrack.log('app_aberta',{})}catch(e){}
+  return {pinta,rede,instalada:inst}})();
+window.FPApp=FPApp;
 /* v0.17: ecrã de bloqueio — 1.ª vez de cada dia e depois de N minutos sem atividade (Definições › Conta, 60 por defeito); desbloqueia com a palavra-passe */
 const FPLock=(function(){const $=id=>document.getElementById(id),TESTE=/[?&]teste/.test(location.search);let U=null,T=null;
   const ls={g:k=>{try{return localStorage.getItem(k)}catch(e){return null}},s:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
@@ -1127,16 +1157,28 @@ const FPLock=(function(){const $=id=>document.getElementById(id),TESTE=/[?&]test
   function sessao(u){const novo=!U||!u||U.id!==u.id;U=u||null;clearInterval(T);T=null;if(!U){solta();return}
     if(novo&&!ls.g('fp_lock_ult'))ls.s('fp_lock_ult',String(Date.now()));verifica();T=setInterval(verifica,30000)}
   $('fLock').addEventListener('submit',async e=>{e.preventDefault();if(!U)return;const m=$('lkMsg');m.textContent='A confirmar…';m.className='lkmsg';$('lkOk').disabled=true;
-    try{const {error}=await Auth.signIn(U.email,$('lkPass').value);if(error){m.textContent=/Invalid login/i.test(error.message)?'Palavra-passe incorreta.':/rate limit|too many/i.test(error.message)?'Demasiadas tentativas. Espere alguns minutos.':(error.message||'Não foi possível confirmar.');m.className='lkmsg err';return}
+    const pw=$('lkPass').value;
+    const off=async()=>{if(tentOff>=5&&Date.now()-tentT<60000){m.textContent='Demasiadas tentativas. Espere um minuto.';m.className='lkmsg err';return}
+      const ok=await confere(U.id,pw);if(ok===null){m.textContent='Sem internet — e este dispositivo ainda não confirmou a palavra-passe com internet. Ligue-se e tente outra vez.';m.className='lkmsg err';return}
+      if(!ok){tentOff++;tentT=Date.now();m.textContent='Palavra-passe incorreta.';m.className='lkmsg err';return}
+      tentOff=0;$('lkPass').value='';desbloqueou();try{FPTrack.log('sessao_desbloqueada',{off:1})}catch(x){}};
+    if(!navigator.onLine){try{await off()}finally{$('lkOk').disabled=false}return}
+    try{const {error}=await Auth.signIn(U.email,pw);if(error&&/fetch|network|Failed|retryable/i.test((error.name||'')+' '+(error.message||''))){await off();return}if(!error)guarda(U,pw);if(error){m.textContent=/Invalid login/i.test(error.message)?'Palavra-passe incorreta.':/rate limit|too many/i.test(error.message)?'Demasiadas tentativas. Espere alguns minutos.':(error.message||'Não foi possível confirmar.');m.className='lkmsg err';return}
       $('lkPass').value='';desbloqueou();try{FPTrack.log('sessao_desbloqueada',{})}catch(x){}try{FPVer.verifica(true,true)}catch(x){}}
-    catch(x){m.textContent='Sem ligação. Verifique a internet e tente outra vez.';m.className='lkmsg err'}finally{$('lkOk').disabled=false}});
+    catch(x){await off()}finally{$('lkOk').disabled=false}});
+  /* v0.25: verificação local da palavra-passe (PBKDF2-SHA256, sal aleatório) — só para desbloquear sem internet; a palavra-passe nunca é guardada */
+  let tentOff=0,tentT=0;const VK=id=>'fp_lock_v_'+id;
+  const b64=a=>btoa(String.fromCharCode(...new Uint8Array(a))),de64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));
+  async function pb(pw,sal,it){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);return b64(await crypto.subtle.deriveBits({name:'PBKDF2',salt:sal,iterations:it,hash:'SHA-256'},k,256))}
+  async function guarda(u,pw){if(!u||!u.id||!pw||/^demo@frisk\.pt$/i.test(u.email||''))return;try{const sal=crypto.getRandomValues(new Uint8Array(16)),it=210000;ls.s(VK(u.id),JSON.stringify({s:b64(sal),it,h:await pb(pw,sal,it)}))}catch(e){}}
+  async function confere(id,pw){try{const v=JSON.parse(ls.g(VK(id))||'null');if(!v||!v.h)return null;return (await pb(pw,de64(v.s),v.it))===v.h}catch(e){return null}}
   $('lkSair').addEventListener('click',async()=>{solta();window.sairConta&&await window.sairConta()});
   $('lkEsq').addEventListener('click',async()=>{if(!U)return;const m=$('lkMsg');try{const {error}=await window.plataforma.auth.resetPasswordForEmail(U.email,{redirectTo:location.origin+location.pathname});m.textContent=error?(error.message||'Não foi possível enviar.'):'Enviámos um email com um link para definir uma palavra-passe nova.';m.className='lkmsg'+(error?' err':' ok')}catch(e){m.textContent='Não foi possível enviar.';m.className='lkmsg err'}});
   ['pointerdown','keydown','wheel','touchstart','scroll'].forEach(ev=>addEventListener(ev,ativ,{passive:true,capture:true}));
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')verifica()});
   addEventListener('storage',e=>{if(e.key==='fp_lock_des'&&bloqueado()){if(!deve())solta()}});
   const sel=$('optLock');sel.value=String(minutos());sel.addEventListener('change',()=>{ls.s('fp_lock_min',sel.value);ativ()});
-  return {sessao,ativ,verifica,bloqueia,desbloqueou,_estado:()=>({bloqueado:bloqueado(),min:minutos()})}})();
+  return {sessao,ativ,verifica,bloqueia,desbloqueou,guarda,confere,_estado:()=>({bloqueado:bloqueado(),min:minutos()})}})();
 window.FPLock=FPLock;
 /* v0.18: conta de demonstração (demo@frisk.pt, palavra-passe pública "demo2026") — botão no ecrã de entrada e faixa enquanto se está nela */
 const FPDemo=(function(){const $=id=>document.getElementById(id),EM='demo@frisk.pt',PW='demo2026';
