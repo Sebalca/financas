@@ -238,14 +238,13 @@ html.solo #mSet .big{max-width:100vw!important;width:100vw;height:100vh;max-heig
     <section data-s="tema"><h3>Tema</h3><p>Aplica-se a todos os separadores e fica guardado neste dispositivo.</p>
       <div class="grp" id="gTema"><button class="opt" data-v="" type="button">Automático</button><button class="opt" data-v="light" type="button">☀️ Claro</button><button class="opt" data-v="dark" type="button">🌙 Escuro</button></div>
       <h3>Tamanho</h3><p>Tamanho do conteúdo das páginas.</p>
-      <div class="grp" id="gZoom"><button class="opt" data-v="0.72" type="button">80%</button><button class="opt" data-v="0.81" type="button">90%</button><button class="opt" data-v="" type="button">100% (padrão)</button><button class="opt" data-v="0.99" type="button">110%</button><button class="opt" data-v="1.08" type="button">120%</button></div>
+      <div class="grp" id="gZoom"><button class="opt" data-v="0.792" type="button">80%</button><button class="opt" data-v="0.891" type="button">90%</button><button class="opt" data-v="" type="button">100% (padrão)</button><button class="opt" data-v="1.089" type="button">110%</button><button class="opt" data-v="1.188" type="button">120%</button></div>
       <h3>Idioma</h3><p>Em breve poderá escolher outros idiomas.</p><select disabled style="max-width:260px"><option>Português (Portugal)</option><option>English</option></select>
       <h3>Opções</h3>
       <p style="margin:0 0 6px">Primeiro mês do ano (Início e Despesas)</p><select id="optMes1" style="max-width:260px;margin-bottom:12px"></select>
       <p style="margin:0 0 6px">Ordem dos movimentos nos Extratos</p><div class="grp" id="gOrdem" style="margin:0 0 12px"><button class="opt" data-v="" type="button">Mais recentes primeiro</button><button class="opt" data-v="asc" type="button">Mais antigos primeiro</button></div>
       <p style="margin:12px 0 6px">Cores das categorias e referências <small style="color:var(--mu)">(escolhem-se em Despesas › Editar; os gráficos usam sempre essas cores)</small></p>
       <div id="optCores" style="display:grid;gap:6px;margin-bottom:12px">
-        <label class="sw2"><input type="checkbox" data-cor="des"> <span>Pintar as linhas nas Despesas</span></label>
         <label class="sw2" style="cursor:default"><span style="flex:none">Extratos: pintar a</span><select id="optPint" style="max-width:220px"><option value="caixa">caixa da categoria</option><option value="linha">linha inteira</option><option value="">(não pintar)</option></select></label>
       </div>
       <label class="sw2"><input type="checkbox" id="optDupw"> <span>Mostrar os avisos <b>⚠</b> de pagamentos repetidos no mesmo mês (Despesas)</span></label>
@@ -414,7 +413,7 @@ const FPTema=(function(){const h=document.documentElement;
   const envia=(tipo,obj)=>document.querySelectorAll('.frames iframe:not([data-ext])').forEach(f=>{try{f.contentWindow.postMessage({tipo,...obj},'*')}catch(e){}});
   const atual=()=>h.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
   const tema=t=>{if(t)h.dataset.theme=t;else delete h.dataset.theme;try{t?localStorage.setItem('fp_tema',t):localStorage.removeItem('fp_tema')}catch(e){}envia('fp-tema',{tema:t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')});FPMenu.pinta()};
-  try{if(['0.75','0.85','1','1.1'].includes(localStorage.getItem('fp_zoom')))localStorage.removeItem('fp_zoom')}catch(e){} // tamanhos antigos → padrão novo (v0.8b)
+  try{const z=localStorage.getItem('fp_zoom'),M={'0.72':'0.792','0.81':'0.891','0.99':'','1.08':'1.089'};if(['0.75','0.85','1','1.1'].includes(z))localStorage.removeItem('fp_zoom');else if(z in M){M[z]?localStorage.setItem('fp_zoom',M[z]):localStorage.removeItem('fp_zoom')}}catch(e){} // v0.24: 100% = antigo 110% // tamanhos antigos → padrão novo (v0.8b)
   const zoom=z=>{try{z?localStorage.setItem('fp_zoom',z):localStorage.removeItem('fp_zoom')}catch(e){}envia('fp-zoom',{zoom:z||''});FPMenu.pinta()};
   document.getElementById('frames').addEventListener('load',()=>{if(h.dataset.theme)envia('fp-tema',{tema:h.dataset.theme});let z='';try{z=localStorage.getItem('fp_zoom')||''}catch(e){}if(z)envia('fp-zoom',{zoom:z})},true);
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>FPMenu.pinta());
@@ -845,6 +844,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.24',d:'17/10/2026',n:['Despesas › Editar › 🎨 Aspeto: pintar linhas, células em relação ao previsto (texto ou caixas verde/vermelho), coluna Previsão vs média, valores centrados e cor do tipo de despesa'],a:['O tamanho 100% passa a ser o antigo 110%','Despesas: categorias mais afastadas, com uma linha na cor da categoria por baixo, e a página encaixa no início de cada categoria ao descer']},
  {v:'0.23',d:'17/10/2026',n:['Quando sai uma versão nova aparece logo o aviso "🆕 Atualizar agora", mesmo com o site aberto','Agregados e empresas: um movimento importado por duas pessoas aparece uma vez, com ⚠ a explicar'],a:['Partilha passa para a seguir ao Chat e tem ⓘ a explicar cada caixa']},
  {v:'0.22',d:'17/10/2026',n:['Partilha: rendimentos de cada um a partir das Previsões (campo Quem) e dos extratos','Partilha: dividir uma despesa de outra forma (só de um, não entra, % própria)','Partilha: modo conta comum, com alerta a quem ainda não transferiu a sua parte'],a:['Partilha só aparece com 2 ou mais membros; na regra de % o último é sempre 100 − o outro']},
  {v:'0.21',d:'17/10/2026',n:['Agregados: aba ⚖️ Partilha — regra para dividir as despesas comuns (proporcional ao que cada um ganha, 50/50, valor fixo ou %), quem deve quanto a quem e ✓ Acertar'],a:[]},

@@ -230,7 +230,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
   t('D68a','logo ao lado do título e ícone da página',await ev(()=>!!document.querySelector('.top h1 img.logo')&&!!document.querySelector('link[rel="icon"]')));
 
   console.log('v0.8b');
-  t('D69','tamanho padrão = 90% real (o novo 100%)',await ev(()=>getComputedStyle(document.documentElement).zoom==='0.9'||document.documentElement.style.zoom===''&&/zoom:\s*\.9/.test(document.querySelector('style').textContent)));
+  t('D69','tamanho padrão = 99% real (o antigo 110% é o novo 100%, v0.24)',await ev(()=>getComputedStyle(document.documentElement).zoom==='0.99'||document.documentElement.style.zoom===''&&/zoom:\s*\.99/.test(document.querySelector('style').textContent)));
   t('D70','ordem dos movimentos do extrato (mais recentes/antigos primeiro)',await ev(()=>{document.querySelector('[data-tab="ext"]').click();limpaFiltros();render();const ds=()=>[...document.querySelectorAll('#extTable tbody tr[data-id]')].map(tr=>DB.mov.find(x=>x.id===tr.dataset.id).dm);
     const a=ds();window.postMessage({tipo:'fp-ordem',ordem:'asc'},'*');return new Promise(ok=>setTimeout(()=>{const b=ds();window.postMessage({tipo:'fp-ordem',ordem:''},'*');setTimeout(()=>ok(a.length>2&&a[0]>=a[a.length-1]&&b[0]<=b[b.length-1]&&a[0]!==b[0]),80)},80))}));
   const z71=await ev(()=>{const m=DB.mov.filter(x=>x.valor<0).sort((a,b)=>a.dm<b.dm?-1:1)[1];const r={id:'rb71',desc:'X',valor:5,dm:m.dm,cat:'',ref:''};abreReemb(r);
@@ -1021,6 +1021,19 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
    t('D152','Partilha a seguir ao Chat com ⓘ; movimento repetido importado por outra pessoa do agregado aparece uma vez com ⚠ a explicar',r.ordem&&r.infs&&Object.values(r2).every(Boolean)&&!er2.length,{r,r2,er2});await p2.close()}
   {const z=await ev(()=>{const b=document.querySelector('#verBan');b.hidden=true;FPVer.novaVersao('9.99');const ok=!b.hidden&&/9\.99/.test(document.querySelector('#verN').textContent);b.hidden=true;FPVer.novaVersao(document.documentElement.innerHTML.match(/const NOVIDADES=\[\s*\{v:'([^']+)'/)[1]);return {ok,mesma:b.hidden}});
    t('D153','Versão nova em tempo real (site_versoes via Realtime): mostra "Atualizar agora" se a versão recebida for diferente da aberta',z.ok&&z.mesma,z)}
+  console.log('v0.24');
+  {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),o={};await fpCtx.exemplo();await W(300);
+     const k=DB.cats.find(c=>c.refs&&c.refs.length);PA()[anoIni(new Date()).getFullYear()]={[k.nome+'›'+k.refs[0]]:1};
+     go('des');render();await W(50);o.fora=!$('#desAsp').offsetWidth&&$('#desAbrir').offsetWidth>0;o.fim=document.querySelectorAll('#desCats tr.gfim').length>1;o.snap=document.documentElement.classList.contains('snapDes');
+     $('#btDesEdit').click();await W(30);o.dentro=$('#desAsp').offsetWidth>0&&!$('#desAbrir').offsetWidth&&!$('#desFechar').offsetWidth;$('#desAsp').click();await W(30);o.dlg=!$('#mAsp').hidden;
+     const set=(k,v)=>{const i=document.querySelector(`#mAsp [data-asp="${k}"]`);if(i.type==='checkbox')i.checked=v;else i.value=v;i.dispatchEvent(new Event('change',{bubbles:true}))};
+     set('cel','cx');set('pvc',true);set('ctr',true);set('tipo',true);$('#mAsp').hidden=true;$('#btDesEdit').click();await W(50);
+     o.cx=document.querySelectorAll('#desCats td.cxr,#desCats td.cxg').length>0;o.ctr=!!document.querySelector('#desCats table.dgrid.ctr');o.tipo=document.querySelectorAll('#desCats tr.tpl').length>0;
+     o.guarda=JSON.parse(localStorage.getItem('fp_cores')||'{}').cel==='cx';set('cel','0');await W(30);o.nada=!document.querySelector('#desCats td.cxr,#desCats td.cxg,#desCats td.over');set('cel','txt');return o});
+   const ix=await (async()=>{const q=await b.newPage();await q.route(/cdn\.jsdelivr\.net/,r=>r.abort());await q.goto(U+'/index.html');const v=await q.evaluate(()=>({sem:!document.querySelector('[data-cor="des"]'),pad:/100% \(padrão\)/.test(document.querySelector('#gZoom').textContent)&&document.querySelector('#gZoom [data-v=""]')!==null}));await q.close();return v})();
+   t('D154','Despesas: categorias separadas com linha grossa da cor; encaixa ao descer; 🎨 Aspeto só no Editar (substitui Abrir/Fechar todas) com pintura das células, previsão vs média, centrar e tipo; 100% = antigo 110%',Object.values(r).every(Boolean)&&ix.sem&&ix.pad&&!er2.length,{r,ix,er2});await p2.close()}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}
