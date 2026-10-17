@@ -17,6 +17,7 @@ Responder sempre em português de Portugal, de forma concisa.
    Se o pedido criar uma regra nova ("quero sempre…", "nunca…"), acrescentá-la às Decisões fixas e, se possível, um teste.
 6. Atualizar `APP_VERSAO` em `public/financas.html` **e** acrescentar a versão no topo de `NOVIDADES` em `public/index.html` (texto para o utilizador, em dois grupos: `n` novas funcionalidades, `a` alterações; frases curtas). O teste D81 exige que as duas versões coincidam.
 7. Commit + push para `main` (`git fetch && git rebase origin/main` antes); verificar o site publicado.
+8. **Depois de o site estar publicado** (Workers Builds com sucesso), avisar os utilizadores com o site aberto: `insert into public.site_versoes(site_id, versao) values ('financas', '<APP_VERSAO>');` (Supabase › SQL). O site mostra logo "🆕 Atualizar agora" (D152).
 
 ## Regras
 - Nunca pôr no repositório extratos, recibos ou outros dados reais — os testes usam só `tests/fixtures` (fictícios).

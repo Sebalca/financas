@@ -845,7 +845,7 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     document.querySelector('#empEd2').click();await W(30);const q=document.querySelector('#ecQ');q.value='joao';q.dispatchEvent(new Event('input',{bubbles:true}));
     o.filtro=[...document.querySelectorAll('#empCont tr[data-ecr]')].filter(t=>!t.hidden).map(t=>t.textContent).join('|');o.cont=DB.empresa.contactos.length;
     return o});
-   const ok139=r.ordem==='card | pvTabs | card | rpCard'&&r.desVis&&r.renVis&&r.navNoSaldo&&r.barra==='none'&&/saude,chat,emp$/.test(r.tabs)&&r.chatEsc&&r.bdg==='1'&&r.chatVis&&/Olá equipa/.test(r.msg1)&&r.lido&&/cmsg eu:Bom dia/.test(r.env)&&r.ro&&r.edit&&r.filtro==='João ContabContabilista'&&r.cont===2;
+   const ok139=r.ordem==='card | pvTabs | card | rpCard'&&r.desVis&&r.renVis&&r.navNoSaldo&&r.barra==='none'&&/saude,chat,(part,)?emp$/.test(r.tabs)&&r.chatEsc&&r.bdg==='1'&&r.chatVis&&/Olá equipa/.test(r.msg1)&&r.lido&&/cmsg eu:Bom dia/.test(r.env)&&r.ro&&r.edit&&r.filtro==='João ContabContabilista'&&r.cont===2;
    t('D139','Chat nos agregados/empresas (bolinha por ler, enviar, marca lido); Empresa no fim, ficha só de leitura com ✏ Editar e 📇 Contactos com pesquisa; Previsões: saldo em cima e abas Despesas | Rendimentos; sem barra vazia',ok139&&!er2.length,{r,er2});await p2.close()}
   console.log('v0.15');
   {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
@@ -1006,6 +1006,21 @@ const t=(id,nome,cond,info)=>{if(cond){ok++;console.log(`  ✓ ${id} ${nome}`)}e
     const a1=ptCCAlertas()[0];alFeito(a1.id);o.alOk=!ptCCAlertas().some(a=>a.id===a1.id);
     window.__ptTeste=null;CTX.t='p';await W(700);return o});
    t('D151','Partilha: aba só com 2+ membros; regra e saldo lado a lado; % à escolha = 100 − o outro; rendimentos das Previsões (Quem) + extratos com cálculo mês/ano/12 meses; divisão por movimento (só de um / não entra / %); conta comum com alerta automático',Object.values(r).every(Boolean)&&!er2.length,{r,er2});await p2.close()}
+  console.log('v0.23');
+  {const p2=await b.newPage({viewport:{width:1400,height:900}});const er2=[];p2.on('pageerror',e=>er2.push(e.message));p2.on('dialog',d=>d.accept());await p2.route(/cdn\.jsdelivr\.net/,r=>r.abort());
+   await p2.goto(U+'/financas.html?teste=1');await p2.evaluate(()=>localStorage.clear());await p2.reload();await p2.waitForTimeout(400);
+   const r=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms)),o={};await fpCtx.exemplo();await W(300);
+     const tabs=[...document.querySelectorAll('nav.tabs button[data-tab]')].map(b=>b.dataset.tab);o.ordem=tabs.indexOf('part')===tabs.indexOf('chat')+1;
+     CTX.t='a';CTX.id='g1';CTX.emp=false;window.__ptTeste=[{id:'ua',nome:'Ana'},{id:'ur',nome:'Rui'}];SY.user={id:'ua',email:'ana@x.pt'};await W(700);go('part');render();await W(30);
+     o.infs=document.querySelectorAll('#ptBox .inf').length>=3;
+     DB.imports.forEach(i=>i.por='ur');SY.user={id:'ua',email:'ana@x.pt'};return o});
+   await p2.setInputFiles('#fExt',path.join(FX,'cgd_teste.csv'));await p2.waitForTimeout(400);
+   await p2.evaluate(()=>{DB.imports.forEach(i=>i.por='ur')});await p2.setInputFiles('#fExt',path.join(FX,'cgd_teste.csv'));await p2.waitForTimeout(400);
+   const r2=await p2.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));go('ext');render();await W(50);const d=DB.mov.filter(m=>m.dupDe);const w=document.querySelector('#extTable .dupw');
+     const ok={dup:d.length>0&&d[0].dupDe.includes('ana'),aviso:!!w&&/importado por ana/.test(w.title),umaVez:DB.mov.filter(m=>m.desc===d[0].desc&&m.valor===d[0].valor&&m.dm===d[0].dm).length===1};window.__ptTeste=null;CTX.t='p';await W(700);return ok});
+   t('D152','Partilha a seguir ao Chat com ⓘ; movimento repetido importado por outra pessoa do agregado aparece uma vez com ⚠ a explicar',r.ordem&&r.infs&&Object.values(r2).every(Boolean)&&!er2.length,{r,r2,er2});await p2.close()}
+  {const z=await ev(()=>{const b=document.querySelector('#verBan');b.hidden=true;FPVer.novaVersao('9.99');const ok=!b.hidden&&/9\.99/.test(document.querySelector('#verN').textContent);b.hidden=true;FPVer.novaVersao(document.documentElement.innerHTML.match(/const NOVIDADES=\[\s*\{v:'([^']+)'/)[1]);return {ok,mesma:b.hidden}});
+   t('D153','Versão nova em tempo real (site_versoes via Realtime): mostra "Atualizar agora" se a versão recebida for diferente da aberta',z.ok&&z.mesma,z)}
   t('D99','sem erros de JavaScript',erros.length===0,erros);
   await b.close();srv.close();
   console.log(`\n${ok} ok · ${falhas.length} falha(s)`);if(falhas.length){console.log('FALHAS:\n - '+falhas.join('\n - '));process.exit(1)}

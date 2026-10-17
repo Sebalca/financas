@@ -845,6 +845,7 @@ const FPTipos=(()=>{let L=[],U={},apagar=null;const $=id=>document.getElementByI
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',liga);else liga();
   return {carrega}})();
 const NOVIDADES=[
+ {v:'0.23',d:'17/10/2026',n:['Quando sai uma versão nova aparece logo o aviso "🆕 Atualizar agora", mesmo com o site aberto','Agregados e empresas: um movimento importado por duas pessoas aparece uma vez, com ⚠ a explicar'],a:['Partilha passa para a seguir ao Chat e tem ⓘ a explicar cada caixa']},
  {v:'0.22',d:'17/10/2026',n:['Partilha: rendimentos de cada um a partir das Previsões (campo Quem) e dos extratos','Partilha: dividir uma despesa de outra forma (só de um, não entra, % própria)','Partilha: modo conta comum, com alerta a quem ainda não transferiu a sua parte'],a:['Partilha só aparece com 2 ou mais membros; na regra de % o último é sempre 100 − o outro']},
  {v:'0.21',d:'17/10/2026',n:['Agregados: aba ⚖️ Partilha — regra para dividir as despesas comuns (proporcional ao que cada um ganha, 50/50, valor fixo ou %), quem deve quanto a quem e ✓ Acertar'],a:[]},
  {v:'0.20',d:'17/10/2026',n:['🔔 Alertas na aba Notas/Chat: data, recorrência e antecedência — avisa todos os dias até carregar em ✓ Feito'],a:['Extratos: as observações já não têm o ícone 💬 (o balão continua)']},
@@ -1099,7 +1100,11 @@ const FPVer=(function(){const $=id=>document.getElementById(id),hojeV=()=>new Da
       if(m&&atual()&&m[1]!==atual()){if(auto){try{FPTrack.log('versao_nova',{de:atual(),para:m[1],auto:1})}catch(e){}setTimeout(()=>location.reload(),300);return}$('verN').textContent=` (v${m[1]})`;$('verBan').hidden=false;try{FPTrack.log('versao_nova',{de:atual(),para:m[1]})}catch(e){}}}catch(e){}}
   $('verOk').addEventListener('click',()=>{location.reload()});$('verX').addEventListener('click',()=>{$('verBan').hidden=true});
   setTimeout(()=>verifica(false),2500);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')verifica(false)});
-  return {verifica}})();
+  /* v0.23: aviso em tempo real — cada publicação insere a versão em site_versoes (Supabase Realtime); quem está a usar vê logo a faixa */
+  function novaVersao(v){if(!v||!atual()||v===atual())return;$('verN').textContent=` (v${v})`;$('verBan').hidden=false;try{FPTrack.log('versao_nova',{de:atual(),para:v,rt:1})}catch(e){}}
+  let canal=null;function escuta(){const c=window.plataforma;if(canal||!c||!c.channel)return;try{canal=c.channel('versoes-financas').on('postgres_changes',{event:'INSERT',schema:'public',table:'site_versoes',filter:'site_id=eq.financas'},x=>{try{novaVersao(x.new&&x.new.versao)}catch(e){}}).subscribe()}catch(e){canal=null}}
+  [1500,5000,15000].forEach(t=>setTimeout(escuta,t));
+  return {verifica,novaVersao,escuta}})();
 window.FPVer=FPVer;
 /* v0.17: ecrã de bloqueio — 1.ª vez de cada dia e depois de N minutos sem atividade (Definições › Conta, 60 por defeito); desbloqueia com a palavra-passe */
 const FPLock=(function(){const $=id=>document.getElementById(id),TESTE=/[?&]teste/.test(location.search);let U=null,T=null;
